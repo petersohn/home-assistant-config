@@ -8,7 +8,7 @@ sensor.yr_temperature:
 
 sensor.yr_humidity:
   friendly_name: Humidity
-  icon: mdi:weather-percent
+  icon: mdi:water-percent
 
 sensor.yr_wind_speed:
   friendly_name: Wind Speed
@@ -16,7 +16,25 @@ sensor.yr_wind_speed:
 
 sensor.yr_wind_direction:
   friendly_name: Wind Direction
-  icon: mdi:arrow-bottom-right
+  icon: >
+    {% if states.sensor.yr_wind_direction < 12.5 or states.sensor.yr_wind_direction >= 347.5 %}
+      mdi:arrow-up
+    {% elif states.sensor.yr_wind_direction < 77.5 %}
+      mdi:arrow-top-right
+    {% elif states.sensor.yr_wind_direction < 102.5 %}
+      mdi:arrow-right
+    {% elif states.sensor.yr_wind_direction < 147.5 %}
+      mdi:arrow-bottom-right
+    {% elif states.sensor.yr_wind_direction < 192.5 %}
+      mdi:arrow-down
+    {% elif states.sensor.yr_wind_direction < 237.5 %}
+      mdi:arrow-bottom-left
+    {% elif states.sensor.yr_wind_direction < 282.5 %}
+      mdi:arrow-left
+    {% else %}
+      mdi:arrow-top-left
+    {% endif %}
+
 
 sensor.yr_cloudiness:
   friendly_name: Cloudiness
