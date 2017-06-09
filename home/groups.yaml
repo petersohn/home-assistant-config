@@ -1,0 +1,29 @@
+example:
+  view: no
+  entities:
+    - binary_sensor.test
+
+weather:
+  view: yes
+  entities:
+    - group.weather_state
+    - group.yr
+
+weather_state:
+  view: no
+  name: State
+  entities:
+    - sun.sun
+    - sensor.moon
+
+yr:
+  view: no
+  name: YR
+  entities:
+    - sensor.yr_symbol
+    - sensor.yr_temperature
+    - sensor.yr_humidity
+    - sensor.yr_precipitation
+    - sensor.yr_wind_speed
+    - sensor.yr_wind_direction
+    - sensor.yr_cloudiness

@@ -1,0 +1,17 @@
+sensor.yr_precipitation:
+  icon: mdi:weather-rainy
+
+sensor.yr_temperature:
+  icon: mdi:thermometer
+
+sensor.yr_humidity:
+  icon: mdi:weather-percent
+
+sensor.yr_wind_speed:
+  icon: mdi:weather-windy
+
+sensor.yr_wind_direction:
+  icon: mdi:arrow-bottom-right
+
+sensor.yr_cloudiness:
+  icon: mdi:weather-cloudy
