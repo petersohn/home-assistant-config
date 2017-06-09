@@ -1,17 +1,26 @@
 sensor.yr_precipitation:
+  friendly_name: Precipitation
   icon: mdi:weather-rainy
 
 sensor.yr_temperature:
+  friendly_name: Temperature
   icon: mdi:thermometer
 
 sensor.yr_humidity:
+  friendly_name: Humidity
   icon: mdi:weather-percent
 
 sensor.yr_wind_speed:
+  friendly_name: Wind Speed
   icon: mdi:weather-windy
 
 sensor.yr_wind_direction:
+  friendly_name: Wind Direction
   icon: mdi:arrow-bottom-right
 
 sensor.yr_cloudiness:
+  friendly_name: Cloudiness
   icon: mdi:weather-cloudy
+
+binary_sensor.test:
+  device_class: light

@@ -1,13 +1,21 @@
+default_view:
+  view: yes
+  icon: mdi:home
+  entities:
+    - group.example
+
+weather:
+  view: yes
+  icon: mdi:weather-pouring
+  entities:
+    - group.weather_state
+    - group.yr
+
 example:
   view: no
   entities:
     - binary_sensor.test
-
-weather:
-  view: yes
-  entities:
-    - group.weather_state
-    - group.yr
+    - binary_sensor.foobar
 
 weather_state:
   view: no
