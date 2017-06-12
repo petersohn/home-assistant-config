@@ -2,15 +2,16 @@ homeassistant:
   # Name of the location where Home Assistant is running
   name: Home
   # Location required to calculate the time the sun rises and sets
-  latitude: ***
-  longitude: ***
+  latitude: !secret latitude
+  longitude: !secret longitude
   # Impacts weather/sunrise data (altitude above sea level in meters)
-  elevation: 163
+  elevation: !secret elevation
   # metric for Metric, imperial for Imperial
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/Budapest
   customize: !include customize.yaml
+  api_password: !secret http_password
 
 # Show links to resources in log and frontend
 introduction:
@@ -67,6 +68,37 @@ binary_sensor:
   - platform: rpi_gpio
     ports:
       2: test
+
+rest_command:
+  set_wind_icon:
+    url: http://localhost:8123/api/states/sensor.yr_wind_direction
+    method: post
+    payload: >
+      {
+        "state": "{{ states.sensor.yr_wind_direction.state }}",
+        "attributes": {
+          "friendly_name": "Wind Direction",
+          "unit_of_measurement": "°",
+          "icon":
+            {% if float(states.sensor.yr_wind_direction.state) < 12.5 or float(states.sensor.yr_wind_direction.state) >= 347.5 %}
+              "mdi:arrow-down"
+            {% elif float(states.sensor.yr_wind_direction.state) < 77.5 %}
+              "mdi:arrow-bottom-left"
+            {% elif float(states.sensor.yr_wind_direction.state) < 102.5 %}
+              "mdi:arrow-left"
+            {% elif float(states.sensor.yr_wind_direction.state) < 147.5 %}
+              "mdi:arrow-top-left"
+            {% elif float(states.sensor.yr_wind_direction.state) < 192.5 %}
+              "mdi:arrow-up"
+            {% elif float(states.sensor.yr_wind_direction.state) < 237.5 %}
+              "mdi:arrow-top-right"
+            {% elif float(states.sensor.yr_wind_direction.state) < 282.5 %}
+              "mdi:arrow-right"
+            {% else %}
+              "mdi:arrow-bottom-right"
+            {% endif %}
+        }
+      }
 
 # Text to speech
 tts:
