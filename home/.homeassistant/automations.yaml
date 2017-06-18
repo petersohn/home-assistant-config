@@ -1,7 +1,0 @@
-- trigger:
-    - platform: homeassistant
-      event: start
-    - platform: state
-      entity_id: sensor.yr_wind_direction
-  action:
-    - service: rest_command.set_wind_icon
