@@ -16,6 +16,8 @@ example:
   entities:
     - binary_sensor.test
     - binary_sensor.foobar
+    - binary_sensor.test_device_led
+    - binary_sensor.test_device_button
 
 weather_state:
   view: no
