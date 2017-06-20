@@ -50,7 +50,6 @@ logbook:
 # Track the sun
 sun:
 
-# Weather Prediction
 sensor:
   - platform: yr
     state_topic: yr
@@ -63,11 +62,22 @@ sensor:
       - humidity
       - cloudiness
   - platform: moon
+  - platform: rest
+    resource: !secret test_device_url
+    value_template: '{{ value_json.device.uptime }}'
+    name: Test Device Uptime
+    unit_of_measurement: ms
 
 binary_sensor:
   - platform: rpi_gpio
     ports:
       2: test
+
+switch:
+  - platform: rest
+    resource: !secret test_device_led_url
+    name: 'Test Device Led'
+    is_on_template: '{{ value_json.value == 1 }}'
 
 # Text to speech
 tts:

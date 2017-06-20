@@ -18,6 +18,8 @@ example:
     - binary_sensor.foobar
     - binary_sensor.test_device_led
     - binary_sensor.test_device_button
+    - switch.test_device_led
+    - sensor.test_device_uptime
 
 weather_state:
   view: no
