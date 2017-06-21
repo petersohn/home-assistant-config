@@ -12,9 +12,6 @@ homeassistant:
   time_zone: Europe/Budapest
   customize: !include customize.yaml
 
-# Show links to resources in log and frontend
-introduction:
-
 # Enables the frontend
 frontend:
 
@@ -72,6 +69,18 @@ binary_sensor:
   - platform: rpi_gpio
     ports:
       2: test
+  - platform: ping
+    host: !secret router_address
+    name: network_available
+  - platform: ping
+    host: !secret desktop_address
+    name: desktop_available
+  - platform: ping
+    host: google.com
+    name: internet_available
+  - platform: ping
+    host: !secret gateway_address
+    name: gateway_available
 
 switch:
   - platform: rest

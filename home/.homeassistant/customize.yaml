@@ -23,3 +23,19 @@ sensor.yr_cloudiness:
 
 binary_sensor.test:
   device_class: light
+
+binary_sensor.network_available:
+  friendly_name: Network
+  icon: mdi:network
+
+binary_sensor.internet_available:
+  friendly_name: Internet
+  icon: mdi:earth
+
+binary_sensor.desktop_available:
+  friendly_name: Desktop
+  icon: mdi:desktop-tower
+
+binary_sensor.gateway_available:
+  friendly_name: Gateway
+  icon: mdi:server

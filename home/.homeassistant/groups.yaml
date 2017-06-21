@@ -3,6 +3,7 @@ default_view:
   icon: mdi:home
   entities:
     - group.example
+    - group.availability
 
 weather:
   view: yes
@@ -20,6 +21,14 @@ example:
     - binary_sensor.test_device_button
     - switch.test_device_led
     - sensor.test_device_uptime
+
+availability:
+  view: no
+  entities:
+    - binary_sensor.network_available
+    - binary_sensor.desktop_available
+    - binary_sensor.internet_available
+    - binary_sensor.gateway_available
 
 weather_state:
   view: no
