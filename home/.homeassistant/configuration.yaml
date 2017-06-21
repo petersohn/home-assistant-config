@@ -77,7 +77,7 @@ switch:
   - platform: rest
     resource: !secret test_device_led_url
     name: 'Test Device Led'
-    is_on_template: '{{ value_json.value == 1 }}'
+    is_on_template: '{{ value_json.value }}'
 
 # Text to speech
 tts:
