@@ -39,3 +39,7 @@ binary_sensor.desktop_available:
 binary_sensor.gateway_available:
   friendly_name: Gateway
   icon: mdi:server
+
+binary_sensor.ssh_tunnel_available:
+  friendly_name: SSH tunnel
+  icon: mdi:download-network

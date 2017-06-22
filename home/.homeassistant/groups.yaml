@@ -29,6 +29,7 @@ availability:
     - binary_sensor.desktop_available
     - binary_sensor.internet_available
     - binary_sensor.gateway_available
+    - binary_sensor.ssh_tunnel_available
 
 weather_state:
   view: no
