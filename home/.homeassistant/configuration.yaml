@@ -87,6 +87,12 @@ binary_sensor:
     command: 'timeout 2 netcat localhost 8888 </dev/null && echo ON || echo OFF'
     name: ssh_tunnel_available
 
+device_tracker:
+  - platform: asuswrt
+    host: !secret router_address
+    username: !secret router_username
+    ssh_key: !secret ssh_key
+
 switch:
   - platform: rest
     resource: !secret test_device_led_url
