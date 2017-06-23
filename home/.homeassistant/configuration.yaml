@@ -48,6 +48,11 @@ logbook:
 sun:
 
 mqtt:
+  broker: 127.0.0.1
+  port: 1883
+  client_id: home-assistant-1
+  username: !secret mosquitto_username
+  password: !secret mosquitto_pasword
 
 sensor:
   - platform: yr
@@ -101,6 +106,8 @@ switch:
     resource: !secret test_device_led_url
     name: 'Test Device Led'
     is_on_template: '{{ value_json.value }}'
+  - platform: mqtt
+    command_topic: foo/bar
 
 # Text to speech
 tts:

@@ -22,6 +22,7 @@ example:
     - binary_sensor.test_device_button
     - switch.test_device_led
     - sensor.test_device_uptime
+    - switch.mqtt_switch
 
 availability:
   view: no
