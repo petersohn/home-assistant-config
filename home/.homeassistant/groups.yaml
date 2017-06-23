@@ -31,6 +31,7 @@ availability:
     - binary_sensor.internet_available
     - binary_sensor.gateway_available
     - binary_sensor.ssh_tunnel_available
+    - binary_sensor.what_the_hell
 
 tracker:
   view: no

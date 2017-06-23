@@ -86,6 +86,9 @@ binary_sensor:
   - platform: command_line
     command: 'timeout 2 netcat localhost 8888 </dev/null && echo ON || echo OFF'
     name: ssh_tunnel_available
+  - platform: command_line
+    command: !secret what_the_hell_command
+    name: 'What the hell'
 
 device_tracker:
   - platform: asuswrt
