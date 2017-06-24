@@ -4,7 +4,6 @@ default_view:
   entities:
     - group.example
     - group.availability
-    - group.tracker
 
 weather:
   view: yes
@@ -33,11 +32,6 @@ availability:
     - binary_sensor.gateway_available
     - binary_sensor.ssh_tunnel_available
     - binary_sensor.what_the_hell
-
-tracker:
-  view: no
-  entities:
-    - !secret peti_phone
 
 weather_state:
   view: no

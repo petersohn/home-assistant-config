@@ -38,11 +38,20 @@ discovery:
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
+recorder:
+  purge_days: 30
+
 # Enables support for tracking state changes over time.
 history:
+  exclude:
+    domains:
+      - group
 
 # View all events in a logbook
 logbook:
+  exclude:
+    entities:
+      - sensor.yr_symbol
 
 # Track the sun
 sun:
