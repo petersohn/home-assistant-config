@@ -75,13 +75,26 @@ sensor:
       - humidity
       - cloudiness
   - platform: moon
-  - platform: rest
-    resource: !secret test_device_url
-    value_template: '{{ value_json.device.uptime }}'
-    name: Test Device Uptime
-    unit_of_measurement: ms
 
 binary_sensor:
+  - platform: mqtt
+    state_topic: devices/testDevice/button/state
+    name: 'Test device button'
+    value_template: '{{ value_json.value }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: devices/testDevice/led/state
+    name: 'Test device led'
+    value_template: '{{ value_json.value }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: devices/testDevice/availability
+    name: 'Test device availability'
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
   - platform: rpi_gpio
     ports:
       2: test
@@ -111,12 +124,11 @@ device_tracker:
     ssh_key: !secret ssh_key
 
 switch:
-  - platform: rest
-    resource: !secret test_device_led_url
-    name: 'Test Device Led'
-    is_on_template: '{{ value_json.value }}'
   - platform: mqtt
-    command_topic: foo/bar
+    name: 'Test Device Led'
+    command_topic: devices/testDevice/led/set
+    payload_on: '{ "value": true }'
+    payload_off: '{ "value": false }'
 
 # Text to speech
 tts:
