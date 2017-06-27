@@ -80,18 +80,16 @@ binary_sensor:
   - platform: mqtt
     state_topic: devices/testDevice/button/state
     name: 'Test device button'
-    value_template: '{{ value_json.value }}'
-    payload_on: true
-    payload_off: false
+    payload_on: 'on'
+    payload_off: 'off'
   - platform: mqtt
     state_topic: devices/testDevice/led/state
     name: 'Test device led'
-    value_template: '{{ value_json.value }}'
-    payload_on: true
-    payload_off: false
+    payload_on: 'on'
+    payload_off: 'off'
   - platform: mqtt
     state_topic: devices/testDevice/availability
-    name: 'Test device availability'
+    name: 'Test device available'
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
@@ -127,8 +125,10 @@ switch:
   - platform: mqtt
     name: 'Test Device Led'
     command_topic: devices/testDevice/led/set
-    payload_on: '{ "value": true }'
-    payload_off: '{ "value": false }'
+    retain: true
+    state_topic: devices/testDevice/led/state
+    payload_on: 'on'
+    payload_off: 'off'
 
 # Text to speech
 tts:
