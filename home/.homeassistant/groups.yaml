@@ -2,8 +2,8 @@ default_view:
   view: yes
   icon: mdi:home
   entities:
-    - group.example
-    - group.availability
+    - group.temperature
+    - group.machinery
 
 weather:
   view: yes
@@ -11,18 +11,28 @@ weather:
   entities:
     - group.weather_state
     - group.yr
+    - group.temperature
 
-example:
+state:
+  view: yes
+  icon: mdi:wrench
+  entities:
+    - group.network_availability
+    - group.device_availability
+
+temperature:
   view: no
   entities:
-    - binary_sensor.test
-    - binary_sensor.foobar
-    - binary_sensor.test_device_led
-    - binary_sensor.test_device_button
-    - switch.test_device_led
-    - binary_sensor.test_device_available
+    - sensor.temperature_furnace_room
+    - sensor.humidity_furnace_room
 
-availability:
+machinery:
+  view: no
+  entities:
+    - sensor.temperature_furnace_gas
+    - sensor.temperature_furnace_wood
+
+network_availability:
   view: no
   entities:
     - binary_sensor.network_available
@@ -30,7 +40,11 @@ availability:
     - binary_sensor.internet_available
     - binary_sensor.gateway_available
     - binary_sensor.ssh_tunnel_available
-    - binary_sensor.what_the_hell
+
+device_availability:
+  view: no
+  entities:
+    - binary_sensor.furnace_temperature_available
 
 weather_state:
   view: no

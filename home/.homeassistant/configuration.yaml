@@ -75,22 +75,30 @@ sensor:
       - humidity
       - cloudiness
   - platform: moon
+  - platform: mqtt
+    state_topic: home/sensors/temperature/furnace_room
+    unit_of_measurement: "°C"
+    name: temperature_furnace_room
+  - platform: mqtt
+    state_topic: home/sensors/humidity/furnace_room
+    unit_of_measurement: "%"
+    name: humidity_furnace_room
+  - platform: mqtt
+    state_topic: home/sensors/temperature/furnace/gas
+    unit_of_measurement: "°C"
+    name: temperature_furnace_gas
+  - platform: mqtt
+    state_topic: home/sensors/temperature/furnace/wood
+    unit_of_measurement: "°C"
+    name: temperature_furnace_wood
 
 binary_sensor:
   - platform: mqtt
-    state_topic: devices/testDevice/button/state
-    name: 'Test device button'
-    payload_on: 1
-    payload_off: 0
-  - platform: mqtt
-    state_topic: devices/testDevice/availability
-    name: 'Test device available'
+    state_topic: home/devices/furnaceTemperature/availability
+    name: furnace_temperature_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
-  - platform: rpi_gpio
-    ports:
-      2: test
   - platform: ping
     host: !secret router_address
     name: network_available
@@ -112,14 +120,6 @@ device_tracker:
     host: !secret router_address
     username: !secret router_username
     ssh_key: !secret ssh_key
-
-switch:
-  - platform: mqtt
-    name: 'Test Device Led'
-    command_topic: devices/testDevice/led/set
-    state_topic: devices/testDevice/led/state
-    payload_on: 1
-    payload_off: 0
 
 # Text to speech
 tts:

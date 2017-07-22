@@ -21,9 +21,6 @@ sensor.yr_cloudiness:
   friendly_name: Cloudiness
   icon: mdi:weather-cloudy
 
-binary_sensor.test:
-  device_class: light
-
 binary_sensor.network_available:
   friendly_name: Network
   icon: mdi:network
@@ -43,3 +40,21 @@ binary_sensor.gateway_available:
 binary_sensor.ssh_tunnel_available:
   friendly_name: SSH tunnel
   icon: mdi:download-network
+
+sensor.temperature_furnace_room:
+  friendly_name: "Kazánház hőmérséklet"
+
+sensor.humidity_furnace_room:
+  friendly_name: "Kazánház páratartalom"
+
+sensor.temperature_furnace_gas:
+  friendly_name: "Gázkazán"
+
+sensor.temperature_furnace_wood:
+  friendly_name: "Fakazán"
+
+group.temperature:
+  friendly_name: "Hőmérséklet"
+
+group.machinery:
+  friendly_name: "Gépészet"
