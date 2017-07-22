@@ -1,0 +1,49 @@
+{
+    "debug": true,
+    "name": "furnaceTemperature",
+    "availabilityTopic": "home/devices/furnaceTemperature/availability",
+    "interfaces": [
+        {
+            "type": "dallasTemperature",
+            "name": "dallas",
+            "interval": 15,
+            "pin": 2
+        },
+        {
+            "type": "dht",
+            "name": "dht",
+            "interval": 60,
+            "pin": 3
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "dallas",
+            "topic": "home/sensors/temperature/furnace/gas",
+            "template": "%1",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "dallas",
+            "topic": "home/sensors/temperature/furnace/wood",
+            "template": "%2",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/temperature/furnace_room",
+            "template": "%1",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/humidity/furnace_room",
+            "template": "%2",
+            "retain": false
+        }
+    ]
+}
