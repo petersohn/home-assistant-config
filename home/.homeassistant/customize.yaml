@@ -46,6 +46,7 @@ sensor.temperature_furnace_room:
 
 sensor.humidity_furnace_room:
   friendly_name: "Kazánház páratartalom"
+  icon: mdi:water-percent
 
 sensor.temperature_furnace_gas:
   friendly_name: "Gázkazán"
