@@ -19,6 +19,7 @@ state:
   entities:
     - group.network_availability
     - group.device_availability
+    - updater.updater
 
 temperature:
   view: no
@@ -40,6 +41,7 @@ network_availability:
     - binary_sensor.internet_available
     - binary_sensor.gateway_available
     - binary_sensor.ssh_tunnel_available
+    - binary_sensor.mosquitto_bridge_available
 
 device_availability:
   view: no

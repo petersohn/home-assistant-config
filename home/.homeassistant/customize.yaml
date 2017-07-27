@@ -41,6 +41,14 @@ binary_sensor.ssh_tunnel_available:
   friendly_name: SSH tunnel
   icon: mdi:download-network
 
+binary_sensor.mosquitto_bridge_available:
+  friendly_name: Mosquitto Bridge
+  icon: mdi:bridge
+
+binary_sensor.furnace_temperature_available:
+  friendly_name: Furnace Temperature
+  icon: mdi:chip
+
 sensor.temperature_furnace_room:
   friendly_name: "Kazánház hőmérséklet"
 

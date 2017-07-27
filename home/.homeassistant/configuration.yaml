@@ -99,6 +99,11 @@ binary_sensor:
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
+  - platform: mqtt
+    state_topic: "$SYS/broker/connection/hassbian.homeassistant_gateway/state"
+    name: mosquitto_bridge_available
+    payload_on: 1
+    payload_off: 0
   - platform: ping
     host: !secret router_address
     name: network_available
