@@ -49,6 +49,17 @@ binary_sensor.furnace_temperature_available:
   friendly_name: Furnace Temperature
   icon: mdi:chip
 
+binary_sensor.well_controller_available:
+  friendly_name: Well Controller
+  icon: mdi:chip
+
+sensor.temperature_outside:
+  friendly_name: "Kinti hőmérséklet"
+
+sensor.humidity_outside:
+  friendly_name: "Kinti páratartalom"
+  icon: mdi:water-percent
+
 sensor.temperature_furnace_room:
   friendly_name: "Kazánház hőmérséklet"
 
@@ -61,6 +72,10 @@ sensor.temperature_furnace_gas:
 
 sensor.temperature_furnace_wood:
   friendly_name: "Fakazán"
+
+switch.well:
+  friendly_name: "Kút"
+  icon: mdi:water-pump
 
 group.temperature:
   friendly_name: "Hőmérséklet"

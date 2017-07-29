@@ -2,7 +2,8 @@ default_view:
   view: yes
   icon: mdi:home
   entities:
-    - group.temperature
+    - group.switch
+    - group.weather_measurements
     - group.machinery
 
 weather:
@@ -11,7 +12,7 @@ weather:
   entities:
     - group.weather_state
     - group.yr
-    - group.temperature
+    - group.weather_measurements
 
 state:
   view: yes
@@ -21,9 +22,16 @@ state:
     - group.device_availability
     - updater.updater
 
-temperature:
+switch:
   view: no
   entities:
+    - switch.well
+
+weather_measurements:
+  view: no
+  entities:
+    - sensor.temperature_outside
+    - sensor.humidity_outside
     - sensor.temperature_furnace_room
     - sensor.humidity_furnace_room
 
@@ -47,6 +55,7 @@ device_availability:
   view: no
   entities:
     - binary_sensor.furnace_temperature_available
+    - binary_sensor.well_controller_available
 
 weather_state:
   view: no

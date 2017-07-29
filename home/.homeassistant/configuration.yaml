@@ -76,6 +76,14 @@ sensor:
       - cloudiness
   - platform: moon
   - platform: mqtt
+    state_topic: home/sensors/temperature/outside
+    unit_of_measurement: "°C"
+    name: temperature_outside
+  - platform: mqtt
+    state_topic: home/sensors/humidity/outside
+    unit_of_measurement: "%"
+    name: humidity_outside
+  - platform: mqtt
     state_topic: home/sensors/temperature/furnace_room
     unit_of_measurement: "°C"
     name: temperature_furnace_room
@@ -93,6 +101,12 @@ sensor:
     name: temperature_furnace_wood
 
 binary_sensor:
+  - platform: mqtt
+    state_topic: home/devices/well_controller/availability
+    name: well_controller_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
   - platform: mqtt
     state_topic: home/devices/furnaceTemperature/availability
     name: furnace_temperature_available
@@ -119,6 +133,14 @@ binary_sensor:
   - platform: command_line
     command: 'timeout 2 netcat localhost 8888 </dev/null && echo ON || echo OFF'
     name: ssh_tunnel_available
+
+switch:
+  - platform: mqtt
+    name: well
+    command_topic: home/switches/well/set
+    state_topic: home/switches/well/state
+    payload_on: 1
+    payload_off: 0
 
 device_tracker:
   - platform: asuswrt
