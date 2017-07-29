@@ -1,0 +1,61 @@
+{
+    "debug": true,
+    "name": "well_controller",
+    "availabilityTopic": "home/devices/well_controller/availability",
+    "interfaces": [
+        {
+            "type": "input",
+            "name": "button",
+            "pin": 0
+        },
+        {
+            "type": "output",
+            "name": "relay",
+            "commandTopic": "home/switches/well/set",
+            "default": false,
+            "pin": 3
+        },
+        {
+            "type": "dht",
+            "name": "dht",
+            "interval": 60,
+            "pin": 2
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "relay",
+            "topic": "home/switches/well/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "button",
+            "topic": "home/buttons/well",
+            "value": 0,
+            "retain": false
+        },
+        {
+            "type": "command",
+            "interface": "button",
+            "target": "relay",
+            "command": "toggle",
+            "value": "0"
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/temperature/outside",
+            "template": "%1",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/humidity/outside",
+            "template": "%2",
+            "retain": false
+        }
+    ]
+}
