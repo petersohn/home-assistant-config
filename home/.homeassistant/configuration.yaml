@@ -142,12 +142,6 @@ switch:
     payload_on: 1
     payload_off: 0
 
-device_tracker:
-  - platform: asuswrt
-    host: !secret router_address
-    username: !secret router_username
-    ssh_key: !secret ssh_key
-
 # Text to speech
 tts:
   platform: google
