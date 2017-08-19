@@ -142,6 +142,15 @@ switch:
     payload_on: 1
     payload_off: 0
 
+influxdb:
+  host: !secret influxdb_address
+  port: 8086
+  ssl: true
+  verify_ssl: true
+  username: !secret influxdb_username
+  password: !secret influxdb_password
+  database: !secret influxdb_database
+
 # Text to speech
 tts:
   platform: google
