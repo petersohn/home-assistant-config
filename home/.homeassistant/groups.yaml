@@ -20,6 +20,8 @@ state:
   entities:
     - group.network_availability
     - group.device_availability
+    - group.device_memory
+    - group.device_uptime
     - updater.updater
 
 switch:
@@ -56,6 +58,18 @@ device_availability:
   entities:
     - binary_sensor.furnace_temperature_available
     - binary_sensor.well_controller_available
+
+device_memory:
+  view: no
+  entities:
+    - sensor.furnace_temperature_free_memory
+    - sensor.well_controller_free_memory
+
+device_uptime:
+  view: no
+  entities:
+    - sensor.furnace_temperature_uptime
+    - sensor.well_controller_uptime
 
 weather_state:
   view: no

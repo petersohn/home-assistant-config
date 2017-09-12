@@ -53,6 +53,22 @@ binary_sensor.well_controller_available:
   friendly_name: Well Controller
   icon: mdi:chip
 
+sensor.furnace_temperature_free_memory:
+  friendly_name: Furnace Temperature
+  icon: mdi:memory
+
+sensor.well_controller_free_memory:
+  friendly_name: Well Controller
+  icon: mdi:memory
+
+sensor.furnace_temperature_uptime:
+  friendly_name: Furnace Temperature
+  icon: mdi:clock
+
+sensor.well_controller_uptime:
+  friendly_name: Well Controller
+  icon: mdi:clock
+
 sensor.temperature_outside:
   friendly_name: "Kinti hőmérséklet"
 

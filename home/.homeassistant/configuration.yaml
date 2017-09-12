@@ -99,6 +99,26 @@ sensor:
     state_topic: home/sensors/temperature/furnace/wood
     unit_of_measurement: "°C"
     name: temperature_furnace_wood
+  - platform: mqtt
+    state_topic: home/devices/well_controller/availability
+    name: well_controller_free_memory
+    value_template: '{{ value_json.freeMemory }}'
+    unit_of_measurement: "b"
+  - platform: mqtt
+    state_topic: home/devices/well_controller/availability
+    name: well_controller_uptime
+    value_template: '{{ value_json.uptime }}'
+    unit_of_measurement: "ms"
+  - platform: mqtt
+    state_topic: home/devices/furnaceTemperature/availability
+    name: furnace_temperature_free_memory
+    value_template: '{{ value_json.freeMemory }}'
+    unit_of_measurement: "b"
+  - platform: mqtt
+    state_topic: home/devices/furnaceTemperature/availability
+    name: furnace_temperature_uptime
+    value_template: '{{ value_json.uptime }}'
+    unit_of_measurement: "ms"
 
 binary_sensor:
   - platform: mqtt
