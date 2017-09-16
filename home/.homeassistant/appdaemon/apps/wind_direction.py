@@ -18,17 +18,19 @@ class WindDirection(appapi.AppDaemon):
         self.listen_state(
             self.on_wind_changed, entity=self._ENTITY_NAME)
         self.__set_wind_direction_icon()
-        self.log('Initialized wind direction checker')
 
     def on_wind_changed(self, entity, attribute, old, new, kwargs):
         self.__set_wind_direction_icon()
 
     def __set_wind_direction_icon(self):
-        self.log("Setting wind direction icon")
         wind_direction = self.get_state(self._ENTITY_NAME, 'all')
-        wind_direction['attributes']['icon'] = self._DIRECTIONS[int(
-            (float(wind_direction['state']) + self._DIRECTION_OFFSET)
-            / self._DIRECTION_DIVISOR) % self._NUM_DIRECTIONS]
+        try:
+            wind_direction['attributes']['icon'] = self._DIRECTIONS[int(
+                (float(wind_direction['state']) + self._DIRECTION_OFFSET)
+                / self._DIRECTION_DIVISOR) % self._NUM_DIRECTIONS]
+        except ValueError:
+            self.log('Wind direction is invalid: ' + wind_direction['state'])
+            return
 
         self.set_state(
             self._ENTITY_NAME, attributes=wind_direction['attributes'])
