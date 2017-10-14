@@ -10,10 +10,17 @@
             "pin": 2
         },
         {
+            "type": "output",
+            "name": "pump",
+            "commandTopic": "home/switches/heating_pump/set",
+            "default": false,
+            "pin": 3
+        },
+        {
             "type": "dht",
             "name": "dht",
             "interval": 60,
-            "pin": 3
+            "pin": 0
         }
     ],
     "actions": [
@@ -44,6 +51,12 @@
             "topic": "home/sensors/humidity/furnace_room",
             "template": "%2",
             "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "pump",
+            "topic": "home/switches/heating_pump/status",
+            "retain": true
         }
     ]
 }
