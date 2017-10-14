@@ -1,13 +1,10 @@
-furnace_temperature_state:
-  class: EspStateChecker
-  module: esp_state
-  name: furnace_temperature
-
-well_controller_state:
-  class: EspStateChecker
-  module: esp_state
-  name: well_controller
-
 wind_direction:
   class: WindDirection
   module: wind_direction
+
+heating_pump:
+  class: TemperatureController
+  module: temperature_controller
+  target: 50
+  sensor: sensor.temperature_furnace_wood
+  availability: binary_sensor.furnace_temperature_available

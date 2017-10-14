@@ -134,6 +134,18 @@ binary_sensor:
     payload_on: true
     payload_off: false
   - platform: mqtt
+    state_topic: home/devices/well_controller/restarted
+    name: well_controller_restarted
+    value_template: '{{ value_json.restarted }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/furnaceTemperature/restarted
+    name: furnace_temperature_restarted
+    value_template: '{{ value_json.restarted }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
     state_topic: "$SYS/broker/connection/hassbian.homeassistant_gateway/state"
     name: mosquitto_bridge_available
     payload_on: 1
@@ -159,6 +171,12 @@ switch:
     name: well
     command_topic: home/switches/well/set
     state_topic: home/switches/well/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: furnace_pump
+    command_topic: home/switches/furnace_pump/set
+    state_topic: home/switches/furnace_pump/state
     payload_on: 1
     payload_off: 0
 
