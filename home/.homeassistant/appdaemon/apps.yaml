@@ -8,3 +8,4 @@ heating_pump:
   target: 50
   sensor: sensor.temperature_furnace_wood
   availability: binary_sensor.furnace_temperature_available
+  switch: switch.heating_pump

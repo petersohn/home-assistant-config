@@ -175,9 +175,9 @@ switch:
     payload_on: 1
     payload_off: 0
   - platform: mqtt
-    name: furnace_pump
-    command_topic: home/switches/furnace_pump/set
-    state_topic: home/switches/furnace_pump/state
+    name: heating_pump
+    command_topic: home/switches/heating_pump/set
+    state_topic: home/switches/heating_pump/status
     payload_on: 1
     payload_off: 0
 

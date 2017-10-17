@@ -13,7 +13,7 @@ class TemperatureController(appapi.AppDaemon):
     def trigger(self, entity, attribute, old, new, kwargs):
         self.__check()
 
-    def check(self):
+    def __check(self):
         temperature = float(self.get_state(self.args['sensor']))
 
         if temperature < self.__target - self.__tolerance:
