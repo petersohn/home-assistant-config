@@ -6,6 +6,9 @@ heating_pump:
   class: TemperatureController
   module: temperature_controller
   target: 50
+  minimum: 30
+  low_mode_start: 30
+  low_mode_time: 10
   sensor: sensor.temperature_furnace_wood
   availability: binary_sensor.furnace_temperature_available
   switch: switch.heating_pump
