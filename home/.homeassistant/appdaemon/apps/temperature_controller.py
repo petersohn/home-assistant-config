@@ -30,8 +30,8 @@ class TemperatureController(appapi.AppDaemon):
             self.turn_off(self.args['switch'])
         elif temperature < self.__target - self.__tolerance:
             if self.__timer is None:
+                self.turn_off(self.args['switch'])
                 self.__schedule_start()
-            self.turn_off(self.args['switch'])
 
     def __schedule_start(self):
         self.__stop_timer()
