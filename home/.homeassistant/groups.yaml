@@ -3,6 +3,7 @@ default_view:
   icon: mdi:home
   entities:
     - group.switch
+    - group.lights
     - group.weather_measurements
     - group.machinery
 
@@ -28,6 +29,11 @@ switch:
   view: no
   entities:
     - switch.well
+
+lights:
+  view: no
+  entities:
+    - switch.light_driveway
 
 weather_measurements:
   view: no

@@ -97,6 +97,10 @@ switch.well:
   friendly_name: "Kút"
   icon: mdi:water-pump
 
+switch.light_driveway:
+  friendly_name: "Bejáró"
+  icon: mdi:lightbulb
+
 group.temperature:
   friendly_name: "Hőmérséklet"
 
