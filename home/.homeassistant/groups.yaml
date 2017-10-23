@@ -28,14 +28,17 @@ state:
 switch:
   view: no
   name: Kapcsolók
+  control: hidden
   entities:
     - switch.well
 
 lights:
   view: no
   name: Világítás
+  control: hidden
   entities:
     - switch.light_driveway
+    - input_boolean.motion_sensor_driveway_enable
 
 weather_measurements:
   view: no
@@ -49,6 +52,7 @@ weather_measurements:
 machinery:
   view: no
   name: Gépészet
+  control: hidden
   entities:
     - sensor.temperature_furnace_gas
     - sensor.temperature_furnace_wood

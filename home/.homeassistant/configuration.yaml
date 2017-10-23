@@ -246,6 +246,12 @@ switch:
     payload_on: 1
     payload_off: 0
 
+input_boolean:
+  motion_sensor_driveway_enable:
+    name: Bejáró mozgásérzékelő
+    initial: on
+    icon: mdi:walk
+
 influxdb:
   host: !secret influxdb_address
   port: 8086

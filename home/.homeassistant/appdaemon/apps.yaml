@@ -24,3 +24,4 @@ driveway_motion_sensor:
   time: 3
   constrain_start_time: sunset
   constrain_stop_time: sunrise
+  constrain_input_boolean: input_boolean.motion_sensor_driveway_enable
