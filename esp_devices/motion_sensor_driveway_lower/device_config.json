@@ -1,0 +1,32 @@
+{
+    "debug": true,
+    "name": "motion_sensor_driveway_lower",
+    "availabilityTopic": "home/devices/motion_sensor_driveway_lower/availability",
+    "interfaces": [
+        {
+            "type": "input",
+            "name": "motion",
+            "pin": 0
+        },
+        {
+            "type": "output",
+            "name": "relay",
+            "commandTopic": "home/switches/lights/driveway/set",
+            "pin": 3
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "motion",
+            "topic": "home/sensors/motion/driveway_lower",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "relay",
+            "topic": "home/switches/lights/driveway/state",
+            "retain": true
+        }
+    ]
+}
