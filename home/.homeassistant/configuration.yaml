@@ -157,13 +157,13 @@ binary_sensor:
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/motion_sensor_driveway_lower/availability
-    name: motion_sensor_driveway_lower
+    name: motion_sensor_driveway_lower_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/motion_sensor_driveway_upper/availability
-    name: motion_sensor_driveway_upper
+    name: motion_sensor_driveway_upper_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
