@@ -53,6 +53,8 @@ logbook:
   exclude:
     entities:
       - sensor.yr_symbol
+    domains:
+      - group
 
 # Track the sun
 sun:
