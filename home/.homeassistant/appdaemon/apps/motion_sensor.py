@@ -16,23 +16,19 @@ class MotionSensor(appapi.AppDaemon):
 
     def __on_motion_start(self, entity, attribute, old, new, kwargs):
         self.__stop_timer()
-        self.log('Turn on')
         for target in self.__targets:
             self.turn_on(target)
 
     def __on_motion_stop(self, entity, attribute, old, new, kwargs):
         if all([self.get_state(sensor) == 'off' for sensor in self.__sensors]):
-            self.log('Start timer')
             self.__timer = self.run_in(self.__on_timeout, self.__time)
 
     def __on_timeout(self, kwargs):
-        self.log('Turn off')
         for target in self.__targets:
             self.turn_off(target)
 
     def __stop_timer(self):
         if self.__timer is not None:
-            self.log('Stop timer')
             self.cancel_timer(self.__timer)
             self.__timer = None
 

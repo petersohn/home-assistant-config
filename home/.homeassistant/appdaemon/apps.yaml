@@ -21,4 +21,6 @@ driveway_motion_sensor:
     - binary_sensor.motion_sensor_driveway_lower
   targets:
     - switch.light_driveway
-  time: 0.1
+  time: 3
+  constrain_start_time: sunset
+  constrain_stop_time: sunrise
