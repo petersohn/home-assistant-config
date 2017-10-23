@@ -27,16 +27,19 @@ state:
 
 switch:
   view: no
+  name: Kapcsolók
   entities:
     - switch.well
 
 lights:
   view: no
+  name: Világítás
   entities:
     - switch.light_driveway
 
 weather_measurements:
   view: no
+  name: Időjárás
   entities:
     - sensor.temperature_outside
     - sensor.humidity_outside
@@ -45,6 +48,7 @@ weather_measurements:
 
 machinery:
   view: no
+  name: Gépészet
   entities:
     - sensor.temperature_furnace_gas
     - sensor.temperature_furnace_wood
@@ -52,6 +56,7 @@ machinery:
 
 network_availability:
   view: no
+  name: Hálózat
   entities:
     - binary_sensor.network_available
     - binary_sensor.desktop_available
