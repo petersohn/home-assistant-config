@@ -53,12 +53,28 @@ binary_sensor.well_controller_available:
   friendly_name: Well Controller
   icon: mdi:chip
 
+binary_sensor.motion_sensor_driveway_lower_available:
+  friendly_name: Motion Sensor Driveway Lower
+  icon: mdi:chip
+
+binary_sensor.motion_sensor_driveway_upper_available:
+  friendly_name: Motion Sensor Driveway Upper
+  icon: mdi:chip
+
 sensor.furnace_temperature_free_memory:
   friendly_name: Furnace Temperature
   icon: mdi:memory
 
 sensor.well_controller_free_memory:
   friendly_name: Well Controller
+  icon: mdi:memory
+
+sensor.motion_sensor_driveway_lower_free_memory:
+  friendly_name: Motion Sensor Driveway Lower
+  icon: mdi:memory
+
+sensor.motion_sensor_driveway_upper_free_memory:
+  friendly_name: Motion Sensor Driveway Upper
   icon: mdi:memory
 
 sensor.furnace_temperature_uptime:
@@ -68,6 +84,14 @@ sensor.furnace_temperature_uptime:
 sensor.well_controller_uptime:
   friendly_name: Well Controller
   icon: mdi:clock
+
+sensor.motion_sensor_driveway_lower_uptime:
+  friendly_name: Motion Sensor Driveway Lower
+  icon: mdi:time
+
+sensor.motion_sensor_driveway_upper_uptime:
+  friendly_name: Motion Sensor Driveway Upper
+  icon: mdi:time
 
 sensor.temperature_outside:
   friendly_name: "Kinti hőmérséklet"
