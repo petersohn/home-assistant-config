@@ -1,11 +1,14 @@
 import appdaemon.appapi as appapi
 
+import auto_switch
 
 class MotionSensor(appapi.AppDaemon):
 
     def initialize(self):
         self.__sensors = self.args['sensors']
-        self.__targets = self.args['targets']
+        self.__targets = [
+            auto_switch.AutoSwitch(self, target)
+            for target in self.args['targets']]
         self.__time = float(self.args['time']) * 60
 
         self.__timer = None
@@ -16,9 +19,8 @@ class MotionSensor(appapi.AppDaemon):
 
     def __on_motion_start(self, entity, attribute, old, new, kwargs):
         self.__stop_timer()
-        self.log('Switching on')
         for target in self.__targets:
-            self.turn_on(target)
+            target.turn_on()
 
     def __on_motion_stop(self, entity, attribute, old, new, kwargs):
         if all([self.get_state(sensor) == 'off' for sensor in self.__sensors]):
@@ -26,9 +28,9 @@ class MotionSensor(appapi.AppDaemon):
             self.__timer = self.run_in(self.__on_timeout, self.__time)
 
     def __on_timeout(self, kwargs):
-        self.log('Switching off')
+        self.log('Timeout')
         for target in self.__targets:
-            self.turn_off(target)
+            target.turn_off()
 
     def __stop_timer(self):
         if self.__timer is not None:
