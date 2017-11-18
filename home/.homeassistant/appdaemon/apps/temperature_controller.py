@@ -11,6 +11,7 @@ class TemperatureController(appapi.AppDaemon):
             self.args.get('low_mode_start', 30)) * 60
         self.__low_mode_time = float(self.args.get('low_mode_time', 5)) * 60
         self.__timer = None
+        self.__low_mode_limit = None
         self.listen_state(self.trigger, entity=self.args['sensor'])
         self.listen_state(self.trigger, entity=self.args['availability'])
 
@@ -29,13 +30,20 @@ class TemperatureController(appapi.AppDaemon):
             self.__stop_timer()
             self.turn_off(self.args['switch'])
         elif temperature < self.__target - self.__tolerance:
+            if self.__low_mode_limit and temperature > self.__low_mode_limit:
+                self.__stop_timer()
             if self.__timer is None:
                 self.turn_off(self.args['switch'])
-                self.__schedule_start()
+                self.__schedule_start(temperature)
 
-    def __schedule_start(self):
+    def __schedule_start(self, current_temperature):
         self.__stop_timer()
-        self.log('Schedule low mode start')
+
+        self.log(
+                'Start pump if temperature remains below '
+                + str(current_temperature) + ' in '
+                + str(self.args['low_mode_start']) + ' minutes')
+        self.__low_mode_limit = current_temperature
         self.__timer = self.run_in(
             self.__on_start_timer, self.__low_mode_start)
 
@@ -58,4 +66,4 @@ class TemperatureController(appapi.AppDaemon):
     def __on_stop_timer(self, kwargs):
         self.log('Low mode stop')
         self.turn_off(self.args['switch'])
-        self.__schedule_start()
+        self.__schedule_start(float(self.get_state(self.args['sensor'])))
