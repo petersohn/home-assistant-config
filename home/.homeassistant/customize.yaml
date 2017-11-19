@@ -61,6 +61,14 @@ binary_sensor.motion_sensor_driveway_upper_available:
   friendly_name: Motion Sensor Driveway Upper
   icon: mdi:chip
 
+binary_sensor.living_room_temperature_available:
+  friendly_name: Living Room Temperature Available
+  icon: mdi:chip
+
+binary_sensor.bedroom_temperature_available:
+  friendly_name: Bedroom Temperature Available
+  icon: mdi:chip
+
 sensor.furnace_temperature_free_memory:
   friendly_name: Furnace Temperature
   icon: mdi:memory
@@ -77,6 +85,14 @@ sensor.motion_sensor_driveway_upper_free_memory:
   friendly_name: Motion Sensor Driveway Upper
   icon: mdi:memory
 
+sensor.living_room_temperature_free_memory:
+  friendly_name: Living Room Temperature
+  icon: mdi:memory
+
+sensor.bedroom_temperature_free_memory:
+  friendly_name: Bedroom Temperature
+  icon: mdi:memory
+
 sensor.furnace_temperature_uptime:
   friendly_name: Furnace Temperature
   icon: mdi:clock
@@ -87,11 +103,19 @@ sensor.well_controller_uptime:
 
 sensor.motion_sensor_driveway_lower_uptime:
   friendly_name: Motion Sensor Driveway Lower
-  icon: mdi:time
+  icon: mdi:clock
 
 sensor.motion_sensor_driveway_upper_uptime:
   friendly_name: Motion Sensor Driveway Upper
-  icon: mdi:time
+  icon: mdi:clock
+
+sensor.living_room_temperature_uptime:
+  friendly_name: Living Room Temperature
+  icon: mdi:clock
+
+sensor.bedroom_temperature_uptime:
+  friendly_name: Bedroom Temperature
+  icon: mdi:clock
 
 sensor.temperature_outside:
   friendly_name: "Kinti hőmérséklet"
@@ -112,6 +136,20 @@ sensor.temperature_living_room_upper:
 
 sensor.humidity_living_room_upper:
   friendly_name: "Nappali páratartalom fent"
+  icon: mdi:water-percent
+
+sensor.temperature_bedroom_lower:
+  friendly_name: "Hálószoba hőmérséklet lent"
+
+sensor.humidity_bedroom_lower:
+  friendly_name: "Hálószoba páratartalom lent"
+  icon: mdi:water-percent
+
+sensor.temperature_bedroom_upper:
+  friendly_name: "Hálószoba hőmérséklet fent"
+
+sensor.humidity_bedroom_upper:
+  friendly_name: "Hálószoba páratartalom fent"
   icon: mdi:water-percent
 
 sensor.temperature_furnace_room:

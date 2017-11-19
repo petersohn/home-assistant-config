@@ -111,6 +111,22 @@ sensor:
     unit_of_measurement: "%"
     name: humidity_living_room_upper
   - platform: mqtt
+    state_topic: home/sensors/temperature/bedroom/lower
+    unit_of_measurement: "°C"
+    name: temperature_bedroom_lower
+  - platform: mqtt
+    state_topic: home/sensors/humidity/bedroom/lower
+    unit_of_measurement: "%"
+    name: humidity_bedroom_lower
+  - platform: mqtt
+    state_topic: home/sensors/temperature/bedroom/upper
+    unit_of_measurement: "°C"
+    name: temperature_bedroom_upper
+  - platform: mqtt
+    state_topic: home/sensors/humidity/bedroom/upper
+    unit_of_measurement: "%"
+    name: humidity_bedroom_upper
+  - platform: mqtt
     state_topic: home/sensors/temperature/furnace/gas
     unit_of_measurement: "°C"
     name: temperature_furnace_gas
@@ -159,6 +175,26 @@ sensor:
     name: motion_sensor_driveway_upper_uptime
     value_template: '{{ value_json.uptime }}'
     unit_of_measurement: "ms"
+  - platform: mqtt
+    state_topic: home/devices/living_room_temperature/availability
+    name: living_room_temperature_free_memory
+    value_template: '{{ value_json.freeMemory }}'
+    unit_of_measurement: "b"
+  - platform: mqtt
+    state_topic: home/devices/living_room_temperature/availability
+    name: living_room_temperature_uptime
+    value_template: '{{ value_json.uptime }}'
+    unit_of_measurement: "ms"
+  - platform: mqtt
+    state_topic: home/devices/bedroom_temperature/availability
+    name: bedroom_temperature_free_memory
+    value_template: '{{ value_json.freeMemory }}'
+    unit_of_measurement: "b"
+  - platform: mqtt
+    state_topic: home/devices/bedroom_temperature/availability
+    name: bedroom_temperature_uptime
+    value_template: '{{ value_json.uptime }}'
+    unit_of_measurement: "ms"
 
 binary_sensor:
   - platform: mqtt
@@ -185,6 +221,18 @@ binary_sensor:
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/living_room_temperature/availability
+    name: living_room_temperature_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/bedroom_temperature/availability
+    name: bedroom_temperature_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
 
   - platform: mqtt
     state_topic: home/devices/well_controller/availability
@@ -207,6 +255,18 @@ binary_sensor:
   - platform: mqtt
     state_topic: home/devices/motion_sensor_driveway_upper/availability
     name: motion_sensor_driveway_upper_restarted
+    value_template: '{{ value_json.restarted }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/living_room_temperature/availability
+    name: living_room_temperature_restarted
+    value_template: '{{ value_json.restarted }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/bedroom_temperature/availability
+    name: bedroom_temperature_restarted
     value_template: '{{ value_json.restarted }}'
     payload_on: true
     payload_off: false
