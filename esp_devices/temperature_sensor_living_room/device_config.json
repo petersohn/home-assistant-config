@@ -1,0 +1,49 @@
+{
+    "debug": true,
+    "name": "living_room_temperature",
+    "availabilityTopic": "home/devices/living_room_temperature/availability",
+    "interfaces": [
+        {
+            "type": "dht",
+            "name": "lower",
+            "interval": 60,
+            "pin": 0
+        },
+        {
+            "type": "dht",
+            "name": "upper",
+            "interval": 60,
+            "pin": 2
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "lower",
+            "topic": "home/sensors/temperature/living_room/lower",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "lower",
+            "topic": "home/sensors/humidity/living_room/lower",
+            "template": "%2",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "upper",
+            "topic": "home/sensors/temperature/living_room/upper",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "upper",
+            "topic": "home/sensors/humidity/living_room/upper",
+            "template": "%2",
+            "retain": true
+        },
+    ]
+}
