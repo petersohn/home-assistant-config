@@ -95,6 +95,22 @@ sensor:
     unit_of_measurement: "%"
     name: humidity_furnace_room
   - platform: mqtt
+    state_topic: home/sensors/temperature/living_room/lower
+    unit_of_measurement: "°C"
+    name: temperature_living_room_lower
+  - platform: mqtt
+    state_topic: home/sensors/humidity/living_room/lower
+    unit_of_measurement: "%"
+    name: humidity_living_room_lower
+  - platform: mqtt
+    state_topic: home/sensors/temperature/living_room/upper
+    unit_of_measurement: "°C"
+    name: temperature_living_room_upper
+  - platform: mqtt
+    state_topic: home/sensors/humidity/living_room/upper
+    unit_of_measurement: "%"
+    name: humidity_living_room_upper
+  - platform: mqtt
     state_topic: home/sensors/temperature/furnace/gas
     unit_of_measurement: "°C"
     name: temperature_furnace_gas

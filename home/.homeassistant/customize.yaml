@@ -100,6 +100,20 @@ sensor.humidity_outside:
   friendly_name: "Kinti páratartalom"
   icon: mdi:water-percent
 
+sensor.temperature_living_room_lower:
+  friendly_name: "Nappali hőmérséklet lent"
+
+sensor.humidity_living_room_lower:
+  friendly_name: "Nappali páratartalom lent"
+  icon: mdi:water-percent
+
+sensor.temperature_living_room_upper:
+  friendly_name: "Nappali hőmérséklet fent"
+
+sensor.humidity_living_room_upper:
+  friendly_name: "Nappali páratartalom fent"
+  icon: mdi:water-percent
+
 sensor.temperature_furnace_room:
   friendly_name: "Kazánház hőmérséklet"
 

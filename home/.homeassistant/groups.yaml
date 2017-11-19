@@ -48,6 +48,10 @@ weather_measurements:
     - sensor.humidity_outside
     - sensor.temperature_furnace_room
     - sensor.humidity_furnace_room
+    - sensor.temperature_living_room_lower
+    - sensor.humidity_living_room_lower
+    - sensor.temperature_living_room_upper
+    - sensor.humidity_living_room_upper
 
 machinery:
   view: no
