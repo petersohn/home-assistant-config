@@ -48,14 +48,14 @@
             "interface": "dht",
             "topic": "home/sensors/temperature/outside",
             "template": "%1",
-            "retain": false
+            "retain": true
         },
         {
             "type": "publish",
             "interface": "dht",
             "topic": "home/sensors/humidity/outside",
             "template": "%2",
-            "retain": false
+            "retain": true
         }
     ]
 }

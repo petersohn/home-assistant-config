@@ -29,28 +29,28 @@
             "interface": "dallas",
             "topic": "home/sensors/temperature/furnace/gas",
             "template": "%1",
-            "retain": false
+            "retain": true
         },
         {
             "type": "publish",
             "interface": "dallas",
             "topic": "home/sensors/temperature/furnace/wood",
             "template": "%2",
-            "retain": false
+            "retain": true
         },
         {
             "type": "publish",
             "interface": "dht",
             "topic": "home/sensors/temperature/furnace_room",
             "template": "%1",
-            "retain": false
+            "retain": true
         },
         {
             "type": "publish",
             "interface": "dht",
             "topic": "home/sensors/humidity/furnace_room",
             "template": "%2",
-            "retain": false
+            "retain": true
         },
         {
             "type": "publish",
