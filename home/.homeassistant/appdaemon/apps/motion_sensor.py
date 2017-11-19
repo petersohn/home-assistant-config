@@ -19,8 +19,9 @@ class MotionSensor(appapi.AppDaemon):
 
     def __on_motion_start(self, entity, attribute, old, new, kwargs):
         self.__stop_timer()
-        for target in self.__targets:
-            target.turn_on()
+        if self.__should_start():
+            for target in self.__targets:
+                target.turn_on()
 
     def __on_motion_stop(self, entity, attribute, old, new, kwargs):
         if all([self.get_state(sensor) == 'off' for sensor in self.__sensors]):
@@ -37,3 +38,5 @@ class MotionSensor(appapi.AppDaemon):
             self.cancel_timer(self.__timer)
             self.__timer = None
 
+    def __should_start(self):
+        return self.sun_down() and self.get_state(self.args['enabler']) == 'on'
