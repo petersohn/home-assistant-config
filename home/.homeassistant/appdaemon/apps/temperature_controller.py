@@ -4,7 +4,7 @@ import appdaemon.appapi as appapi
 class TemperatureController(appapi.AppDaemon):
 
     def initialize(self):
-        self.__target = float(self.args['target'])
+        self.__target = self.args['target']
         self.__minimum = float(self.args['minimum'])
         self.__tolerance = float(self.args.get('tolerance', 1.0))
         self.__low_mode_start = float(
@@ -21,15 +21,30 @@ class TemperatureController(appapi.AppDaemon):
         self.__check()
 
     def __check(self):
+        outside_temperature = float(self.get_state(self.args['outside_sensor']))
+        if type(self.__target) is dict:
+            min_temperature = float(self.__target['min_temperature'])
+            max_temperature = float(self.__target['max_temperature'])
+            min_target = float(self.__target['min_target'])
+            max_target = float(self.__target['max_target'])
+            coefficient = ((min_target - max_target)
+                    / (min_temperature - max_temperature))
+            constant = min_target - min_temperature * coefficient
+            target = coefficient * outside_temperature + constant
+            target = min(min_target, max(max_target, target))
+        else:
+            target = float(self.__target)
+
+        self.log('Target temperature = ' + str(target))
         temperature = float(self.get_state(self.args['sensor']))
 
-        if temperature > self.__target + self.__tolerance:
+        if temperature > target + self.__tolerance:
             self.__stop_timer()
             self.turn_on(self.args['switch'])
         elif temperature < self.__minimum:
             self.__stop_timer()
             self.turn_off(self.args['switch'])
-        elif temperature < self.__target - self.__tolerance:
+        elif temperature < target - self.__tolerance:
             if self.__low_mode_limit and temperature > self.__low_mode_limit:
                 self.__stop_timer()
             if self.__timer is None:
