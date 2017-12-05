@@ -35,7 +35,6 @@ class TemperatureController(appapi.AppDaemon):
         else:
             target = float(self.__target)
 
-        self.log('Target temperature = ' + str(target))
         temperature = float(self.get_state(self.args['sensor']))
 
         if temperature > target + self.__tolerance:
