@@ -28,14 +28,14 @@
             "type": "publish",
             "interface": "dallas",
             "topic": "home/sensors/temperature/furnace/gas",
-            "template": "%1",
+            "payload": {"type": "value", "index": 1},
             "retain": true
         },
         {
             "type": "publish",
             "interface": "dallas",
             "topic": "home/sensors/temperature/furnace/wood",
-            "template": "%2",
+            "payload": {"type": "value", "index": 2},
             "retain": true
         },
         {
@@ -57,6 +57,34 @@
             "interface": "pump",
             "topic": "home/switches/heating_pump/status",
             "retain": true
+        },
+        {
+            "type": "command",
+            "interface": "dallas",
+            "target": "pump",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": ">=",
+                    "ops": [{"type": "value", "index": 2}, 80]
+                },
+                "then": "1",
+                "else": ""
+            }
+        },
+        {
+            "type": "command",
+            "interface": "dallas",
+            "target": "pump",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": "<",
+                    "ops": [{"type": "value", "index": 2}, 25]
+                },
+                "then": "0",
+                "else": ""
+            }
         }
     ]
 }
