@@ -1,6 +1,6 @@
 *** Settings ***
 Resource       resources/Config.robot
-Test Setup     Initialize Environment
+Test Setup     Initialize
 Test Teardown  Cleanup Environment
 
 *** Test Cases ***
@@ -8,3 +8,11 @@ Test Teardown  Cleanup Environment
 Foo
     List Directory  .
     Log  %{PWD}
+
+
+*** Keywords ***
+
+Initialize
+    ${apps} =  Create List  TestApp
+    ${app_configs} =  Create List  TestApp
+    Initialize Environment  ${apps}  ${app_configs}
