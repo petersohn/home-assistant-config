@@ -5,6 +5,6 @@ root_dir=$(readlink -e "${script_dir}/..")
 
 cd "$script_dir"
 
-export PYTHONPATH="${root_dir}/robotframework-httplibrary/src:${PYTHONPATH}"
+export PYTHONPATH="${script_dir}:${root_dir}/robotframework-httplibrary/src:${PYTHONPATH}"
 
 robot "$@" .

@@ -1,7 +1,7 @@
 *** Settings ***
 
 Library   OperatingSystem
-Library   ../libraries/Config.py
+Library   libraries/Config.py
 Resource  HomeAssistant.robot
 
 

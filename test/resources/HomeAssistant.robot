@@ -1,8 +1,8 @@
 *** Settings ***
 
 Library    HttpLibrary.HTTP
-Library    ../libraries/Process.py
-Variables  ../libraries/Directories.py
+Library    libraries/Process.py
+Variables  libraries/Directories.py
 
 
 *** Variables ***
@@ -30,7 +30,7 @@ Check Home Assistant
     Json Value Should Equal  ${body}  /message  "API running."
 
 Wait For Home Assistant To Start
-    Wait Until Keyword Succeeds  1 min  0.5 sec
+    Wait Until Keyword Succeeds  0.5 min  0.1 sec
     ...    Check Home Assistant
 
 Stop Home Assistant
