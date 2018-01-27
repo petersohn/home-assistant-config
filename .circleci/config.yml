@@ -9,3 +9,8 @@ jobs:
             - run: ./test/run-test
             - store_artifacts:
                 path: test/output
+workflows:
+    version: 2
+    test:
+        jobs:
+            - test-appdaemon
