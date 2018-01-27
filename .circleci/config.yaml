@@ -1,0 +1,11 @@
+version: 2
+jobs:
+    test-appdaemon:
+        docker:
+            - image: kangirigungi/home-assistant-config-test:lagest
+        steps:
+            - checkout
+            - run: git submodule update --init --recursive
+            - run: ./test/run-test
+            - store_artifacts:
+                path: test/output
