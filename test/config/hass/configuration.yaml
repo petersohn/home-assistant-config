@@ -4,5 +4,6 @@ homeassistant:
 http:
     server_port: 18123
 
-frontend:
+api:
 
+websocket_api:
