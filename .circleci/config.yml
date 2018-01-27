@@ -6,11 +6,13 @@ jobs:
         steps:
             - checkout
             - run: git submodule update --init --recursive
-            - run: ./test/run-test --loglevel=trace
+            - run: ./test/run-test --loglevel=trace --xunit=robot.xml
             - run: |
                 find test/output -depth -name __pycache__ -type d \
                     -exec rm -r '{}' ';'
             - store_artifacts:
+                path: test/output
+            - store_test_results:
                 path: test/output
 workflows:
     version: 2
