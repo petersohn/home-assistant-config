@@ -7,6 +7,9 @@ jobs:
             - checkout
             - run: git submodule update --init --recursive
             - run: ./test/run-test --loglevel=trace
+            - run: |
+                find test/output -depth -name __pycache__ -type d \
+                    -exec rm -r '{}' ';'
             - store_artifacts:
                 path: test/output
 workflows:
