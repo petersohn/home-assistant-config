@@ -2,7 +2,7 @@ version: 2
 jobs:
     test-appdaemon:
         docker:
-            - image: kangirigungi/home-assistant-config-test:lagest
+            - image: kangirigungi/home-assistant-config-test:latest
         steps:
             - checkout
             - run: git submodule update --init --recursive
