@@ -7,5 +7,6 @@ cd "$script_dir"
 mkdir -p output
 
 export PYTHONPATH="${script_dir}:${root_dir}/robotframework-httplibrary/src:${PYTHONPATH}"
+export START_TIME=$(date '+%Y:%m:%d %H:%M:%S')
 
-robot --outputdir=output "$@" .
+exec robot --outputdir=output "$@" .

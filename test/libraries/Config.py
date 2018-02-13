@@ -1,13 +1,17 @@
 import os
-import time
 
 import Directories
 
 
-def get_output_directory(suite_name, case_name):
+def get_base_output_directory():
+    n = 1
+    while True:
+        result = os.path.join(Directories.output_path, str(n))
+        if not os.path.exists(result):
+            return result
+        n += 1
+
+
+def get_output_directory(base, suite_name, case_name):
     suite_path = suite_name.split('.')
-    return os.path.join(
-        Directories.output_path,
-        time.strftime('%Y-%m-%d %H:%M:%S'),
-        *suite_path,
-        case_name)
+    return os.path.join(base, *suite_path, case_name)

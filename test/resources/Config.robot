@@ -10,7 +10,8 @@ Resource  resources/AppDaemon.robot
 *** Keywords ***
 
 Setup Output Directory
-    ${OUTPUT_DIRECTORY} =  Get Output Directory  ${SUITE_NAME}  ${TEST_NAME}
+    ${OUTPUT_DIRECTORY} =  Get Output Directory
+    ...    ${base_output_directory}  ${SUITE_NAME}  ${TEST_NAME}
     Set Test Variable  ${OUTPUT_DIRECTORY}
     Create Directory   ${OUTPUT_DIRECTORY}
 
