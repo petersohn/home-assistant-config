@@ -19,6 +19,7 @@ Start AppDaemon
     ...    --config     ${OUTPUT_DIRECTORY}
     ...    --starttime  ${start_time}
     ...    --tick       0
+    ...    --interval   ${appdaemon_interval}
     Set Test Variable  ${app_daemon_process}
 
 Call Function
@@ -51,5 +52,3 @@ Stop AppDaemon
 Wait For AppDaemon To Stop
     Wait For Process  ${app_daemon_process}  timeout=10 sec  on_timeout=kill
     Process Should Be Stopped
-
-

@@ -1,6 +1,6 @@
 import appdaemon.appapi as appapi
 
-import TestAppDaemon
+import Blocker
 
 import datetime
 import traceback
@@ -15,8 +15,11 @@ class TestApp(appapi.AppDaemon):
         kwargs = data.get('kwargs', {})
         try:
             function = data['function']
-            self.log('Calling function: ' + function)
+            self.log(
+                'Calling function: ' + function + ' ' + str(args) +
+                ' ' + str(kwargs))
             result = getattr(self, function)(*args, **kwargs)
+            self.log('Function returns: ' + function + ' = ' + str(result))
             return result, 200
         except:
             return traceback.format_exc(), 500
@@ -25,13 +28,16 @@ class TestApp(appapi.AppDaemon):
         self.log(str(type(self.time())))
         return arg
 
+    def __block(self, kwargs):
+        Blocker.block()
+
     def unblock_until(self, timestamp):
-        self.run_at(TestAppDaemon.block, datetime.fromtimestamp(timestamp))
-        TestAppDaemon.unblock()
+        self.run_at(self.__block, datetime.fromtimestamp(timestamp))
+        Blocker.unblock()
 
     def unblock_for(self, duration):
-        self.run_in(TestAppDaemon.block, duration)
-        TestAppDaemon.unblock()
+        self.run_in(self.__block, duration)
+        Blocker.unblock()
 
     def get_current_time(self):
         return self.datetime().timestamp()

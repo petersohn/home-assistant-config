@@ -12,9 +12,9 @@ Start Time
 
 Unblock For Some Time
     ${unblock_time} =  Set Variable  ${120}
-    ${finish_time} =  Add Time To Date  ${start_time}  ${unblock_time}
+    ${finish_time} =  Get Finish Time  ${start_time}  ${unblock_time}
     Call Function  unblock_for  ${unblock_time}
-    Wait Until Keyword Succeeds  5s  0.1s
+    Wait Until Keyword Succeeds  5s  0.01s
     ...    Current Time Should Be  ${finish_time}
 
 
@@ -32,3 +32,10 @@ Current Time Should Be
     ${current_time} =  Call Function  get_current_time
     ${current_time_value} =  Convert Date  ${current_time}
     Should Be Equal  ${current_time_value}  ${time_value}
+
+
+Get Finish Time
+    [Arguments]  ${begin_time}  ${time}
+    ${finish_time_1} =  Add Time To Date  ${begin_time}  ${time}
+    ${finish_time_2} =  Add Time To Date  ${finish_time_1}  ${appdaemon_interval}
+    [Return]  ${finish_time_2}
