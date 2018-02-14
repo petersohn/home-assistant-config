@@ -32,7 +32,7 @@ class TestApp(appapi.AppDaemon):
         Blocker.block()
 
     def unblock_until(self, timestamp):
-        self.run_at(self.__block, datetime.fromtimestamp(timestamp))
+        self.run_at(self.__block, datetime.datetime.fromtimestamp(timestamp))
         Blocker.unblock()
 
     def unblock_for(self, duration):
