@@ -177,6 +177,10 @@ switch.light_driveway:
   friendly_name: "Bejáró"
   icon: mdi:lightbulb
 
+switch.motion_sensor_driveway_enable:
+  friendly_name: Bejáró mozgásérzékelő
+  icon: mdi:walk
+
 group.temperature:
   friendly_name: "Hőmérséklet"
 
