@@ -19,6 +19,7 @@ class AutoSwitch:
         self.__app.turn_on(self.__entity)
 
     def turn_off(self):
+        self.__turning_on = False
         if self.__manually_turned_on:
             self.__app.log(
                 self.__entity + ': On manual control, not turning off')
