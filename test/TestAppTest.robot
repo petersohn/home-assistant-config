@@ -10,6 +10,7 @@ Test Teardown  Cleanup Environment
 
 ${test_sensor} =        sensor.test_sensor
 ${test_sensor_value} =  sensor state
+${new_sensor_value} =   new sensor state
 
 
 *** Test Cases ***
@@ -18,27 +19,44 @@ Start Time
     Current Time Should Be  ${start_time}
 
 Unblock For Some Time
-    ${unblock_time} =  Set Variable  ${120}
-    ${finish_time} =  Add Time To Date  ${start_time}  ${unblock_time}
-    ${real_finish_time} =  Add Time To Date  ${finish_time}  ${appdaemon_interval}
-    Call Function  unblock_for  ${unblock_time}
-    Wait Until Keyword Succeeds  5s  0.01s
-    ...    Current Time Should Be  ${real_finish_time}
+    Unblock For  2min
 
 Unblock Until Some Time
-    ${unblock_time} =  Set Variable  ${150}
-    ${finish_time} =  Add Time To Date
-    ...    ${start_time}  ${unblock_time}  result_format=epoch
-    ${real_finish_time} =  Add Time To Date
-    ...    ${finish_time}  ${appdaemon_interval}
-    Call Function  unblock_until  ${finish_time}
-    Wait Until Keyword Succeeds  5s  0.01s
-    ...    Current Time Should Be  ${real_finish_time}
+    ${unblock_time} =  Set Variable  2:30
+    ${finish_time} =  Add Time To Date  ${start_time}  ${unblock_time}
+
+    Unblock Until  ${finish_time}
 
 Set State
-    Call Function  set_state  ${test_sensor}  state=${test_sensor_value}
-    ${value} =  Call Function  get_state  ${test_sensor}
-    Should Be Equal  ${value}  ${test_sensor_value}
+    Set State  ${test_sensor}  ${test_sensor_value}
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+
+Schedule State Change In Some Time
+    ${delay} =  Set Variable  2min
+    ${unblock_time} =  Subtract Time From Time
+    ...    ${delay}  ${2 * ${appdaemon_interval}}
+
+    Set State  ${test_sensor}  ${test_sensor_value}
+    Schedule Call In  ${delay}
+    ...    set_state  ${test_sensor}  state=${new_sensor_value}
+    Unblock For  ${unblock_time}
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Unblock For  ${3 * ${appdaemon_interval}}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Schedule State Change At Some Time
+    ${delay} =  Set Variable  3min
+    ${finish_time} =  Add Time To Date  ${start_time}  ${delay}
+    ${unblock_time} =  Subtract Time From Time
+    ...    ${delay}  ${2 * ${appdaemon_interval}}
+
+    Set State  ${test_sensor}  ${test_sensor_value}
+    Schedule Call At  ${finish_time}
+    ...    set_state  ${test_sensor}  state=${new_sensor_value}
+    Unblock For  ${unblock_time}
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Unblock For  ${3 * ${appdaemon_interval}}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
 
 
 *** Keywords ***
@@ -54,3 +72,5 @@ Current Time Should Be
     ${current_time} =  Call Function  get_current_time
     ${current_time_value} =  Convert Date  ${current_time}
     Should Be Equal  ${current_time_value}  ${time_value}
+
+

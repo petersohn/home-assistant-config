@@ -2,6 +2,7 @@
 
 Library    HttpLibrary.HTTP
 Library    Process
+Library    DateTime
 Variables  libraries/Directories.py
 
 
@@ -22,13 +23,18 @@ Start AppDaemon
     ...    --interval   ${appdaemon_interval}
     Set Test Variable  ${app_daemon_process}
 
-Call Function
+Create Call Data
     [Arguments]  ${function}  @{args}  &{kwargs}
-    Create Http Context  ${app_daemon_host}:${app_daemon_port}
-    ${content} =  Create Dictionary
+    ${result} =  Create Dictionary
     ...    function=${function}
     ...    args=@{args}
     ...    kwargs=&{kwargs}
+    [Return]  ${result}
+
+Call Function
+    [Arguments]  ${function}  @{args}  &{kwargs}
+    Create Http Context  ${app_daemon_host}:${app_daemon_port}
+    ${content} =  Create Call Data  ${function}  @{args}  &{kwargs}
     ${body} =  Stringify Json  ${content}
     Set Request Body  ${body}
     POST  /api/appdaemon/TestApp
@@ -36,6 +42,43 @@ Call Function
     ${response} =  Get Response Body
     ${result} =  Parse Json  ${response}
     [Return]  ${result}
+
+Unblock Until
+    [Arguments]  ${when}  ${timeout}=5s
+    ${epoch} =  Convert Date  ${when}  result_format=epoch
+    Call Function  unblock_until  ${epoch}
+    Wait Until Keyword Succeeds  ${timeout}  0.01s
+    ...    Current Time Should Be  ${when}
+
+Unblock For
+    [Arguments]  ${delay}  ${timeout}=5s
+    ${current_time} =  Call Function  get_current_time
+    ${end_time} =  Add Time To Time  ${current_time}  ${delay}
+    ${seconds} =  Convert Time  ${delay}  result_format=number
+    Call Function  unblock_for  ${seconds}
+    Wait Until Keyword Succeeds  ${timeout}  0.01s
+    ...    Current Time Should Be  ${end_time}
+
+Schedule Call At
+    [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
+    ${data} =  Create Call Data  ${function}  @{args}  &{kwargs}
+    ${epoch} =  Convert Date  ${when}  result_format=epoch
+    Call Function  schedule_call_at  ${epoch}  ${data}
+
+Schedule Call In
+    [Arguments]  ${delay}  ${function}  @{args}  &{kwargs}
+    ${data} =  Create Call Data  ${function}  @{args}  &{kwargs}
+    ${seconds} =  Convert Time  ${delay}  result_format=number
+    Call Function  schedule_call_in  ${seconds}  ${data}
+
+State Should Be
+    [Arguments]  ${entity_id}  ${expected_value}
+    ${value} =  Call Function  get_state  ${entity_id}
+    Should Be Equal  ${value}  ${expected_value}
+
+Set State
+    [Arguments]  ${entity_id}  ${value}
+    Call Function  set_state  ${entity_id}  state=${value}
 
 Check AppDaemon
     Process Should Be Running  ${app_daemon_process}
