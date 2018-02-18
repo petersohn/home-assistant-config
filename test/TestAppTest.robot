@@ -2,6 +2,7 @@
 
 Resource       resources/Config.robot
 Library        DateTime
+Library        libraries/DateTimeUtil.py
 Test Setup     Initialize
 Test Teardown  Cleanup Environment
 
@@ -26,10 +27,10 @@ Unblock For Some Time
     Current Time Should Be  ${finish_time}
 
 Unblock Until Some Time
-    ${unblock_time} =  Set Variable  2:30
-    ${finish_time} =  Add Time To Date  ${start_time}  ${unblock_time}
+    ${unblock_time} =  Set Variable  12:05:00
+    ${finish_time} =  Find Time  ${start_time}  ${unblock_time}
 
-    Unblock Until  ${finish_time}
+    Unblock Until  ${unblock_time}
     Current Time Should Be  ${finish_time}
 
 Set State
@@ -37,30 +38,21 @@ Set State
     State Should Be  ${test_sensor}  ${test_sensor_value}
 
 Schedule State Change In Some Time
-    ${delay} =  Set Variable  2min
-    ${unblock_time} =  Subtract Time From Time
-    ...    ${delay}  ${2 * ${appdaemon_interval}}
-
     Set State  ${test_sensor}  ${test_sensor_value}
-    Schedule Call In  ${delay}
+    Schedule Call In  2:00
     ...    set_state  ${test_sensor}  state=${new_sensor_value}
-    Unblock For  ${unblock_time}
+    Unblock For  1:59
     State Should Be  ${test_sensor}  ${test_sensor_value}
-    Unblock For  ${3 * ${appdaemon_interval}}
+    Unblock For  2s
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Schedule State Change At Some Time
-    ${delay} =  Set Variable  3min
-    ${finish_time} =  Add Time To Date  ${start_time}  ${delay}
-    ${unblock_time} =  Subtract Time From Time
-    ...    ${delay}  ${2 * ${appdaemon_interval}}
-
     Set State  ${test_sensor}  ${test_sensor_value}
-    Schedule Call At  ${finish_time}
+    Schedule Call At  12:10:00
     ...    set_state  ${test_sensor}  state=${new_sensor_value}
-    Unblock For  ${unblock_time}
+    Unblock Until  12:09:59
     State Should Be  ${test_sensor}  ${test_sensor_value}
-    Unblock For  ${3 * ${appdaemon_interval}}
+    Unblock Until  12:10:01
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 

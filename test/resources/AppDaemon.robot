@@ -54,29 +54,23 @@ Wait Until Blocked
 
 Unblock Until
     [Arguments]  ${when}  ${timeout}=5s
-    ${epoch} =  Convert Date  ${when}  result_format=epoch
-    Call Function  unblock_until  ${epoch}
+    Call Function  unblock_until  ${when}
     Wait Until Blocked  ${timeout}
 
 Unblock For
     [Arguments]  ${delay}  ${timeout}=5s
-    ${current_time} =  Call Function  get_current_time
-    ${end_time} =  Add Time To Time  ${current_time}  ${delay}
-    ${seconds} =  Convert Time  ${delay}  result_format=number
-    Call Function  unblock_for  ${seconds}
+    Call Function  unblock_for  ${delay}
     Wait Until Blocked  ${timeout}
 
 Schedule Call At
     [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
     ${data} =  Create Call Data  ${function}  @{args}  &{kwargs}
-    ${epoch} =  Convert Date  ${when}  result_format=epoch
-    Call Function  schedule_call_at  ${epoch}  ${data}
+    Call Function  schedule_call_at  ${when}  ${data}
 
 Schedule Call In
     [Arguments]  ${delay}  ${function}  @{args}  &{kwargs}
     ${data} =  Create Call Data  ${function}  @{args}  &{kwargs}
-    ${seconds} =  Convert Time  ${delay}  result_format=number
-    Call Function  schedule_call_in  ${seconds}  ${data}
+    Call Function  schedule_call_in  ${delay}  ${data}
 
 State Should Be
     [Arguments]  ${entity_id}  ${expected_value}
