@@ -32,10 +32,12 @@ class TestApp(appapi.AppDaemon):
             return exception_str, 500
 
     def test(self, arg):
-        self.log(str(type(self.time())))
         return arg
 
     def __block(self, kwargs):
+        Blocker.block()
+
+    def __block_on_state(self, entity, attribute, old, new, kwargs):
         Blocker.block()
 
     def unblock_until(self, when):
@@ -46,6 +48,10 @@ class TestApp(appapi.AppDaemon):
         self.run_in(
             self.__block,
             DateTime.convert_time(duration, result_format='number'))
+        Blocker.unblock()
+
+    def unblock_until_state_change(self, entity, **kwargs):
+        self.listen_state(self.__block_on_state, oneshot=True, **kwargs)
         Blocker.unblock()
 
     def get_current_time(self):

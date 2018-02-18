@@ -11,6 +11,7 @@ Test Teardown  Cleanup Environment
 
 ${test_sensor} =        sensor.test_sensor
 ${test_sensor_value} =  sensor state
+${intermediate_sensor_value} =   intermediate sensor state
 ${new_sensor_value} =   new sensor state
 
 
@@ -53,6 +54,31 @@ Schedule State Change At Some Time
     Unblock Until  12:09:59
     State Should Be  ${test_sensor}  ${test_sensor_value}
     Unblock Until  12:10:01
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Unblock Until State Change
+    Set State  ${test_sensor}  ${test_sensor_value}
+    Schedule Call At  12:00:05
+    ...    set_state  ${test_sensor}  state=${new_sensor_value}
+    Unblock Until State Change  ${test_sensor}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Unblock Until State Change With New State
+    Set State  ${test_sensor}  ${test_sensor_value}
+    Schedule Call At  12:00:05
+    ...    set_state  ${test_sensor}  state=${intermediate_sensor_value}
+    Schedule Call At  12:00:10
+    ...    set_state  ${test_sensor}  state=${new_sensor_value}
+    Unblock Until State Change  ${test_sensor}  new=${new_sensor_value}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Unblock Until State Change With Old State
+    Set State  ${test_sensor}  ${test_sensor_value}
+    Schedule Call At  12:00:05
+    ...    set_state  ${test_sensor}  state=${intermediate_sensor_value}
+    Schedule Call At  12:00:10
+    ...    set_state  ${test_sensor}  state=${new_sensor_value}
+    Unblock Until State Change  ${test_sensor}  old=${intermediate_sensor_value}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 

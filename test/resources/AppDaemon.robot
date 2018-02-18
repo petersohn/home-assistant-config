@@ -62,6 +62,11 @@ Unblock For
     Call Function  unblock_for  ${delay}
     Wait Until Blocked  ${timeout}
 
+Unblock Until State Change
+    [Arguments]  ${entity}  ${timeout}=5s  &{kwargs}
+    Call Function  unblock_until_state_change  ${entity}  &{kwargs}
+    Wait Until Blocked  ${timeout}
+
 Schedule Call At
     [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
     ${data} =  Create Call Data  ${function}  @{args}  &{kwargs}
