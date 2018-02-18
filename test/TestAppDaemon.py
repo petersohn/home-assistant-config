@@ -19,7 +19,7 @@ def _do_every(period, f):
     while not conf.stopping:
         yield from conf.loop.run_in_executor(
             queue_joiner, appdaemon.appdaemon.q.join)
-        yield from Blocker._main_loop_blocker.wait()
+        yield from Blocker.wait()
         t += conf.interval
         yield from f(t)
 

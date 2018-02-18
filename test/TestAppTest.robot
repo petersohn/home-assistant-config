@@ -19,13 +19,18 @@ Start Time
     Current Time Should Be  ${start_time}
 
 Unblock For Some Time
-    Unblock For  2min
+    ${unblock_time} =  Set Variable  2:00
+    ${finish_time} =  Add Time To Date  ${start_time}  ${unblock_time}
+
+    Unblock For  ${unblock_time}
+    Current Time Should Be  ${finish_time}
 
 Unblock Until Some Time
     ${unblock_time} =  Set Variable  2:30
     ${finish_time} =  Add Time To Date  ${start_time}  ${unblock_time}
 
     Unblock Until  ${finish_time}
+    Current Time Should Be  ${finish_time}
 
 Set State
     Set State  ${test_sensor}  ${test_sensor_value}

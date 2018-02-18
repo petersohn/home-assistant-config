@@ -26,3 +26,12 @@ def block():
         _main_loop_blocker.clear()
 
     asyncio.run_coroutine_threadsafe(_block(), conf.loop)
+
+
+@asyncio.coroutine
+def wait():
+    yield from _main_loop_blocker.wait()
+
+
+def is_blocked():
+    return not _main_loop_blocker.is_set()

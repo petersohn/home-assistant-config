@@ -54,3 +54,6 @@ class TestApp(appapi.AppDaemon):
 
     def schedule_call_in(self, delay, data):
         self.run_in(self.__call, delay, **data)
+
+    def is_blocked(self):
+        return Blocker.is_blocked()

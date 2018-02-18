@@ -43,12 +43,20 @@ Call Function
     ${result} =  Parse Json  ${response}
     [Return]  ${result}
 
+Should Be Blocked
+    ${result} =  Call Function  is_blocked
+    Should Be True  ${result}
+
+Wait Until Blocked
+    [Arguments]  ${timeout}
+    Wait Until Keyword Succeeds  ${timeout}  0.01s
+    ...    Should Be Blocked
+
 Unblock Until
     [Arguments]  ${when}  ${timeout}=5s
     ${epoch} =  Convert Date  ${when}  result_format=epoch
     Call Function  unblock_until  ${epoch}
-    Wait Until Keyword Succeeds  ${timeout}  0.01s
-    ...    Current Time Should Be  ${when}
+    Wait Until Blocked  ${timeout}
 
 Unblock For
     [Arguments]  ${delay}  ${timeout}=5s
@@ -56,8 +64,7 @@ Unblock For
     ${end_time} =  Add Time To Time  ${current_time}  ${delay}
     ${seconds} =  Convert Time  ${delay}  result_format=number
     Call Function  unblock_for  ${seconds}
-    Wait Until Keyword Succeeds  ${timeout}  0.01s
-    ...    Current Time Should Be  ${end_time}
+    Wait Until Blocked  ${timeout}
 
 Schedule Call At
     [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
