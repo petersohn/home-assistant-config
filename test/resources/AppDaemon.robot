@@ -77,9 +77,14 @@ Schedule Call In
     ${data} =  Create Call Data  ${function}  @{args}  &{kwargs}
     Call Function  schedule_call_in  ${delay}  ${data}
 
+Get State
+    [Arguments]  ${entity_id}
+    ${value} =  Call Function  get_state  ${entity_id}
+    [Return]  ${value}
+
 State Should Be
     [Arguments]  ${entity_id}  ${expected_value}
-    ${value} =  Call Function  get_state  ${entity_id}
+    ${value} =  Get State  ${entity_id}
     Should Be Equal  ${value}  ${expected_value}
 
 Set State

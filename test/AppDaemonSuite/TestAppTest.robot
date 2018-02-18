@@ -4,7 +4,7 @@ Resource       resources/Config.robot
 Library        DateTime
 Library        libraries/DateTimeUtil.py
 Test Setup     Initialize
-Test Teardown  Cleanup Environment
+Test Teardown  Cleanup AppDaemon
 
 
 *** Variables ***
@@ -81,13 +81,21 @@ Unblock Until State Change With Old State
     Unblock Until State Change  ${test_sensor}  old=${intermediate_sensor_value}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
+Clean Home Assistant States
+    Set State  ${test_sensor}  ${test_sensor_value}
+    Clean States
+    ${states} =  Get States
+    Should Be Empty  ${states}
+    Run Keyword And Expect Error  *Internal Server Error*
+    ...    Get State  ${test_sensor}
+
 
 *** Keywords ***
 
 Initialize
     ${apps} =  Create List  TestApp
     ${app_configs} =  Create List  TestApp
-    Initialize Environment  ${apps}  ${app_configs}
+    Initialize AppDaemon  ${apps}  ${app_configs}
 
 Current Time Should Be
     [Arguments]  ${time}
@@ -95,5 +103,3 @@ Current Time Should Be
     ${current_time} =  Call Function  get_current_time
     ${current_time_value} =  Convert Date  ${current_time}
     Should Be Equal  ${current_time_value}  ${time_value}
-
-

@@ -1,7 +1,11 @@
 *** Settings ***
 
-Library      libraries/Config.py
-Suite Setup  Initialize Variables
+Library         libraries/Config.py
+Resource        resources/Config.robot
+Suite Setup     Run Keywords
+...             Initialize Variables
+...             Initialize Home Assistant
+Suite Teardown  Cleanup Home Assistant
 
 
 *** Keywords ***

@@ -15,17 +15,23 @@ Setup Output Directory
     Set Test Variable  ${OUTPUT_DIRECTORY}
     Create Directory   ${OUTPUT_DIRECTORY}
 
-Initialize Environment
+Initialize AppDaemon
     [Arguments]  ${apps}  ${app_configs}
     Setup Output Directory
     Start Home Assistant
     Create AppDaemon Configuration  ${OUTPUT_DIRECTORY}  ${apps}  ${app_configs}
-    Wait For Home Assistant To Start
     Start App Daemon
     Wait For App Daemon To Start
 
-Cleanup Environment
-    Stop Home Assistant
+Cleanup AppDaemon
     Stop AppDaemon
-    Wait For Home Assistant To Stop
     Wait For AppDaemon To Stop
+    Clean States
+
+Initialize Home Assistant
+    Start Home Assistant
+    Wait For Home Assistant To Start
+
+Cleanup Home Assistant
+    Stop Home Assistant
+    Wait For Home Assistant To Stop
