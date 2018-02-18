@@ -93,6 +93,7 @@ Clean Home Assistant States
 *** Keywords ***
 
 Initialize
+    Clean States
     ${apps} =  Create List  TestApp
     ${app_configs} =  Create List  TestApp
     Initialize AppDaemon  ${apps}  ${app_configs}

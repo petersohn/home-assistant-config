@@ -18,7 +18,6 @@ Setup Output Directory
 Initialize AppDaemon
     [Arguments]  ${apps}  ${app_configs}
     Setup Output Directory
-    Start Home Assistant
     Create AppDaemon Configuration  ${OUTPUT_DIRECTORY}  ${apps}  ${app_configs}
     Start App Daemon
     Wait For App Daemon To Start
@@ -26,7 +25,6 @@ Initialize AppDaemon
 Cleanup AppDaemon
     Stop AppDaemon
     Wait For AppDaemon To Stop
-    Clean States
 
 Initialize Home Assistant
     Start Home Assistant
