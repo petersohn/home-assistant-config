@@ -2,6 +2,7 @@
 
 Library    HttpLibrary.HTTP
 Library    Process
+Resource   resources/Http.robot
 Variables  libraries/Directories.py
 
 
@@ -22,7 +23,6 @@ Start Home Assistant
 
 Check Home Assistant
     Process Should Be Running  ${hass_process}
-    Create Http Context  ${home_assistant_host}:${home_assistant_port}
     GET  /api/
     Response Status Code Should Equal  200
     ${body} =  Get Response Body
@@ -30,6 +30,7 @@ Check Home Assistant
 
 Wait For Home Assistant To Start
     Wait Until Keyword Succeeds  30 sec  0.2 sec
+    ...    Run In Http Context  ${home_assistant_host}:${home_assistant_port}
     ...    Check Home Assistant
 
 Stop Home Assistant
@@ -39,22 +40,31 @@ Wait For Home Assistant To Stop
     Wait For Process  ${hass_process}  timeout=10 sec  on_timeout=kill
     Process Should Be Stopped
 
-Delete State
+Do Delete State
     [Arguments]  ${entity_id}
-    Set Request Header  Connection  keep-alive
+    Ask For Connection Keepalive
     DELETE  /api/states/${entity_id}
     Response Status Code Should Equal  200
 
-Get States
-    Create Http Context  ${home_assistant_host}:${home_assistant_port}
-    Set Request Header  Connection  keep-alive
+Do Get States
+    Ask For Connection Keepalive
     GET  /api/states
     Response Status Code Should Equal  200
     ${body} =  Get Response Body
     ${content} =  Parse Json  ${body}
     [Return]  ${content}
 
-Clean States
-    @{content} =  Get States
+Do Clean States
+    @{content} =  Do Get States
     :FOR  ${entity}  IN  @{content}
-    \    Delete State  ${entity['entity_id']}
+    \    Do Delete State  ${entity['entity_id']}
+
+Get States
+    ${result} =  Run In Http Context
+    ...    ${home_assistant_host}:${home_assistant_port}
+    ...    Do Get States
+    [Return]  ${result}
+
+Clean States
+    Run In Http Context  ${home_assistant_host}:${home_assistant_port}
+    ...    Do Clean States

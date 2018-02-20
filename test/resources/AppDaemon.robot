@@ -3,6 +3,7 @@
 Library    HttpLibrary.HTTP
 Library    Process
 Library    DateTime
+Resource   resources/Http.robot
 Variables  libraries/Directories.py
 
 
@@ -17,11 +18,11 @@ ${test_arg}         This is a test
 
 Start AppDaemon
     ${app_daemon_process} =  Start Process   python  TestAppDaemon.py
-    ...    --config     ${OUTPUT_DIRECTORY}
-    ...    --starttime  ${start_time}
-    ...    --tick       0
-    ...    --interval   ${appdaemon_interval}
-    Set Test Variable  ${app_daemon_process}
+    ...    --config      ${OUTPUT_DIRECTORY}
+    ...    --starttime   ${start_time}
+    ...    --tick        0
+    ...    --interval    ${appdaemon_interval}
+    Set Test Variable    ${app_daemon_process}
 
 Create Call Data
     [Arguments]  ${function}  @{args}  &{kwargs}
@@ -33,10 +34,10 @@ Create Call Data
 
 Call Function
     [Arguments]  ${function}  @{args}  &{kwargs}
-    Create Http Context  ${app_daemon_host}:${app_daemon_port}
     ${content} =  Create Call Data  ${function}  @{args}  &{kwargs}
     ${body} =  Stringify Json  ${content}
     Set Request Body  ${body}
+    Ask For Connection Keepalive
     POST  /api/appdaemon/TestApp
     Response Status Code Should Equal  200
     ${response} =  Get Response Body
@@ -98,10 +99,13 @@ Check AppDaemon
 
 Wait For AppDaemon To Start
     Wait Until Keyword Succeeds  30 sec  0.2 sec
+    ...    Run In Http Context  ${app_daemon_host}:${app_daemon_port}
     ...    Check AppDaemon
+    Create Http Context  ${app_daemon_host}:${app_daemon_port}
 
 Stop AppDaemon
     Send Signal To Process  TERM  ${app_daemon_process}
+    Restore Http Context
 
 Wait For AppDaemon To Stop
     Wait For Process  ${app_daemon_process}  timeout=10 sec  on_timeout=kill
