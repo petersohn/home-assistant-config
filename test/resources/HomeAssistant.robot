@@ -45,6 +45,15 @@ Do Delete State
     DELETE  /api/states/${entity_id}
     Response Status Code Should Equal  200
 
+Do Get State
+    [Arguments]  ${entity_id}
+    Ask For Connection Keepalive
+    GET  /api/states/${entity_id}
+    Response Status Code Should Equal  200
+    ${body} =  Get Response Body
+    ${content} =  Parse Json  ${body}
+    [Return]  ${content['state']}
+
 Do Get States
     Ask For Connection Keepalive
     GET  /api/states
@@ -63,12 +72,26 @@ Do Initialize State
     ${content} =  Create Dictionary  state=${state}
     ${body} =  Stringify Json  ${content}
     Set Request Body  ${body}
+    Ask For Connection Keepalive
     POST  /api/states/${entity}
 
 Do Initialize States
     [Arguments]  &{states}
     :FOR  ${entity}  IN  @{states.keys()}
     \    Do Initialize State  ${entity}  ${states['${entity}']}
+
+Do Check State
+    [Arguments]  ${entity}  ${expected_state}
+    ${actual_state} =  Do Get State  ${entity}
+    Should Be Equal  ${actual_state}  ${expected_state}
+
+Wait Until State Becomes
+    [Arguments]  ${entity}  ${state}  ${timeout}=1s
+    ${result} =  Run In Http Context
+    ...    ${home_assistant_host}
+    ...    Wait Until Keyword Succeeds  0.1s  ${timeout}
+    ...    Do Check State  ${entity}  ${state}
+    [Return]  ${result}
 
 Get States
     ${result} =  Run In Http Context

@@ -39,6 +39,7 @@ Unblock Until Some Time
 
 Set State
     Set State  ${test_sensor}  ${new_sensor_value}
+    Wait Until State Becomes  ${test_sensor}  ${new_sensor_value}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Schedule State Change In Some Time
