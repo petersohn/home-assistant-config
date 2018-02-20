@@ -59,6 +59,18 @@ Do Clean States
     :FOR  ${entity}  IN  @{content}
     \    Do Delete State  ${entity['entity_id']}
 
+Do Initialize State
+    [Arguments]  ${entity}  ${state}
+    ${content} =  Create Dictionary  state=${state}
+    ${body} =  Stringify Json  ${content}
+    Set Request Body  ${body}
+    POST  /api/states/${entity}
+
+Do Initialize States
+    [Arguments]  &{states}
+    :FOR  ${entity}  IN  @{states.keys()}
+    \    Do Initialize State  ${entity}  ${states['${entity}']}
+
 Get States
     ${result} =  Run In Http Context
     ...    ${home_assistant_host}:${home_assistant_port}
@@ -68,3 +80,8 @@ Get States
 Clean States
     Run In Http Context  ${home_assistant_host}:${home_assistant_port}
     ...    Do Clean States
+
+Initialize States
+    [Arguments]  &{states}
+    Run In Http Context  ${home_assistant_host}:${home_assistant_port}
+    ...    Do Initialize States  &{states}

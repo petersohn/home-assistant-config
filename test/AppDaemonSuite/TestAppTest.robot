@@ -20,6 +20,9 @@ ${new_sensor_value} =   new sensor state
 Start Time
     Current Time Should Be  ${start_time}
 
+Initial State
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+
 Unblock For Some Time
     ${unblock_time} =  Set Variable  2:00
     ${finish_time} =  Add Time To Date  ${start_time}  ${unblock_time}
@@ -35,11 +38,10 @@ Unblock Until Some Time
     Current Time Should Be  ${finish_time}
 
 Set State
-    Set State  ${test_sensor}  ${test_sensor_value}
-    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Set State  ${test_sensor}  ${new_sensor_value}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Schedule State Change In Some Time
-    Set State  ${test_sensor}  ${test_sensor_value}
     Schedule Call In  2:00
     ...    set_state  ${test_sensor}  state=${new_sensor_value}
     Unblock For  1:59
@@ -48,7 +50,6 @@ Schedule State Change In Some Time
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Schedule State Change At Some Time
-    Set State  ${test_sensor}  ${test_sensor_value}
     Schedule Call At  12:10:00
     ...    set_state  ${test_sensor}  state=${new_sensor_value}
     Unblock Until  12:09:59
@@ -57,14 +58,12 @@ Schedule State Change At Some Time
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Unblock Until State Change
-    Set State  ${test_sensor}  ${test_sensor_value}
     Schedule Call At  12:00:05
     ...    set_state  ${test_sensor}  state=${new_sensor_value}
     Unblock Until State Change  ${test_sensor}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Unblock Until State Change With New State
-    Set State  ${test_sensor}  ${test_sensor_value}
     Schedule Call At  12:00:05
     ...    set_state  ${test_sensor}  state=${intermediate_sensor_value}
     Schedule Call At  12:00:10
@@ -73,7 +72,6 @@ Unblock Until State Change With New State
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Unblock Until State Change With Old State
-    Set State  ${test_sensor}  ${test_sensor_value}
     Schedule Call At  12:00:05
     ...    set_state  ${test_sensor}  state=${intermediate_sensor_value}
     Schedule Call At  12:00:10
@@ -82,7 +80,6 @@ Unblock Until State Change With Old State
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Clean Home Assistant States
-    Set State  ${test_sensor}  ${test_sensor_value}
     Clean States
     ${states} =  Get States
     Should Be Empty  ${states}
@@ -94,6 +91,7 @@ Clean Home Assistant States
 
 Initialize
     Clean States
+    Initialize States  ${test_sensor}=${test_sensor_value}
     ${apps} =  Create List  TestApp
     ${app_configs} =  Create List  TestApp
     Initialize AppDaemon  ${apps}  ${app_configs}
