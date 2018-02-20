@@ -9,8 +9,7 @@ Variables  libraries/Directories.py
 
 *** Variables ***
 
-${app_daemon_host}  127.0.0.1
-${app_daemon_port}  18124
+${app_daemon_host}  127.0.0.1:18124
 ${test_arg}         This is a test
 
 
@@ -99,9 +98,9 @@ Check AppDaemon
 
 Wait For AppDaemon To Start
     Wait Until Keyword Succeeds  30 sec  0.2 sec
-    ...    Run In Http Context  ${app_daemon_host}:${app_daemon_port}
+    ...    Run In Http Context  ${app_daemon_host}
     ...    Check AppDaemon
-    Create Http Context  ${app_daemon_host}:${app_daemon_port}
+    Create Http Context  ${app_daemon_host}
 
 Stop AppDaemon
     Send Signal To Process  TERM  ${app_daemon_process}

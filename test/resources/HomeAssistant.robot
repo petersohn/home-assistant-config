@@ -8,8 +8,7 @@ Variables  libraries/Directories.py
 
 *** Variables ***
 
-${home_assistant_host}  127.0.0.1
-${home_assistant_port}  18123
+${home_assistant_host}  127.0.0.1:18123
 
 
 *** Keywords ***
@@ -30,7 +29,7 @@ Check Home Assistant
 
 Wait For Home Assistant To Start
     Wait Until Keyword Succeeds  30 sec  0.2 sec
-    ...    Run In Http Context  ${home_assistant_host}:${home_assistant_port}
+    ...    Run In Http Context  ${home_assistant_host}
     ...    Check Home Assistant
 
 Stop Home Assistant
@@ -73,15 +72,15 @@ Do Initialize States
 
 Get States
     ${result} =  Run In Http Context
-    ...    ${home_assistant_host}:${home_assistant_port}
+    ...    ${home_assistant_host}
     ...    Do Get States
     [Return]  ${result}
 
 Clean States
-    Run In Http Context  ${home_assistant_host}:${home_assistant_port}
+    Run In Http Context  ${home_assistant_host}
     ...    Do Clean States
 
 Initialize States
     [Arguments]  &{states}
-    Run In Http Context  ${home_assistant_host}:${home_assistant_port}
+    Run In Http Context  ${home_assistant_host}
     ...    Do Initialize States  &{states}
