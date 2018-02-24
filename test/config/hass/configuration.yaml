@@ -7,3 +7,6 @@ http:
 api:
 
 websocket_api:
+
+input_boolean:
+    test_switch:

@@ -13,6 +13,7 @@ ${test_sensor} =        sensor.test_sensor
 ${test_sensor_value} =  sensor state
 ${intermediate_sensor_value} =   intermediate sensor state
 ${new_sensor_value} =   new sensor state
+${test_switch} =             input_boolean.test_switch
 
 
 *** Test Cases ***
@@ -41,6 +42,14 @@ Set State
     Set State  ${test_sensor}  ${new_sensor_value}
     Wait Until State Becomes  ${test_sensor}  ${new_sensor_value}
     State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Turn On And Off
+    Turn On  ${test_switch}
+    State Should Be  ${test_switch}  on
+    Turn Off  ${test_switch}
+    State Should Be  ${test_switch}  off
+    Turn On  ${test_switch}
+    State Should Be  ${test_switch}  on
 
 Schedule State Change In Some Time
     Schedule Call In  2:00
@@ -81,11 +90,11 @@ Unblock Until State Change With Old State
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Clean Home Assistant States
+    Turn On  ${test_switch}
     Clean States
-    ${states} =  Get States
-    Should Be Empty  ${states}
     Run Keyword And Expect Error  *Internal Server Error*
     ...    Get State  ${test_sensor}
+    State Should Be  ${test_switch}  off
 
 
 *** Keywords ***

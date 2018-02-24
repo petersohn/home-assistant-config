@@ -19,3 +19,9 @@ Run In Http Context
 
 Ask For Connection Keepalive
     Set Request Header  Connection  keep-alive
+
+Set Request Body To Dictionary
+    [Arguments]  &{kwargs}
+    ${content} =  Create Dictionary  &{kwargs}
+    ${body} =  Stringify Json  ${content}
+    Set Request Body  ${body}

@@ -91,6 +91,14 @@ Set State
     [Arguments]  ${entity_id}  ${value}
     Call Function  set_state  ${entity_id}  state=${value}
 
+Turn On
+    [Arguments]  ${entity_id}
+    Call Function  turn_on  ${entity_id}
+
+Turn Off
+    [Arguments]  ${entity_id}
+    Call Function  turn_off  ${entity_id}
+
 Check AppDaemon
     Process Should Be Running  ${app_daemon_process}
     ${result} =  Call Function  test  ${test_arg}

@@ -45,6 +45,22 @@ Do Delete State
     DELETE  /api/states/${entity_id}
     Response Status Code Should Equal  200
 
+Do Switch Off
+    [Arguments]  ${entity_id}
+    Set Request Body To Dictionary  entity_id=${entity_id}
+    Ask For Connection Keepalive
+    POST  /api/services/homeassistant/turn_off
+    Response Status Code Should Equal  200
+
+Do Clean State
+    [Arguments]  ${entity_id}
+    ${is_switch} =  Run Keyword And Return Status
+    ...    Should Match  ${entity_id}  input_boolean.*
+    Run Keyword If  ${is_switch}
+    ...    Do Switch Off  ${entity_id}
+    ...    ELSE
+    ...    Do Delete State  ${entity_id}
+
 Do Get State
     [Arguments]  ${entity_id}
     Ask For Connection Keepalive
@@ -65,13 +81,11 @@ Do Get States
 Do Clean States
     @{content} =  Do Get States
     :FOR  ${entity}  IN  @{content}
-    \    Do Delete State  ${entity['entity_id']}
+    \    Do Clean State  ${entity['entity_id']}
 
 Do Initialize State
     [Arguments]  ${entity}  ${state}
-    ${content} =  Create Dictionary  state=${state}
-    ${body} =  Stringify Json  ${content}
-    Set Request Body  ${body}
+    Set Request Body To Dictionary  state=${state}
     Ask For Connection Keepalive
     POST  /api/states/${entity}
 
@@ -89,7 +103,7 @@ Wait Until State Becomes
     [Arguments]  ${entity}  ${state}  ${timeout}=1s
     ${result} =  Run In Http Context
     ...    ${home_assistant_host}
-    ...    Wait Until Keyword Succeeds  0.1s  ${timeout}
+    ...    Wait Until Keyword Succeeds  ${timeout}  0.01 s
     ...    Do Check State  ${entity}  ${state}
     [Return]  ${result}
 
