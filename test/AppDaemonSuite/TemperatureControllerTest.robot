@@ -53,12 +53,10 @@ Low Mode
     Schedule Call In  ${end_time}
     ...    set_state  ${furnace_sensor}  state=${low_furnace_temperature}
 
-    Unblock For  1 sec
     Repeat Keyword  2  Low Mode Should Cycle
-    Switch Should Be After  ${low_mode_start}  off
+    State Should Not Change  ${switch}  timeout=10 min
 
 Low Mode Starts After Temperature Stops Rising
-    ${check_time} =  Set Variable  2 min
     Set State  ${furnace_sensor}  31
     Schedule Call In  2 min
     ...    set_state  ${furnace_sensor}  state=32
@@ -67,19 +65,19 @@ Low Mode Starts After Temperature Stops Rising
     Schedule Call In  6 min
     ...    set_state  ${furnace_sensor}  state=34
 
-    Unblock For  1 sec
-    Repeat Keyword  3  Switch Should Be After  ${check_time}  off
+
+    State Should Be  ${switch}  off
+    State Should Not Change  ${switch}  timeout=6 min
     Low Mode Should Cycle
 
 Low Mode Starts After Normal Operation
-    ${check_time} =  Set Variable  2 min
+    ${stop_time} =  Set Variable  6 min
     Set State  ${furnace_sensor}  70
-    Schedule Call In  6 min
+    Schedule Call In  ${stop_time}
     ...    set_state  ${furnace_sensor}  state=40
 
-    Unblock For  1 sec
-    Repeat Keyword  2  Switch Should Be After  ${check_time}  on
-    Switch Should Be After  ${check_time}  off
+    State Should Be  ${switch}  on
+    State Should Change In  ${switch}  off  ${stop_time}
     Low Mode Should Cycle
 
 
@@ -101,10 +99,9 @@ Verify Switch On And Off
     Switch State Should Be After temperature Change  ${low}  off
 
 Low Mode Should Cycle
-    Unblock For  ${low_mode_start}
-    State Should Be  ${switch}  on
-    Unblock For  ${low_mode_time}
     State Should Be  ${switch}  off
+    State Should Change In  ${switch}  on  ${low_mode_start}
+    State Should Change In  ${switch}  off  ${low_mode_time}
 
 Switch Should Be After
     [Arguments]  ${delay}  ${state}

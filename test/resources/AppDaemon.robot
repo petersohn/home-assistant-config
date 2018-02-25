@@ -59,19 +59,44 @@ Wait Until Blocked
     ...    Should Be Blocked
 
 Unblock Until
-    [Arguments]  ${when}  ${timeout}=5s
+    [Arguments]  ${when}  ${real_timeout}=5s
     Call Function  unblock_until  ${when}
-    Wait Until Blocked  ${timeout}
+    Wait Until Blocked  ${real_timeout}
 
 Unblock For
-    [Arguments]  ${delay}  ${timeout}=5s
+    [Arguments]  ${delay}  ${real_timeout}=5s
     Call Function  unblock_for  ${delay}
-    Wait Until Blocked  ${timeout}
+    Wait Until Blocked  ${real_timeout}
 
 Unblock Until State Change
-    [Arguments]  ${entity}  ${timeout}=5s  &{kwargs}
-    Call Function  unblock_until_state_change  ${entity}  &{kwargs}
-    Wait Until Blocked  ${timeout}
+    [Arguments]  ${entity}
+    ...          ${timeout}=${None}
+    ...          ${deadline}=${None}
+    ...          ${real_timeout}=5s
+    ...          &{kwargs}
+    Call Function  unblock_until_state_change  ${entity}
+    ...    timeout=${timeout}  deadline=${deadline}  &{kwargs}
+    Wait Until Blocked  ${real_timeout}
+
+State Should Not Change
+    [Arguments]  ${entity}  @{args}  &{kwargs}
+    ${old_state} =  Get State  ${entity}
+    Unblock Until State Change  ${entity}  @{args}  &{kwargs}
+    State Should Be  ${entity}  ${old_state}
+
+State Should Change At
+    [Arguments]  ${entity}  ${value}  ${time}
+    ${deadline} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
+    State Should Not Change  ${entity}  deadline=${deadline}
+    Unblock For  ${appdaemon_interval}
+    State Should Be  ${entity}  ${value}
+
+State Should Change In
+    [Arguments]  ${entity}  ${value}  ${time}
+    ${timeout} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
+    State Should Not Change  ${entity}  timeout=${timeout}
+    Unblock For  ${appdaemon_interval}
+    State Should Be  ${entity}  ${value}
 
 Schedule Call At
     [Arguments]  ${when}  ${function}  @{args}  &{kwargs}

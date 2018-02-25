@@ -10,6 +10,8 @@ import traceback
 class TestApp(appapi.AppDaemon):
     def initialize(self):
         self.register_endpoint(self.api_callback, 'TestApp')
+        self.__block_listeners = []
+        self.__block_timers = []
 
     def __call(self, data):
         args = data.get('args', [])
@@ -36,22 +38,37 @@ class TestApp(appapi.AppDaemon):
 
     def __block(self, kwargs):
         Blocker.block()
+        for listener in self.__block_listeners:
+            self.cancel_listen_state(listener)
+        self.__block_listeners.clear()
+        for timer in self.__block_timers:
+            self.cancel_timers(timer)
+        self.__block_timers.clear()
 
     def __block_on_state(self, entity, attribute, old, new, kwargs):
         Blocker.block()
 
     def unblock_until(self, when):
-        self.run_once(self.__block, DateTimeUtil.to_time(when))
+        self.__block_timers.append(
+            self.run_once(self.__block, DateTimeUtil.to_time(when)))
         Blocker.unblock()
 
     def unblock_for(self, duration):
-        self.run_in(
-            self.__block,
-            DateTime.convert_time(duration, result_format='number'))
+        self.__block_timers.append(
+            self.run_in(
+                self.__block,
+                DateTime.convert_time(duration, result_format='number')))
         Blocker.unblock()
 
-    def unblock_until_state_change(self, entity, **kwargs):
-        self.listen_state(self.__block_on_state, oneshot=True, **kwargs)
+    def unblock_until_state_change(
+            self, entity, timeout=None, deadline=None, **kwargs):
+        self.__block_listeners.append(
+            self.listen_state(
+                self.__block_on_state, entity, oneshot=True, **kwargs))
+        if timeout is not None:
+            self.unblock_for(timeout)
+        if deadline is not None:
+            self.unblock_until(deadline)
         Blocker.unblock()
 
     def get_current_time(self):
