@@ -25,12 +25,16 @@ class TestApp(appapi.AppDaemon):
     def __call(self, data):
         args = data.get('args', [])
         kwargs = data.get('kwargs', {})
+        result_type = data.get('result_type')
         function = data['function']
         self.log(
             'Calling function: ' + function + ' ' + str(args) +
             ' ' + str(kwargs))
         result = getattr(self, function)(*args, **kwargs)
         self.log('Function returns: ' + function + ' = ' + str(result))
+        if result_type is not None:
+            wrapper = eval(result_type, {}, {})
+            result = wrapper(result)
         return result
 
     def api_callback(self, data):
@@ -62,6 +66,13 @@ class TestApp(appapi.AppDaemon):
             self.run_once(self.__block, DateTimeUtil.to_time(when)))
         Blocker.main_blocker.unblock()
 
+    def unblock_until_date_time(self, when):
+        self.__block_timers.append(
+            self.run_at(
+                self.__block,
+                DateTime.convert_date(when, result_format='datetime')))
+        Blocker.main_blocker.unblock()
+
     def unblock_for(self, duration):
         self.__block_timers.append(
             self.run_in(
@@ -90,6 +101,12 @@ class TestApp(appapi.AppDaemon):
         self.run_in(
             self.__call,
             DateTime.convert_time(delay, result_format='number'),
+            **data)
+
+    def schedule_call_at_date_time(self, when, data):
+        self.run_at(
+            self.__call,
+            DateTime.convert_date(when, result_format='datetime'),
             **data)
 
     def is_blocked(self):

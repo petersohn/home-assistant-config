@@ -3,6 +3,7 @@
 Library    HttpLibrary.HTTP
 Library    Process
 Library    DateTime
+Library    libraries/TypeUtil.py
 Resource   resources/ErrorHandling.robot
 Resource   resources/Http.robot
 Variables  libraries/Directories.py
@@ -30,16 +31,19 @@ Start AppDaemon
     Set Test Variable    ${app_daemon_process}
 
 Create Call Data
-    [Arguments]  ${function}  @{args}  &{kwargs}
+    [Arguments]  ${function}  ${result_type}  @{args}  &{kwargs}
     ${result} =  Create Dictionary
     ...    function=${function}
+    ...    result_type=${result_type}
     ...    args=@{args}
     ...    kwargs=&{kwargs}
     [Return]  ${result}
 
 Call Function
     [Arguments]  ${function}  @{args}  &{kwargs}
-    ${content} =  Create Call Data  ${function}  @{args}  &{kwargs}
+    ${result_type} =  Extract From Dictionary  ${kwargs}  result_type
+    ${content} =  Create Call Data  ${function}  ${result_type}
+    ...    @{args}  &{kwargs}
     ${body} =  Stringify Json  ${content}
     Set Request Body  ${body}
     Ask For Connection Keepalive
@@ -77,6 +81,27 @@ Unblock Until State Change
     ...    timeout=${timeout}  deadline=${deadline}  &{kwargs}
     Wait Until Blocked  ${real_timeout}
 
+Unblock Until Date Time
+    [Arguments]  ${when}  ${real_timeout}=5s
+    Call Function  unblock_until_date_time  ${when}
+    Wait Until Blocked  ${real_timeout}
+
+Calculate Time
+    [Arguments]  ${function}  ${delay}
+    ${target} =  Call Function  ${function}  result_type=str
+    ${result} =  Add Time To Date  ${target}  ${delay}
+    [Return]  ${result}
+
+Unblock Until Sunrise
+    [Arguments]  ${delay}=${0}  ${real_timeout}=5s
+    ${target} =  Calculate Time  sunrise  ${delay}
+    Unblock Until Date Time  ${target}  ${real_timeout}
+
+Unblock Until Sunset
+    [Arguments]  ${delay}=${0}  ${real_timeout}=5s
+    ${target} =  Calculate Time  sunset  ${delay}
+    Unblock Until Date Time  ${target}  ${real_timeout}
+
 State Should Not Change
     [Arguments]  ${entity}  @{args}  &{kwargs}
     ${old_state} =  Get State  ${entity}
@@ -99,13 +124,30 @@ State Should Change In
 
 Schedule Call At
     [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
-    ${data} =  Create Call Data  ${function}  @{args}  &{kwargs}
+    ${data} =  Create Call Data  ${function}  ${None}  @{args}  &{kwargs}
     Call Function  schedule_call_at  ${when}  ${data}
 
 Schedule Call In
     [Arguments]  ${delay}  ${function}  @{args}  &{kwargs}
-    ${data} =  Create Call Data  ${function}  @{args}  &{kwargs}
+    ${data} =  Create Call Data  ${function}  ${None}  @{args}  &{kwargs}
     Call Function  schedule_call_in  ${delay}  ${data}
+
+Schedule Call At Date Time
+    [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
+    ${data} =  Create Call Data  ${function}  ${None}  @{args}  &{kwargs}
+    Call Function  schedule_call_at_date_time  ${when}  ${data}
+
+Schedule Call At Sunrise
+    [Arguments]  ${function}  @{args}  &{kwargs}
+    ${delay} =  Extract From Dictionary  ${kwargs}  delay
+    ${target} =  Calculate Time  sunrise  ${delay}
+    Schedule Call At Date Time  ${target}  ${function}  @{args}  &{kwargs}
+
+Schedule Call At Sunset
+    [Arguments]  ${function}  @{args}  &{kwargs}
+    ${delay} =  Extract From Dictionary  ${kwargs}  delay
+    ${target} =  Calculate Time  sunset  ${delay}
+    Schedule Call At Date Time  ${target}  ${function}  @{args}  &{kwargs}
 
 Get State
     [Arguments]  ${entity_id}

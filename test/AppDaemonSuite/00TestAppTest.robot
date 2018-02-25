@@ -40,6 +40,25 @@ Unblock Until Some Time
     Unblock Until  ${unblock_time}
     Current Time Should Be  ${unblock_time}
 
+Unblock Until Exact Time
+    ${unblock_time} =  Set Variable  2018-01-01 01:05:00
+    Unblock Until Date Time  ${unblock_time}
+    Current Time Should Be  01:05:00
+
+Unblock Until Sunrise
+    [Setup]  Initialize  ${before_sunrise}
+    Unblock Until Sunrise  -1 sec
+    Sun Should Be Down
+    Unblock For  1 sec
+    Sun Should Be Up
+
+Unblock Until Sunset
+    [Setup]  Initialize  ${before_sunset}
+    Unblock Until Sunset  -1 sec
+    Sun Should Be Up
+    Unblock For  1 sec
+    Sun Should Be Down
+
 Set State
     Set State  ${test_sensor}  ${new_sensor_value}
     Wait Until State Becomes  ${test_sensor}  ${new_sensor_value}
@@ -67,6 +86,32 @@ Schedule State Change At Some Time
     Unblock Until  01:09:59
     State Should Be  ${test_sensor}  ${test_sensor_value}
     Unblock Until  01:10:01
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Schedule State Change At Exact Time
+    Schedule Call At Date Time  2018-01-01 01:10:00
+    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
+    Unblock Until  01:09:59
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Unblock Until  01:10:01
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Schedule State Change At Sunrise
+    [Setup]  Initialize  ${before_sunrise}
+    Schedule Call At Sunrise  set_sensor_state
+    ...    ${test_sensor}  ${new_sensor_value}  delay=1 sec
+    Unblock Until Sunrise
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Unblock For  1 sec
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Schedule State Change At Sunset
+    [Setup]  Initialize  ${before_sunset}
+    Schedule Call At Sunset  set_sensor_state
+    ...    ${test_sensor}  ${new_sensor_value}  delay=-1 sec
+    Unblock Until Sunset  -2 sec
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Unblock For  1 sec
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Unblock Until State Change
@@ -148,8 +193,25 @@ Clean Home Assistant States
     ...    Get State  ${test_sensor}
     State Should Be  ${test_switch}  off
 
+Type Conversions
+    [Template]  Convert Types
+    Foo      ${None}  Foo
+    ${21}    ${None}  ${21}
+    ${41}    int      ${41}
+    ${26}    str      26
+    ${True}  str      True
+    ${0}     bool     ${False}
+    ${1}     bool     ${True}
+    123      int      ${123}
+    41.5     float    ${41.5}
+
 
 *** Keywords ***
+
+Convert Types
+    [Arguments]  ${argument}  ${result_type}  ${expected_result}
+    ${result} =  Call Function  test  ${argument}  result_type=${result_type}
+    Should Be Equal  ${result}  ${expected_result}
 
 Initialize
     [Arguments]  ${start_time}=${start_time}
@@ -168,3 +230,11 @@ Current Time Should Be
     ${current_time} =  Call Function  get_current_time
     ${current_time_value} =  Convert Date  ${current_time}
     Should Be Equal  ${current_time_value}  ${time_value}
+
+Sun Should Be Up
+    ${result} =  Call Function  sun_up
+    Should Be True  ${result}
+
+Sun Should Be Down
+    ${result} =  Call Function  sun_up
+    Should Be True  not ${result}
