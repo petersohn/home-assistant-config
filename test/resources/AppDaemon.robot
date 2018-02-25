@@ -44,7 +44,6 @@ Call Function
     Set Request Body  ${body}
     Ask For Connection Keepalive
     POST  /api/appdaemon/TestApp
-    Response Status Code Should Equal  200
     ${response} =  Get Response Body
     ${result} =  Parse Json  ${response}
     [Return]  ${result}

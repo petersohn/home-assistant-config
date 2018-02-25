@@ -25,7 +25,6 @@ Start Home Assistant
 Check Home Assistant
     Process Should Be Running  ${hass_process}
     GET  /api/
-    Response Status Code Should Equal  200
     ${body} =  Get Response Body
     Json Value Should Equal  ${body}  /message  "API running."
 
@@ -45,14 +44,12 @@ Do Delete State
     [Arguments]  ${entity_id}
     Ask For Connection Keepalive
     DELETE  /api/states/${entity_id}
-    Response Status Code Should Equal  200
 
 Do Switch Off
     [Arguments]  ${entity_id}
     Set Request Body To Dictionary  entity_id=${entity_id}
     Ask For Connection Keepalive
     POST  /api/services/homeassistant/turn_off
-    Response Status Code Should Equal  200
 
 Do Clean State
     [Arguments]  ${entity_id}
@@ -67,7 +64,6 @@ Do Get State
     [Arguments]  ${entity_id}
     Ask For Connection Keepalive
     GET  /api/states/${entity_id}
-    Response Status Code Should Equal  200
     ${body} =  Get Response Body
     ${content} =  Parse Json  ${body}
     [Return]  ${content['state']}
@@ -75,7 +71,6 @@ Do Get State
 Do Get States
     Ask For Connection Keepalive
     GET  /api/states
-    Response Status Code Should Equal  200
     ${body} =  Get Response Body
     ${content} =  Parse Json  ${body}
     [Return]  ${content}
