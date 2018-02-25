@@ -3,6 +3,7 @@
 Library    HttpLibrary.HTTP
 Library    Process
 Library    DateTime
+Resource   resources/ErrorHandling.robot
 Resource   resources/Http.robot
 Variables  libraries/Directories.py
 
@@ -105,12 +106,13 @@ Turn Off
     Call Function  turn_off  ${entity_id}
 
 Check AppDaemon
-    Process Should Be Running  ${app_daemon_process}
+    Critical Check  AppDaemon process failed to start
+    ...    Process Should Be Running  ${app_daemon_process}
     ${result} =  Call Function  test  ${test_arg}
     Should Be Equal  ${result}  ${test_arg}
 
 Wait For AppDaemon To Start
-    Wait Until Keyword Succeeds  30 sec  0.2 sec
+    Wait Until Keyword Succeeds  10 sec  0.2 sec
     ...    Run In Http Context  ${app_daemon_host}
     ...    Check AppDaemon
     Create Http Context  ${app_daemon_host}

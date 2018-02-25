@@ -6,7 +6,7 @@ jobs:
         steps:
             - checkout
             - run: git submodule update --init --recursive
-            - run: ./test/run-test --loglevel=trace --xunit=robot.xml
+            - run: ./test/run-test --loglevel=trace --xunit=robot.xml --removekeywords WUKS
             - run: |
                 find test/output -depth -name __pycache__ -type d \
                     -exec rm -r '{}' ';'
