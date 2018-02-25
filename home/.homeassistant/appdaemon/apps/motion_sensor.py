@@ -2,6 +2,7 @@ import appdaemon.appapi as appapi
 
 import auto_switch
 
+
 class MotionSensor(appapi.AppDaemon):
 
     def initialize(self):
@@ -18,6 +19,7 @@ class MotionSensor(appapi.AppDaemon):
             self.listen_state(self.__on_motion_stop, entity=sensor, new='off')
 
     def __on_motion_start(self, entity, attribute, old, new, kwargs):
+        self.log('motion start: ' + entity)
         self.__stop_timer()
         if self.__should_start():
             for target in self.__targets:

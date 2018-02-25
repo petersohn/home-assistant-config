@@ -23,3 +23,19 @@ Find Time On Next Day
     ${result_string} =  Convert Date  ${result}  result_format=timestamp
     ${expected_result} =  Convert Date  2018-01-02 10:32:40  result_format=timestamp
     Should Be Equal  ${result_string}  ${expected_result}
+
+Add Times
+    [Template]  Add Times With Format
+    number
+    verbose
+    compact
+
+
+*** Keywords ***
+
+Add Times With Format
+    [Arguments]  ${format}
+    ${result} =  Add Times  10 sec  32 min 5 sec  2:05:24  result_format=${format}
+    ${expected_result} =  Convert Time  02:37:39  result_format=${format}
+    Should Be Equal  ${result}  ${expected_result}
+

@@ -1,4 +1,5 @@
 import datetime
+import functools
 
 from robot.libraries import DateTime
 
@@ -25,3 +26,9 @@ def find_time(start_date, new_time):
     if time < start_datetime.time():
         result += datetime.timedelta(days=1)
     return result
+
+
+def add_times(*times, **kwargs):
+    return functools.reduce(
+        lambda lhs, rhs: DateTime.add_time_to_time(lhs, rhs, **kwargs),
+        times)
