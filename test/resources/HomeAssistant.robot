@@ -18,6 +18,8 @@ Start Home Assistant
     ...    --verbose
     ...    --config     ${hass_config_path}
     ...    --log-file   ${base_output_directory}/homeassistant.log
+    ...    stdout=${base_output_directory}/homeassistant.stdout
+    ...    stderr=${base_output_directory}/homeassistant.stderr
     Set Suite Variable  ${hass_process}
 
 Check Home Assistant

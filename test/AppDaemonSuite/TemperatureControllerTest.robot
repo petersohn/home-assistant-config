@@ -14,8 +14,8 @@ ${outside_sensor} =       sensor.outside
 ${availability_sensor} =  binary_sensor.available
 ${switch} =               input_boolean.temperature_controller_pump
 ${minimum_temperature} =  ${30.0}
-${low_mode_start} =       15 min
-${low_mode_time} =        5 min
+${low_mode_start} =       5 min
+${low_mode_time} =        2 min
 ${tolerance} =            ${1.0}
 
 ${high_outside_temperature} =  ${10}
@@ -43,6 +43,45 @@ Switch On And Off At Moderate Temperature
     Set State  ${outside_sensor}  ${outside_temperature}
     Verify Switch On And Off  ${target}  ${tolerance}
 
+Low Mode
+    Set State  ${outside_sensor}  ${high_outside_temperature}
+    ${high_furnace_temperature} =  Evaluate  ${minimum_temperature} + 1.0
+    ${low_furnace_temperature} =  Evaluate  ${minimum_temperature} - 1.0
+    ${end_time} =  Set Variable  16 min
+
+    Set State  ${furnace_sensor}  ${high_furnace_temperature}
+    Schedule Call In  ${end_time}
+    ...    set_state  ${furnace_sensor}  state=${low_furnace_temperature}
+
+    Unblock For  1 sec
+    Repeat Keyword  2  Low Mode Should Cycle
+    Switch Should Be After  ${low_mode_start}  off
+
+Low Mode Starts After Temperature Stops Rising
+    ${check_time} =  Set Variable  2 min
+    Set State  ${furnace_sensor}  31
+    Schedule Call In  2 min
+    ...    set_state  ${furnace_sensor}  state=32
+    Schedule Call In  4 min
+    ...    set_state  ${furnace_sensor}  state=33
+    Schedule Call In  6 min
+    ...    set_state  ${furnace_sensor}  state=34
+
+    Unblock For  1 sec
+    Repeat Keyword  3  Switch Should Be After  ${check_time}  off
+    Low Mode Should Cycle
+
+Low Mode Starts After Normal Operation
+    ${check_time} =  Set Variable  2 min
+    Set State  ${furnace_sensor}  70
+    Schedule Call In  6 min
+    ...    set_state  ${furnace_sensor}  state=40
+
+    Unblock For  1 sec
+    Repeat Keyword  2  Switch Should Be After  ${check_time}  on
+    Switch Should Be After  ${check_time}  off
+    Low Mode Should Cycle
+
 
 *** Keywords ***
 
@@ -60,6 +99,17 @@ Verify Switch On And Off
     Switch State Should Be After temperature Change  ${high}  on
     Switch State Should Be After temperature Change  ${target}  on
     Switch State Should Be After temperature Change  ${low}  off
+
+Low Mode Should Cycle
+    Unblock For  ${low_mode_start}
+    State Should Be  ${switch}  on
+    Unblock For  ${low_mode_time}
+    State Should Be  ${switch}  off
+
+Switch Should Be After
+    [Arguments]  ${delay}  ${state}
+    Unblock For  ${delay}
+    State Should Be  ${switch}  ${state}
 
 Initialize Simple
     Clean States
