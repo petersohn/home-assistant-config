@@ -3,7 +3,7 @@
 Resource       resources/Config.robot
 Library        DateTime
 Library        libraries/DateTimeUtil.py
-Test Setup     Initialize Simple
+Test Setup     Initialize
 Test Teardown  Cleanup AppDaemon
 
 
@@ -111,7 +111,7 @@ Switch Should Be After
     Unblock For  ${delay}
     State Should Be  ${switch}  ${state}
 
-Initialize Simple
+Initialize
     Clean States
     Initialize States
     ...    ${furnace_sensor}=${10}
@@ -119,5 +119,5 @@ Initialize Simple
     ...    ${availability_sensor}=on
     ...    ${switch}=off
     ${apps} =  Create List  TestApp  temperature_controller
-    ${app_configs} =  Create List  TestApp  TemperatureControllerSimple
+    ${app_configs} =  Create List  TestApp  TemperatureController
     Initialize AppDaemon  ${apps}  ${app_configs}
