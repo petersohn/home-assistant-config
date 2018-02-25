@@ -3,7 +3,7 @@
 Resource       resources/Config.robot
 Library        DateTime
 Library        libraries/DateTimeUtil.py
-Test Setup     Initialize
+Test Setup     Initialize  00:00:00
 Test Teardown  Cleanup AppDaemon
 
 
@@ -14,26 +14,32 @@ ${test_sensor_value} =  sensor state
 ${intermediate_sensor_value} =   intermediate sensor state
 ${new_sensor_value} =   new sensor state
 ${test_switch} =             input_boolean.test_switch
+${alternate_start_time} =  10:11:12
 
 
 *** Test Cases ***
 
 Start Time
-    Current Time Should Be  ${start_time}
+    Current Time Should Be  ${start_date}
+
+Different Start Time
+    [Setup]  Initialize  ${alternate_start_time}
+    ${expected_time} =  Add Time To Date  ${start_date}  ${alternate_start_time}
+    Current Time Should Be  ${expected_time}
 
 Initial State
     State Should Be  ${test_sensor}  ${test_sensor_value}
 
 Unblock For Some Time
     ${unblock_time} =  Set Variable  2:00
-    ${finish_time} =  Add Time To Date  ${start_time}  ${unblock_time}
+    ${finish_time} =  Add Time To Date  ${start_date}  ${unblock_time}
 
     Unblock For  ${unblock_time}
     Current Time Should Be  ${finish_time}
 
 Unblock Until Some Time
-    ${unblock_time} =  Set Variable  12:05:00
-    ${finish_time} =  Find Time  ${start_time}  ${unblock_time}
+    ${unblock_time} =  Set Variable  00:05:00
+    ${finish_time} =  Find Time  ${start_date}  ${unblock_time}
 
     Unblock Until  ${unblock_time}
     Current Time Should Be  ${finish_time}
@@ -60,31 +66,31 @@ Schedule State Change In Some Time
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Schedule State Change At Some Time
-    Schedule Call At  12:10:00
+    Schedule Call At  00:10:00
     ...    set_state  ${test_sensor}  state=${new_sensor_value}
-    Unblock Until  12:09:59
+    Unblock Until  00:09:59
     State Should Be  ${test_sensor}  ${test_sensor_value}
-    Unblock Until  12:10:01
+    Unblock Until  00:10:01
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Unblock Until State Change
-    Schedule Call At  12:00:05
+    Schedule Call At  00:00:05
     ...    set_state  ${test_sensor}  state=${new_sensor_value}
     Unblock Until State Change  ${test_sensor}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Unblock Until State Change With New State
-    Schedule Call At  12:00:05
+    Schedule Call At  00:00:05
     ...    set_state  ${test_sensor}  state=${intermediate_sensor_value}
-    Schedule Call At  12:00:10
+    Schedule Call At  00:00:10
     ...    set_state  ${test_sensor}  state=${new_sensor_value}
     Unblock Until State Change  ${test_sensor}  new=${new_sensor_value}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Unblock Until State Change With Old State
-    Schedule Call At  12:00:05
+    Schedule Call At  00:00:05
     ...    set_state  ${test_sensor}  state=${intermediate_sensor_value}
-    Schedule Call At  12:00:10
+    Schedule Call At  00:00:10
     ...    set_state  ${test_sensor}  state=${new_sensor_value}
     Unblock Until State Change  ${test_sensor}  old=${intermediate_sensor_value}
     State Should Be  ${test_sensor}  ${new_sensor_value}
@@ -100,11 +106,12 @@ Clean Home Assistant States
 *** Keywords ***
 
 Initialize
+    [Arguments]  ${start_time}
     Clean States
     Initialize States  ${test_sensor}=${test_sensor_value}
     ${apps} =  Create List  TestApp
     ${app_configs} =  Create List  TestApp
-    Initialize AppDaemon  ${apps}  ${app_configs}
+    Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
 
 Current Time Should Be
     [Arguments]  ${time}

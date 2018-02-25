@@ -16,11 +16,16 @@ ${test_arg}         This is a test
 *** Keywords ***
 
 Start AppDaemon
+    [Arguments]  ${start_time}
+    ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}
+    ...    exclude_millis=true
     ${app_daemon_process} =  Start Process   python  TestAppDaemon.py
     ...    --config      ${OUTPUT_DIRECTORY}
-    ...    --starttime   ${start_time}
+    ...    --starttime   ${start_datetime}
     ...    --tick        0
     ...    --interval    ${appdaemon_interval}
+    ...    stdout=${OUTPUT_DIRECTORY}/appdaemon.stdout
+    ...    stderr=${OUTPUT_DIRECTORY}/appdaemon.stderr
     Set Test Variable    ${app_daemon_process}
 
 Create Call Data
