@@ -4,34 +4,36 @@ import appdaemon.utils as utils
 import asyncio
 
 
-_main_loop_blocker = asyncio.Event()
+class Blocker:
+    def __init__(self, name):
+        self.name = name
+        self.__blocker = asyncio.Event()
 
+    def unblock(self):
+        @asyncio.coroutine
+        def _unblock():
+            utils.log(
+                conf.logger, "INFO", "Unblock", self.name)
+            self.__blocker.set()
 
-def unblock():
+        asyncio.run_coroutine_threadsafe(_unblock(), conf.loop)
+
+    def block(self):
+        @asyncio.coroutine
+        def _block():
+            global _main_loop_blocker
+            utils.log(conf.logger, "INFO", "Block", self.name)
+            self.__blocker.clear()
+
+        asyncio.run_coroutine_threadsafe(_block(), conf.loop)
+
     @asyncio.coroutine
-    def _unblock():
-        global _main_loop_blocker
-        utils.log(
-            conf.logger, "INFO", "Unblock")
-        _main_loop_blocker.set()
+    def wait(self):
+        yield from self.__blocker.wait()
 
-    asyncio.run_coroutine_threadsafe(_unblock(), conf.loop)
+    def is_blocked(self):
+        return not self.__blocker.is_set()
 
 
-def block():
-    @asyncio.coroutine
-    def _block():
-        global _main_loop_blocker
-        utils.log(conf.logger, "INFO", "Block")
-        _main_loop_blocker.clear()
-
-    asyncio.run_coroutine_threadsafe(_block(), conf.loop)
-
-
-@asyncio.coroutine
-def wait():
-    yield from _main_loop_blocker.wait()
-
-
-def is_blocked():
-    return not _main_loop_blocker.is_set()
+main_blocker = Blocker('main_blocker')
+set_state_blocker = Blocker('set_state_blocker')

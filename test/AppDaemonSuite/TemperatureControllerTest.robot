@@ -51,7 +51,7 @@ Low Mode
 
     Set State  ${furnace_sensor}  ${high_furnace_temperature}
     Schedule Call In  ${end_time}
-    ...    set_state  ${furnace_sensor}  state=${low_furnace_temperature}
+    ...    set_sensor_state  ${furnace_sensor}  ${low_furnace_temperature}
 
     Repeat Keyword  2  Low Mode Should Cycle
     State Should Not Change  ${switch}  timeout=10 min
@@ -59,11 +59,11 @@ Low Mode
 Low Mode Starts After Temperature Stops Rising
     Set State  ${furnace_sensor}  31
     Schedule Call In  2 min
-    ...    set_state  ${furnace_sensor}  state=32
+    ...    set_sensor_state  ${furnace_sensor}  32
     Schedule Call In  4 min
-    ...    set_state  ${furnace_sensor}  state=33
+    ...    set_sensor_state  ${furnace_sensor}  33
     Schedule Call In  6 min
-    ...    set_state  ${furnace_sensor}  state=34
+    ...    set_sensor_state  ${furnace_sensor}  34
 
 
     State Should Be  ${switch}  off
@@ -74,7 +74,7 @@ Low Mode Starts After Normal Operation
     ${stop_time} =  Set Variable  6 min
     Set State  ${furnace_sensor}  70
     Schedule Call In  ${stop_time}
-    ...    set_state  ${furnace_sensor}  state=40
+    ...    set_sensor_state  ${furnace_sensor}  40
 
     State Should Be  ${switch}  on
     State Should Change In  ${switch}  off  ${stop_time}

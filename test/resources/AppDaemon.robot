@@ -120,7 +120,7 @@ State Should Be
 
 Set State
     [Arguments]  ${entity_id}  ${value}
-    Call Function  set_state  ${entity_id}  state=${value}
+    Call Function  set_sensor_state  ${entity_id}  ${value}
 
 Turn On
     [Arguments]  ${entity_id}
