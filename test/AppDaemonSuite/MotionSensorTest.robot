@@ -22,15 +22,39 @@ Switch On For First Sensor
     Set State  ${motion_detector1}  on
     Set State  ${motion_detector1}  off
     State Should Be  ${switch}  on
-    Unblock For  ${delay}
-    State Should Be  ${switch}  off
+    State Should Change In  ${switch}  off  ${delay}
 
 Switch On For Second Sensor
     Set State  ${motion_detector2}  on
     Set State  ${motion_detector2}  off
     State Should Be  ${switch}  on
-    Unblock For  ${delay}
-    State Should Be  ${switch}  off
+    State Should Change In  ${switch}  off  ${delay}
+
+Switch Off After All Motion Stops
+    Schedule Call In  10 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call In  12 sec
+    ...    set_sensor_state  ${motion_detector2}  on
+    Schedule Call In  13 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call In  18 sec
+    ...    set_sensor_state  ${motion_detector2}  off
+
+    State Should Change In  ${switch}  on  10 sec
+    State Should Change In  ${switch}  off  1 min 8 sec
+
+Switch Off After Motion Restarts
+    Schedule Call At  5 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  8 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+
+    State Should Change At  ${switch}  on  5 sec
+    State Should Change At  ${switch}  off  1 min 40 sec
 
 
 *** Keywords ***
