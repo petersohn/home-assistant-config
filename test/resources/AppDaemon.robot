@@ -26,7 +26,7 @@ Start AppDaemon
     ...    --starttime   ${start_datetime}
     ...    --tick        0
     ...    --interval    ${appdaemon_interval}
-    ...    --debug       DEBUG
+#     ...    --debug       DEBUG
     ...    stdout=${OUTPUT_DIRECTORY}/appdaemon.stdout
     ...    stderr=${OUTPUT_DIRECTORY}/appdaemon.stderr
     Set Test Variable    ${app_daemon_process}
