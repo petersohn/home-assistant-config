@@ -49,6 +49,12 @@ class TestApp(appapi.AppDaemon):
     def test(self, arg):
         return arg
 
+    def __convert_date(self, date):
+        return DateTime.convert_date(date, result_format='datetime')
+
+    def __convert_time(self, time):
+        return DateTime.convert_time(time, result_format='number')
+
     def __block(self, kwargs):
         Blocker.main_blocker.block()
         for listener in self.__block_listeners:
@@ -68,16 +74,12 @@ class TestApp(appapi.AppDaemon):
 
     def unblock_until_date_time(self, when):
         self.__block_timers.append(
-            self.run_at(
-                self.__block,
-                DateTime.convert_date(when, result_format='datetime')))
+            self.run_at(self.__block, self.__convert_date(when)))
         Blocker.main_blocker.unblock()
 
     def unblock_for(self, duration):
         self.__block_timers.append(
-            self.run_in(
-                self.__block,
-                DateTime.convert_time(duration, result_format='number')))
+            self.run_in(self.__block, self.__convert_time(duration)))
         Blocker.main_blocker.unblock()
 
     def unblock_until_state_change(
@@ -86,8 +88,14 @@ class TestApp(appapi.AppDaemon):
             self.listen_state(
                 self.__block_on_state, entity, oneshot=True, **kwargs))
         if timeout is not None:
-            self.unblock_for(timeout)
+            converted_timeout = self.__convert_time(timeout)
+            if converted_timeout == 0:
+                return
+            self.unblock_for(converted_timeout)
         if deadline is not None:
+            converted_deadline = self.__convert_time(deadline)
+            if DateTimeUtil.to_time(converted_deadline) == self.time():
+                return
             self.unblock_until(deadline)
         Blocker.main_blocker.unblock()
 
@@ -98,16 +106,10 @@ class TestApp(appapi.AppDaemon):
         self.run_once(self.__call, DateTimeUtil.to_time(when), **data)
 
     def schedule_call_in(self, delay, data):
-        self.run_in(
-            self.__call,
-            DateTime.convert_time(delay, result_format='number'),
-            **data)
+        self.run_in(self.__call, self.__convert_time(delay), **data)
 
     def schedule_call_at_date_time(self, when, data):
-        self.run_at(
-            self.__call,
-            DateTime.convert_date(when, result_format='datetime'),
-            **data)
+        self.run_at(self.__call, self.__convert_date(when), **data)
 
     def is_blocked(self):
         return Blocker.main_blocker.is_blocked()
@@ -115,7 +117,9 @@ class TestApp(appapi.AppDaemon):
     def __state_set(self, entity, attribute, old, new, kwargs):
         self.log(
             'state changed: ' + entity + '='
-            + str(new) + ' pending=' + str(self.__pending_states))
+            + str(new) + ' pending=' + str(
+                [k + '->' + v.state
+                 for k, v in self.__pending_states.items()]))
         pending_state = self.__pending_states.get(
             entity, self.PendingState())
         if pending_state.state != new:

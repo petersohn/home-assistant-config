@@ -12,7 +12,7 @@ Suite Teardown  Cleanup Home Assistant
 *** Keywords ***
 
 Initialize Variables
-    Set Suite Variable  ${appdaemon_interval}  ${1}  children=true
+    Set Suite Variable  ${appdaemon_interval}  ${10}  children=true
     Set Suite Variable  ${start_date}  2018-01-01 00:00:00  children=true
     Set Suite Variable  ${before_sunrise}  07:20:00  children=true
     Set Suite Variable  ${before_sunset}  15:50:00  children=true

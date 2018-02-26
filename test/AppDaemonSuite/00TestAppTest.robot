@@ -16,7 +16,7 @@ ${intermediate_sensor_value} =   intermediate sensor state
 ${new_sensor_value} =            new sensor state
 ${test_switch} =                 input_boolean.test_switch
 ${start_time} =                  01:00:00
-${alternate_start_time} =        10:11:12
+${alternate_start_time} =        10:11:20
 
 
 *** Test Cases ***
@@ -47,16 +47,16 @@ Unblock Until Exact Time
 
 Unblock Until Sunrise
     [Setup]  Initialize  ${before_sunrise}
-    Unblock Until Sunrise  -1 sec
+    Unblock Until Sunrise  -10 sec
     Sun Should Be Down
-    Unblock For  1 sec
+    Unblock For  10 sec
     Sun Should Be Up
 
 Unblock Until Sunset
     [Setup]  Initialize  ${before_sunset}
-    Unblock Until Sunset  -1 sec
+    Unblock Until Sunset  -10 sec
     Sun Should Be Up
-    Unblock For  1 sec
+    Unblock For  10 sec
     Sun Should Be Down
 
 Set State
@@ -75,116 +75,137 @@ Turn On And Off
 Schedule State Change In Some Time
     Schedule Call In  2:00
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    Unblock For  1:59
+    Unblock For  1:50
     State Should Be  ${test_sensor}  ${test_sensor_value}
-    Unblock For  2s
+    Unblock For  ${appdaemon_interval}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Schedule State Change At Some Time
     Schedule Call At  01:10:00
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    Unblock Until  01:09:59
+    Unblock Until  01:09:50
     State Should Be  ${test_sensor}  ${test_sensor_value}
-    Unblock Until  01:10:01
+    Unblock For  ${appdaemon_interval}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Schedule State Change At Exact Time
     Schedule Call At Date Time  2018-01-01 01:10:00
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    Unblock Until  01:09:59
+    Unblock Until  01:09:50
     State Should Be  ${test_sensor}  ${test_sensor_value}
-    Unblock Until  01:10:01
+    Unblock For  ${appdaemon_interval}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Schedule State Change At Sunrise
     [Setup]  Initialize  ${before_sunrise}
     Schedule Call At Sunrise  set_sensor_state
-    ...    ${test_sensor}  ${new_sensor_value}  delay=1 sec
+    ...    ${test_sensor}  ${new_sensor_value}  delay=10 sec
     Unblock Until Sunrise
     State Should Be  ${test_sensor}  ${test_sensor_value}
-    Unblock For  1 sec
+    Unblock For  10 sec
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Schedule State Change At Sunset
     [Setup]  Initialize  ${before_sunset}
     Schedule Call At Sunset  set_sensor_state
-    ...    ${test_sensor}  ${new_sensor_value}  delay=-1 sec
-    Unblock Until Sunset  -2 sec
+    ...    ${test_sensor}  ${new_sensor_value}  delay=-10 sec
+    Unblock Until Sunset  -20 sec
     State Should Be  ${test_sensor}  ${test_sensor_value}
-    Unblock For  1 sec
+    Unblock For  10 sec
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
 Unblock Until State Change
-    Schedule Call At  01:00:05
+    ${change_time} =  Set Variable  01:00:10
+    Schedule Call At  ${change_time}
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
     Unblock Until State Change  ${test_sensor}
     State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  ${change_time}
 
 Unblock Until Later State Change
-    Schedule Call At  01:00:05
+    ${change_time1} =  Set Variable  01:00:10
+    ${change_time2} =  Set Variable  01:00:30
+    Schedule Call At  ${change_time1}
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    Schedule Call At  01:00:10
+    Schedule Call At  ${change_time2}
     ...    set_sensor_state  ${test_sensor2}  ${new_sensor_value}
     Unblock Until State Change  ${test_sensor2}
     State Should Be  ${test_sensor2}  ${new_sensor_value}
+    Current Time Should Be  ${change_time2}
 
 Unblock Until State Change With Timeout
-    Schedule Call In  00:00:05
+    Schedule Call In  20 sec
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    Unblock Until State Change  ${test_sensor}  timeout=10 sec
+    Unblock Until State Change  ${test_sensor}  timeout=30 sec
     State Should Be  ${test_sensor}  ${new_sensor_value}
-    Current Time Should Be  01:00:05
+    Current Time Should Be  01:00:20
 
 Unblock Until State Change With Deadline
-    Schedule Call At  01:00:05
+    Schedule Call At  01:00:20
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    Unblock Until State Change  ${test_sensor}  deadline=01:00:10
+    Unblock Until State Change  ${test_sensor}  deadline=01:00:30
     State Should Be  ${test_sensor}  ${new_sensor_value}
-    Current Time Should Be  01:00:05
+    Current Time Should Be  01:00:20
+
+Unblock Until State Change With New State
+    Schedule Call At  01:00:20
+    ...    set_sensor_state  ${test_sensor}  ${intermediate_sensor_value}
+    Schedule Call At  01:00:40
+    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
+    Unblock Until State Change  ${test_sensor}  new=${new_sensor_value}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Unblock Until State Change With Old State
+    Schedule Call At  01:00:20
+    ...    set_sensor_state  ${test_sensor}  ${intermediate_sensor_value}
+    Schedule Call At  01:00:40
+    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
+    Unblock Until State Change  ${test_sensor}  old=${intermediate_sensor_value}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
 
 State Should Not Change With Timeout
-    Schedule Call In  00:00:15
+    Schedule Call In  30 sec
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    State Should Not Change  ${test_sensor}  timeout=10 sec
-    Current Time Should Be  01:00:10
+    State Should Not Change  ${test_sensor}  timeout=20 sec
+    Current Time Should Be  01:00:20
 
 State Should Not Change With Deadline
-    Schedule Call In  00:00:15
+    Schedule Call In  30 sec
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    State Should Not Change  ${test_sensor}  deadline=01:00:10
-    Current Time Should Be  01:00:10
+    State Should Not Change  ${test_sensor}  deadline=01:00:20
+    Current Time Should Be  01:00:20
 
 State Should Change In Some Time
-    ${time} =  Set Variable  10 sec
+    ${time} =  Set Variable  30 sec
     Schedule Call In  ${time}
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
     State Should Change In  ${test_sensor}  ${new_sensor_value}  ${time}
     State Should Be  ${test_sensor}  ${new_sensor_value}
-    Current Time Should Be  01:00:10
+    Current Time Should Be  01:00:30
 
 State Should Change At Some Time
-    ${time} =  Set Variable  01:00:12
+    ${time} =  Set Variable  01:01:00
     Schedule Call At  ${time}
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
     State Should Change At  ${test_sensor}  ${new_sensor_value}  ${time}
     State Should Be  ${test_sensor}  ${new_sensor_value}
     Current Time Should Be  ${time}
 
-Unblock Until State Change With New State
-    Schedule Call At  01:00:05
-    ...    set_sensor_state  ${test_sensor}  ${intermediate_sensor_value}
-    Schedule Call At  01:00:10
+State Should Change In One Time Frame
+    ${time} =  Set Variable  ${appdaemon_interval}
+    Schedule Call In  ${time}
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    Unblock Until State Change  ${test_sensor}  new=${new_sensor_value}
+    State Should Change In  ${test_sensor}  ${new_sensor_value}  ${time}
     State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  01:00:10
 
-Unblock Until State Change With Old State
-    Schedule Call At  01:00:05
-    ...    set_sensor_state  ${test_sensor}  ${intermediate_sensor_value}
-    Schedule Call At  01:00:10
+State Should Change At Next Time Frame
+    ${time} =  Set Variable  01:00:10
+    Schedule Call At  ${time}
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    Unblock Until State Change  ${test_sensor}  old=${intermediate_sensor_value}
+    State Should Change At  ${test_sensor}  ${new_sensor_value}  ${time}
     State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  ${time}
 
 Clean Home Assistant States
     Turn On  ${test_switch}
