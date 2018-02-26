@@ -22,8 +22,8 @@ class MotionSensor(appapi.AppDaemon):
         self.log(
             'motion start: ' + entity
             + ' enabled=' + str(self.__should_start()))
-        self.__stop_timer()
         if self.__should_start():
+            self.__stop_timer()
             for target in self.__targets:
                 target.turn_on()
 

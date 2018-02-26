@@ -92,6 +92,22 @@ Do Not Restart After Disabling While In Motion
     State Should Change At  ${switch}  off  1 min 30 sec
     State Should Not Change  ${switch}  deadline=1 min 40 sec
 
+Do Not Restart After Movement While Disabled And On
+    Schedule Call At  10 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call At  50 sec
+    ...    set_sensor_state  ${enabler}  off
+    Schedule Call At  1 min
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  1 min 10 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+
+    State Should Change At  ${switch}  on  10 sec
+    State Should Change At  ${switch}  off  1 min 30 sec
+    State Should Not Change  ${switch}  deadline=1 min 30 sec
+
 Restart After Enabling
     Set State  ${enabler}  off
 
