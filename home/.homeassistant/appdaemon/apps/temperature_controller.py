@@ -21,14 +21,16 @@ class TemperatureController(appapi.AppDaemon):
         self.__check()
 
     def __check(self):
-        outside_temperature = float(self.get_state(self.args['outside_sensor']))
+        outside_temperature = float(
+            self.get_state(self.args['outside_sensor']))
         if type(self.__target) is dict:
             min_temperature = float(self.__target['min_temperature'])
             max_temperature = float(self.__target['max_temperature'])
             min_target = float(self.__target['min_target'])
             max_target = float(self.__target['max_target'])
-            coefficient = ((min_target - max_target)
-                    / (min_temperature - max_temperature))
+            coefficient = (
+                (min_target - max_target)
+                / (min_temperature - max_temperature))
             constant = min_target - min_temperature * coefficient
             target = coefficient * outside_temperature + constant
             target = min(min_target, max(max_target, target))

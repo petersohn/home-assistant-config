@@ -1,7 +1,7 @@
 import appdaemon.appapi as appapi
 
-class AutoSwitch:
 
+class AutoSwitch:
     def __init__(self, app, entity):
         self.__app = app
         self.__entity = entity
@@ -39,5 +39,7 @@ class AutoSwitch:
         self.__app.log(self.__entity + ': Turned off')
         self.__manually_turned_on = False
 
+
 class Dummy(appapi.AppDaemon):
-    pass
+    def initialize(self):
+        pass

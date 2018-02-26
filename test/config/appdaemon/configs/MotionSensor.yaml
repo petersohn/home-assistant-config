@@ -1,0 +1,11 @@
+test_motion_sensor:
+  class: MotionSensor
+  module: motion_sensor
+  dependencies: auto_switch
+  sensors:
+    - binary_sensor.motion_detector1
+    - binary_sensor.motion_detector2
+  targets:
+    - input_boolean.motion_light
+  enabler: binary_sensor.motion_sensor_enable
+  time: 1

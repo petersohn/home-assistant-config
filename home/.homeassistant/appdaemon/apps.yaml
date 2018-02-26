@@ -2,7 +2,6 @@ auto_switch:
   module: auto_switch
   class: Dummy
 
-
 wind_direction:
   class: WindDirection
   module: wind_direction

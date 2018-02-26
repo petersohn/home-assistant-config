@@ -1,0 +1,18 @@
+homeassistant:
+    name: test
+    latitude: 47.498358
+    longitude: 19.040419
+    elevation: 100
+    time_zone: Europe/Budapest
+
+http:
+    server_port: 18123
+
+api:
+
+websocket_api:
+
+input_boolean:
+    test_switch:
+    temperature_controller_pump:
+    motion_light:
