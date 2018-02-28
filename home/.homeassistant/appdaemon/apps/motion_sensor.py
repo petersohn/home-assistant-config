@@ -8,7 +8,7 @@ class MotionSensor(appapi.AppDaemon):
     def initialize(self):
         self.__sensors = self.args['sensors']
         self.__targets = [
-            auto_switch.AutoSwitch(self, target)
+            auto_switch.AutoSwitch_(self, target)
             for target in self.args['targets']]
         self.__time = float(self.args['time']) * 60
 

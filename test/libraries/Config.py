@@ -12,6 +12,10 @@ def get_base_output_directory():
         n += 1
 
 
-def get_output_directory(base, suite_name, case_name):
+def get_output_directory(base, suite_name, case_name, suffix):
     suite_path = suite_name.split('.')
-    return os.path.join(base, *suite_path, case_name)
+    result = os.path.join(base, *suite_path, case_name)
+    if suffix:
+        return os.path.join(result, suffix)
+    else:
+        return result

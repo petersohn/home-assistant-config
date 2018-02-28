@@ -10,14 +10,15 @@ Resource  resources/AppDaemon.robot
 *** Keywords ***
 
 Setup Output Directory
+    [Arguments]  ${suffix}=${Empty}
     ${OUTPUT_DIRECTORY} =  Get Output Directory
-    ...    ${base_output_directory}  ${SUITE_NAME}  ${TEST_NAME}
+    ...    ${base_output_directory}  ${SUITE_NAME}  ${TEST_NAME}  ${suffix}
     Set Test Variable  ${OUTPUT_DIRECTORY}
     Create Directory   ${OUTPUT_DIRECTORY}
 
 Initialize AppDaemon
-    [Arguments]  ${apps}  ${app_configs}  ${start_time}=00:00:00
-    Setup Output Directory
+    [Arguments]  ${apps}  ${app_configs}  ${start_time}=00:00:00  ${suffix}=${Empty}
+    Setup Output Directory  ${suffix}
     Create AppDaemon Configuration  ${OUTPUT_DIRECTORY}  ${apps}  ${app_configs}
     Start App Daemon  ${start_time}
     Wait For App Daemon To Start

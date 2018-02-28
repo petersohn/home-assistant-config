@@ -16,3 +16,10 @@ input_boolean:
     test_switch:
     temperature_controller_pump:
     motion_light:
+
+input_select:
+    test_auto_switch_switch:
+        options:
+            - "auto"
+            - "on"
+            - "off"

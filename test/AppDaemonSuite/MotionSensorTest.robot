@@ -156,4 +156,3 @@ Initialize
     ${apps} =  Create List  TestApp  motion_sensor  auto_switch
     ${app_configs} =  Create List  TestApp  MotionSensor  DummyAutoSwitch
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
-

@@ -114,6 +114,9 @@ class TestApp(appapi.AppDaemon):
     def is_blocked(self):
         return Blocker.main_blocker.is_blocked()
 
+    def call_on_app(self, app, function, *args, **kwargs):
+        return getattr(self.get_app(app), function)(*args, **kwargs)
+
     def __state_set(self, entity, attribute, old, new, kwargs):
         self.log(
             'state changed: ' + entity + '='

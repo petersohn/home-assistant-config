@@ -1,0 +1,4 @@
+other_test_app:
+    class: TestOtherApp
+    module: TestOtherApp
+

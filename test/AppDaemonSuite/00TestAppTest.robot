@@ -226,6 +226,13 @@ Type Conversions
     123      int      ${123}
     41.5     float    ${41.5}
 
+Call External App
+    [Setup]  Initialize With External Test App
+    ${input} =  Set Variable  Some Test
+    ${result} =  Call Function  call_on_app
+    ...    other_test_app  other_test  ${input}
+    Should Be Equal  ${result}  ${input}
+
 
 *** Keywords ***
 
@@ -242,6 +249,12 @@ Initialize
     ...    ${test_sensor2}=${test_sensor_value}
     ${apps} =  Create List  TestApp
     ${app_configs} =  Create List  TestApp
+    Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
+
+Initialize With External Test App
+    Clean States
+    ${apps} =  Create List  TestApp  TestOtherApp
+    ${app_configs} =  Create List  TestApp  TestOtherApp
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
 
 Current Time Should Be
