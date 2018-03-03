@@ -1,1 +1,0 @@
-../../../../home/.homeassistant/appdaemon/apps/auto_switch.py

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 script_dir=$(readlink -e "$(dirname "$0")")
-root_dir=$(readlink -e "${script_dir}/..")
+root_dir=$(readlink -e "${script_dir}/../..")
 
 cd "$script_dir"
 mkdir -p output
