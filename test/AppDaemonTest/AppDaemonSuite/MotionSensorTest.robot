@@ -31,29 +31,29 @@ Switch On For Second Sensor
     State Should Change In  ${switch}  off  ${delay}
 
 Switch Off After All Motion Stops
-    Schedule Call In  20 sec
+    Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call In  30 sec
+    Schedule Call At  30 sec
     ...    set_sensor_state  ${motion_detector2}  on
-    Schedule Call In  40 sec
+    Schedule Call At  40 sec
     ...    set_sensor_state  ${motion_detector1}  off
-    Schedule Call In  50 sec
+    Schedule Call At  50 sec
     ...    set_sensor_state  ${motion_detector2}  off
 
     State Should Change At  ${switch}  on  20 sec
     State Should Change At  ${switch}  off  1 min 50 sec
 
 Switch Off After Motion Restarts
-    Schedule Call At  10 sec
-    ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
     ...    set_sensor_state  ${motion_detector1}  off
     Schedule Call At  50 sec
     ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  1 min
     ...    set_sensor_state  ${motion_detector1}  off
 
-    State Should Change At  ${switch}  on  10 sec
+    State Should Change At  ${switch}  on  20 sec
     State Should Change At  ${switch}  off  2 min
 
 Do Not Start If Disabled
@@ -73,27 +73,27 @@ Do Not Restart After Disabling
     Schedule Call At  1 min 20 sec
     ...    set_sensor_state  ${motion_detector1}  off
 
-    State Should Change At  ${switch}  off  1 min
+    State Should Change At  ${switch}  off  1 min 10 sec
     State Should Not Change  ${switch}  timeout=30 sec
 
 Do Not Restart After Disabling While In Motion
-    Schedule Call At  10 sec
-    ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  20 sec
-    ...    set_sensor_state  ${enabler}  off
-    Schedule Call At  30 sec
-    ...    set_sensor_state  ${motion_detector1}  off
-    Schedule Call At  1 min 40 sec
     ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${enabler}  off
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector1}  off
     Schedule Call At  1 min 50 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  2 min
     ...    set_sensor_state  ${motion_detector1}  off
 
-    State Should Change At  ${switch}  on  10 sec
-    State Should Change At  ${switch}  off  1 min 30 sec
-    State Should Not Change  ${switch}  deadline=1 min 40 sec
+    State Should Change At  ${switch}  on  20 sec
+    State Should Change At  ${switch}  off  1 min 40 sec
+    State Should Not Change  ${switch}  deadline=2 min
 
 Do Not Restart After Movement While Disabled And On
-    Schedule Call At  10 sec
+    Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  30 sec
     ...    set_sensor_state  ${motion_detector1}  off
@@ -104,19 +104,36 @@ Do Not Restart After Movement While Disabled And On
     Schedule Call At  1 min 10 sec
     ...    set_sensor_state  ${motion_detector1}  off
 
-    State Should Change At  ${switch}  on  10 sec
+    State Should Change At  ${switch}  on  20 sec
     State Should Change At  ${switch}  off  1 min 30 sec
     State Should Not Change  ${switch}  deadline=1 min 30 sec
 
 Restart After Enabling
     Set State  ${enabler}  off
 
-    Schedule Call At  10 sec
-    ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
     ...    set_sensor_state  ${motion_detector1}  off
-    Schedule Call At  40 sec
+    Schedule Call At  50 sec
     ...    set_sensor_state  ${enabler}  on
+    Schedule Call At  1 min 10 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  1 min 20 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+
+    State Should Change At  ${switch}  on  1 min 10 sec
+    State Should Change At  ${switch}  off  2 min 20 sec
+
+Restart After Enabling While In Motion
+    Set State  ${enabler}  off
+
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${enabler}  on
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector1}  off
     Schedule Call At  1 min
     ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  1 min 10 sec
@@ -124,23 +141,6 @@ Restart After Enabling
 
     State Should Change At  ${switch}  on  1 min
     State Should Change At  ${switch}  off  2 min 10 sec
-
-Restart After Enabling While In Motion
-    Set State  ${enabler}  off
-
-    Schedule Call At  10 sec
-    ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  20 sec
-    ...    set_sensor_state  ${enabler}  on
-    Schedule Call At  30 sec
-    ...    set_sensor_state  ${motion_detector1}  off
-    Schedule Call At  50 sec
-    ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  1 min
-    ...    set_sensor_state  ${motion_detector1}  off
-
-    State Should Change At  ${switch}  on  50 sec
-    State Should Change At  ${switch}  off  2 min
 
 
 *** Keywords ***
@@ -154,5 +154,6 @@ Initialize
     ...    ${switch}=off
     ...    ${enabler}=on
     ${apps} =  Create List  TestApp  motion_sensor  auto_switch
-    ${app_configs} =  Create List  TestApp  MotionSensor  DummyAutoSwitch
+    ${app_configs} =  Create List  TestApp  MotionSensor
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
+    Unblock For  ${appdaemon_interval}

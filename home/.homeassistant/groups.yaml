@@ -38,7 +38,7 @@ lights:
   control: hidden
   entities:
     - switch.light_driveway
-    - switch.motion_sensor_driveway_enable
+    - input_select.light_driveway
 
 weather_measurements:
   view: no

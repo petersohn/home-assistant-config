@@ -1,45 +1,6 @@
 import appdaemon.appapi as appapi
 
 
-class AutoSwitch_:
-    def __init__(self, app, entity):
-        self.__app = app
-        self.__entity = entity
-        self.__turning_on = False
-        self.__manually_turned_on = False
-
-        self.__app.listen_state(
-            self.__on_turned_on, entity=self.__entity, new='on')
-        self.__app.listen_state(
-            self.__on_turned_off, entity=self.__entity, new='off')
-
-    def turn_on(self):
-        self.__app.log(self.__entity + ': Turning on')
-        self.__turning_on = True
-        self.__app.turn_on(self.__entity)
-
-    def turn_off(self):
-        self.__turning_on = False
-        if self.__manually_turned_on:
-            self.__app.log(
-                self.__entity + ': On manual control, not turning off')
-            return
-
-        self.__app.log(self.__entity + ': Turning off')
-        self.__app.turn_off(self.__entity)
-
-    def __on_turned_on(self, entity, attribute, old, new, kwargs):
-        if self.__turning_on:
-            self.__turning_on = False
-        else:
-            self.__app.log(self.__entity + ': Turned on manually')
-            self.__manually_turned_on = True
-
-    def __on_turned_off(self, entity, attribute, old, new, kwargs):
-        self.__app.log(self.__entity + ': Turned off')
-        self.__manually_turned_on = False
-
-
 class AutoSwitch(appapi.AppDaemon):
     def initialize(self):
         self.__target = self.args['target']
@@ -100,3 +61,19 @@ class AutoSwitch(appapi.AppDaemon):
         else:
             self.log('Setting to auto')
             self.__update(self.__state)
+
+
+class Switcher:
+    def __init__(self, auto_switch):
+        self.__auto_switch = auto_switch
+        self.__state = False
+
+    def turn_on(self):
+        if not self.__state:
+            self.__auto_switch.auto_turn_on()
+            self.__state = True
+
+    def turn_off(self):
+        if self.__state:
+            self.__auto_switch.auto_turn_off()
+            self.__state = False

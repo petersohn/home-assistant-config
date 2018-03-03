@@ -321,13 +321,14 @@ switch:
     state_topic: home/switches/lights/driveway/state
     payload_on: 1
     payload_off: 0
-  - platform: mqtt
-    name: motion_sensor_driveway_enable
-    command_topic: home/switches/motion_sensor/driveway/set
-    state_topic: home/switches/motion_sensor/driveway/set
-    payload_on: 1
-    payload_off: 0
-    retain: true
+
+input_select:
+    light_driveway:
+        name: Bejáró világítás
+        options:
+            - "auto"
+            - "on"
+            - "off"
 
 influxdb:
   host: !secret influxdb_address

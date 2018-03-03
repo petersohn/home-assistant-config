@@ -1,7 +1,3 @@
-auto_switch:
-  module: auto_switch
-  class: Dummy
-
 wind_direction:
   class: WindDirection
   module: wind_direction
@@ -22,6 +18,13 @@ heating_pump:
   availability: binary_sensor.furnace_temperature_available
   switch: switch.heating_pump
 
+auto_switch_light_driveway:
+  module: auto_switch
+  class: AutoSwitch
+  target: switch.light_driveway
+  switch: input_select.light_driveway
+  reentrant: true
+
 driveway_motion_sensor:
   class: MotionSensor
   module: motion_sensor
@@ -30,6 +33,6 @@ driveway_motion_sensor:
     - binary_sensor.motion_sensor_driveway_upper
     - binary_sensor.motion_sensor_driveway_lower
   targets:
-    - switch.light_driveway
+    - auto_switch_light_driveway
   enabler: switch.motion_sensor_driveway_enable
   time: 2
