@@ -177,6 +177,9 @@ switch.light_driveway:
   friendly_name: "Bejáró"
   icon: mdi:lightbulb
 
+input_select.light_driveway:
+  icon: mdi:lightbulb
+
 group.temperature:
   friendly_name: "Hőmérséklet"
 
