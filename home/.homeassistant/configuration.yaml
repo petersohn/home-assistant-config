@@ -330,6 +330,12 @@ input_select:
             - "on"
             - "off"
 
+mqtt_statestream:
+  base_topic: home
+  include:
+    domains:
+      - input_select
+
 influxdb:
   host: !secret influxdb_address
   port: 8086

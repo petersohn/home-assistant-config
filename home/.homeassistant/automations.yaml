@@ -1,0 +1,9 @@
+- trigger:
+      platform: mqtt
+      topic: home/input_select/light_driveway/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_driveway
+            option: '{{ trigger.payload }}'
+
