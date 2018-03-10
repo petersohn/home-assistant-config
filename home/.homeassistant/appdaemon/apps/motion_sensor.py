@@ -43,4 +43,4 @@ class MotionSensor(appapi.AppDaemon):
             self.__timer = None
 
     def __should_start(self):
-        return self.sun_down() and self.get_state(self.args['enabler']) == 'on'
+        return self.sun_down()

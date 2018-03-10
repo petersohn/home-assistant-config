@@ -34,5 +34,4 @@ driveway_motion_sensor:
     - binary_sensor.motion_sensor_driveway_lower
   targets:
     - auto_switch_light_driveway
-  enabler: switch.motion_sensor_driveway_enable
   time: 2

@@ -12,7 +12,6 @@ Test Teardown  Cleanup AppDaemon
 ${motion_detector1} =  binary_sensor.motion_detector1
 ${motion_detector2} =  binary_sensor.motion_detector2
 ${switch} =            input_boolean.motion_light
-${enabler} =           binary_sensor.motion_sensor_enable
 ${delay} =             1 min
 
 
@@ -56,91 +55,93 @@ Switch Off After Motion Restarts
     State Should Change At  ${switch}  on  20 sec
     State Should Change At  ${switch}  off  2 min
 
-Do Not Start If Disabled
-    Set State  ${enabler}  off
+Do Not Start At Daylight
+    [Setup]  Initialize  ${before_sunset}
+
     Set State  ${motion_detector1}  on
     Set State  ${motion_detector1}  off
     State Should Be  ${switch}  off
 
-Do Not Restart After Disabling
+Do Not Restart After Sun Rises
+    [Setup]  Initialize  ${before_sunrise}
+    Unblock Until Sunrise  -30 sec
+
     Set State  ${motion_detector1}  on
     Set State  ${motion_detector1}  off
     State Should Be  ${switch}  on
-    Schedule Call At  30 sec
-    ...    set_sensor_state  ${enabler}  off
-    Schedule Call At  1 min 10 sec
+    Schedule Call In  1 min
     ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  1 min 20 sec
+    Schedule Call In  1 min 10 sec
     ...    set_sensor_state  ${motion_detector1}  off
 
-    State Should Change At  ${switch}  off  1 min 10 sec
+    State Should Change In  ${switch}  off  1 min
     State Should Not Change  ${switch}  timeout=30 sec
 
-Do Not Restart After Disabling While In Motion
-    Schedule Call At  20 sec
-    ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  30 sec
-    ...    set_sensor_state  ${enabler}  off
-    Schedule Call At  40 sec
-    ...    set_sensor_state  ${motion_detector1}  off
-    Schedule Call At  1 min 50 sec
-    ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  2 min
-    ...    set_sensor_state  ${motion_detector1}  off
+Do Not Restart After Sun Rises While In Motion
+    [Setup]  Initialize  ${before_sunrise}
+    Unblock Until Sunrise  -30 sec
 
-    State Should Change At  ${switch}  on  20 sec
-    State Should Change At  ${switch}  off  1 min 40 sec
-    State Should Not Change  ${switch}  deadline=2 min
-
-Do Not Restart After Movement While Disabled And On
-    Schedule Call At  20 sec
+    Schedule Call In  10 sec
     ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  30 sec
+    Schedule Call In  30 sec
     ...    set_sensor_state  ${motion_detector1}  off
-    Schedule Call At  50 sec
-    ...    set_sensor_state  ${enabler}  off
-    Schedule Call At  1 min
+    Schedule Call In  1 min 40 sec
     ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  1 min 10 sec
+    Schedule Call In  1 min 50 sec
     ...    set_sensor_state  ${motion_detector1}  off
 
-    State Should Change At  ${switch}  on  20 sec
-    State Should Change At  ${switch}  off  1 min 30 sec
-    State Should Not Change  ${switch}  deadline=1 min 30 sec
+    State Should Change In  ${switch}  on  10 sec
+    State Should Change In  ${switch}  off  1 min 20 sec
+    State Should Not Change  ${switch}  timeout=1 min
 
-Restart After Enabling
-    Set State  ${enabler}  off
+Do Not Restart On Movement After Sun Rises While On
+    [Setup]  Initialize  ${before_sunrise}
+    Unblock Until Sunrise  -40 sec
 
-    Schedule Call At  20 sec
+    Schedule Call In  10 sec
     ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  30 sec
+    Schedule Call In  30 sec
     ...    set_sensor_state  ${motion_detector1}  off
-    Schedule Call At  50 sec
-    ...    set_sensor_state  ${enabler}  on
-    Schedule Call At  1 min 10 sec
+    Schedule Call In  1 min
     ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  1 min 20 sec
-    ...    set_sensor_state  ${motion_detector1}  off
-
-    State Should Change At  ${switch}  on  1 min 10 sec
-    State Should Change At  ${switch}  off  2 min 20 sec
-
-Restart After Enabling While In Motion
-    Set State  ${enabler}  off
-
-    Schedule Call At  20 sec
-    ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  30 sec
-    ...    set_sensor_state  ${enabler}  on
-    Schedule Call At  40 sec
-    ...    set_sensor_state  ${motion_detector1}  off
-    Schedule Call At  1 min
-    ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  1 min 10 sec
+    Schedule Call In  1 min 10 sec
     ...    set_sensor_state  ${motion_detector1}  off
 
-    State Should Change At  ${switch}  on  1 min
-    State Should Change At  ${switch}  off  2 min 10 sec
+    State Should Change In  ${switch}  on  10 sec
+    State Should Change In  ${switch}  off  1 min 20 sec
+    State Should Not Change  ${switch}  timeout=1 min
+
+Restart After Sun Sets
+    [Setup]  Initialize  ${before_sunset}
+    Unblock Until Sunset  -40 sec
+
+    Schedule Call In  10 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call In  20 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call In  1 min
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call In  1 min 10 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+
+    State Should Change In  ${switch}  on  1 min
+    State Should Change In  ${switch}  off  1 min 10 sec
+
+Restart After Sun Sets While In Motion
+    [Setup]  Initialize  ${before_sunset}
+    Unblock Until Sunset  -20 sec
+
+    Schedule Call In  10 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call In  30 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call In  50 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call In  1 min
+    ...    set_sensor_state  ${motion_detector1}  off
+
+    State Should Change In  ${switch}  on  50 sec
+    State Should Change In  ${switch}  off  1 min 10 sec
 
 
 *** Keywords ***
@@ -152,7 +153,6 @@ Initialize
     ...    ${motion_detector1}=off
     ...    ${motion_detector2}=off
     ...    ${switch}=off
-    ...    ${enabler}=on
     ${apps} =  Create List  TestApp  motion_sensor  auto_switch
     ${app_configs} =  Create List  TestApp  MotionSensor
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
