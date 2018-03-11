@@ -1,0 +1,59 @@
+{
+    "debug": true,
+    "name": "main_controller",
+    "availabilityTopic": "home/devices/main_controller/availability",
+    "interfaces": [
+        {
+            "type": "counter",
+            "name": "rain",
+            "pin": 0,
+            "interval": 3600,
+            "multiplier": 1070.64,
+            "bounceTime": 150
+        },
+        {
+            "type": "counter",
+            "name": "wind_strength",
+            "pin": 3,
+            "interval": 10,
+            "multiplier": 2.4,
+            "bounceTime": 5
+        },
+        {
+            "type": "analog",
+            "name": "wind_direction",
+            "interval": 10
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "rain",
+            "topic": "home/sensors/rain"
+        },
+        {
+            "type": "publish",
+            "interface": "wind_strength",
+            "topic": "home/sensors/wind/strength"
+        },
+        {
+            "type": "publish",
+            "interface": "wind_direction",
+            "topic": "home/sensors/wind/direction",
+            "payload": {
+                "type": "map",
+                "ops": [
+                    { "min": 0, "max": 35, "value": 90 },
+                    { "min": 35, "max": 60, "value": 135 },
+                    { "min": 60, "max": 100, "value": 180 },
+                    { "min": 120, "max": 200, "value": 45 },
+                    { "min": 220, "max": 350, "value": 225 },
+                    { "min": 500, "max": 600, "value": 0 },
+                    { "min": 900, "max": 1023, "value": 315 },
+                    { "min": 1024, "max": 1025, "value": 270 }
+                ],
+                "value": { "type": "value" }
+            }
+        }
+    ]
+}
