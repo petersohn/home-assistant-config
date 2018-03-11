@@ -165,6 +165,17 @@ sensor.temperature_furnace_gas:
 sensor.temperature_furnace_wood:
   friendly_name: "Fakazán"
 
+sensor.wind_direction:
+  friendly_name: "Szélirány"
+
+sensor.wind_strength:
+  friendly_name: "Szélsebesség"
+  icon: mdi:weather-windy
+
+sensor.rain:
+  friendly_name: "Eső"
+  icon: mdi:weather-rainy
+
 switch.heating_pump:
   friendly_name: "Keringető szivattyú"
   icon: mdi:engine

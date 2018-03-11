@@ -12,18 +12,17 @@ class WindDirection(appapi.AppDaemon):
     _DIRECTION_DIVISOR = 360.0 / _NUM_DIRECTIONS
     _DIRECTION_OFFSET = _DIRECTION_DIVISOR / 2.0
 
-    _ENTITY_NAME = 'sensor.yr_wind_direction'
-
     def initialize(self):
+        self.__entity_name = self.args['entity']
         self.listen_state(
-            self.on_wind_changed, entity=self._ENTITY_NAME)
+            self.on_wind_changed, entity=self.__entity_name)
         self.__set_wind_direction_icon()
 
     def on_wind_changed(self, entity, attribute, old, new, kwargs):
         self.__set_wind_direction_icon()
 
     def __set_wind_direction_icon(self):
-        wind_direction = self.get_state(self._ENTITY_NAME, 'all')
+        wind_direction = self.get_state(self.__entity_name, 'all')
         try:
             wind_direction['attributes']['icon'] = self._DIRECTIONS[int(
                 (float(wind_direction['state']) + self._DIRECTION_OFFSET)
@@ -33,4 +32,4 @@ class WindDirection(appapi.AppDaemon):
             return
 
         self.set_state(
-            self._ENTITY_NAME, attributes=wind_direction['attributes'])
+            self.__entity_name, attributes=wind_direction['attributes'])

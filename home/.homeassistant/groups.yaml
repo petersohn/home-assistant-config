@@ -5,6 +5,7 @@ default_view:
     - group.switch
     - group.lights
     - group.weather_measurements
+    - group.weather_inside
     - group.machinery
 
 weather:
@@ -14,6 +15,7 @@ weather:
     - group.weather_state
     - group.yr
     - group.weather_measurements
+    - group.weather_inside
 
 state:
   view: yes
@@ -46,6 +48,14 @@ weather_measurements:
   entities:
     - sensor.temperature_outside
     - sensor.humidity_outside
+    - sensor.wind_direction
+    - sensor.wind_strength
+    - sensor.rain
+
+weather_inside:
+  view: no
+  name: "Beltéri időjárás"
+  entities:
     - sensor.temperature_furnace_room
     - sensor.humidity_furnace_room
     - sensor.temperature_living_room_lower

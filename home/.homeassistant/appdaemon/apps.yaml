@@ -1,6 +1,12 @@
+wind_direction_yr:
+  class: WindDirection
+  module: wind_direction
+  entity: sensor.yr_wind_direction
+
 wind_direction:
   class: WindDirection
   module: wind_direction
+  entity: sensor.wind_direction
 
 heating_pump:
   class: TemperatureController

@@ -134,6 +134,18 @@ sensor:
     state_topic: home/sensors/temperature/furnace/wood
     unit_of_measurement: "°C"
     name: temperature_furnace_wood
+  - platform: mqtt
+    state_topic: home/sensors/wind/direction
+    unit_of_measurement: "°"
+    name: wind_direction
+  - platform: mqtt
+    state_topic: home/sensors/wind/strength
+    unit_of_measurement: "km/h"
+    name: wind_strength
+  - platform: mqtt
+    state_topic: home/sensors/rain
+    unit_of_measurement: "mm"
+    name: rain
 
   - platform: mqtt
     state_topic: home/devices/well_controller/availability
