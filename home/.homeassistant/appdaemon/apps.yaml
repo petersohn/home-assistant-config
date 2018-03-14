@@ -36,6 +36,12 @@ sun_enabler_night:
     class: SunEnabler
     day: false
 
+wind_disabler:
+    module: enabler
+    class: RangeEnabler
+    entity: sensor.wind_strength
+    max: 20
+
 driveway_motion_sensor:
   class: MotionSensor
   module: motion_sensor
@@ -47,4 +53,5 @@ driveway_motion_sensor:
     - auto_switch_light_driveway
   enablers:
     - sun_enabler_night
+    - wind_disabler
   time: 2
