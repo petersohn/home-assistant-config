@@ -9,6 +9,7 @@ ${name} =    test_auto_switch
 ${target} =  input_boolean.test_switch
 ${switch} =  input_select.test_auto_switch_switch
 
+
 *** Test Cases ***
 
 Basic Usage

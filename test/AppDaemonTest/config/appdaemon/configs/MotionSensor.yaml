@@ -4,6 +4,14 @@ auto_switch_light:
     target: input_boolean.motion_light
     reentrant: true
 
+test_enabler1:
+    class: ScriptEnabler
+    module: enabler
+
+test_enabler2:
+    class: ScriptEnabler
+    module: enabler
+
 test_motion_sensor:
     class: MotionSensor
     module: motion_sensor
@@ -13,5 +21,7 @@ test_motion_sensor:
         - binary_sensor.motion_detector2
     targets:
         - auto_switch_light
-    enabler: binary_sensor.motion_sensor_enable
+    enablers:
+        - test_enabler1
+        - test_enabler2
     time: 1

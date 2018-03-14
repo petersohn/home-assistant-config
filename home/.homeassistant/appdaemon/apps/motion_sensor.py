@@ -11,6 +11,8 @@ class MotionSensor(appapi.AppDaemon):
             auto_switch.Switcher(self.get_app(target))
             for target in self.args['targets']]
         self.__time = float(self.args['time']) * 60
+        self.__enablers = [
+            self.get_app(enabler) for enabler in self.args.get('enablers', [])]
 
         self.__timer = None
 
@@ -43,4 +45,4 @@ class MotionSensor(appapi.AppDaemon):
             self.__timer = None
 
     def __should_start(self):
-        return self.sun_down() and self.get_state(self.args['enabler']) == 'on'
+        return all([enabler.is_enabled() for enabler in self.__enablers])

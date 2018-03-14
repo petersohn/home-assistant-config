@@ -31,6 +31,11 @@ auto_switch_light_driveway:
   switch: input_select.light_driveway
   reentrant: true
 
+sun_enabler_night:
+    module: enabler
+    class: SunEnabler
+    day: false
+
 driveway_motion_sensor:
   class: MotionSensor
   module: motion_sensor
@@ -40,5 +45,6 @@ driveway_motion_sensor:
     - binary_sensor.motion_sensor_driveway_lower
   targets:
     - auto_switch_light_driveway
-  enabler: switch.motion_sensor_driveway_enable
+  enablers:
+    - sun_enabler_night
   time: 2
