@@ -47,16 +47,16 @@ Unblock Until Exact Time
 
 Unblock Until Sunrise
     [Setup]  Initialize  ${before_sunrise}
-    Unblock Until Sunrise  ${-${appdaemon_interval}}
+    Unblock Until Sunrise  -10 sec
     Sun Should Be Down
-    Unblock For  ${appdaemon_interval}
+    Unblock For  10 sec
     Sun Should Be Up
 
 Unblock Until Sunset
     [Setup]  Initialize  ${before_sunset}
-    Unblock Until Sunset  ${-${appdaemon_interval}}
+    Unblock Until Sunset  -10 sec
     Sun Should Be Up
-    Unblock For  ${appdaemon_interval}
+    Unblock For  10 sec
     Sun Should Be Down
 
 Set State
