@@ -4,12 +4,9 @@
     "availabilityTopic": "home/devices/main_controller/availability",
     "interfaces": [
         {
-            "type": "counter",
+            "type": "input",
             "name": "rain",
-            "pin": 0,
-            "interval": 3600,
-            "multiplier": 1070.64,
-            "bounceTime": 150
+            "pin": 0
         },
         {
             "type": "counter",
@@ -29,7 +26,16 @@
         {
             "type": "publish",
             "interface": "rain",
-            "topic": "home/sensors/rain"
+            "topic": "home/sensors/rain",
+            "value": 0,
+            "payload": "0.2794"
+        },
+        {
+            "type": "publish",
+            "interface": "rain",
+            "topic": "home/sensors/rain",
+            "value": 1,
+            "payload": "0"
         },
         {
             "type": "publish",
