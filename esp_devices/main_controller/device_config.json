@@ -17,12 +17,60 @@
             "bounceTime": 5
         },
         {
+            "type": "output",
+            "name": "light_attic_upstairs",
+            "commandTopic": "home/switches/lights/attic/upstairs/set",
+            "pin": 2
+        },
+        {
+            "type": "input",
+            "name": "light_switch_attic_upstairs",
+            "pin": 4
+        },
+        {
+            "type": "output",
+            "name": "light_attic_downstairs",
+            "commandTopic": "home/switches/lights/attic/downstairs/set",
+            "pin": 5
+        },
+        {
+            "type": "input",
+            "name": "light_switch_attic_downstairs",
+            "pin": 13
+        },
+        {
             "type": "analog",
             "name": "wind_direction",
             "interval": 10
         }
     ],
     "actions": [
+        {
+            "type": "publish",
+            "interface": "light_attic_upstairs",
+            "topic": "home/switches/lights/attic/upstairs/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light_attic_downstairs",
+            "topic": "home/switches/lights/attic/downstairs/state",
+            "retain": true
+        },
+        {
+            "type": "command",
+            "interface": "light_switch_attic_upstairs",
+            "target": "light_attic_upstairs",
+            "command": "toggle",
+            "value": "0"
+        },
+        {
+            "type": "command",
+            "interface": "light_switch_attic_downstairs",
+            "target": "light_attic_downstairs",
+            "command": "toggle",
+            "value": "0"
+        },
         {
             "type": "publish",
             "interface": "rain",
@@ -40,7 +88,8 @@
         {
             "type": "publish",
             "interface": "wind_strength",
-            "topic": "home/sensors/wind/strength"
+            "topic": "home/sensors/wind/strength",
+            "retain": true
         },
         {
             "type": "publish",
@@ -59,7 +108,8 @@
                     { "min": 1024, "max": 1025, "value": 270 }
                 ],
                 "value": { "type": "value" }
-            }
+            },
+            "retain": true
         }
     ]
 }
