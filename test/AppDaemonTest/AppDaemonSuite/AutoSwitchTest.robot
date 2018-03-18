@@ -34,6 +34,13 @@ Switch On And Off Manually
     off      on       on
     off      auto     off
 
+Target State Changes
+    [Template]  Manually Change Target State
+    on   off  off
+    on   on   auto
+    off  off  auto
+    off  on   on
+
 Reentrancy
     [Template]  Switch On And Off Multiple Times
 #   type       expected
@@ -66,6 +73,16 @@ Change Manual Switch State
     Set Manual Switch State  ${switch}  ${changed}
     State Should Be  ${target}  ${expected}
 
+Manually Change Target State
+    [Arguments]  ${initial_state}  ${new_state}  ${expected_switch_state}
+    [Teardown]  Cleanup AppDaemon
+    Initialize  Switched  suffix=${initial_state}.${new_state}
+
+    Turn On Or Off Auto Switch  ${name}  ${initial_state}
+    Turn On Or Off  ${target}  ${new_state}
+    State Should Be  ${target}  ${new_state}
+    State Should Be  ${switch}  ${expected_switch_state}
+
 Switch On And Off Multiple Times
     [Arguments]  ${type}  ${expected}
     [Teardown]  Cleanup AppDaemon
@@ -79,7 +96,6 @@ Switch On And Off Multiple Times
     Turn Off Auto Switch  ${name}
     State Should Be  ${target}  off
 
-
 Turn On Auto Switch
     [Arguments]  ${app_name}
     Call Function  call_on_app  ${app_name}  auto_turn_on
@@ -92,6 +108,13 @@ Set Manual Switch State
     [Arguments]  ${entity_id}  ${state}
     Call Function  call_service  input_select/select_option
     ...    entity_id=${entity_id}  option=${state}
+
+Turn On Or Off Auto Switch
+    [Arguments]  ${app_name}  ${state}
+    Run Keyword If  '${state}' == 'on'
+    ...    Turn On Auto Switch  ${app_name}
+    ...    ELSE
+    ...    Turn Off Auto Switch  ${app_name}
 
 Initialize
     [Arguments]  ${type}  ${initial_switch_state}=auto

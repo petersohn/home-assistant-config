@@ -6,6 +6,9 @@ class AutoSwitch(appapi.AppDaemon):
         self.__target = self.args['target']
         self.__switch = self.args.get('switch')
         self.__reentrant = self.args.get('reentrant', False)
+        self.__intended_state = None
+
+        self.listen_state(self.__on_target_change, entity=self.__target)
 
         if self.__switch:
             self.run_in(self.__initialize_state, 0)
@@ -45,11 +48,16 @@ class AutoSwitch(appapi.AppDaemon):
             return
 
         if state == 0:
-            self.log('Turning off')
+            self.__set_intended_state('off')
             self.turn_off(self.__target)
         else:
-            self.log('Turning on')
+            self.__set_intended_state('on')
             self.turn_on(self.__target)
+
+    def __set_intended_state(self, state):
+        self.log('Turning ' + state)
+        if self.get_state(self.__target) != state:
+            self.__intended_state = state
 
     def __on_switch_change(self, entity, attribute, old, new, kwargs):
         if new == 'on':
@@ -61,6 +69,16 @@ class AutoSwitch(appapi.AppDaemon):
         else:
             self.log('Setting to auto')
             self.__update(self.__state)
+
+    def __on_target_change(self, entity, attribute, old, new, kwargs):
+        if not self.__intended_state and self.__switch:
+            self.log('Switching to manual mode')
+            self.call_service(
+                'input_select/select_option', entity_id=self.__switch,
+                option=new)
+            self.__intended_state = None
+        elif new == self.__intended_state:
+            self.__intended_state = None
 
 
 class Switcher:

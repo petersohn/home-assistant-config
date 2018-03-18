@@ -71,6 +71,13 @@ Turn On And Off
     State Should Be  ${test_switch}  off
     Turn On  ${test_switch}
     State Should Be  ${test_switch}  on
+    Turn On  ${test_switch}
+    State Should Be  ${test_switch}  on
+
+Turn On Or Off Test
+    [Template]  Test Turn On Or Off
+    on
+    off
 
 Schedule State Change In Some Time
     Schedule Call In  2:00
@@ -264,6 +271,11 @@ Current Time Should Be
     ${current_time} =  Call Function  get_current_time
     ${current_time_value} =  Convert Date  ${current_time}
     Should Be Equal  ${current_time_value}  ${time_value}
+
+Test Turn On Or Off
+    [Arguments]  ${state}
+    Turn On Or Off  ${test_switch}  ${state}
+    State Should Be  ${test_switch}  ${state}
 
 Sun Should Be Up
     ${result} =  Call Function  sun_up

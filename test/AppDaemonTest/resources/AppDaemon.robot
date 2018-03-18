@@ -172,6 +172,13 @@ Turn Off
     [Arguments]  ${entity_id}
     Call Function  turn_off  ${entity_id}
 
+Turn On Or Off
+    [Arguments]  ${entity_id}  ${state}
+    Run Keyword If  '${state}' == 'on'
+    ...    Turn On  ${entity_id}
+    ...    ELSE
+    ...    Turn Off  ${entity_id}
+
 Check AppDaemon
     Critical Check  AppDaemon process failed to start
     ...    Process Should Be Running  ${app_daemon_process}
