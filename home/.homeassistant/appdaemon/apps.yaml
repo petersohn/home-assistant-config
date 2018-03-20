@@ -40,7 +40,7 @@ wind_disabler:
     module: enabler
     class: RangeEnabler
     entity: sensor.wind_strength
-    max: 20
+    max: 15
 
 driveway_motion_sensor:
   class: MotionSensor
