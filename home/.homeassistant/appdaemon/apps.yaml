@@ -15,7 +15,7 @@ heating_pump:
     min_temperature: 0
     min_target: 65
     max_temperature: 10
-    max_target: 52
+    max_target: 55
   minimum: 30
   low_mode_start: 15
   low_mode_time: 5
