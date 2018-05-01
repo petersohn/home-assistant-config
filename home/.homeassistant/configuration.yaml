@@ -363,3 +363,4 @@ tts:
 
 group: !include groups.yaml
 automation: !include automations.yaml
+script: !include script.yaml

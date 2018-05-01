@@ -1,0 +1,6 @@
+set_driveway_motion_sensor_auto:
+    sequence:
+        - service: input_select.select_option
+          data:
+              entity_id: input_select.light_driveway
+              option: auto

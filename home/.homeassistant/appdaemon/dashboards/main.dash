@@ -1,0 +1,49 @@
+##
+## Main arguments, all optional
+##
+title: Hello Panel
+widget_dimensions: [120, 120]
+widget_margins: [5, 5]
+columns: 8
+
+clock:
+    widget_type: clock
+    time_format: 24hr
+    show_seconds: 1
+    date_format_country: hu
+
+light_driveway:
+    widget_type: switch
+    entity: switch.light_driveway
+    title: Bejáró
+    icon_on: mdi-lightbulb-on
+    icon_off: mdi-lightbulb
+
+light_driveway:
+    widget_type: switch
+    entity: switch.light_driveway
+    title: Bejáró
+    icon_on: mdi-lightbulb-on
+    icon_off: mdi-lightbulb
+
+driveway_motion_sensor:
+    widget_type: mode
+    entity: input_select.light_driveway
+    mode: auto
+    script: script.set_driveway_motion_sensor_auto
+    state_text: 1
+    title: Bejáró mozgásérzékelő
+    icon_on: mdi-walk
+    icon_off: mdi-walk
+
+well:
+    widget_type: switch
+    entity: switch.well
+    title: Kút
+    icon_on: mdi-water-pump
+    icon_off: mdi-water-pump
+
+layout:
+    - clock(2x1), sensor.temperature_outside, sensor.wind_direction, sensor.wind_strength
+    - sensor.temperature_living_room_upper, sensor.humidity_living_room_upper, sensor.temperature_bedroom_upper, sensor.humidity_bedroom_upper
+    - light_driveway, driveway_motion_sensor, well
