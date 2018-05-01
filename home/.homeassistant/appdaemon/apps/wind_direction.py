@@ -22,7 +22,8 @@ class WindDirection(hass.Hass):
         self.__set_wind_direction_icon()
 
     def __set_wind_direction_icon(self):
-        wind_direction = self.get_state(self.__entity_name, 'all')
+        wind_direction = self.get_state(
+            entity=self.__entity_name, attribute='all')
         try:
             wind_direction['attributes']['icon'] = self._DIRECTIONS[int(
                 (float(wind_direction['state']) + self._DIRECTION_OFFSET)
