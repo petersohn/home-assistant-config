@@ -1,7 +1,7 @@
-import appdaemon.appapi as appapi
+import appdaemon.plugins.hass.hassapi as hass
 
 
-class WindDirection(appapi.AppDaemon):
+class WindDirection(hass.Hass):
 
     _DIRECTIONS = [
         'mdi:arrow-down', 'mdi:arrow-bottom-left', 'mdi:arrow-left',

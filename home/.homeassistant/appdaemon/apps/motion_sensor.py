@@ -1,9 +1,9 @@
-import appdaemon.appapi as appapi
+import appdaemon.plugins.hass.hassapi as hass
 
 import auto_switch
 
 
-class MotionSensor(appapi.AppDaemon):
+class MotionSensor(hass.Hass):
 
     def initialize(self):
         self.__sensors = self.args['sensors']

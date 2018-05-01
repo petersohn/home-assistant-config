@@ -1,7 +1,7 @@
-import appdaemon.appapi as appapi
+import appdaemon.plugins.hass.hassapi as hass
 
 
-class AutoSwitch(appapi.AppDaemon):
+class AutoSwitch(hass.Hass):
     def initialize(self):
         self.__target = self.args['target']
         self.__switch = self.args.get('switch')

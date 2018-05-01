@@ -1,7 +1,7 @@
-import appdaemon.appapi as appapi
+import appdaemon.plugins.hass.hassapi as hass
 
 
-class ScriptEnabler(appapi.AppDaemon):
+class ScriptEnabler(hass.Hass):
     def initialize(self):
         self.__enabled = self.args.get('initial', True)
 
@@ -15,7 +15,7 @@ class ScriptEnabler(appapi.AppDaemon):
         return self.__enabled
 
 
-class ValueEnabler(appapi.AppDaemon):
+class ValueEnabler(hass.Hass):
     def initialize(self):
         self.__entity = self.args['entity']
         self.__values = self.args.get('values')
@@ -26,7 +26,7 @@ class ValueEnabler(appapi.AppDaemon):
         return self.get_state(self.__entity) in self.__values
 
 
-class RangeEnabler(appapi.AppDaemon):
+class RangeEnabler(hass.Hass):
     def initialize(self):
         self.__entity = self.args['entity']
         self.__min = self.args.get('min')
@@ -41,7 +41,7 @@ class RangeEnabler(appapi.AppDaemon):
         return True
 
 
-class SunEnabler(appapi.AppDaemon):
+class SunEnabler(hass.Hass):
     def initialize(self):
         self.__day = self.args.get('day', True)
 

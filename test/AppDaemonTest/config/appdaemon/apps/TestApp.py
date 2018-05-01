@@ -1,13 +1,14 @@
-import appdaemon.appapi as appapi
+import appdaemon.plugins.hass.hassapi as hass
 
 import Blocker
 from libraries import DateTimeUtil
 from robot.libraries import DateTime
 
+import pprint
 import traceback
 
 
-class TestApp(appapi.AppDaemon):
+class TestApp(hass.Hass):
     class PendingState():
         def __init__(self):
             self.state = None
@@ -18,7 +19,7 @@ class TestApp(appapi.AppDaemon):
 
     def initialize(self):
         self.register_endpoint(self.api_callback, 'TestApp')
-        self.__block_listeners = []
+        self.__block_listeners = {}
         self.__block_timers = []
         self.__pending_states = {}
 
@@ -57,7 +58,7 @@ class TestApp(appapi.AppDaemon):
 
     def __block(self, kwargs):
         Blocker.main_blocker.block()
-        for listener in self.__block_listeners:
+        for listener in self.__block_listeners.values():
             self.cancel_listen_state(listener)
         self.__block_listeners.clear()
         for timer in self.__block_timers:
@@ -65,6 +66,7 @@ class TestApp(appapi.AppDaemon):
         self.__block_timers.clear()
 
     def __block_on_state(self, entity, attribute, old, new, kwargs):
+        del self.__block_listeners[entity]
         Blocker.main_blocker.block()
 
     def unblock_until(self, when):
@@ -84,9 +86,10 @@ class TestApp(appapi.AppDaemon):
 
     def unblock_until_state_change(
             self, entity, timeout=None, deadline=None, **kwargs):
-        self.__block_listeners.append(
-            self.listen_state(
-                self.__block_on_state, entity, oneshot=True, **kwargs))
+        pprint.pprint(kwargs)
+        # TODO: Use oneshot when home-assistant/appdaemon#299 is pulled
+        self.__block_listeners[entity] = \
+            self.listen_state(self.__block_on_state, entity, **kwargs)
         if timeout is not None:
             converted_timeout = self.__convert_time(timeout)
             if converted_timeout == 0:

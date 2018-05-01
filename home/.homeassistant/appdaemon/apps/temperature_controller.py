@@ -1,7 +1,7 @@
-import appdaemon.appapi as appapi
+import appdaemon.plugins.hass.hassapi as hass
 
 
-class TemperatureController(appapi.AppDaemon):
+class TemperatureController(hass.Hass):
 
     def initialize(self):
         self.__target = self.args['target']

@@ -1,40 +1,49 @@
 import appdaemon.appdaemon
 import appdaemon.admain as admain
-import appdaemon.conf as conf
-import appdaemon.utils as utils
 
 import Blocker
 
-import asyncio
 import concurrent
 import math
+import datetime
 
 
 queue_joiner = concurrent.futures.ThreadPoolExecutor(max_workers=1)
 
 
-@asyncio.coroutine
-def _do_every(period, f):
+async def _do_every(self, period, f):
     Blocker.main_blocker.block()
     Blocker.set_state_blocker.unblock()
 
-    t = math.floor(utils.get_now_ts())
-    while not conf.stopping:
-        yield from Blocker.main_blocker.wait()
-        yield from Blocker.set_state_blocker.wait()
-        yield from conf.loop.run_in_executor(
-            queue_joiner, appdaemon.appdaemon.q.join)
+    self.now = datetime.datetime.strptime(
+        self.starttime, "%Y-%m-%d %H:%M:%S").timestamp()
+    t = math.floor(self.now)
+    while not self.stopping:
+        await Blocker.main_blocker.wait()
+        await Blocker.set_state_blocker.wait()
+        await self.loop.run_in_executor(queue_joiner, self.q.join)
 
         if (Blocker.main_blocker.is_blocked()
                 or Blocker.set_state_blocker.is_blocked()):
             continue
 
-        t += conf.interval
-        yield from f(t)
+        t += self.interval
+        await f(t)
+
+
+_old_appdaemon_init = None
+
+
+def _appdaemon_init(self, *args, **kwargs):
+    Blocker.daemon = self
+    _old_appdaemon_init(self, *args, **kwargs)
 
 
 def main():
-    appdaemon.appdaemon.do_every = _do_every
+    appdaemon.appdaemon.AppDaemon.do_every = _do_every
+    global _old_appdaemon_init
+    _old_appdaemon_init = appdaemon.appdaemon.AppDaemon.__init__
+    appdaemon.appdaemon.AppDaemon.__init__ = _appdaemon_init
     admain.main()
 
 

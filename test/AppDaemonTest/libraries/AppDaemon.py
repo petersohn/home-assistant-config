@@ -6,7 +6,7 @@ def create_appdaemon_configuration(target_directory, apps, app_configs):
     log_file = os.path.join(target_directory, 'appdaemon.log')
     error_file = os.path.join(target_directory, 'error.log')
     apps_dir = os.path.join(target_directory, 'apps')
-    apps_yaml = os.path.join(target_directory, 'apps.yaml')
+    apps_yaml = os.path.join(apps_dir, 'apps.yaml')
     secrets_yaml = os.path.join(target_directory, 'secrets.yaml')
     appdaemon_yaml = os.path.join(target_directory, 'appdaemon.yaml')
 

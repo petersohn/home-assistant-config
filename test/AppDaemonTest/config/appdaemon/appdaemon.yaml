@@ -1,9 +1,12 @@
-AppDaemon:
+log:
     logfile: !secret logfile
     errorfile: !secret errorfile
+
+appdaemon:
     threads: 1
     api_port: 18124
-
-HASS:
-    ha_url: http://localhost:18123
-    ha_key: foobar
+    plugins:
+        HASS:
+            type: hass
+            ha_url: http://localhost:18123
+            ha_key: foobar

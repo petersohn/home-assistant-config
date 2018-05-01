@@ -1,7 +1,7 @@
-import appdaemon.appapi as appapi
+import appdaemon.plugins.hass.hassapi as hass
 
 
-class TestOtherApp(appapi.AppDaemon):
+class TestOtherApp(hass.Hass):
     def initialze(self):
         pass
 

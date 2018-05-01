@@ -1,7 +1,9 @@
-import appdaemon.conf as conf
 import appdaemon.utils as utils
 
 import asyncio
+
+
+daemon = None
 
 
 class Blocker:
@@ -13,19 +15,19 @@ class Blocker:
         @asyncio.coroutine
         def _unblock():
             utils.log(
-                conf.logger, "INFO", "Unblock", self.name)
+                daemon.logger, "INFO", "Unblock", self.name)
             self.__blocker.set()
 
-        asyncio.run_coroutine_threadsafe(_unblock(), conf.loop)
+        asyncio.run_coroutine_threadsafe(_unblock(), daemon.loop)
 
     def block(self):
         @asyncio.coroutine
         def _block():
             global _main_loop_blocker
-            utils.log(conf.logger, "INFO", "Block", self.name)
+            utils.log(daemon.logger, "INFO", "Block", self.name)
             self.__blocker.clear()
 
-        asyncio.run_coroutine_threadsafe(_block(), conf.loop)
+        asyncio.run_coroutine_threadsafe(_block(), daemon.loop)
 
     @asyncio.coroutine
     def wait(self):
