@@ -41,6 +41,8 @@ lights:
   entities:
     - switch.light_driveway
     - input_select.light_driveway
+    - switch.light_attic_downstairs
+    - switch.light_attic_upstairs
 
 weather_measurements:
   view: no
@@ -66,6 +68,8 @@ weather_inside:
     - sensor.humidity_bedroom_lower
     - sensor.temperature_bedroom_upper
     - sensor.humidity_bedroom_upper
+    - sensor.temperature_kitchen
+    - sensor.humidity_kitchen
 
 machinery:
   view: no
@@ -75,6 +79,8 @@ machinery:
     - sensor.temperature_furnace_gas
     - sensor.temperature_furnace_wood
     - switch.heating_pump
+    - sensor.water_usage_dishwasher
+    - sensor.temperature_dishwasher
 
 network_availability:
   view: no

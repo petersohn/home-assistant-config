@@ -152,6 +152,13 @@ sensor.humidity_bedroom_upper:
   friendly_name: "Hálószoba páratartalom fent"
   icon: mdi:water-percent
 
+sensor.temperature_kitchen:
+  friendly_name: "Konyha hőmérséklet"
+
+sensor.humidity_kitchen:
+  friendly_name: "Konyha páratartalom"
+  icon: mdi:water-percent
+
 sensor.temperature_furnace_room:
   friendly_name: "Kazánház hőmérséklet"
 
@@ -164,6 +171,13 @@ sensor.temperature_furnace_gas:
 
 sensor.temperature_furnace_wood:
   friendly_name: "Fakazán"
+
+sensor.temperature_dishwasher:
+  friendly_name: "Mosogatógép hőmérséklet"
+
+sensor.water_usage_dishwasher:
+  friendly_name: "Mosogatógép vízhasználat"
+  icon: mdi:water
 
 sensor.wind_direction:
   friendly_name: "Szélirány"
@@ -189,6 +203,14 @@ switch.light_driveway:
   icon: mdi:lightbulb
 
 input_select.light_driveway:
+  icon: mdi:lightbulb
+
+switch.light_attic_upstairs:
+  friendly_name: "Padlás fent"
+  icon: mdi:lightbulb
+
+switch.light_attic_downstairs:
+  friendly_name: "Padlás lent"
   icon: mdi:lightbulb
 
 group.temperature:

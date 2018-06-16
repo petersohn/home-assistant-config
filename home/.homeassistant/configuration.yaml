@@ -127,6 +127,22 @@ sensor:
     unit_of_measurement: "%"
     name: humidity_bedroom_upper
   - platform: mqtt
+    state_topic: home/sensors/temperature/kitchen
+    unit_of_measurement: "°C"
+    name: temperature_kitchen
+  - platform: mqtt
+    state_topic: home/sensors/humidity/kitchen
+    unit_of_measurement: "%"
+    name: humidity_kitchen
+  - platform: mqtt
+    state_topic: home/sensors/temperature/dishwasher
+    unit_of_measurement: "°C"
+    name: temperature_dishwasher
+  - platform: mqtt
+    state_topic: home/sensors/water/dishwasher
+    unit_of_measurement: "l"
+    name: water_usage_dishwasher
+  - platform: mqtt
     state_topic: home/sensors/temperature/furnace/gas
     unit_of_measurement: "°C"
     name: temperature_furnace_gas
@@ -333,6 +349,18 @@ switch:
     state_topic: home/switches/lights/driveway/state
     payload_on: 1
     payload_off: 0
+  - platform: mqtt
+    name: light_attic_downstairs
+    command_topic: home/switches/lights/attic/downstairs/set
+    state_topic: home/switches/lights/attic/downstairs/state
+    payload_on: 0
+    payload_off: 1
+  - platform: mqtt
+    name: light_attic_upstairs
+    command_topic: home/switches/lights/attic/upstairs/set
+    state_topic: home/switches/lights/attic/upstairs/state
+    payload_on: 0
+    payload_off: 1
 
 input_select:
     light_driveway:
