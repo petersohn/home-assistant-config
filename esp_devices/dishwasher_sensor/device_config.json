@@ -1,0 +1,56 @@
+{
+    "debug": true,
+    "name": "dishwasher_sensor",
+    "availabilityTopic": "home/devices/dishwasher_sensor/availability",
+    "interfaces": [
+        {
+            "type": "counter",
+            "name": "flow",
+            "pin": 3,
+            "interval": 10,
+            "multiplier": 0.0225,
+            "bounceTime": 2,
+            "pulse": 0
+        },
+        {
+            "type": "dallasTemperature",
+            "name": "temperature",
+            "interval": 10,
+            "pin": 0
+        },
+        {
+            "type": "dht",
+            "name": "dht",
+            "interval": 60,
+            "pin": 2
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "flow",
+            "topic": "home/sensors/water/dishwasher",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "temperature",
+            "topic": "home/sensors/temperature/dishwasher",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/temperature/kitchen",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/humidity/kitchen",
+            "template": "%2",
+            "retain": true
+        }
+    ]
+}
