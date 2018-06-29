@@ -13,9 +13,9 @@ jobs:
                 find test/AppDaemonTest/output -depth -name __pycache__ \
                     -type d -exec rm -r '{}' ';'
             - store_artifacts:
-                path: test/output
+                path: test/AppDaemonTest/output
             - store_test_results:
-                path: test/output
+                path: test/AppDaemonTest/output
 workflows:
     version: 2
     test:
