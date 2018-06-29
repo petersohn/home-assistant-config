@@ -80,6 +80,8 @@ Limited History Should Be
     Should Be Equal  ${values}  ${expected_values}
 
 Initialize
+    Initialize States
+    ...    ${entity}=${0}
     Clean States And History
     Initialize States
     ...    ${entity}=${0}
