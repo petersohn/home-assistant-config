@@ -23,3 +23,7 @@ input_select:
             - "auto"
             - "on"
             - "off"
+
+history:
+
+recorder:

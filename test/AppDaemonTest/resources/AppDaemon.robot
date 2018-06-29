@@ -32,10 +32,14 @@ Start AppDaemon
     Set Test Variable    ${app_daemon_process}
 
 Create Call Data
-    [Arguments]  ${function}  ${result_type}  @{args}  &{kwargs}
+    [Arguments]  ${function}  ${result_type}  ${arg_types}  ${kwarg_types}
+    ...          @{args}  &{kwargs}
+
     ${result} =  Create Dictionary
     ...    function=${function}
     ...    result_type=${result_type}
+    ...    arg_types=${arg_types}
+    ...    kwarg_types=${kwarg_types}
     ...    args=@{args}
     ...    kwargs=&{kwargs}
     [Return]  ${result}
@@ -43,7 +47,10 @@ Create Call Data
 Call Function
     [Arguments]  ${function}  @{args}  &{kwargs}
     ${result_type} =  Extract From Dictionary  ${kwargs}  result_type
-    ${content} =  Create Call Data  ${function}  ${result_type}
+    ${arg_types} =  Extract From Dictionary  ${kwargs}  arg_types
+    ${kwarg_types} =  Extract From Dictionary  ${kwargs}  kwarg_types
+    ${content} =  Create Call Data  ${function}
+    ...    ${result_type}  ${arg_types}  ${kwarg_types}
     ...    @{args}  &{kwargs}
     ${body} =  Stringify Json  ${content}
     Set Request Body  ${body}

@@ -4,8 +4,13 @@ import Blocker
 from libraries import DateTimeUtil
 from robot.libraries import DateTime
 
+from itertools import zip_longest
+import datetime
 import pprint
 import traceback
+
+
+
 
 
 class TestApp(hass.Hass):
@@ -27,16 +32,32 @@ class TestApp(hass.Hass):
         args = data.get('args', [])
         kwargs = data.get('kwargs', {})
         result_type = data.get('result_type')
+        arg_types = data.get('arg_types') or []
+        kwarg_types = data.get('kwarg_types') or {}
+
+        def convert(target_type, value):
+            if target_type is not None:
+                wrapper = eval(target_type, {
+                    'convert_date': self.__convert_date,
+                    'convert_time': self.__convert_time,
+                    'convert_timedelta': self.__convert_timedelta}, {})
+                return wrapper(value)
+            else:
+                return value
+
         function = data['function']
         self.log(
             'Calling function: ' + function + ' ' + str(args) +
             ' ' + str(kwargs))
+
+        if arg_types:
+            args = [convert(t, v) for t, v in zip_longest(arg_types, args)]
+        for name, kwarg_type in kwarg_types.items():
+            kwargs[name] = convert(kwarg_type, kwargs[name])
         result = getattr(self, function)(*args, **kwargs)
+
         self.log('Function returns: ' + function + ' = ' + str(result))
-        if result_type is not None:
-            wrapper = eval(result_type, {}, {})
-            result = wrapper(result)
-        return result
+        return convert(result_type, result)
 
     def api_callback(self, data):
         try:
@@ -55,6 +76,9 @@ class TestApp(hass.Hass):
 
     def __convert_time(self, time):
         return DateTime.convert_time(time, result_format='number')
+
+    def __convert_timedelta(self, time):
+        return DateTime.convert_time(time, result_format='timedelta')
 
     def __block(self, kwargs):
         Blocker.main_blocker.block()

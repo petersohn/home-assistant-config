@@ -96,6 +96,15 @@ Do Check State
     ${actual_state} =  Do Get State  ${entity}
     Should Be Equal  ${actual_state}  ${expected_state}
 
+Do Clean History
+    Set Request Body To Dictionary  keep_days=${0}
+    Ask For Connection Keepalive
+    POST  /api/services/recorder/purge
+
+Do Clean States And History
+    Do Clean States
+    Do Clean History
+
 Wait Until State Becomes
     [Arguments]  ${entity}  ${state}  ${timeout}=1s
     ${result} =  Run In Http Context
@@ -113,6 +122,10 @@ Get States
 Clean States
     Run In Http Context  ${home_assistant_host}
     ...    Do Clean States
+
+Clean States And History
+    Run In Http Context  ${home_assistant_host}
+    ...    Do Clean States And History
 
 Initialize States
     [Arguments]  &{states}

@@ -233,6 +233,8 @@ Type Conversions
     123      int      ${123}
     41.5     float    ${41.5}
 
+Argument Type Conversions
+
 Call External App
     [Setup]  Initialize With External Test App
     ${input} =  Set Variable  Some Test
@@ -244,9 +246,18 @@ Call External App
 *** Keywords ***
 
 Convert Types
-    [Arguments]  ${argument}  ${result_type}  ${expected_result}
-    ${result} =  Call Function  test  ${argument}  result_type=${result_type}
-    Should Be Equal  ${result}  ${expected_result}
+    [Arguments]  ${argument}  ${type}  ${expected_result}
+    ${result1} =  Call Function  test  ${argument}  result_type=${type}
+    Should Be Equal  ${result1}  ${expected_result}
+
+    ${arg_types} =  Create List  ${type}
+    ${result2} =  Call Function  test  ${argument}  arg_types=${arg_types}
+    Should Be Equal  ${result2}  ${expected_result}
+
+    ${kwarg_types} =  Create Dictionary  arg=${type}
+    ${result3} =  Call Function  test  arg=${argument}
+    ...    kwarg_types=${kwarg_types}
+    Should Be Equal  ${result3}  ${expected_result}
 
 Initialize
     [Arguments]  ${start_time}=${start_time}
