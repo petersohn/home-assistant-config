@@ -26,11 +26,14 @@ class HistoryManager(hass.Hass):
         return self.__loaded
 
     def get_history(self, interval=None):
+        self.log('interval=%s' % interval)
         if interval is not None:
             limit = self.datetime() - interval
+            self.log('limit=%s' % limit)
             return [
                 element for element in self.__history if element.time >= limit]
         else:
+            self.log('no limit')
             return self.__history
 
     def get_values(self, interval=None):

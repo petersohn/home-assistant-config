@@ -4,3 +4,14 @@ test_history_manager:
     entity: sensor.test_sensor
     max_interval:
         hours: 1
+
+test_history_enabler:
+    class: HistoryEnabler
+    module: enabler
+    dependencies: test_history_manager
+    manager: test_history_manager
+    interval:
+        minutes: 5
+    aggregator: sum
+    min: 5
+    max: 10

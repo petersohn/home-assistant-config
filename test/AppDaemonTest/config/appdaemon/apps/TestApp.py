@@ -5,12 +5,8 @@ from libraries import DateTimeUtil
 from robot.libraries import DateTime
 
 from itertools import zip_longest
-import datetime
 import pprint
 import traceback
-
-
-
 
 
 class TestApp(hass.Hass):

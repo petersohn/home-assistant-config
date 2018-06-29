@@ -1,6 +1,7 @@
 *** Settings ***
 
 Resource       resources/Config.robot
+Resource       resources/Enabler.robot
 Test Setup     Initialize
 Test Teardown  Cleanup AppDaemon
 
@@ -9,6 +10,7 @@ Test Teardown  Cleanup AppDaemon
 
 ${name} =    test_history_manager
 ${entity} =  sensor.test_sensor
+${enabler} =  test_history_enabler
 
 
 *** Test Cases ***
@@ -25,7 +27,6 @@ Get History
     # Since there is no time travel in HASS, initial elements happen in the future
     Limited History Should Be  65 s  ${EMPTY}  0  3  0
 
-
 Old History Elements Are Removed
     Set State  ${entity}  20
     Unblock For  20 min
@@ -37,6 +38,24 @@ Old History Elements Are Removed
     Unblock For  21 min
     Set State  ${entity}  54
     History Should Be  ${EMPTY}  0  1  6  54
+
+History Enabler
+    Enabled State Should Be  ${enabler}  ${False}
+    Unblock For  1 min
+    Set State  ${entity}  4
+    Enabled State Should Be  ${enabler}  ${False}
+    Unblock For  1 min
+    Set State  ${entity}  3
+    Enabled State Should Be  ${enabler}  ${True}
+    Unblock For  1 min
+    Set State  ${entity}  4
+    Enabled State Should Be  ${enabler}  ${False}
+    Unblock For  3 min 30 s
+    Set State  ${entity}  1
+    Enabled State Should Be  ${enabler}  ${True}
+    Unblock For  4 min
+    Enabled State Should Be  ${enabler}  ${False}
+
 
 *** Keywords ***
 
@@ -64,7 +83,7 @@ Initialize
     Clean States And History
     Initialize States
     ...    ${entity}=${0}
-    ${apps} =  Create List  TestApp  history
+    ${apps} =  Create List  TestApp  history  enabler
     ${app_configs} =  Create List  TestApp  HistoryManager
     Initialize AppDaemon  ${apps}  ${app_configs}
     Unblock For  ${appdaemon_interval}

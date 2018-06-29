@@ -1,6 +1,8 @@
 *** Settings ***
 
+Resource       resources/AppDaemon.robot
 Resource       resources/Config.robot
+Resource       resources/Enabler.robot
 Test Setup     Initialize  00:00:00
 Test Teardown  Cleanup AppDaemon
 
@@ -84,11 +86,6 @@ Sun Goes Down
 
 
 *** Keywords ***
-
-Enabled State Should Be
-    [Arguments]  ${enabler}  ${expected_state}
-    ${state} =  Call Function  call_on_app  ${enabler}  is_enabled
-    Should Be Equal  ${state}  ${expected_state}
 
 Set Value And Check State
     [Arguments]  ${entity}  ${value}  ${enabler}  ${expected_state}

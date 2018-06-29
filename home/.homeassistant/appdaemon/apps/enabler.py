@@ -1,4 +1,5 @@
 import appdaemon.plugins.hass.hassapi as hass
+import datetime
 
 
 class ScriptEnabler(hass.Hass):
@@ -26,6 +27,14 @@ class ValueEnabler(hass.Hass):
         return self.get_state(self.__entity) in self.__values
 
 
+def is_between(value, min_value, max_value):
+        if min_value is not None and float(value) < min_value:
+            return False
+        if max_value is not None and float(value) > max_value:
+            return False
+        return True
+
+
 class RangeEnabler(hass.Hass):
     def initialize(self):
         self.__entity = self.args['entity']
@@ -34,11 +43,7 @@ class RangeEnabler(hass.Hass):
 
     def is_enabled(self):
         value = self.get_state(self.__entity)
-        if self.__min is not None and float(value) < self.__min:
-            return False
-        if self.__max is not None and float(value) > self.__max:
-            return False
-        return True
+        return is_between(value, self.__min, self.__max)
 
 
 class SunEnabler(hass.Hass):
@@ -48,3 +53,23 @@ class SunEnabler(hass.Hass):
     def is_enabled(self):
         return ((self.__day and self.sun_up()) or
                 (not self.__day and self.sun_down()))
+
+
+class HistoryEnabler(hass.Hass):
+    def initialize(self):
+        self.__manager = self.get_app(self.args['manager'])
+        self.__aggregator = eval(self.args['aggregator'], {}, {})
+        if 'interval' in self.args:
+            self.__interval = datetime.timedelta(**self.args['interval'])
+        else:
+            self.__interval = None
+        self.__min = self.args.get('min')
+        self.__max = self.args.get('max')
+
+    def is_enabled(self):
+        values = [
+            float(value)
+            for value in self.__manager.get_values(self.__interval)
+            if value != '']
+        value = self.__aggregator(values)
+        return is_between(value, self.__min, self.__max)
