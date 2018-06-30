@@ -6,6 +6,7 @@ import json
 from collections import namedtuple
 import re
 import pprint
+import traceback
 
 
 HistoryElement = namedtuple('HistoryElement', ['time', 'value'])
@@ -52,19 +53,25 @@ class HistoryManager(hass.Hass):
                     as result:
                 if result.status >= 300:
                     raise http.client.HTTPException(result.reason)
-                loaded_history = json.load(result)
-                self.log('history=%s' % pprint.pformat(loaded_history))
+                loaded_history = json.loads(result.read().decode())
+
+                def get_date(s):
+                    s = re.sub(r'([-+][0-9]{2}):([0-9]{2})$', '', s)
+                    try:
+                        return datetime.datetime.strptime(
+                            s, '%Y-%m-%dT%H:%M:%S.%f')
+                    except ValueError:
+                        return datetime.datetime.strptime(
+                            s, '%Y-%m-%dT%H:%M:%S')
+
                 self.__history = [
                     HistoryElement(
-                        datetime.datetime.strptime(
-                            re.sub(
-                                r'([-+][0-9]{2}):([0-9]{2})$', '',
-                                change['last_changed']),
-                            '%Y-%m-%dT%H:%M:%S.%f'),
+                        get_date(change['last_changed']),
                         change['state'])
                     for changes in loaded_history for change in changes]
         except:
             self.log('Failed to load history.', level='WARNING')
+            self.log(traceback.format_exc(), level='WARNING')
             self.run_in(self.__load_config, 2)
             raise
 
