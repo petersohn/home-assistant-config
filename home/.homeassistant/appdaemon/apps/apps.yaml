@@ -36,9 +36,13 @@ sun_enabler_night:
     class: SunEnabler
     day: false
 
+wind_short_term:
+  module: history
+  class: HistoryManager
+
 wind_disabler:
     module: enabler
-    class: RangeEnabler
+    class: HistoyEnabler
     entity: sensor.wind_strength
     max: 15
 
