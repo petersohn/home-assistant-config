@@ -233,8 +233,6 @@ Type Conversions
     123      int      ${123}
     41.5     float    ${41.5}
 
-Argument Type Conversions
-
 Call External App
     [Setup]  Initialize With External Test App
     ${input} =  Set Variable  Some Test

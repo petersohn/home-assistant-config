@@ -132,17 +132,20 @@ State Should Change In
 
 Schedule Call At
     [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
-    ${data} =  Create Call Data  ${function}  ${None}  @{args}  &{kwargs}
+    ${data} =  Create Call Data  ${function}  ${None}  ${None}  ${None}
+    ...    @{args}  &{kwargs}
     Call Function  schedule_call_at  ${when}  ${data}
 
 Schedule Call In
     [Arguments]  ${delay}  ${function}  @{args}  &{kwargs}
-    ${data} =  Create Call Data  ${function}  ${None}  @{args}  &{kwargs}
+    ${data} =  Create Call Data  ${function}  ${None}  ${None}  ${None}
+    ...    @{args}  &{kwargs}
     Call Function  schedule_call_in  ${delay}  ${data}
 
 Schedule Call At Date Time
     [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
-    ${data} =  Create Call Data  ${function}  ${None}  @{args}  &{kwargs}
+    ${data} =  Create Call Data  ${function}  ${None}  ${None}  ${None}
+    ...    @{args}  &{kwargs}
     Call Function  schedule_call_at_date_time  ${when}  ${data}
 
 Schedule Call At Sunrise
