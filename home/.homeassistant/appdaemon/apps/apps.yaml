@@ -44,6 +44,7 @@ wind_short_term:
 wind_disabler:
     module: enabler
     class: HistoyEnabler
+    dependencies: wind_short_term
     manager: wind_short_term
     aggregator: max
     max: 20
