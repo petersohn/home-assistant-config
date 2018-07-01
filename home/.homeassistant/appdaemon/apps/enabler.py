@@ -67,9 +67,11 @@ class HistoryEnabler(hass.Hass):
         self.__max = self.args.get('max')
 
     def is_enabled(self):
-        values = [
-            float(value)
-            for value in self.__manager.get_values(self.__interval)
-            if value != '']
-        value = self.__aggregator(values)
-        return is_between(value, self.__min, self.__max)
+        values = []
+        for value in self.__manager.get_values(self.__interval):
+            try:
+                values.append(float(value))
+            except ValueError:
+                pass
+        aggregated_value = self.__aggregator(values)
+        return is_between(aggregated_value, self.__min, self.__max)

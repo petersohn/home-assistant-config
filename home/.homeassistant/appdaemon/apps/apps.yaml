@@ -43,11 +43,13 @@ wind_short_term:
 
 wind_disabler:
     module: enabler
-    class: HistoyEnabler
+    class: HistoryEnabler
     dependencies: wind_short_term
     manager: wind_short_term
     aggregator: max
     max: 20
+    interval:
+      minutes: 10
 
 driveway_motion_sensor:
   class: MotionSensor
