@@ -59,6 +59,7 @@ class HistoryEnabler(hass.Hass):
     def initialize(self):
         self.__manager = self.get_app(self.args['manager'])
         self.__aggregator = eval(self.args['aggregator'], {}, {})
+        self.__default = self.args['default']
         if 'interval' in self.args:
             self.__interval = datetime.timedelta(**self.args['interval'])
         else:
@@ -73,5 +74,10 @@ class HistoryEnabler(hass.Hass):
                 values.append(float(value))
             except ValueError:
                 pass
+        if not values:
+            if self.__default is not None:
+                values = [self.__default]
+            else:
+                values = self.__manager.get_values()[-1:]
         aggregated_value = self.__aggregator(values)
         return is_between(aggregated_value, self.__min, self.__max)

@@ -50,6 +50,7 @@ wind_disabler:
     max: 20
     interval:
       minutes: 10
+    default: 0
 
 driveway_motion_sensor:
   class: MotionSensor

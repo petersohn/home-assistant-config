@@ -86,4 +86,3 @@ class HistoryManager(hass.Hass):
         self.__history = list(filter(
             lambda element: element.time >= limit, self.__history))
         self.__history.append(HistoryElement(now, new))
-
