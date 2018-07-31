@@ -59,10 +59,12 @@ class HistoryEnabler(hass.Hass):
     def initialize(self):
         self.__manager = self.get_app(self.args['manager'])
         self.__aggregator = eval(self.args['aggregator'], {}, {})
-        self.__default = self.args['default']
+        self.__default = self.args.get('default')
         if 'interval' in self.args:
+            self.log('interval 1')
             self.__interval = datetime.timedelta(**self.args['interval'])
         else:
+            self.log('interval 2')
             self.__interval = None
         self.__min = self.args.get('min')
         self.__max = self.args.get('max')
