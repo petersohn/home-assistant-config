@@ -6,7 +6,8 @@
         {
             "type": "input",
             "name": "rain",
-            "pin": 0
+            "pin": 0,
+            "cycle": "multi"
         },
         {
             "type": "counter",
