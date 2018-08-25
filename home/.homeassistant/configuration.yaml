@@ -34,7 +34,7 @@ updater:
 
 recorder:
   purge_interval: 1
-  purge_keep_days: 30
+  purge_keep_days: 7
   db_url: sqlite:///tmp/homeassistant/home-assistant.db
 
 # Enables support for tracking state changes over time.
