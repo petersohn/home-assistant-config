@@ -86,3 +86,23 @@ class HistoryManager(hass.Hass):
         self.__history = list(filter(
             lambda element: element.time >= limit, self.__history))
         self.__history.append(HistoryElement(now, new))
+
+class Aggregator:
+    def __init__(self, manager, expr, default):
+        self.__manager = manager
+        self.__aggregator = eval(expr, {}, {})
+        self.__default = default
+
+    def get(self, interval):
+        values = []
+        for value in self.__manager.get_values(interval):
+            try:
+                values.append(float(value))
+            except ValueError:
+                pass
+        if not values:
+            if self.__default is not None:
+                values = [self.__default]
+            else:
+                values = self.__manager.get_values()[-1:]
+        return self.__aggregator(values)
