@@ -5,6 +5,17 @@ test_history_manager:
     max_interval:
         hours: 1
 
+aggregated_value:
+    class: AggregatedValue
+    module: history
+    dependencies: test_history_manager
+    manager: test_history_manager
+    target: sensor.test_sensor_sum
+    default: 0
+    interval:
+        minutes: 3
+    aggregator: sum
+
 test_history_enabler:
     class: HistoryEnabler
     module: enabler

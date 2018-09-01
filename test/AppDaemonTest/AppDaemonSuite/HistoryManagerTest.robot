@@ -10,6 +10,7 @@ Test Teardown  Cleanup AppDaemon
 
 ${name} =    test_history_manager
 ${entity} =  sensor.test_sensor
+${target_entity} =  sensor.test_sensor_sum
 ${enabler} =  test_history_enabler
 
 
@@ -55,6 +56,25 @@ History Enabler
     Enabled State Should Be  ${enabler}  ${True}
     Unblock For  4 min
     Enabled State Should Be  ${enabler}  ${False}
+
+Aggregated Value
+    Unblock For  1 min
+    State Should Be As  ${target_entity}  Int  ${0}
+    Set State  ${entity}  3
+    Unblock For  1 min
+    State Should Be As  ${target_entity}  Int  ${3}
+    Set State  ${entity}  5
+    Unblock For  1 min
+    State Should Be As  ${target_entity}  Int  ${8}
+    Set State  ${entity}  2
+    Unblock For  1 min
+    State Should Be As  ${target_entity}  Int  ${10}
+    Set State  ${entity}  5
+    Unblock For  1 min
+    State Should Be As  ${target_entity}  Int  ${12}
+    Set State  ${entity}  1
+    Unblock For  1 min
+    State Should Be As  ${target_entity}  Int  ${8}
 
 
 *** Keywords ***

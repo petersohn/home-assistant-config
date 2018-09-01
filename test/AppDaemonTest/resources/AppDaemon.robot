@@ -161,13 +161,18 @@ Schedule Call At Sunset
     Schedule Call At Date Time  ${target}  ${function}  @{args}  &{kwargs}
 
 Get State
-    [Arguments]  ${entity_id}
-    ${value} =  Call Function  get_state  ${entity_id}
+    [Arguments]  ${entity_id}  &{kwargs}
+    ${value} =  Call Function  get_state  ${entity_id}  &{kwargs}
     [Return]  ${value}
 
 State Should Be
     [Arguments]  ${entity_id}  ${expected_value}
     ${value} =  Get State  ${entity_id}
+    Should Be Equal  ${value}  ${expected_value}
+
+State Should Be As
+    [Arguments]  ${entity_id}  ${type}  ${expected_value}
+    ${value} =  Get State  ${entity_id}  result_type=${type}
     Should Be Equal  ${value}  ${expected_value}
 
 Set State

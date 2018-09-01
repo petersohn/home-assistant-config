@@ -16,7 +16,7 @@ class HistoryManager(hass.Hass):
     def initialize(self):
         self.__max_interval = datetime.timedelta(
             **self.args.get('max_interval', {'days': 1}))
-        self.__entity_id = self.args['entity']
+        self.entity_id = self.args['entity']
         self.__hass_config = [
             config for config in self.config['plugins'].values()
             if config['type'] == 'hass'][0]
@@ -31,7 +31,7 @@ class HistoryManager(hass.Hass):
         if interval is not None:
             limit = self.datetime() - interval
             return [
-                element for element in self.__history if element.time >= limit]
+                element for element in self.__history if element.time > limit]
         else:
             return self.__history
 
@@ -45,7 +45,7 @@ class HistoryManager(hass.Hass):
                 datetime.datetime.now() - self.__max_interval).strftime(
                 '%Y-%m-%dT%H:%M:%S%z')
             url = (self.__hass_config['ha_url'] + '/api/history/period/'
-                   + timestamp + '?filter_entity_id=' + self.__entity_id)
+                   + timestamp + '?filter_entity_id=' + self.entity_id)
             self.log('Calling API: ' + url)
             with request.urlopen(request.Request(
                     url,
@@ -76,7 +76,7 @@ class HistoryManager(hass.Hass):
             raise
 
         self.listen_state(
-            self.__on_changed, entity=self.__entity_id)
+            self.__on_changed, entity=self.entity_id)
         self.__loaded = True
         self.log('History loaded.')
 
@@ -106,3 +106,24 @@ class Aggregator:
             else:
                 values = self.__manager.get_values()[-1:]
         return self.__aggregator(values)
+
+
+class AggregatedValue(hass.Hass):
+    def initialize(self):
+        manager = self.get_app(self.args['manager'])
+        self.__aggregator = Aggregator(
+            manager,
+            self.args['aggregator'],
+            self.args.get('default'))
+        self.__target = self.args['target']
+        self.__interval = datetime.timedelta(**self.args['interval'])
+        self.listen_state(self.__on_change, manager.entity_id)
+        self.__set_state()
+
+    def __set_state(self):
+        value = self.__aggregator.get(self.__interval)
+        self.set_state(
+            self.__target, state=value)
+
+    def __on_change(self, entity, attribute, old, new, kwargs):
+        self.__set_state()

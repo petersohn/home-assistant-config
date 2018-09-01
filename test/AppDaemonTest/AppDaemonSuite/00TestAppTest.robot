@@ -232,6 +232,11 @@ Type Conversions
     ${1}     bool     ${True}
     123      int      ${123}
     41.5     float    ${41.5}
+    41.0     Int      ${41}
+
+Converted State Expectations
+    Set State  ${test_sensor}  12
+    State Should Be As  ${test_sensor}  int  ${12}
 
 Call External App
     [Setup]  Initialize With External Test App

@@ -36,7 +36,8 @@ class TestApp(hass.Hass):
                 wrapper = eval(target_type, {
                     'convert_date': self.__convert_date,
                     'convert_time': self.__convert_time,
-                    'convert_timedelta': self.__convert_timedelta}, {})
+                    'convert_timedelta': self.__convert_timedelta,
+                    'Int': lambda val: int(float(val))}, {})
                 return wrapper(value)
             else:
                 return value
