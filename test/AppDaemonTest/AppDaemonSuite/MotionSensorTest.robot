@@ -120,7 +120,7 @@ Do Not Restart After Movement While Disabled And On
 
     State Should Change At  ${switch}  on  20 sec
     State Should Change At  ${switch}  off  1 min 30 sec
-    State Should Not Change  ${switch}  deadline=1 min 30 sec
+    State Should Not Change  ${switch}  deadline=2 min
 
 Restart After Enabling
     Disable  ${enabler1}
