@@ -1,6 +1,9 @@
 version: 2
 jobs:
     test-appdaemon:
+        environment:
+            - HASS_PATH: /homeassistant
+            - APPDAEMON_PATH: /appdaemon
         docker:
             - image: kangirigungi/home-assistant-config-test:latest
         steps:

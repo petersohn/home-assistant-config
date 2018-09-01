@@ -9,6 +9,7 @@ Variables  libraries/Directories.py
 *** Variables ***
 
 ${home_assistant_host}  127.0.0.1:18123
+${home_assistant_password}  pass
 
 
 *** Keywords ***
@@ -24,6 +25,7 @@ Start Home Assistant
 
 Check Home Assistant
     Process Should Be Running  ${hass_process}
+    Authenticate
     GET  /api/
     ${body} =  Get Response Body
     Json Value Should Equal  ${body}  /message  "API running."
@@ -40,15 +42,20 @@ Wait For Home Assistant To Stop
     Wait For Process  ${hass_process}  timeout=10 sec  on_timeout=kill
     Process Should Be Stopped
 
+Authenticate
+    Set Request Header  x-ha-access  ${home_assistant_password}
+
 Do Delete State
     [Arguments]  ${entity_id}
     Ask For Connection Keepalive
+    Authenticate
     DELETE  /api/states/${entity_id}
 
 Do Switch Off
     [Arguments]  ${entity_id}
     Set Request Body To Dictionary  entity_id=${entity_id}
     Ask For Connection Keepalive
+    Authenticate
     POST  /api/services/homeassistant/turn_off
 
 Do Clean State
@@ -63,6 +70,7 @@ Do Clean State
 Do Get State
     [Arguments]  ${entity_id}
     Ask For Connection Keepalive
+    Authenticate
     GET  /api/states/${entity_id}
     ${body} =  Get Response Body
     ${content} =  Parse Json  ${body}
@@ -70,6 +78,7 @@ Do Get State
 
 Do Get States
     Ask For Connection Keepalive
+    Authenticate
     GET  /api/states
     ${body} =  Get Response Body
     ${content} =  Parse Json  ${body}
@@ -84,6 +93,7 @@ Do Initialize State
     [Arguments]  ${entity}  ${state}
     Set Request Body To Dictionary  state=${state}
     Ask For Connection Keepalive
+    Authenticate
     POST  /api/states/${entity}
 
 Do Initialize States
@@ -99,6 +109,7 @@ Do Check State
 Do Clean History
     Set Request Body To Dictionary  keep_days=${0}
     Ask For Connection Keepalive
+    Authenticate
     POST  /api/services/recorder/purge
 
 Do Clean States And History

@@ -9,4 +9,4 @@ appdaemon:
         HASS:
             type: hass
             ha_url: http://localhost:18123
-            ha_key: foobar
+            ha_key: pass
