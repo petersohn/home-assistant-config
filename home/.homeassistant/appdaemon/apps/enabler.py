@@ -1,8 +1,6 @@
 import appdaemon.plugins.hass.hassapi as hass
 import datetime
 
-import history
-
 
 class ScriptEnabler(hass.Hass):
     def initialize(self):
@@ -59,6 +57,8 @@ class SunEnabler(hass.Hass):
 
 class HistoryEnabler(hass.Hass):
     def initialize(self):
+        import history
+
         self.__aggregator = history.Aggregator(
             self.get_app(self.args['manager']),
             self.args['aggregator'],
