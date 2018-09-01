@@ -9,5 +9,4 @@ script_dir=$(dirname "$(readlink -e "$0")")
 
 source "${APPDAEMON_PATH}/bin/activate"
 
-python "${script_dir}/TestAppDaemon.py" "$@"
-
+exec python "${script_dir}/TestAppDaemon.py" "$@"

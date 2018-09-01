@@ -15,7 +15,7 @@ ${home_assistant_password}  pass
 *** Keywords ***
 
 Start Home Assistant
-    ${hass_process} =   Start Process   hass
+    ${hass_process} =   Start Process   ./hass
     ...    --verbose
     ...    --config     ${hass_config_path}
     ...    --log-file   ${base_output_directory}/homeassistant.log

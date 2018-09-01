@@ -21,7 +21,7 @@ Start AppDaemon
     [Arguments]  ${start_time}
     ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}
     ...    exclude_millis=true
-    ${app_daemon_process} =  Start Process   python  TestAppDaemon.py
+    ${app_daemon_process} =  Start Process   ./appdaemon
     ...    --config      ${OUTPUT_DIRECTORY}
     ...    --starttime   ${start_datetime}
     ...    --tick        0
