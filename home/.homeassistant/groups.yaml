@@ -51,6 +51,7 @@ weather_measurements:
     - sensor.temperature_outside
     - sensor.humidity_outside
     - sensor.wind_direction
+    - sensor.wind_direction_average
     - sensor.wind_strength
     - sensor.rain
 

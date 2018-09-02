@@ -30,6 +30,7 @@ class HistoryManager(hass.Hass):
     def get_history(self, interval=None):
         if interval is not None:
             limit = self.datetime() - interval
+            # self.log(pprint.pformat(['{}: {}'.format(e.time, e.value) for e in self.__history]))
             return [
                 element for element in self.__history if element.time > limit]
         else:
@@ -65,12 +66,13 @@ class HistoryManager(hass.Hass):
                             s, '%Y-%m-%dT%H:%M:%S')
 
                 now = self.datetime()
-                self.__history = filter(
+                self.__history = list(filter(
                     lambda element: element.time <= now,
                     (HistoryElement(
                         get_date(change['last_changed']),
                         change['state'])
-                     for changes in loaded_history for change in changes))
+                     for changes in loaded_history for change in changes)))
+                self.log('History size={}'.format(len(self.__history)))
         except:
             self.log('Failed to load history.', level='WARNING')
             self.log(traceback.format_exc(), level='WARNING')
@@ -99,7 +101,9 @@ class Aggregator:
 
     def get(self, interval):
         values = []
-        for value in self.__manager.get_values(interval):
+        raw = self.__manager.get_values(interval)
+        # self.__manager.log('raw={}'.format(raw))
+        for value in raw:
             try:
                 values.append(float(value))
             except ValueError:
@@ -109,7 +113,10 @@ class Aggregator:
                 values = [self.__default]
             else:
                 values = self.__manager.get_values()[-1:]
-        return self.__aggregator(values)
+        # self.__manager.log('values={}'.format(values))
+        result = self.__aggregator(values)
+        # self.__manager.log('result={}'.format(result))
+        return result
 
 
 class AggregatedValue(hass.Hass):

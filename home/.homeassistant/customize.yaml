@@ -182,6 +182,10 @@ sensor.water_usage_dishwasher:
 sensor.wind_direction:
   friendly_name: "Szélirány"
 
+sensor.wind_direction_average:
+  friendly_name: "Szélirány"
+  unit_of_measurement: "°"
+
 sensor.wind_strength:
   friendly_name: "Szélsebesség"
   icon: mdi:weather-windy

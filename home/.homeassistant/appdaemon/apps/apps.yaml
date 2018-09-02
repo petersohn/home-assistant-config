@@ -11,6 +11,11 @@ wind_direction:
   module: wind_direction
   entity: sensor.wind_direction
 
+wind_direction_average:
+  class: WindDirection
+  module: wind_direction
+  entity: sensor.wind_direction_average
+
 heating_pump:
   class: TemperatureController
   module: temperature_controller
@@ -44,6 +49,11 @@ wind_short_term:
   class: HistoryManager
   entity: sensor.wind_strength
 
+wind_direction_short_term:
+  module: history
+  class: HistoryManager
+  entity: sensor.wind_direction
+
 wind_disabler:
     module: enabler
     class: HistoryEnabler
@@ -55,13 +65,13 @@ wind_disabler:
       minutes: 10
     default: 0
 
-wind_average:
+wind_direction_average:
   module: history
   class: AggregatedValue
   global_dependencies: aggregator
-  dependencies: wind_short_term
-  manager: wind_short_term
-  target: sensor.wind_average
+  dependencies: wind_direction_short_term
+  manager: wind_direction_short_term
+  target: sensor.wind_direction_average
   interval:
     minutes: 10
   aggregator: anglemean
