@@ -128,13 +128,14 @@ class AggregatedValue(hass.Hass):
             self.args.get('default'))
         self.__target = self.args['target']
         self.__interval = datetime.timedelta(**self.args['interval'])
+        self.__attributes = self.args.get('attributes', {})
         self.listen_state(self.__on_change, manager.entity_id)
         self.__set_state()
 
     def __set_state(self):
         value = self.__aggregator.get(self.__interval)
         self.set_state(
-            self.__target, state=value)
+            self.__target, state=value, attributes=self.__attributes)
 
     def __on_change(self, entity, attribute, old, new, kwargs):
         self.__set_state()

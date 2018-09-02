@@ -11,7 +11,7 @@ wind_direction:
   module: wind_direction
   entity: sensor.wind_direction
 
-wind_direction_average:
+wind_direction_average_icon:
   class: WindDirection
   module: wind_direction
   entity: sensor.wind_direction_average
@@ -75,6 +75,9 @@ wind_direction_average:
   interval:
     minutes: 10
   aggregator: anglemean
+  attributes:
+    unit_of_measurement: "°"
+    friendly_name: "Szélirány"
 
 driveway_motion_sensor:
   class: MotionSensor
