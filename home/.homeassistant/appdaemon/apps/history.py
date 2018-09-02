@@ -30,8 +30,6 @@ class HistoryManager(hass.Hass):
     def get_history(self, interval=None):
         if interval is not None:
             limit = self.datetime() - interval
-            self.log('limit={}'.format(limit))
-            self.log('history={}'.format(self.__history))
             return [
                 element for element in self.__history if element.time > limit]
         else:
@@ -111,7 +109,6 @@ class Aggregator:
                 values = [self.__default]
             else:
                 values = self.__manager.get_values()[-1:]
-        self.__manager.log('values={}'.format(values))
         return self.__aggregator(values)
 
 
