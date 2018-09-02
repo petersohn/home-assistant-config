@@ -8,6 +8,15 @@ test_history_manager:
     max_interval:
         hours: 1
 
+test_history_manager_refresh_interval:
+    class: HistoryManager
+    module: history
+    entity: sensor.test_sensor
+    max_interval:
+        hours: 1
+    refresh_interval:
+        minutes: 1
+
 aggregated_value:
     class: AggregatedValue
     module: history

@@ -28,6 +28,22 @@ Get History
     History Should Be  3  2  3  0
     Limited History Should Be  65 s  3  0
 
+Refresh Interval
+    Set Test Variable  ${name}  test_history_manager_refresh_interval
+    Set State  ${entity}  3
+    Unblock For  1 min
+    Set State  ${entity}  6
+    Unblock For  1 min
+    Set State  ${entity}  2
+    Unblock For  3 min
+    Set State  ${entity}  3
+    Unblock For  2 min
+    Set State  ${entity}  0
+    Unblock For  2 min
+    Set State  ${entity}  10
+    History Should Be  3  6  2  2  2  3  3  0  0  10
+
+
 Old History Elements Are Removed
     Set State  ${entity}  20
     Unblock For  20 min

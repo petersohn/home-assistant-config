@@ -17,6 +17,10 @@ class HistoryManager(hass.Hass):
         self.__max_interval = datetime.timedelta(
             **self.args.get('max_interval', {'days': 1}))
         self.entity_id = self.args['entity']
+        self.__refresh_interval = None
+        if 'refresh_interval' in self.args:
+            self.__refresh_interval = datetime.timedelta(
+                **self.args['refresh_interval'])
         self.__hass_config = [
             config for config in self.config['plugins'].values()
             if config['type'] == 'hass'][0]
@@ -26,6 +30,16 @@ class HistoryManager(hass.Hass):
 
     def is_loaded(self):
         return self.__loaded
+
+    def __fill(self):
+        if not self.__history or self.__refresh_interval is None:
+            return
+
+        limit = self.datetime() - self.__refresh_interval
+        while self.__history[-1].time < limit:
+            self.__history.append(HistoryElement(
+                self.__history[-1].time + self.__refresh_interval,
+                self.__history[-1].value))
 
     def get_history(self, interval=None):
         if interval is not None:
@@ -72,13 +86,13 @@ class HistoryManager(hass.Hass):
                         get_date(change['last_changed']),
                         change['state'])
                      for changes in loaded_history for change in changes)))
-                self.log('History size={}'.format(len(self.__history)))
         except:
             self.log('Failed to load history.', level='WARNING')
             self.log(traceback.format_exc(), level='WARNING')
             self.run_in(self.__load_config, 2)
             raise
 
+        self.__fill()
         self.listen_state(
             self.__on_changed, entity=self.entity_id)
         self.__loaded = True
@@ -89,6 +103,7 @@ class HistoryManager(hass.Hass):
         limit = now - self.__max_interval
         self.__history = list(filter(
             lambda element: element.time >= limit, self.__history))
+        self.__fill()
         self.__history.append(HistoryElement(now, new))
 
 
