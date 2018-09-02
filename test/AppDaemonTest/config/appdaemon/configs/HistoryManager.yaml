@@ -1,3 +1,6 @@
+global_modules:
+    - aggregator
+
 test_history_manager:
     class: HistoryManager
     module: history
@@ -15,6 +18,19 @@ aggregated_value:
     interval:
         minutes: 3
     aggregator: sum
+
+mean_value:
+    class: AggregatedValue
+    module: history
+    global_dependencies:
+        - aggregator
+    dependencies: test_history_manager
+    manager: test_history_manager
+    target: sensor.test_sensor_mean
+    default: 0
+    interval:
+        minutes: 2
+    aggregator: mean
 
 test_history_enabler:
     class: HistoryEnabler

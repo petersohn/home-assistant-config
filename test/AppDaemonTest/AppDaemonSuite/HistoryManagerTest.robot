@@ -11,6 +11,7 @@ Test Teardown  Cleanup AppDaemon
 ${name} =    test_history_manager
 ${entity} =  sensor.test_sensor
 ${target_entity} =  sensor.test_sensor_sum
+${mean_entity} =  sensor.test_sensor_mean
 ${enabler} =  test_history_enabler
 
 
@@ -24,9 +25,8 @@ Get History
     Set State  ${entity}  3
     Unblock For  1 min
     Set State  ${entity}  0
-    History Should Be  ${EMPTY}  0  3  2  3  0
-    # Since there is no time travel in HASS, initial elements happen in the future
-    Limited History Should Be  65 s  ${EMPTY}  0  3  0
+    History Should Be  3  2  3  0
+    Limited History Should Be  65 s  3  0
 
 Old History Elements Are Removed
     Set State  ${entity}  20
@@ -38,7 +38,7 @@ Old History Elements Are Removed
     Set State  ${entity}  6
     Unblock For  21 min
     Set State  ${entity}  54
-    History Should Be  ${EMPTY}  0  1  6  54
+    History Should Be  1  6  54
 
 History Enabler
     Enabled State Should Be  ${enabler}  ${False}
@@ -77,6 +77,17 @@ Aggregated Value
     State Should Be As  ${target_entity}  Int  ${8}
 
 
+Custom Aggregator
+    Unblock For  1 min
+    Set State  ${entity}  0
+    Unblock For  1 min
+    Set State  ${entity}  20
+    Unblock For  1 min
+    Set State  ${entity}  10
+    Unblock For  1 min
+    State Should Be As  ${mean_entity}  Int  ${15}
+
+
 *** Keywords ***
 
 Get Values
@@ -105,7 +116,7 @@ Initialize
     Clean States And History
     Initialize States
     ...    ${entity}=${0}
-    ${apps} =  Create List  TestApp  history  enabler
+    ${apps} =  Create List  TestApp  history  enabler  aggregator
     ${app_configs} =  Create List  TestApp  HistoryManager
     Initialize AppDaemon  ${apps}  ${app_configs}
     Unblock For  ${appdaemon_interval}

@@ -30,6 +30,8 @@ class HistoryManager(hass.Hass):
     def get_history(self, interval=None):
         if interval is not None:
             limit = self.datetime() - interval
+            self.log('limit={}'.format(limit))
+            self.log('history={}'.format(self.__history))
             return [
                 element for element in self.__history if element.time > limit]
         else:
@@ -64,11 +66,13 @@ class HistoryManager(hass.Hass):
                         return datetime.datetime.strptime(
                             s, '%Y-%m-%dT%H:%M:%S')
 
-                self.__history = [
-                    HistoryElement(
+                now = self.datetime()
+                self.__history = filter(
+                    lambda element: element.time <= now,
+                    (HistoryElement(
                         get_date(change['last_changed']),
                         change['state'])
-                    for changes in loaded_history for change in changes]
+                     for changes in loaded_history for change in changes))
         except:
             self.log('Failed to load history.', level='WARNING')
             self.log(traceback.format_exc(), level='WARNING')
@@ -87,10 +91,12 @@ class HistoryManager(hass.Hass):
             lambda element: element.time >= limit, self.__history))
         self.__history.append(HistoryElement(now, new))
 
+
 class Aggregator:
     def __init__(self, manager, expr, default):
+        import aggregator
         self.__manager = manager
-        self.__aggregator = eval(expr, {}, {})
+        self.__aggregator = eval(expr, aggregator.__dict__, {})
         self.__default = default
 
     def get(self, interval):
@@ -105,6 +111,7 @@ class Aggregator:
                 values = [self.__default]
             else:
                 values = self.__manager.get_values()[-1:]
+        self.__manager.log('values={}'.format(values))
         return self.__aggregator(values)
 
 
