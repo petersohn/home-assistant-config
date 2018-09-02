@@ -1,3 +1,6 @@
+global_modules:
+  - aggregator
+
 wind_direction_yr:
   class: WindDirection
   module: wind_direction
@@ -51,6 +54,17 @@ wind_disabler:
     interval:
       minutes: 10
     default: 0
+
+wind_average:
+  module: history
+  class: AggregatedValue
+  global_dependencies: aggregator
+  dependencies: wind_short_term
+  manager: wind_short_term
+  target: sensor.wind_average
+  interval:
+    minutes: 10
+  aggregator: anglemean
 
 driveway_motion_sensor:
   class: MotionSensor
