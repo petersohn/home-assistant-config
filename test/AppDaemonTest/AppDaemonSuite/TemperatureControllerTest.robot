@@ -65,7 +65,6 @@ Low Mode Starts After Temperature Stops Rising
     Schedule Call In  6 min
     ...    set_sensor_state  ${furnace_sensor}  34
 
-
     State Should Be  ${switch}  off
     State Should Not Change  ${switch}  timeout=6 min
     Low Mode Should Cycle
