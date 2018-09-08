@@ -190,6 +190,9 @@ sensor.rain:
   friendly_name: "Eső"
   icon: mdi:weather-rainy
 
+sensor.tmp_free_space:
+  friendly_name: "TMP szabad hely"
+
 switch.heating_pump:
   friendly_name: "Keringető szivattyú"
   icon: mdi:engine

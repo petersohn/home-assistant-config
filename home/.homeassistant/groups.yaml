@@ -25,6 +25,7 @@ state:
     - group.device_availability
     - group.device_memory
     - group.device_uptime
+    - group.local_device
     - updater.updater
 
 switch:
@@ -123,6 +124,11 @@ device_uptime:
     - sensor.motion_sensor_driveway_upper_uptime
     - sensor.living_room_temperature_uptime
     - sensor.bedroom_temperature_uptime
+
+local_device:
+  view: no
+  entities:
+    - sensor.tmp_free_space
 
 weather_state:
   view: no

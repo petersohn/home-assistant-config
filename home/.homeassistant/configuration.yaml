@@ -219,6 +219,11 @@ sensor:
     value_template: '{{ value_json.uptime }}'
     unit_of_measurement: "ms"
 
+  - platform: command_line
+    command: "df /tmp | tail -n 1 | awk '{print $4}'"
+    unit_of_measurement: Kb
+    name: tmp_free_space
+
 binary_sensor:
   - platform: mqtt
     state_topic: home/devices/well_controller/availability
