@@ -223,6 +223,10 @@ sensor:
     command: "df /tmp | tail -n 1 | awk '{print $4}'"
     unit_of_measurement: Kb
     name: tmp_free_space
+  - platform: command_line
+    command: "df /var/log | tail -n 1 | awk '{print $4}'"
+    unit_of_measurement: Kb
+    name: var_log_free_space
 
 binary_sensor:
   - platform: mqtt

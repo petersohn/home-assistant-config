@@ -129,6 +129,7 @@ local_device:
   view: no
   entities:
     - sensor.tmp_free_space
+    - sensor.var_log_free_space
 
 weather_state:
   view: no
