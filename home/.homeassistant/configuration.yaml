@@ -179,23 +179,13 @@ sensor:
     value_template: '{{ value_json.uptime }}'
     unit_of_measurement: "ms"
   - platform: mqtt
-    state_topic: home/devices/motion_sensor_driveway_lower/availability
-    name: motion_sensor_driveway_lower_free_memory
+    state_topic: home/devices/driveway/availability
+    name: driveway_free_memory
     value_template: '{{ value_json.freeMemory }}'
     unit_of_measurement: "b"
   - platform: mqtt
-    state_topic: home/devices/motion_sensor_driveway_lower/availability
-    name: motion_sensor_driveway_lower_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/motion_sensor_driveway_upper/availability
-    name: motion_sensor_driveway_upper_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/motion_sensor_driveway_upper/availability
-    name: motion_sensor_driveway_upper_uptime
+    state_topic: home/devices/driveway/availability
+    name: driveway_uptime
     value_template: '{{ value_json.uptime }}'
     unit_of_measurement: "ms"
   - platform: mqtt
@@ -216,6 +206,16 @@ sensor:
   - platform: mqtt
     state_topic: home/devices/bedroom_temperature/availability
     name: bedroom_temperature_uptime
+    value_template: '{{ value_json.uptime }}'
+    unit_of_measurement: "ms"
+  - platform: mqtt
+    state_topic: home/devices/dishwasher_sensor/availability
+    name: dishwasher_sensor_free_memory
+    value_template: '{{ value_json.freeMemory }}'
+    unit_of_measurement: "b"
+  - platform: mqtt
+    state_topic: home/devices/dishwasher_sensor/availability
+    name: dishwasher_sensor_uptime
     value_template: '{{ value_json.uptime }}'
     unit_of_measurement: "ms"
 
@@ -242,14 +242,8 @@ binary_sensor:
     payload_on: true
     payload_off: false
   - platform: mqtt
-    state_topic: home/devices/motion_sensor_driveway_lower/availability
-    name: motion_sensor_driveway_lower_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/motion_sensor_driveway_upper/availability
-    name: motion_sensor_driveway_upper_available
+    state_topic: home/devices/driveway/availability
+    name: driveway_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
@@ -262,6 +256,12 @@ binary_sensor:
   - platform: mqtt
     state_topic: home/devices/bedroom_temperature/availability
     name: bedroom_temperature_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/dishwasher_sensor/availability
+    name: dishwasher_sensor_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
@@ -279,14 +279,8 @@ binary_sensor:
     payload_on: true
     payload_off: false
   - platform: mqtt
-    state_topic: home/devices/motion_sensor_driveway_lower/availability
-    name: motion_sensor_driveway_lower_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/motion_sensor_driveway_upper/availability
-    name: motion_sensor_driveway_upper_restarted
+    state_topic: home/devices/driveway/availability
+    name: driveway_restarted
     value_template: '{{ value_json.restarted }}'
     payload_on: true
     payload_off: false
@@ -299,6 +293,12 @@ binary_sensor:
   - platform: mqtt
     state_topic: home/devices/bedroom_temperature/availability
     name: bedroom_temperature_restarted
+    value_template: '{{ value_json.restarted }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/dishwasher_sensor/availability
+    name: dishwasher_sensor_restarted
     value_template: '{{ value_json.restarted }}'
     payload_on: true
     payload_off: false

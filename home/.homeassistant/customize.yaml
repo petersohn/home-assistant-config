@@ -53,12 +53,12 @@ binary_sensor.well_controller_available:
   friendly_name: Well Controller
   icon: mdi:chip
 
-binary_sensor.motion_sensor_driveway_lower_available:
-  friendly_name: Motion Sensor Driveway Lower
+binary_sensor.driveway_available:
+  friendly_name: Driveway
   icon: mdi:chip
 
-binary_sensor.motion_sensor_driveway_upper_available:
-  friendly_name: Motion Sensor Driveway Upper
+binary_sensor.dishwasher_sensor_available:
+  friendly_name: Dishwasher Sensor
   icon: mdi:chip
 
 binary_sensor.living_room_temperature_available:
@@ -77,12 +77,12 @@ sensor.well_controller_free_memory:
   friendly_name: Well Controller
   icon: mdi:memory
 
-sensor.motion_sensor_driveway_lower_free_memory:
-  friendly_name: Motion Sensor Driveway Lower
+sensor.driveway_free_memory:
+  friendly_name: Driveway
   icon: mdi:memory
 
-sensor.motion_sensor_driveway_upper_free_memory:
-  friendly_name: Motion Sensor Driveway Upper
+sensor.dishwasher_sensor_free_memory:
+  friendly_name: Dishwasher Sensor
   icon: mdi:memory
 
 sensor.living_room_temperature_free_memory:
@@ -101,12 +101,12 @@ sensor.well_controller_uptime:
   friendly_name: Well Controller
   icon: mdi:clock
 
-sensor.motion_sensor_driveway_lower_uptime:
-  friendly_name: Motion Sensor Driveway Lower
+sensor.driveway_uptime:
+  friendly_name: Driveway
   icon: mdi:clock
 
-sensor.motion_sensor_driveway_upper_uptime:
-  friendly_name: Motion Sensor Driveway Upper
+sensor.dishwasher_sensor_uptime:
+  friendly_name: Dishwasher Sensor
   icon: mdi:clock
 
 sensor.living_room_temperature_uptime:

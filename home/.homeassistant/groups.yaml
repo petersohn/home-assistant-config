@@ -100,30 +100,30 @@ device_availability:
   entities:
     - binary_sensor.furnace_temperature_available
     - binary_sensor.well_controller_available
-    - binary_sensor.motion_sensor_driveway_lower_available
-    - binary_sensor.motion_sensor_driveway_upper_available
+    - binary_sensor.driveway_available
     - binary_sensor.living_room_temperature_available
     - binary_sensor.bedroom_temperature_available
+    - binary_sensor.dishwasher_sensor_available
 
 device_memory:
   view: no
   entities:
     - sensor.furnace_temperature_free_memory
     - sensor.well_controller_free_memory
-    - sensor.motion_sensor_driveway_lower_free_memory
-    - sensor.motion_sensor_driveway_upper_free_memory
+    - sensor.driveway_free_memory
     - sensor.living_room_temperature_free_memory
     - sensor.bedroom_temperature_free_memory
+    - sensor.dishwasher_sensor_free_memory
 
 device_uptime:
   view: no
   entities:
     - sensor.furnace_temperature_uptime
     - sensor.well_controller_uptime
-    - sensor.motion_sensor_driveway_lower_uptime
-    - sensor.motion_sensor_driveway_upper_uptime
+    - sensor.driveway_uptime
     - sensor.living_room_temperature_uptime
     - sensor.bedroom_temperature_uptime
+    - sensor.dishwasher_sensor_uptime
 
 local_device:
   view: no
