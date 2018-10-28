@@ -166,6 +166,13 @@ sensor.humidity_furnace_room:
   friendly_name: "Kazánház páratartalom"
   icon: mdi:water-percent
 
+sensor.temperature_cellar:
+  friendly_name: "Pince hőmérséklet"
+
+sensor.humidity_cellar:
+  friendly_name: "Pince páratartalom"
+  icon: mdi:water-percent
+
 sensor.temperature_furnace_gas:
   friendly_name: "Gázkazán"
 
