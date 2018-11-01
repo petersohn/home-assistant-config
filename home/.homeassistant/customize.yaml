@@ -226,6 +226,14 @@ switch.light_attic_downstairs:
   friendly_name: "Padlás lent"
   icon: mdi:lightbulb
 
+switch.light_cellar:
+  friendly_name: "Pince"
+  icon: mdi:lightbulb
+
+switch.light_garage:
+  friendly_name: "Garázs"
+  icon: mdi:lightbulb
+
 group.temperature:
   friendly_name: "Hőmérséklet"
 

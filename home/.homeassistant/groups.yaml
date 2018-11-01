@@ -44,6 +44,8 @@ lights:
     - input_select.light_driveway
     - switch.light_attic_downstairs
     - switch.light_attic_upstairs
+    - switch.light_cellar
+    - switch.light_garage
 
 weather_measurements:
   view: no
