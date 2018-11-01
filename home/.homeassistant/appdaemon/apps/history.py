@@ -37,9 +37,10 @@ class HistoryManager(hass.Hass):
 
         limit = self.datetime() - self.__refresh_interval
         while self.__history[-1].time < limit:
+            value = self.__history[-1].value
             self.__history.append(HistoryElement(
                 self.__history[-1].time + self.__refresh_interval,
-                self.__history[-1].value))
+                value))
 
     def get_history(self, interval=None):
         if interval is not None:
@@ -99,6 +100,8 @@ class HistoryManager(hass.Hass):
         self.log('History loaded.')
 
     def __on_changed(self, entity, attribute, old, new, kwargs):
+        if new == old:
+            return
         now = self.datetime()
         limit = now - self.__max_interval
         self.__history = list(filter(

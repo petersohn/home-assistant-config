@@ -22,9 +22,9 @@ class MotionSensor(hass.Hass):
             self.listen_state(self.__on_motion_stop, entity=sensor, new='off')
 
     def __on_motion_start(self, entity, attribute, old, new, kwargs):
-        self.log(
-            'motion start: ' + entity
-            + ' enabled=' + str(self.__should_start()))
+        # self.log(
+        #     'motion start: ' + entity
+        #     + ' enabled=' + str(self.__should_start()))
         if self.__should_start():
             self.__stop_timer()
             for target in self.__targets:
@@ -32,11 +32,11 @@ class MotionSensor(hass.Hass):
 
     def __on_motion_stop(self, entity, attribute, old, new, kwargs):
         if all([self.get_state(sensor) == 'off' for sensor in self.__sensors]):
-            self.log('Starting timer')
+            # self.log('Starting timer')
             self.__timer = self.run_in(self.__on_timeout, self.__time)
 
     def __on_timeout(self, kwargs):
-        self.log('Timeout')
+        # self.log('Timeout')
         for target in self.__targets:
             target.turn_off()
 
@@ -48,5 +48,5 @@ class MotionSensor(hass.Hass):
     def __should_start(self):
         for enabler in self.__enablers:
             is_enabled = enabler[1].is_enabled()
-            self.log('%s: enabled=%s' % (enabler[0], is_enabled))
+            # self.log('%s: enabled=%s' % (enabler[0], is_enabled))
         return all([enabler[1].is_enabled() for enabler in self.__enablers])
