@@ -197,6 +197,16 @@ sensor:
     value_template: '{{ value_json.uptime }}'
     unit_of_measurement: "ms"
   - platform: mqtt
+    state_topic: home/devices/cellar_controller/availability
+    name: cellar_controller_free_memory
+    value_template: '{{ value_json.freeMemory }}'
+    unit_of_measurement: "b"
+  - platform: mqtt
+    state_topic: home/devices/cellar_controller/availability
+    name: cellar_controller_uptime
+    value_template: '{{ value_json.uptime }}'
+    unit_of_measurement: "ms"
+  - platform: mqtt
     state_topic: home/devices/living_room_temperature/availability
     name: living_room_temperature_free_memory
     value_template: '{{ value_json.freeMemory }}'
@@ -251,6 +261,12 @@ binary_sensor:
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/driveway/availability
+    name: cellar_controller_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/cellar_controller/availability
     name: driveway_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -289,6 +305,12 @@ binary_sensor:
   - platform: mqtt
     state_topic: home/devices/driveway/availability
     name: driveway_restarted
+    value_template: '{{ value_json.restarted }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/cellar_controller/availability
+    name: cellar_controller_restarted
     value_template: '{{ value_json.restarted }}'
     payload_on: true
     payload_off: false

@@ -57,6 +57,10 @@ binary_sensor.driveway_available:
   friendly_name: Driveway
   icon: mdi:chip
 
+binary_sensor.cellar_controller_available:
+  friendly_name: Cellar Controller
+  icon: mdi:chip
+
 binary_sensor.dishwasher_sensor_available:
   friendly_name: Dishwasher Sensor
   icon: mdi:chip
@@ -81,6 +85,10 @@ sensor.driveway_free_memory:
   friendly_name: Driveway
   icon: mdi:memory
 
+sensor.cellar_controller_free_memory:
+  friendly_name: Cellar Controller
+  icon: mdi:memory
+
 sensor.dishwasher_sensor_free_memory:
   friendly_name: Dishwasher Sensor
   icon: mdi:memory
@@ -103,6 +111,10 @@ sensor.well_controller_uptime:
 
 sensor.driveway_uptime:
   friendly_name: Driveway
+  icon: mdi:clock
+
+sensor.cellar_controller_uptime:
+  friendly_name: Cellar Controller
   icon: mdi:clock
 
 sensor.dishwasher_sensor_uptime:
