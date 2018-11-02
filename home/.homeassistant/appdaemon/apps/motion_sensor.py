@@ -48,5 +48,5 @@ class MotionSensor(hass.Hass):
     def __should_start(self):
         for enabler in self.__enablers:
             is_enabled = enabler[1].is_enabled()
-            # self.log('%s: enabled=%s' % (enabler[0], is_enabled))
+            self.log('%s: enabled=%s' % (enabler[0], is_enabled))
         return all([enabler[1].is_enabled() for enabler in self.__enablers])

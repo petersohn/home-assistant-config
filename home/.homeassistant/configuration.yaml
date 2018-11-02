@@ -407,6 +407,12 @@ switch:
     state_topic: home/switches/lights/garage/state
     payload_on: 1
     payload_off: 0
+  - platform: mqtt
+    name: light_christmas_front
+    command_topic: home/switches/lights/christmas/front/set
+    state_topic: home/switches/lights/christmas/front/state
+    payload_on: 1
+    payload_off: 0
 
 input_select:
     light_driveway:

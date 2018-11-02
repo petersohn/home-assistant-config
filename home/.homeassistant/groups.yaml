@@ -46,6 +46,7 @@ lights:
     - switch.light_attic_upstairs
     - switch.light_cellar
     - switch.light_garage
+    - switch.light_christmas_front
 
 weather_measurements:
   view: no

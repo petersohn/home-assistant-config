@@ -246,6 +246,10 @@ switch.light_garage:
   friendly_name: "Garázs"
   icon: mdi:lightbulb
 
+switch.light_christmas_front:
+  friendly_name: "Karácsonyi"
+  icon: mdi:lightbulb-outline
+
 group.temperature:
   friendly_name: "Hőmérséklet"
 
