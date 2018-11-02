@@ -84,6 +84,31 @@ Sun Goes Down
     Enabled State Should Be  sun_enabler_day  ${False}
     Enabled State Should Be  sun_enabler_night  ${True}
 
+Date Enabler
+    [Setup]  NONE
+    [Template]  Test Date Enabler
+    # start_date  enabler                expected_state
+    2018-01-01    date_enabler_same      ${False}
+    2018-03-10    date_enabler_same      ${False}
+    2018-03-11    date_enabler_same      ${True}
+    2018-03-12    date_enabler_same      ${False}
+    2018-12-31    date_enabler_same      ${False}
+    2018-01-01    date_enabler_forward   ${False}
+    2018-04-30    date_enabler_forward   ${False}
+    2018-05-01    date_enabler_forward   ${True}
+    2018-05-02    date_enabler_forward   ${True}
+    2018-10-05    date_enabler_forward   ${True}
+    2018-10-06    date_enabler_forward   ${True}
+    2018-10-07    date_enabler_forward   ${False}
+    2018-12-31    date_enabler_forward   ${False}
+    2018-01-01    date_enabler_backward  ${True}
+    2018-04-29    date_enabler_backward  ${True}
+    2018-04-30    date_enabler_backward  ${True}
+    2018-05-01    date_enabler_backward  ${False}
+    2018-06-19    date_enabler_backward  ${False}
+    2018-06-20    date_enabler_backward  ${True}
+    2018-06-21    date_enabler_backward  ${True}
+    2018-12-31    date_enabler_backward  ${True}
 
 *** Keywords ***
 
@@ -92,8 +117,15 @@ Set Value And Check State
     Set State  ${entity}  ${value}
     Enabled State Should Be  ${enabler}  ${expected_state}
 
+Test Date Enabler
+    [Teardown]  Cleanup AppDaemon
+    [Arguments]  ${start_date}  ${enabler}  ${expected_state}
+    Initialize  10:00:00  ${start_date}  ${enabler}-${start_date}
+    Enabled State Should Be  ${enabler}  ${expected_state}
+
 Initialize
-    [Arguments]  ${start_time}
+    [Arguments]  ${start_time}  ${start_date}=${default_start_date}
+    ...          ${suffix}=${Empty}
     Clean States
     Initialize States
     ...    ${input_binary}=off
@@ -101,4 +133,5 @@ Initialize
     ${apps} =  Create List  TestApp  enabler
     ${app_configs} =  Create List  TestApp  Enabler
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
+    ...                   start_date=${start_date}  suffix=${suffix}
     Unblock For  ${appdaemon_interval}

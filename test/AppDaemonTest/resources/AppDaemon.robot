@@ -18,7 +18,7 @@ ${test_arg}         This is a test
 *** Keywords ***
 
 Start AppDaemon
-    [Arguments]  ${start_time}
+    [Arguments]  ${start_time}  ${start_date}=${default_start_date}
     ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}
     ...    exclude_millis=true
     ${app_daemon_process} =  Start Process   ./appdaemon

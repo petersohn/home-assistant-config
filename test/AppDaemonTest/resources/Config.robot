@@ -17,10 +17,11 @@ Setup Output Directory
     Create Directory   ${OUTPUT_DIRECTORY}
 
 Initialize AppDaemon
-    [Arguments]  ${apps}  ${app_configs}  ${start_time}=00:00:00  ${suffix}=${Empty}
+    [Arguments]  ${apps}  ${app_configs}  ${start_time}=00:00:00
+    ...    ${start_date}=${default_start_date}  ${suffix}=${Empty}
     Setup Output Directory  ${suffix}
     Create AppDaemon Configuration  ${OUTPUT_DIRECTORY}  ${apps}  ${app_configs}
-    Start App Daemon  ${start_time}
+    Start App Daemon  ${start_time}  ${start_date}
     Wait For App Daemon To Start
 
 Cleanup AppDaemon

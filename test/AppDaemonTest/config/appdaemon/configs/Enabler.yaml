@@ -60,3 +60,21 @@ sun_enabler_night:
     module: enabler
     class: SunEnabler
     day: false
+
+date_enabler_same:
+    module: enabler
+    class: DateEnabler
+    begin: 03-11
+    end: 03-11
+
+date_enabler_forward:
+    module: enabler
+    class: DateEnabler
+    begin: 05-01
+    end: 10-06
+
+date_enabler_backward:
+    module: enabler
+    class: DateEnabler
+    begin: 06-20
+    end: 04-30

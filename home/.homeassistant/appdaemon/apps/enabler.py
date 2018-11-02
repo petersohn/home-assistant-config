@@ -55,6 +55,23 @@ class SunEnabler(hass.Hass):
                 (not self.__day and self.sun_down()))
 
 
+class DateEnabler(hass.Hass):
+    def initialize(self):
+        self.__begin =\
+            datetime.datetime.strptime(self.args['begin'], '%m-%d').date()
+        self.__end =\
+            datetime.datetime.strptime(self.args['end'], '%m-%d').date()
+
+    def is_enabled(self):
+        now = self.date()
+        begin = datetime.date(now.year, self.__begin.month, self.__begin.day)
+        end = datetime.date(now.year, self.__end.month, self.__end.day)
+        if begin <= end:
+            return begin <= now <= end
+        else: # begin > end
+            return now >= begin or now <= end
+
+
 class HistoryEnabler(hass.Hass):
     def initialize(self):
         import history
