@@ -21,6 +21,8 @@
             "type": "output",
             "name": "light_attic_upstairs",
             "commandTopic": "home/switches/lights/attic/upstairs/set",
+            "invert": true,
+            "default": 0,
             "pin": 2
         },
         {
@@ -32,12 +34,22 @@
             "type": "output",
             "name": "light_attic_downstairs",
             "commandTopic": "home/switches/lights/attic/downstairs/set",
+            "invert": true,
+            "default": 0,
             "pin": 5
         },
         {
             "type": "input",
             "name": "light_switch_attic_downstairs",
             "pin": 13
+        },
+        {
+            "type": "output",
+            "name": "light_christmas",
+            "commandTopic": "home/switches/lights/christmas/front/set",
+            "invert": true,
+            "default": 0,
+            "pin": 12
         },
         {
             "type": "analog",
@@ -56,6 +68,12 @@
             "type": "publish",
             "interface": "light_attic_downstairs",
             "topic": "home/switches/lights/attic/downstairs/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light_christmas",
+            "topic": "home/switches/lights/christmas/front/state",
             "retain": true
         },
         {

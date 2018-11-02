@@ -1,0 +1,102 @@
+{
+    "debug": true,
+    "name": "cellar_controller",
+    "availabilityTopic": "home/devices/cellar_controller/availability",
+    "interfaces": [
+        {
+            "type": "input",
+            "name": "light_switch_cellar",
+            "pin": 0
+        },
+        {
+            "type": "output",
+            "name": "light_cellar",
+            "commandTopic": "home/switches/lights/cellar/set",
+            "invert": true,
+            "default": 0,
+            "pin": 2
+        },
+        {
+            "type": "input",
+            "name": "light_switch_garage",
+            "pin": 3
+        },
+        {
+            "type": "output",
+            "name": "light_garage",
+            "commandTopic": "home/switches/lights/garage/set",
+            "invert": true,
+            "default": 0,
+            "pin": 4
+        },
+        {
+            "type": "dht",
+            "name": "temperature_cellar",
+            "pin": 5
+        },
+        {
+            "type": "input",
+            "name": "motion_sensor_driveway_upper",
+            "pin": 12
+        },
+        {
+            "type": "input",
+            "name": "motion_sensor_driveway_lower",
+            "pin": 13
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "light_cellar",
+            "topic": "home/switches/lights/cellar/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light_garage",
+            "topic": "home/switches/lights/garage/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "motion_sensor_driveway_upper",
+            "topic": "home/sensors/motion/driveway_upper",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "motion_sensor_driveway_lower",
+            "topic": "home/sensors/motion/driveway_lower",
+            "retain": false
+        },
+        {
+            "type": "command",
+            "interface": "light_switch_cellar",
+            "target": "light_cellar",
+            "command": "toggle",
+            "value": "0"
+        },
+        {
+            "type": "command",
+            "interface": "light_switch_garage",
+            "target": "light_garage",
+            "command": "toggle",
+            "value": "0"
+        },
+        {
+            "type": "publish",
+            "interface": "temperature_cellar",
+            "topic": "home/sensors/temperature/cellar",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "temperature_cellar",
+            "topic": "home/sensors/humidity/cellar",
+            "template": "%2",
+            "retain": true
+        }
+    ]
+}
