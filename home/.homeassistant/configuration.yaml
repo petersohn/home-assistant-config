@@ -387,14 +387,14 @@ switch:
     name: light_attic_downstairs
     command_topic: home/switches/lights/attic/downstairs/set
     state_topic: home/switches/lights/attic/downstairs/state
-    payload_on: 0
-    payload_off: 1
+    payload_on: 1
+    payload_off: 0
   - platform: mqtt
     name: light_attic_upstairs
     command_topic: home/switches/lights/attic/upstairs/set
     state_topic: home/switches/lights/attic/upstairs/state
-    payload_on: 0
-    payload_off: 1
+    payload_on: 1
+    payload_off: 0
   - platform: mqtt
     name: light_cellar
     command_topic: home/switches/lights/cellar/set
