@@ -37,6 +37,8 @@ class HistoryManager(hass.Hass):
 
         limit = self.datetime() - self.__refresh_interval
         while self.__history[-1].time < limit:
+            self.log('+' + str(new))
+
             value = self.__history[-1].value
             self.__history.append(HistoryElement(
                 self.__history[-1].time + self.__refresh_interval,
@@ -102,11 +104,13 @@ class HistoryManager(hass.Hass):
     def __on_changed(self, entity, attribute, old, new, kwargs):
         if new == old:
             return
+        # self.log(entity + ': ' + str(old) + ' -> ' + str(new))
         now = self.datetime()
         limit = now - self.__max_interval
         self.__history = list(filter(
             lambda element: element.time >= limit, self.__history))
         self.__fill()
+        # self.log('*' + str(new))
         self.__history.append(HistoryElement(now, new))
 
 
@@ -152,8 +156,10 @@ class AggregatedValue(hass.Hass):
 
     def __set_state(self):
         value = self.__aggregator.get(self.__interval)
+        # self.log(self.__target + ' <- ' + str(value))
         self.set_state(
             self.__target, state=value, attributes=self.__attributes)
 
     def __on_change(self, entity, attribute, old, new, kwargs):
-        self.__set_state()
+        if old != new:
+            self.__set_state()
