@@ -91,3 +91,11 @@ class HistoryEnabler(hass.Hass):
     def is_enabled(self):
         return is_between(
             self.__aggregator.get(self.__interval), self.__min, self.__max)
+
+
+class MultiEnabler:
+    def __init__(self, app, enablers):
+        self.__enablers = [app.get_app(enabler) for enabler in enablers]
+
+    def is_enabled(self):
+        return all([enabler.is_enabled() for enabler in self.__enablers])

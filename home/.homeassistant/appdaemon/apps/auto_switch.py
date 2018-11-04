@@ -95,3 +95,16 @@ class Switcher:
         if self.__state:
             self.__auto_switch.auto_turn_off()
             self.__state = False
+
+
+class MultiSwitcher:
+    def __init__(self, app, targets):
+        self.__targets = [Switcher(app.get_app(target)) for target in targets]
+
+    def turn_on(self):
+        for target in self.__targets:
+            target.turn_on()
+
+    def turn_off(self):
+        for target in self.__targets:
+            target.turn_off()
