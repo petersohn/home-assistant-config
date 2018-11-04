@@ -37,9 +37,8 @@ class HistoryManager(hass.Hass):
 
         limit = self.datetime() - self.__refresh_interval
         while self.__history[-1].time < limit:
-            self.log('+' + str(new))
-
             value = self.__history[-1].value
+            # self.log('+' + str(value))
             self.__history.append(HistoryElement(
                 self.__history[-1].time + self.__refresh_interval,
                 value))
