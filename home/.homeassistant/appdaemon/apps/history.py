@@ -161,6 +161,5 @@ class AggregatedValue(hass.Hass):
             self.__target, state=value, attributes=self.__attributes)
 
     def __on_change(self, entity, attribute, old, new, kwargs):
-        self.__set_state()
-        # if old != new:
-        #     self.__set_state()
+        if old != new:
+            self.__set_state()
