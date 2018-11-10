@@ -1,6 +1,7 @@
 *** Settings ***
 
 Library  libraries/TypeUtil.py
+Library  Collections
 
 
 *** Test Cases ***
@@ -20,3 +21,10 @@ Extract Nonexisting Item From Dictionary
 
     Should Be Equal  ${result}  ${None}
     Should Be Equal  ${dictionary}  ${expected_output}
+
+
+Repeat Item Test
+    ${item} =  Set Variable  foobar
+    ${result} =  Repeat Item  ${item}  ${3}
+    ${expected_result} =  Create List  foobar  foobar  foobar
+    Lists Should Be Equal  ${result}  ${expected_result}
