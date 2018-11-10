@@ -32,18 +32,24 @@ class HistoryManager(hass.Hass):
         return self.__loaded
 
     def __fill(self):
-        if not self.__history or self.__refresh_interval is None:
+        if not self.__history:
             return
 
-        limit = self.datetime() - self.__refresh_interval
-        while self.__history[-1].time < limit:
-            value = self.__history[-1].value
-            # self.log('+' + str(value))
-            self.__history.append(HistoryElement(
-                self.__history[-1].time + self.__refresh_interval,
-                value))
+        if self.__refresh_interval is not None:
+            limit = self.datetime() - self.__refresh_interval
+            while self.__history[-1].time < limit:
+                value = self.__history[-1].value
+                # self.log('+' + str(value))
+                self.__history.append(HistoryElement(
+                    self.__history[-1].time + self.__refresh_interval,
+                    value))
+
+        limit = self.datetime() - self.__max_interval
+        self.__history = list(filter(
+            lambda element: element.time >= limit, self.__history))
 
     def get_history(self, interval=None):
+        self.__fill()
         if interval is not None:
             limit = self.datetime() - interval
             # self.log(pprint.pformat(['{}: {}'.format(e.time, e.value) for e in self.__history]))
@@ -104,13 +110,9 @@ class HistoryManager(hass.Hass):
         if new == old:
             return
         # self.log(entity + ': ' + str(old) + ' -> ' + str(new))
-        now = self.datetime()
-        limit = now - self.__max_interval
-        self.__history = list(filter(
-            lambda element: element.time >= limit, self.__history))
         self.__fill()
         # self.log('*' + str(new))
-        self.__history.append(HistoryElement(now, new))
+        self.__history.append(HistoryElement(self.datetime(), new))
 
 
 class Aggregator:

@@ -1,5 +1,7 @@
 *** Settings ***
 
+Library        libraries/TypeUtil.py
+Library        Collections
 Resource       resources/Config.robot
 Resource       resources/Enabler.robot
 Test Setup     Initialize
@@ -42,6 +44,29 @@ Refresh Interval
     Unblock For  2 min
     Set State  ${entity}  10
     History Should Be  3  6  2  2  2  3  3  0  0  10
+
+
+No Events for a Long Time
+    Set Test Variable  ${name}  test_history_manager_refresh_interval
+    Set State  ${entity}  3
+    Unblock For  1 min
+    Set State  ${entity}  6
+    Unblock For  1 hour 1 min
+    ${expected_result} =  Repeat Item  6  ${60}
+    History Should Be  @{expected_result}
+
+
+Events After a Long Time
+    Set Test Variable  ${name}  test_history_manager_refresh_interval
+    Set State  ${entity}  3
+    Unblock For  1 min
+    Set State  ${entity}  6
+    Unblock For  1 hour 1 min
+    Set State  ${entity}  8
+    Unblock For  30 sec
+    ${expected_result} =  Repeat Item  6  ${59}
+    Append To List  ${expected_result}  8
+    History Should Be  @{expected_result}
 
 
 Old History Elements Are Removed
@@ -117,14 +142,14 @@ Should Be Loaded
 History Should Be
     [Arguments]  @{expected_values}  &{kwargs}
     ${values} =  Call Function  call_on_app  ${name}  get_values  &{kwargs}
-    Should Be Equal  ${values}  ${expected_values}
+    Lists Should Be Equal  ${values}  ${expected_values}
 
 Limited History Should Be
     [Arguments]  ${interval}  @{expected_values}
     ${arg_types} =  Create List  ${None}  ${None}  convert_timedelta
     ${values} =  Call Function  call_on_app  ${name}
     ...   get_values  ${interval}  arg_types=${arg_types}
-    Should Be Equal  ${values}  ${expected_values}
+    Lists Should Be Equal  ${values}  ${expected_values}
 
 Initialize
     Initialize States
