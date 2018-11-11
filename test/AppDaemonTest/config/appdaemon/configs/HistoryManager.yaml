@@ -28,6 +28,17 @@ aggregated_value:
         minutes: 3
     aggregator: sum
 
+aggregated_value_refresh_interval:
+    class: AggregatedValue
+    module: history
+    dependencies: test_history_manager_refresh_interval
+    manager: test_history_manager_refresh_interval
+    target: sensor.test_sensor_sum_refresh_interval
+    default: 0
+    interval:
+        minutes: 3
+    aggregator: sum
+
 mean_value:
     class: AggregatedValue
     module: history

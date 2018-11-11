@@ -12,7 +12,8 @@ Test Teardown  Cleanup AppDaemon
 
 ${name} =    test_history_manager
 ${entity} =  sensor.test_sensor
-${target_entity} =  sensor.test_sensor_sum
+${sum_entity} =  sensor.test_sensor_sum
+${sum_entity_r} =  sensor.test_sensor_sum_refresh_interval
 ${mean_entity} =  sensor.test_sensor_mean
 ${enabler} =  test_history_enabler
 
@@ -68,7 +69,6 @@ Events After a Long Time
     Append To List  ${expected_result}  8
     History Should Be  @{expected_result}
 
-
 Old History Elements Are Removed
     Set State  ${entity}  20
     Unblock For  20 min
@@ -100,23 +100,51 @@ History Enabler
 
 Aggregated Value
     Unblock For  1 min
-    State Should Be As  ${target_entity}  Int  ${0}
+    State Should Be As  ${sum_entity}  Int  ${0}
     Set State  ${entity}  3
     Unblock For  1 min
-    State Should Be As  ${target_entity}  Int  ${3}
+    State Should Be As  ${sum_entity}  Int  ${3}
     Set State  ${entity}  5
     Unblock For  1 min
-    State Should Be As  ${target_entity}  Int  ${8}
+    State Should Be As  ${sum_entity}  Int  ${8}
+    Set State  ${entity}  2
     Set State  ${entity}  2
     Unblock For  1 min
-    State Should Be As  ${target_entity}  Int  ${10}
+    State Should Be As  ${sum_entity}  Int  ${10}
     Set State  ${entity}  5
     Unblock For  1 min
-    State Should Be As  ${target_entity}  Int  ${12}
+    State Should Be As  ${sum_entity}  Int  ${12}
     Set State  ${entity}  1
     Unblock For  1 min
-    State Should Be As  ${target_entity}  Int  ${8}
+    State Should Be As  ${sum_entity}  Int  ${8}
 
+Aggregated Value With Refresh Interval
+    Unblock For  20 sec
+    Set State  ${entity}  3
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_r}  Int  ${3}
+    Set State  ${entity}  5
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_r}  Int  ${8}
+    Set State  ${entity}  2
+    Set State  ${entity}  2
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_r}  Int  ${10}
+    Set State  ${entity}  5
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_r}  Int  ${12}
+    Set State  ${entity}  10
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_r}  Int  ${17}
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_r}  Int  ${25}
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_r}  Int  ${30}
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_r}  Int  ${30}
+    Set State  ${entity}  1
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_r}  Int  ${21}
 
 Custom Aggregator
     Unblock For  1 min

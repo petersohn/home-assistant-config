@@ -14,12 +14,12 @@ HistoryElement = namedtuple('HistoryElement', ['time', 'value'])
 
 class HistoryManager(hass.Hass):
     def initialize(self):
-        self.__max_interval = datetime.timedelta(
+        self.max_interval = datetime.timedelta(
             **self.args.get('max_interval', {'days': 1}))
         self.entity_id = self.args['entity']
-        self.__refresh_interval = None
+        self.refresh_interval = None
         if 'refresh_interval' in self.args:
-            self.__refresh_interval = datetime.timedelta(
+            self.refresh_interval = datetime.timedelta(
                 **self.args['refresh_interval'])
         self.__hass_config = [
             config for config in self.config['plugins'].values()
@@ -35,16 +35,16 @@ class HistoryManager(hass.Hass):
         if not self.__history:
             return
 
-        if self.__refresh_interval is not None:
-            limit = self.datetime() - self.__refresh_interval
+        if self.refresh_interval is not None:
+            limit = self.datetime() - self.refresh_interval
             while self.__history[-1].time < limit:
                 value = self.__history[-1].value
                 # self.log('+' + str(value))
                 self.__history.append(HistoryElement(
-                    self.__history[-1].time + self.__refresh_interval,
+                    self.__history[-1].time + self.refresh_interval,
                     value))
 
-        limit = self.datetime() - self.__max_interval
+        limit = self.datetime() - self.max_interval
         self.__history = list(filter(
             lambda element: element.time >= limit, self.__history))
 
@@ -65,7 +65,7 @@ class HistoryManager(hass.Hass):
         self.log('Loading history...')
         try:
             timestamp = (
-                datetime.datetime.now() - self.__max_interval).strftime(
+                datetime.datetime.now() - self.max_interval).strftime(
                 '%Y-%m-%dT%H:%M:%S%z')
             url = (self.__hass_config['ha_url'] + '/api/history/period/'
                    + timestamp + '?filter_entity_id=' + self.entity_id)
@@ -150,18 +150,23 @@ class AggregatedValue(hass.Hass):
             self.args['aggregator'],
             self.args.get('default'))
         self.__target = self.args['target']
-        self.__interval = datetime.timedelta(**self.args['interval'])
-        self.__attributes = self.args.get('attributes', {})
-        self.listen_state(self.__on_change, manager.entity_id)
+        self.interval = datetime.timedelta(**self.args['interval'])
+        self.attributes = self.args.get('attributes', {})
+
+        if manager.refresh_interval is not None:
+            self.run_every(
+                lambda _: self.__set_state(), self.datetime(),
+                manager.refresh_interval.seconds)
+        else:
+            self.listen_state(self.__on_change, manager.entity_id)
         self.__set_state()
 
     def __set_state(self):
-        value = self.__aggregator.get(self.__interval)
+        value = self.__aggregator.get(self.interval)
         # self.log(self.__target + ' <- ' + str(value))
         self.set_state(
-            self.__target, state=value, attributes=self.__attributes)
+            self.__target, state=value, attributes=self.attributes)
 
     def __on_change(self, entity, attribute, old, new, kwargs):
-        self.__set_state()
-        # if old != new:
-        #     self.__set_state()
+        if old != new:
+            self.__set_state()
