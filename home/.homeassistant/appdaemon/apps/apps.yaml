@@ -97,3 +97,31 @@ driveway_motion_sensor:
     - sun_enabler_night
     - wind_disabler
   time: 2
+
+christmas_light_switch:
+  module: auto_switch
+  class: AutoSwitch
+  target: switch.light_christmas_front
+  switch: input_select.light_christmas
+
+christmas_lights_enabler:
+    module: enabler
+    class: DateEnabler
+    begin: 11-15
+    end: 02-28
+
+christmas_light_switcher:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - christmas_light_switch
+        - christmas_lights_enabler
+        - sun_enabler_night
+    global_dependencies:
+        - auto_switch
+        - enabler
+    enablers:
+        - christmas_lights_enabler
+        - sun_enabler_night
+    targets:
+        - christmas_light_switch

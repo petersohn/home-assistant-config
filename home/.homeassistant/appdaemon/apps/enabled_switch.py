@@ -17,7 +17,10 @@ class EnabledSwitch(hass.Hass):
             self.poll_interval.seconds)
 
     def __set_state(self):
+        self.log('check')
         if self.__enablers.is_enabled():
+            self.log('enabled')
             self.__targets.turn_on()
         else:
+            self.log('disabled')
             self.__targets.turn_off()

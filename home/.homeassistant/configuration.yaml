@@ -421,6 +421,12 @@ input_select:
             - "auto"
             - "on"
             - "off"
+    light_christmas:
+        name: Karácsonyi világítás
+        options:
+            - "auto"
+            - "on"
+            - "off"
 
 mqtt_statestream:
   base_topic: home

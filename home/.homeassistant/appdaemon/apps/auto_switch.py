@@ -14,7 +14,14 @@ class AutoSwitch(hass.Hass):
             self.run_in(self.__initialize_state, 0)
             self.listen_state(self.__on_switch_change, entity=self.__switch)
         self.__state = None
-        self.run_in(lambda _: self.__update(0), 0)
+        self.run_in(lambda _: self.__init(), 0)
+
+    def __init(self):
+        try:
+            self.__update(0)
+        except:
+            self.run_in(lambda _: self.__init(), 1)
+            raise
 
     def __initialize_state(self, kwargs):
         switch_state = self.get_state(self.__switch)
