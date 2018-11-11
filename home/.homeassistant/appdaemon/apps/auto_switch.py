@@ -27,12 +27,14 @@ class AutoSwitch(hass.Hass):
             self.turn_off(self.__target)
 
     def auto_turn_on(self):
+        self.log('turn on')
         if self.__reentrant:
             self.__update(self.__state + 1)
         else:
             self.__update(1)
 
     def auto_turn_off(self):
+        self.log('turn off')
         if self.__reentrant:
             assert self.__state != 0
             self.__update(self.__state - 1)
@@ -49,9 +51,11 @@ class AutoSwitch(hass.Hass):
 
         if state == 0:
             self.__set_intended_state('off')
+            self.log('TURN OFF ' + self.__target)
             self.turn_off(self.__target)
         else:
             self.__set_intended_state('on')
+            self.log('TURN ON ' + self.__target)
             self.turn_on(self.__target)
 
     def __set_intended_state(self, state):

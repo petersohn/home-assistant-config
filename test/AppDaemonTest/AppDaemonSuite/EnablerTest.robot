@@ -20,19 +20,19 @@ Script Enabler
     Enabled State Should Be  script_enabler_true  ${True}
     Enabled State Should Be  script_enabler_false  ${False}
 
-    Call Function  call_on_app  script_enabler_default  disable
+    Set Enabled State  script_enabler_default  disable
     Enabled State Should Be  script_enabler_default  ${False}
-    Call Function  call_on_app  script_enabler_default  enable
+    Set Enabled State  script_enabler_default  enable
     Enabled State Should Be  script_enabler_default  ${True}
 
-    Call Function  call_on_app  script_enabler_true  disable
+    Set Enabled State  script_enabler_true  disable
     Enabled State Should Be  script_enabler_true  ${False}
-    Call Function  call_on_app  script_enabler_true  enable
+    Set Enabled State  script_enabler_true  enable
     Enabled State Should Be  script_enabler_true  ${True}
 
-    Call Function  call_on_app  script_enabler_false  enable
+    Set Enabled State  script_enabler_false  enable
     Enabled State Should Be  script_enabler_false  ${True}
-    Call Function  call_on_app  script_enabler_false  disable
+    Set Enabled State  script_enabler_false  disable
     Enabled State Should Be  script_enabler_false  ${False}
 
 Entity Based Enablers
