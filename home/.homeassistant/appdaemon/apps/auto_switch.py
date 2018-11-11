@@ -51,11 +51,9 @@ class AutoSwitch(hass.Hass):
 
         if state == 0:
             self.__set_intended_state('off')
-            self.log('TURN OFF ' + self.__target)
             self.turn_off(self.__target)
         else:
             self.__set_intended_state('on')
-            self.log('TURN ON ' + self.__target)
             self.turn_on(self.__target)
 
     def __set_intended_state(self, state):
