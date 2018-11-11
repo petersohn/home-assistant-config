@@ -73,9 +73,7 @@ class AutoSwitch(hass.Hass):
     def __on_target_change(self, entity, attribute, old, new, kwargs):
         if not self.__intended_state and self.__switch:
             self.log('Switching to manual mode')
-            self.call_service(
-                'input_select/select_option', entity_id=self.__switch,
-                option=new)
+            self.select_option(entity_id=self.__switch, option=new)
             self.__intended_state = None
         elif new == self.__intended_state:
             self.__intended_state = None
