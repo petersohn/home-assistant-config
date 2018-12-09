@@ -191,6 +191,9 @@ sensor.temperature_furnace_gas:
 sensor.temperature_furnace_wood:
   friendly_name: "Fakazán"
 
+sensor.temperature_hot_water:
+  friendly_name: "Melegvíz"
+
 sensor.temperature_dishwasher:
   friendly_name: "Mosogatógép hőmérséklet"
 

@@ -154,6 +154,10 @@ sensor:
     unit_of_measurement: "°C"
     name: temperature_furnace_wood
   - platform: mqtt
+    state_topic: home/sensors/temperature/hot_water
+    unit_of_measurement: "°C"
+    name: temperature_hot_water
+  - platform: mqtt
     state_topic: home/sensors/wind/direction
     unit_of_measurement: "°"
     name: wind_direction

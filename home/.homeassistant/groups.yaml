@@ -86,6 +86,7 @@ machinery:
   entities:
     - sensor.temperature_furnace_gas
     - sensor.temperature_furnace_wood
+    - sensor.temperature_hot_water
     - switch.heating_pump
     - sensor.water_usage_dishwasher
     - sensor.temperature_dishwasher
