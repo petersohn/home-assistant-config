@@ -53,6 +53,10 @@ binary_sensor.well_controller_available:
   friendly_name: Well Controller
   icon: mdi:chip
 
+binary_sensor.main_controller_available:
+  friendly_name: Main Controller
+  icon: mdi:chip
+
 binary_sensor.driveway_available:
   friendly_name: Driveway
   icon: mdi:chip
@@ -81,6 +85,10 @@ sensor.well_controller_free_memory:
   friendly_name: Well Controller
   icon: mdi:memory
 
+sensor.main_controller_free_memory:
+  friendly_name: Main Controller
+  icon: mdi:memory
+
 sensor.driveway_free_memory:
   friendly_name: Driveway
   icon: mdi:memory
@@ -107,6 +115,10 @@ sensor.furnace_temperature_uptime:
 
 sensor.well_controller_uptime:
   friendly_name: Well Controller
+  icon: mdi:clock
+
+sensor.main_controller_uptime:
+  friendly_name: Main Controller
   icon: mdi:clock
 
 sensor.driveway_uptime:

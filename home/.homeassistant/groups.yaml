@@ -109,6 +109,7 @@ device_availability:
   entities:
     - binary_sensor.furnace_temperature_available
     - binary_sensor.well_controller_available
+    - binary_sensor.main_controller_available
     - binary_sensor.driveway_available
     - binary_sensor.cellar_controller_available
     - binary_sensor.living_room_temperature_available
@@ -120,6 +121,7 @@ device_memory:
   entities:
     - sensor.furnace_temperature_free_memory
     - sensor.well_controller_free_memory
+    - sensor.main_controller_free_memory
     - sensor.driveway_free_memory
     - sensor.cellar_controller_free_memory
     - sensor.living_room_temperature_free_memory
@@ -131,6 +133,7 @@ device_uptime:
   entities:
     - sensor.furnace_temperature_uptime
     - sensor.well_controller_uptime
+    - sensor.main_controller_uptime
     - sensor.driveway_uptime
     - sensor.cellar_controller_uptime
     - sensor.living_room_temperature_uptime
