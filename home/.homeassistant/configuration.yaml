@@ -98,6 +98,14 @@ sensor:
     unit_of_measurement: "%"
     name: humidity_cellar
   - platform: mqtt
+    state_topic: home/sensors/temperature/attic
+    unit_of_measurement: "°C"
+    name: temperature_attic
+  - platform: mqtt
+    state_topic: home/sensors/humidity/attic
+    unit_of_measurement: "%"
+    name: humidity_attic
+  - platform: mqtt
     state_topic: home/sensors/temperature/living_room/lower
     unit_of_measurement: "°C"
     name: temperature_living_room_lower

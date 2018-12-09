@@ -68,6 +68,8 @@ weather_inside:
     - sensor.humidity_furnace_room
     - sensor.temperature_cellar
     - sensor.humidity_cellar
+    - sensor.temperature_attic
+    - sensor.humidity_attic
     - sensor.temperature_living_room_lower
     - sensor.humidity_living_room_lower
     - sensor.temperature_living_room_upper
