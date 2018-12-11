@@ -55,6 +55,12 @@
             "type": "analog",
             "name": "wind_direction",
             "interval": 10
+        },
+        {
+            "type": "dht",
+            "name": "dht",
+            "interval": 60,
+            "pin": 14
         }
     ],
     "actions": [
@@ -108,6 +114,20 @@
             "type": "publish",
             "interface": "wind_strength",
             "topic": "home/sensors/wind/strength",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/temperature/attic",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/humidity/attic",
+            "template": "%2",
             "retain": true
         },
         {
