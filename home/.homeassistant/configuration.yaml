@@ -461,6 +461,12 @@ input_select:
             - "auto"
             - "on"
             - "off"
+    well:
+        name: Kút
+        options:
+            - "off"
+            - "on"
+            - "auto"
 
 mqtt_statestream:
   base_topic: home

@@ -104,6 +104,12 @@ christmas_light_switch:
   target: switch.light_christmas_front
   switch: input_select.light_christmas
 
+well_auto_switch:
+  module: auto_switch
+  class: AutoSwitch
+  target: switch.well
+  switch: input_select.well
+
 christmas_lights_enabler:
     module: enabler
     class: DateEnabler
@@ -125,3 +131,4 @@ christmas_light_switcher:
         - sun_enabler_night
     targets:
         - christmas_light_switch
+        - well_auto_switch
