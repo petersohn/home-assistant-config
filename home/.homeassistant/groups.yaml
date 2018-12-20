@@ -104,6 +104,8 @@ network_availability:
     - binary_sensor.gateway_available
     - binary_sensor.ssh_tunnel_available
     - binary_sensor.mosquitto_bridge_available
+    - sensor.asuswrt_download_speed
+    - sensor.asuswrt_upload_speed
 
 device_availability:
   view: no

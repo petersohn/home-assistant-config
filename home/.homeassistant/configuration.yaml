@@ -468,6 +468,11 @@ input_select:
             - "on"
             - "auto"
 
+asuswrt:
+  host: !secret router_address
+  username: !secret router_username
+  ssh_key: !secret ssh_key
+
 mqtt_statestream:
   base_topic: home
   include:
