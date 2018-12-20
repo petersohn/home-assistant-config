@@ -289,13 +289,13 @@ binary_sensor:
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/driveway/availability
-    name: cellar_controller_available
+    name: driveway_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/cellar_controller/availability
-    name: driveway_available
+    name: cellar_controller_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
