@@ -61,7 +61,7 @@ class HistoryManager(hass.Hass):
     def get_values(self, interval=None):
         return [element.value for element in self.get_history(interval)]
 
-    def __load_config(self):
+    def __load_config(self, *args, **kwargs):
         self.log('Loading history...')
         try:
             timestamp = (
@@ -72,7 +72,10 @@ class HistoryManager(hass.Hass):
             self.log('Calling API: ' + url)
             with request.urlopen(request.Request(
                     url,
-                    headers={'x-ha-access': self.__hass_config['ha_key']})) \
+                    headers={
+                        'Authorization':
+                            'Bearer ' + self.__hass_config['token'],
+                    })) \
                     as result:
                 if result.status >= 300:
                     raise http.client.HTTPException(result.reason)
@@ -137,6 +140,7 @@ class Aggregator:
             else:
                 values = self.__manager.get_values()[-1:]
         # self.__manager.log('values={}'.format(values))
+
         result = self.__aggregator(values)
         # self.__manager.log('result={}'.format(result))
         return result
