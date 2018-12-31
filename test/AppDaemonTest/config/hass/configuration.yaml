@@ -4,10 +4,11 @@ homeassistant:
     longitude: 19.040419
     elevation: 100
     time_zone: Europe/Budapest
+    auth_providers:
+        - type: homeassistant
 
 http:
     server_port: 18123
-    api_password: pass
 
 api:
 

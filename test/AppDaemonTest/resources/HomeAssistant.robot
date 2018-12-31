@@ -2,6 +2,7 @@
 
 Library    HttpLibrary.HTTP
 Library    Process
+Library    OperatingSystem
 Resource   resources/Http.robot
 Variables  libraries/Directories.py
 
@@ -9,15 +10,21 @@ Variables  libraries/Directories.py
 *** Variables ***
 
 ${home_assistant_host}  127.0.0.1:18123
-${home_assistant_password}  pass
+${home_assistant_token}  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkY2U3MDgwNDIwYmI0Mjg3OWIyYjQ1MjQ4OTQzNjI4YiIsImlhdCI6MTU0NjI1MDYyNiwiZXhwIjoxODYxNjEwNjI2fQ.1YmZVaw3EH2bu0jExU2Q6mIyrD1Qf0cPPJmt877mNC0
 
 
 *** Keywords ***
 
 Start Home Assistant
+    ${config_path} =    Set Variable  ${base_output_directory}/config
+    Remove Directory    ${config_path}  recursive=${True}
+    Copy File           ${hass_config_path}/configuration.yaml
+    ...                 ${config_path}/
+    Copy File           ${hass_config_path}//auth
+    ...                 ${config_path}/.storage/
     ${hass_process} =   Start Process   ./hass
     ...    --verbose
-    ...    --config     ${hass_config_path}
+    ...    --config     ${config_path}
     ...    --log-file   ${base_output_directory}/homeassistant.log
     ...    stdout=${base_output_directory}/homeassistant.stdout
     ...    stderr=${base_output_directory}/homeassistant.stderr
@@ -43,7 +50,7 @@ Wait For Home Assistant To Stop
     Process Should Be Stopped
 
 Authenticate
-    Set Request Header  x-ha-access  ${home_assistant_password}
+    Set Request Header  Authorization  Bearer ${home_assistant_token}
 
 Do Delete State
     [Arguments]  ${entity_id}
