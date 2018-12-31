@@ -234,7 +234,7 @@ sensor.rain:
 sensor.tmp_free_space:
   friendly_name: "/tmp szabad hely"
 
-sensor.tmp_free_space:
+sensor.var_log_free_space:
   friendly_name: "/var/log szabad hely"
 
 switch.heating_pump:
