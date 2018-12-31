@@ -149,6 +149,10 @@ sensor:
     unit_of_measurement: "l"
     name: water_usage_dishwasher
   - platform: mqtt
+    state_topic: home/sensors/water/main
+    unit_of_measurement: "l"
+    name: water_usage
+  - platform: mqtt
     state_topic: home/sensors/temperature/furnace/gas
     unit_of_measurement: "°C"
     name: temperature_furnace_gas

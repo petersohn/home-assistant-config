@@ -220,6 +220,10 @@ sensor.water_usage_dishwasher:
   friendly_name: "Mosogatógép vízhasználat"
   icon: mdi:water
 
+sensor.water_usage:
+  friendly_name: "Vízhasználat"
+  icon: mdi:water
+
 sensor.wind_direction:
   friendly_name: "Szélirány"
 

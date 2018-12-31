@@ -93,6 +93,7 @@ machinery:
     - switch.heating_pump
     - sensor.water_usage_dishwasher
     - sensor.temperature_dishwasher
+    - sensor.water_usage
 
 network_availability:
   view: no
