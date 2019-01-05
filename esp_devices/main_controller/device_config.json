@@ -2,6 +2,7 @@
     "debug": true,
     "name": "main_controller",
     "availabilityTopic": "home/devices/main_controller/availability",
+    "debugTopic": "home/devices/main_controller/debug",
     "interfaces": [
         {
             "type": "input",

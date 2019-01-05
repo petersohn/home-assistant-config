@@ -2,6 +2,7 @@
     "debug": true,
     "name": "living_room_temperature",
     "availabilityTopic": "home/devices/living_room_temperature/availability",
+    "debugTopic": "home/devices/living_room_temperature/debug",
     "interfaces": [
         {
             "type": "dht",

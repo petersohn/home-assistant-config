@@ -2,6 +2,7 @@
     "debug": true,
     "name": "well_controller",
     "availabilityTopic": "home/devices/well_controller/availability",
+    "debugTopic": "home/devices/well_controller/debug",
     "interfaces": [
         {
             "type": "input",

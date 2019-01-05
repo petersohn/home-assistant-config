@@ -2,6 +2,7 @@
     "debug": true,
     "name": "bedroom_temperature",
     "availabilityTopic": "home/devices/bedroom_temperature/availability",
+    "debugTopic": "home/devices/bedroom_temperature/debug",
     "interfaces": [
         {
             "type": "dht",

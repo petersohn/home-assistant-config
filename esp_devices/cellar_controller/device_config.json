@@ -2,6 +2,7 @@
     "debug": false,
     "name": "cellar_controller",
     "availabilityTopic": "home/devices/cellar_controller/availability",
+    "debugTopic": "home/devices/cellar_controller/debug",
     "interfaces": [
         {
             "type": "input",

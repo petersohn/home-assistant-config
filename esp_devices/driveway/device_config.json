@@ -2,6 +2,7 @@
     "debug": true,
     "name": "driveway",
     "availabilityTopic": "home/devices/driveway/availability",
+    "debugTopic": "home/devices/driveway/debug",
     "interfaces": [
         {
             "type": "output",
