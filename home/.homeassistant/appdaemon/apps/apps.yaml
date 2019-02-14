@@ -62,7 +62,7 @@ wind_disabler:
     dependencies: wind_short_term
     manager: wind_short_term
     aggregator: max
-    max: 50
+    max: 40
     interval:
       minutes: 10
     default: 0
