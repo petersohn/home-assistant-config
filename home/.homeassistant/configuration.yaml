@@ -58,7 +58,6 @@ mqtt:
 
 sensor:
   - platform: yr
-    state_topic: yr
     monitored_conditions:
       - temperature
       - symbol
