@@ -453,23 +453,21 @@ input_select:
             - "auto"
             - "on"
             - "off"
+        initial: "auto"
     light_christmas:
         name: Karácsonyi világítás
         options:
             - "auto"
             - "on"
             - "off"
+        initial: "auto"
     well:
         name: Kút
         options:
             - "off"
             - "on"
             - "auto"
-
-asuswrt:
-  host: !secret router_address
-  username: !secret router_username
-  ssh_key: !secret ssh_key
+        initial: "off"
 
 mqtt_statestream:
   base_topic: home
@@ -485,6 +483,8 @@ influxdb:
   username: !secret influxdb_username
   password: !secret influxdb_password
   database: !secret influxdb_database
+
+system_health:
 
 group: !include groups.yaml
 automation: !include automations.yaml
