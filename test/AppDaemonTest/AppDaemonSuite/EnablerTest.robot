@@ -94,6 +94,17 @@ Date Enabler
     2018-06-21    date_enabler_backward  ${True}
     2018-12-31    date_enabler_backward  ${True}
 
+Multi Enabler
+    [Template]  Test Multi Enabler
+    ${False}  script_enabler_default=disable  script_enabler_true=disable  script_enabler_false=disable
+    ${False}  script_enabler_default=disable  script_enabler_true=disable  script_enabler_false=enable
+    ${False}  script_enabler_default=disable  script_enabler_true=enable   script_enabler_false=disable
+    ${False}  script_enabler_default=disable  script_enabler_true=enable   script_enabler_false=enable
+    ${False}  script_enabler_default=enable   script_enabler_true=disable  script_enabler_false=disable
+    ${False}  script_enabler_default=enable   script_enabler_true=disable  script_enabler_false=enable
+    ${False}  script_enabler_default=enable   script_enabler_true=enable   script_enabler_false=disable
+    ${True}   script_enabler_default=enable   script_enabler_true=enable   script_enabler_false=enable
+
 *** Keywords ***
 
 Set Value And Check State
@@ -106,6 +117,12 @@ Test Date Enabler
     [Arguments]  ${start_date}  ${enabler}  ${expected_state}
     Initialize  10:00:00  ${start_date}  ${enabler}-${start_date}
     Enabled State Should Be  ${enabler}  ${expected_state}
+
+Test Multi Enabler
+    [Arguments]  ${expected_state}  &{kwargs}
+    :FOR  ${name}  IN  @{kwargs.keys()}
+    \    Set Enabled State  ${name}  ${kwargs['${name}']}
+    Enabled State Should Be  multi_enabler  ${expected_state}
 
 Initialize
     [Arguments]  ${start_time}  ${start_date}=${default_start_date}

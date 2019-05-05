@@ -1,7 +1,6 @@
 import appdaemon.plugins.hass.hassapi as hass
 
 import auto_switch
-import enabler
 
 
 class MotionSensor(hass.Hass):
@@ -10,8 +9,11 @@ class MotionSensor(hass.Hass):
         self.__sensors = self.args['sensors']
         self.__targets = auto_switch.MultiSwitcher(self, self.args['targets'])
         self.__time = float(self.args['time']) * 60
-        self.__enablers = enabler.MultiEnabler(
-            self, self.args.get('enablers', []))
+        enabler = self.args.get('enabler')
+        if enabler is not None:
+            self.__enabler = self.get_app(enabler)
+        else:
+            self.__enabler = None
 
         self.__timer = None
 
@@ -42,4 +44,6 @@ class MotionSensor(hass.Hass):
             self.__timer = None
 
     def __should_start(self):
-        return self.__enablers.is_enabled()
+        if self.__enabler is None:
+            return True
+        return self.__enabler.is_enabled()

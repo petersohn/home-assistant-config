@@ -68,3 +68,15 @@ date_enabler_backward:
     class: DateEnabler
     begin: 06-20
     end: 04-30
+
+multi_enabler:
+    module: enabler
+    class: MultiEnabler
+    dependencies:
+        - script_enabler_default
+        - script_enabler_true
+        - script_enabler_false
+    enablers:
+        - script_enabler_default
+        - script_enabler_true
+        - script_enabler_false

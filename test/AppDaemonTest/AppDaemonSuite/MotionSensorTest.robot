@@ -12,8 +12,7 @@ Test Teardown  Cleanup AppDaemon
 ${motion_detector1} =  binary_sensor.motion_detector1
 ${motion_detector2} =  binary_sensor.motion_detector2
 ${switch} =            input_boolean.motion_light
-${enabler1} =          test_enabler1
-${enabler2} =          test_enabler2
+${enabler} =          test_enabler
 ${delay} =             1 min
 
 
@@ -57,21 +56,8 @@ Switch Off After Motion Restarts
     State Should Change At  ${switch}  on  20 sec
     State Should Change At  ${switch}  off  2 min
 
-Do Not Start If One Enabler Is Disabled
-    Disable  ${enabler1}
-    Set State  ${motion_detector1}  on
-    Set State  ${motion_detector1}  off
-    State Should Be  ${switch}  off
-
-Do Not Start If Other Enabler Is Disabled
-    Disable  ${enabler2}
-    Set State  ${motion_detector1}  on
-    Set State  ${motion_detector1}  off
-    State Should Be  ${switch}  off
-
-Do Not Start If All Enablers Are Disabled
-    Disable  ${enabler1}
-    Disable  ${enabler2}
+Do Not Start If Enabler Is Disabled
+    Disable  ${enabler}
     Set State  ${motion_detector1}  on
     Set State  ${motion_detector1}  off
     State Should Be  ${switch}  off
@@ -81,7 +67,7 @@ Do Not Restart After Disabling
     Set State  ${motion_detector1}  off
     State Should Be  ${switch}  on
     Schedule Call At  30 sec
-    ...    call_on_app  ${enabler1}  disable
+    ...    call_on_app  ${enabler}  disable
     Schedule Call At  1 min 10 sec
     ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  1 min 20 sec
@@ -94,7 +80,7 @@ Do Not Restart After Disabling While In Motion
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  30 sec
-    ...    call_on_app  ${enabler1}  disable
+    ...    call_on_app  ${enabler}  disable
     Schedule Call At  40 sec
     ...    set_sensor_state  ${motion_detector1}  off
     Schedule Call At  1 min 50 sec
@@ -112,7 +98,7 @@ Do Not Restart After Movement While Disabled And On
     Schedule Call At  30 sec
     ...    set_sensor_state  ${motion_detector1}  off
     Schedule Call At  50 sec
-    ...    call_on_app  ${enabler1}  disable
+    ...    call_on_app  ${enabler}  disable
     Schedule Call At  1 min
     ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  1 min 10 sec
@@ -123,14 +109,14 @@ Do Not Restart After Movement While Disabled And On
     State Should Not Change  ${switch}  deadline=2 min
 
 Restart After Enabling
-    Disable  ${enabler1}
+    Disable  ${enabler}
 
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  30 sec
     ...    set_sensor_state  ${motion_detector1}  off
     Schedule Call At  50 sec
-    ...    call_on_app  ${enabler1}  enable
+    ...    call_on_app  ${enabler}  enable
     Schedule Call At  1 min 10 sec
     ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  1 min 20 sec
@@ -140,12 +126,12 @@ Restart After Enabling
     State Should Change At  ${switch}  off  2 min 20 sec
 
 Restart After Enabling While In Motion
-    Disable  ${enabler1}
+    Disable  ${enabler}
 
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector1}  on
     Schedule Call At  30 sec
-    ...    call_on_app  ${enabler1}  enable
+    ...    call_on_app  ${enabler}  enable
     Schedule Call At  40 sec
     ...    set_sensor_state  ${motion_detector1}  off
     Schedule Call At  1 min

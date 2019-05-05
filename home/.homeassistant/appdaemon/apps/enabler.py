@@ -110,9 +110,16 @@ class HistoryEnabler(Enabler):
             self._changed(enabled)
 
 
-class MultiEnabler:
-    def __init__(self, app, enablers):
-        self.__enablers = [app.get_app(enabler) for enabler in enablers]
+class MultiEnabler(Enabler):
+    def initialize(self):
+        self.__enablers = [
+            self.get_app(enabler) for enabler in self.args.get('enablers')]
+        self._init_enabler(self.__get())
+        for enabler in self.__enablers:
+            enabler.on_change(lambda _: self.__on_change())
 
-    def is_enabled(self):
+    def __on_change(self):
+        self._change(self.__get())
+
+    def __get(self):
         return all([enabler.is_enabled() for enabler in self.__enablers])
