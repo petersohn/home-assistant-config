@@ -82,21 +82,28 @@ wind_direction_average:
     unit_of_measurement: "°"
     friendly_name: "Szélirány"
 
+motion_sensor_enabler:
+  module: enabler
+  class: MultiEnabler
+  dependencies:
+    - sun_enabler_night
+    - wind_disabler
+  enablers:
+    - sun_enabler_night
+    - wind_disabler
+
 driveway_motion_sensor:
   class: MotionSensor
   module: motion_sensor
   dependencies:
-    - sun_enabler_night
-    - wind_disabler
     - auto_switch_light_driveway
+    - motion_sensor_enabler
   sensors:
     - binary_sensor.motion_sensor_driveway_upper
     - binary_sensor.motion_sensor_driveway_lower
   targets:
     - auto_switch_light_driveway
-  enablers:
-    - sun_enabler_night
-    - wind_disabler
+  enabler: motion_sensor_enabler
   time: 2
 
 christmas_light_switch:
@@ -111,11 +118,21 @@ well_auto_switch:
   target: switch.well
   switch: input_select.well
 
-christmas_lights_enabler:
+christmas_lights_date_enabler:
     module: enabler
     class: DateEnabler
     begin: 11-15
     end: 02-28
+
+christmas_lights_enabler:
+  module: enabler
+  class: MultiEnabler
+  dependencies:
+        - christmas_lights_date_enabler
+        - sun_enabler_night
+  enablers:
+        - christmas_lights_date_enabler
+        - sun_enabler_night
 
 christmas_light_switcher:
     class: EnabledSwitch
@@ -123,13 +140,9 @@ christmas_light_switcher:
     dependencies:
         - christmas_light_switch
         - christmas_lights_enabler
-        - sun_enabler_night
     global_dependencies:
         - auto_switch
-        - enabler
-    enablers:
-        - christmas_lights_enabler
-        - sun_enabler_night
+    enabler: christmas_lights_enabler
     targets:
         - christmas_light_switch
         - well_auto_switch
