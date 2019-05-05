@@ -284,3 +284,7 @@ group.temperature:
 
 group.machinery:
   friendly_name: "Gépészet"
+
+binary_sensor.night:
+  friendly_name: "Éjszaka"
+  icon: weather-night

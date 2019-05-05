@@ -20,6 +20,7 @@ weather:
 state:
   view: yes
   icon: mdi:wrench
+  control: hidden
   entities:
     - group.network_availability
     - group.device_availability
@@ -53,6 +54,7 @@ lights:
 weather_measurements:
   view: no
   name: Időjárás
+  control: hidden
   entities:
     - sensor.temperature_outside
     - sensor.humidity_outside
@@ -64,6 +66,7 @@ weather_measurements:
 weather_inside:
   view: no
   name: "Beltéri időjárás"
+  control: hidden
   entities:
     - sensor.temperature_furnace_room
     - sensor.humidity_furnace_room
@@ -98,6 +101,7 @@ machinery:
 network_availability:
   view: no
   name: Hálózat
+  control: hidden
   entities:
     - binary_sensor.network_available
     - binary_sensor.desktop_available
@@ -105,11 +109,10 @@ network_availability:
     - binary_sensor.gateway_available
     - binary_sensor.ssh_tunnel_available
     - binary_sensor.mosquitto_bridge_available
-    - sensor.asuswrt_download_speed
-    - sensor.asuswrt_upload_speed
 
 device_availability:
   view: no
+  control: hidden
   entities:
     - binary_sensor.furnace_temperature_available
     - binary_sensor.well_controller_available
@@ -122,6 +125,7 @@ device_availability:
 
 device_memory:
   view: no
+  control: hidden
   entities:
     - sensor.furnace_temperature_free_memory
     - sensor.well_controller_free_memory
@@ -134,6 +138,7 @@ device_memory:
 
 device_uptime:
   view: no
+  control: hidden
   entities:
     - sensor.furnace_temperature_uptime
     - sensor.well_controller_uptime
@@ -146,6 +151,7 @@ device_uptime:
 
 local_device:
   view: no
+  control: hidden
   entities:
     - sensor.tmp_free_space
     - sensor.var_log_free_space
@@ -153,13 +159,16 @@ local_device:
 weather_state:
   view: no
   name: State
+  control: hidden
   entities:
     - sun.sun
     - sensor.moon
+    - binary_sensor.Night
 
 yr:
   view: no
   name: YR
+  control: hidden
   entities:
     - sensor.yr_symbol
     - sensor.yr_temperature
