@@ -1,0 +1,35 @@
+{
+    "debug": true,
+    "name": "gate_reflector",
+    "availabilityTopic": "home/devices/gate_reflector/availability",
+    "debugTopic": "home/devices/gate_reflector/debug",
+    "interfaces": [
+        {
+            "type": "output",
+            "name": "relay",
+            "commandTopic": "home/switches/lights/gate_reflector/set",
+            "pin": 2,
+            "invert": true,
+            "default": 0
+        },
+        {
+            "type": "input",
+            "name": "motion_sensor",
+            "pin": 3
+        },
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "relay",
+            "topic": "home/switches/lights/gate_reflector/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "motion_sensor",
+            "topic": "home/sensors/motion/gate_reflector",
+            "retain": false
+        }
+    ]
+}
