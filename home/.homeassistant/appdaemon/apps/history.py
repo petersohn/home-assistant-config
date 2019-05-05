@@ -5,7 +5,6 @@ import http.client
 import json
 from collections import namedtuple
 import re
-import pprint
 import traceback
 
 
@@ -52,7 +51,6 @@ class HistoryManager(hass.Hass):
         self.__fill()
         if interval is not None:
             limit = self.datetime() - interval
-            # self.log(pprint.pformat(['{}: {}'.format(e.time, e.value) for e in self.__history]))
             return [
                 element for element in self.__history if element.time > limit]
         else:
@@ -112,9 +110,7 @@ class HistoryManager(hass.Hass):
     def __on_changed(self, entity, attribute, old, new, kwargs):
         if new == old:
             return
-        # self.log(entity + ': ' + str(old) + ' -> ' + str(new))
         self.__fill()
-        # self.log('*' + str(new))
         self.__history.append(HistoryElement(self.datetime(), new))
 
 
@@ -128,7 +124,6 @@ class Aggregator:
     def get(self, interval):
         values = []
         raw = self.__manager.get_values(interval)
-        # self.__manager.log('raw={}'.format(raw))
         for value in raw:
             try:
                 values.append(float(value))
@@ -139,38 +134,60 @@ class Aggregator:
                 values = [self.__default]
             else:
                 values = self.__manager.get_values()[-1:]
-        # self.__manager.log('values={}'.format(values))
 
         result = self.__aggregator(values)
-        # self.__manager.log('result={}'.format(result))
         return result
 
 
-class AggregatedValue(hass.Hass):
-    def initialize(self):
-        manager = self.get_app(self.args['manager'])
+class AggregatorApp:
+    def __init__(self, app, callback):
+        self.__app = app
+        self.__manager = app.get_app(app.args['manager'])
         self.__aggregator = Aggregator(
-            manager,
-            self.args['aggregator'],
-            self.args.get('default'))
-        self.__target = self.args['target']
-        self.interval = datetime.timedelta(**self.args['interval'])
-        self.attributes = self.args.get('attributes', {})
-
-        if manager.refresh_interval is not None:
-            self.run_every(
-                lambda _: self.__set_state(), self.datetime(),
-                manager.refresh_interval.seconds)
+            self.__manager,
+            app.args['aggregator'],
+            app.args.get('default'))
+        if 'interval' in app.args:
+            self.__interval = datetime.timedelta(**app.args['interval'])
         else:
-            self.listen_state(self.__on_change, manager.entity_id)
+            self.__interval = None
+        self.__callback = callback
+        if self.__manager.refresh_interval is not None:
+            app.run_every(
+                lambda _: self.__set_state(), self.__app.datetime(),
+                self.__manager.refresh_interval.seconds)
+        else:
+            app.listen_state(self.__on_change, self.__manager.entity_id)
+        self.__timer_needed = self.__interval is not None and \
+            self.__manager.refresh_interval is None
+        self.__timer = None
         self.__set_state()
 
     def __set_state(self):
-        value = self.__aggregator.get(self.interval)
-        # self.log(self.__target + ' <- ' + str(value))
-        self.set_state(
-            self.__target, state=value, attributes=self.attributes)
+        if self.__timer is not None:
+            self.__app.cancel_timer(self.__timer)
+            self.__timer = None
+        value = self.__aggregator.get(self.__interval)
+        self.__callback(value)
+        if self.__timer_needed:
+            history = self.__manager.get_history(self.__interval)
+            if history:
+                next_run = history[0].time + self.__interval
+                if next_run > self.__app.datetime():
+                    self.__timer = self.__app.run_at(
+                        lambda _: self.__set_state(), next_run)
 
     def __on_change(self, entity, attribute, old, new, kwargs):
         if old != new:
             self.__set_state()
+
+
+class AggregatedValue(hass.Hass):
+    def initialize(self):
+        self.__target = self.args['target']
+        self.attributes = self.args.get('attributes', {})
+        self.__aggregator_app = AggregatorApp(self, self.__set_state)
+
+    def __set_state(self, value):
+        self.set_state(
+            self.__target, state=value, attributes=self.attributes)

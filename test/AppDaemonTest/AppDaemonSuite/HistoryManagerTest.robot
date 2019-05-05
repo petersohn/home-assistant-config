@@ -110,13 +110,13 @@ Aggregated Value
     Set State  ${entity}  2
     Set State  ${entity}  2
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${10}
+    State Should Be As  ${sum_entity}  Int  ${7}
     Set State  ${entity}  5
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${12}
+    State Should Be As  ${sum_entity}  Int  ${7}
     Set State  ${entity}  1
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${8}
+    State Should Be As  ${sum_entity}  Int  ${6}
 
 Aggregated Value With Refresh Interval
     Unblock For  20 sec

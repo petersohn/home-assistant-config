@@ -49,7 +49,7 @@ mean_value:
     target: sensor.test_sensor_mean
     default: 0
     interval:
-        minutes: 2
+        minutes: 3
     aggregator: mean
 
 test_history_enabler:
