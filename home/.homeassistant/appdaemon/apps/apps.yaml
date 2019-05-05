@@ -41,8 +41,9 @@ auto_switch_light_driveway:
 
 sun_enabler_night:
     module: enabler
-    class: SunEnabler
-    day: false
+    class: ValueEnabler
+    entity: binary_sensor.night
+    value: 'on'
 
 wind_short_term:
   module: history

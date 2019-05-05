@@ -68,22 +68,6 @@ Entity Based Enablers
     ${input_sensor}  ${16}    range_enabler_only_max  ${False}
     ${input_sensor}  ${100}   range_enabler_only_max  ${False}
 
-Sun Comes Up
-    [Setup]  Initialize  ${before_sunrise}
-    Enabled State Should Be  sun_enabler_day  ${False}
-    Enabled State Should Be  sun_enabler_night  ${True}
-    Unblock Until Sunrise
-    Enabled State Should Be  sun_enabler_day  ${True}
-    Enabled State Should Be  sun_enabler_night  ${False}
-
-Sun Goes Down
-    [Setup]  Initialize  ${before_sunset}
-    Enabled State Should Be  sun_enabler_day  ${True}
-    Enabled State Should Be  sun_enabler_night  ${False}
-    Unblock Until Sunset
-    Enabled State Should Be  sun_enabler_day  ${False}
-    Enabled State Should Be  sun_enabler_night  ${True}
-
 Date Enabler
     [Setup]  NONE
     [Template]  Test Date Enabler

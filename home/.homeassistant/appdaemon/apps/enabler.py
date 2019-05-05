@@ -46,15 +46,6 @@ class RangeEnabler(hass.Hass):
         return is_between(value, self.__min, self.__max)
 
 
-class SunEnabler(hass.Hass):
-    def initialize(self):
-        self.__day = self.args.get('day', True)
-
-    def is_enabled(self):
-        return ((self.__day and self.sun_up()) or
-                (not self.__day and self.sun_down()))
-
-
 class DateEnabler(hass.Hass):
     def initialize(self):
         self.__begin =\

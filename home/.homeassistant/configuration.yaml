@@ -396,6 +396,13 @@ binary_sensor:
     command: 'timeout 2 netcat localhost 8888 </dev/null && echo ON || echo OFF'
     name: ssh_tunnel_available
 
+  - platform: tod
+    name: Night
+    after: sunset
+    after_offset: 00:10
+    before: sunrise
+    before_offset: -00:10
+
 switch:
   - platform: mqtt
     name: well

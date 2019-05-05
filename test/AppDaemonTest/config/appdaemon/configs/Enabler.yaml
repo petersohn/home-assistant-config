@@ -51,16 +51,6 @@ range_enabler_only_max:
     entity: sensor.test_input
     max: 15
 
-sun_enabler_day:
-    module: enabler
-    class: SunEnabler
-    day: true
-
-sun_enabler_night:
-    module: enabler
-    class: SunEnabler
-    day: false
-
 date_enabler_same:
     module: enabler
     class: DateEnabler
