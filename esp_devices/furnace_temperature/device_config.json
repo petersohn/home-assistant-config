@@ -8,7 +8,8 @@
             "type": "dallasTemperature",
             "name": "dallas",
             "interval": 15,
-            "pin": 2
+            "pin": 2,
+            "devices": 3
         },
         {
             "type": "output",
@@ -28,15 +29,22 @@
         {
             "type": "publish",
             "interface": "dallas",
-            "topic": "home/sensors/temperature/furnace/gas",
+            "topic": "home/sensors/temperature/furnace/wood_in",
             "payload": {"type": "value", "index": 1},
             "retain": true
         },
         {
             "type": "publish",
             "interface": "dallas",
-            "topic": "home/sensors/temperature/furnace/wood",
+            "topic": "home/sensors/temperature/furnace/gas",
             "payload": {"type": "value", "index": 2},
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "dallas",
+            "topic": "home/sensors/temperature/furnace/wood",
+            "payload": {"type": "value", "index": 3},
             "retain": true
         },
         {
