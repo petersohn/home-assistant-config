@@ -75,7 +75,7 @@
                 "type": "if",
                 "cond": {
                     "type": ">=",
-                    "ops": [{"type": "value", "index": 2}, 80]
+                    "ops": [{"type": "value", "index": 3}, 80]
                 },
                 "then": "1",
                 "else": ""
@@ -89,7 +89,7 @@
                 "type": "if",
                 "cond": {
                     "type": "<",
-                    "ops": [{"type": "value", "index": 2}, 25]
+                    "ops": [{"type": "value", "index": 3}, 25]
                 },
                 "then": "0",
                 "else": ""
