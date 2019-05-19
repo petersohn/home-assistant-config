@@ -287,4 +287,12 @@ group.machinery:
 
 binary_sensor.night:
   friendly_name: "Éjszaka"
-  icon: weather-night
+  icon: mdi:weather-night
+
+binary_sensor.motion_sensor_driveway_upper:
+  friendly_name: "Bejáró fent"
+  icon: mdi:walk
+
+binary_sensor.motion_sensor_driveway_lower:
+  friendly_name: "Bejáró lent"
+  icon: mdi:walk
