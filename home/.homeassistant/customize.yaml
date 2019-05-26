@@ -302,6 +302,9 @@ switch.light_gate_reflector:
   friendly_name: "Kapu reflektor"
   icon: mdi:lightbulb
 
+input_select.light_gate_reflector:
+  icon: mdi:lightbulb
+
 group.temperature:
   friendly_name: "Hőmérséklet"
 
