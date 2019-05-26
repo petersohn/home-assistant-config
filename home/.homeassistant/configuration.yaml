@@ -76,6 +76,14 @@ sensor:
     unit_of_measurement: "%"
     name: humidity_outside
   - platform: mqtt
+    state_topic: home/sensors/temperature/outside2
+    unit_of_measurement: "°C"
+    name: temperature_outside
+  - platform: mqtt
+    state_topic: home/sensors/humidity/outside2
+    unit_of_measurement: "%"
+    name: humidity_outside
+  - platform: mqtt
     state_topic: home/sensors/temperature/furnace_room
     unit_of_measurement: "°C"
     name: temperature_furnace_room
@@ -256,6 +264,16 @@ sensor:
     name: dishwasher_sensor_uptime
     value_template: '{{ value_json.uptime }}'
     unit_of_measurement: "ms"
+  - platform: mqtt
+    state_topic: home/devices/gate_reflector/availability
+    name: gate_reflector_free_memory
+    value_template: '{{ value_json.freeMemory }}'
+    unit_of_measurement: "b"
+  - platform: mqtt
+    state_topic: home/devices/gate_reflector/availability
+    name: gate_reflector_uptime
+    value_template: '{{ value_json.uptime }}'
+    unit_of_measurement: "ms"
 
   - platform: command_line
     command: "df /tmp | tail -n 1 | awk '{print $4}'"
@@ -315,6 +333,12 @@ binary_sensor:
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/gate_reflector/availability
+    name: gate_reflector_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
 
   - platform: mqtt
     state_topic: home/devices/well_controller/availability
@@ -364,7 +388,18 @@ binary_sensor:
     value_template: '{{ value_json.restarted }}'
     payload_on: true
     payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/gate_reflector/availability
+    name: gate_reflector_restarted
+    value_template: '{{ value_json.restarted }}'
+    payload_on: true
+    payload_off: false
 
+  - platform: mqtt
+    state_topic: home/sensors/motion/gate_reflector
+    name: motion_sensor_driveway_uppest
+    payload_on: 1
+    payload_off: 0
   - platform: mqtt
     state_topic: home/sensors/motion/driveway_upper
     name: motion_sensor_driveway_upper
@@ -450,6 +485,12 @@ switch:
     name: light_christmas_front
     command_topic: home/switches/lights/christmas/front/set
     state_topic: home/switches/lights/christmas/front/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: light_gate_reflector
+    command_topic: home/switches/lights/gate_reflector/set
+    state_topic: home/switches/lights/gate_reflector/state
     payload_on: 1
     payload_off: 0
 
