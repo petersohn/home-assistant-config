@@ -68,7 +68,9 @@ weather_measurements:
   control: hidden
   entities:
     - sensor.temperature_outside
+    - sensor.temperature_outside2
     - sensor.humidity_outside
+    - sensor.humidity_outside2
     - sensor.wind_direction
     - sensor.wind_direction_average
     - sensor.wind_strength

@@ -78,11 +78,11 @@ sensor:
   - platform: mqtt
     state_topic: home/sensors/temperature/outside2
     unit_of_measurement: "°C"
-    name: temperature_outside
+    name: temperature_outside2
   - platform: mqtt
     state_topic: home/sensors/humidity/outside2
     unit_of_measurement: "%"
-    name: humidity_outside
+    name: humidity_outside2
   - platform: mqtt
     state_topic: home/sensors/temperature/furnace_room
     unit_of_measurement: "°C"

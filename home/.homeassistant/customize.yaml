@@ -77,6 +77,10 @@ binary_sensor.bedroom_temperature_available:
   friendly_name: Bedroom Temperature Available
   icon: mdi:chip
 
+binary_sensor.gate_reflector_available:
+  friendly_name: Gate Reflector Available
+  icon: mdi:chip
+
 sensor.furnace_temperature_free_memory:
   friendly_name: Furnace Temperature
   icon: mdi:memory
@@ -107,6 +111,10 @@ sensor.living_room_temperature_free_memory:
 
 sensor.bedroom_temperature_free_memory:
   friendly_name: Bedroom Temperature
+  icon: mdi:memory
+
+sensor.gate_reflector_free_memory:
+  friendly_name: Gate Reflector
   icon: mdi:memory
 
 sensor.furnace_temperature_uptime:
@@ -141,11 +149,22 @@ sensor.bedroom_temperature_uptime:
   friendly_name: Bedroom Temperature
   icon: mdi:clock
 
+sensor.gate_reflector_uptime:
+  friendly_name: Gate Reflector
+  icon: mdi:clock
+
 sensor.temperature_outside:
   friendly_name: "Kinti hőmérséklet"
 
 sensor.humidity_outside:
   friendly_name: "Kinti páratartalom"
+  icon: mdi:water-percent
+
+sensor.temperature_outside2:
+  friendly_name: "Kinti hőmérséklet 2"
+
+sensor.humidity_outside2:
+  friendly_name: "Kinti páratartalom 2"
   icon: mdi:water-percent
 
 sensor.temperature_living_room_lower:
@@ -277,6 +296,10 @@ switch.light_christmas_front:
   icon: mdi:lightbulb-outline
 
 input_select.light_christmas:
+  icon: mdi:lightbulb-outline
+
+switch.light_gate_reflector:
+  friendly_name: "Kapu reflektor"
   icon: mdi:lightbulb
 
 group.temperature:
@@ -289,10 +312,14 @@ binary_sensor.night:
   friendly_name: "Éjszaka"
   icon: mdi:weather-night
 
+binary_sensor.motion_sensor_driveway_uppest:
+  friendly_name: "Bejáró legfelső"
+  icon: mdi:walk
+
 binary_sensor.motion_sensor_driveway_upper:
-  friendly_name: "Bejáró fent"
+  friendly_name: "Bejáró felső"
   icon: mdi:walk
 
 binary_sensor.motion_sensor_driveway_lower:
-  friendly_name: "Bejáró lent"
+  friendly_name: "Bejáró alsó"
   icon: mdi:walk
