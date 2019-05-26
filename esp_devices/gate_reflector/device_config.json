@@ -8,15 +8,25 @@
             "type": "output",
             "name": "relay",
             "commandTopic": "home/switches/lights/gate_reflector/set",
-            "pin": 2,
-            "invert": true,
+            "pin": 3,
             "default": 0
         },
         {
             "type": "input",
             "name": "motion_sensor",
-            "pin": 3
+            "pin": 4
         },
+        {
+            "type": "analog",
+            "name": "light",
+            "interval": 30
+        },
+        {
+            "type": "dht",
+            "name": "dht",
+            "interval": 60,
+            "pin": 2
+        }
     ],
     "actions": [
         {
@@ -30,6 +40,26 @@
             "interface": "motion_sensor",
             "topic": "home/sensors/motion/gate_reflector",
             "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "light",
+            "topic": "home/sensors/light/shadow",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/temperature/outside2",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/humidity/outside2",
+            "template": "%2",
+            "retain": true
         }
     ]
 }
