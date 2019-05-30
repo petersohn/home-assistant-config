@@ -76,6 +76,7 @@ weather_measurements:
     - sensor.wind_direction_average
     - sensor.wind_strength
     - sensor.rain
+    - sensor.light_shadow
 
 weather_inside:
   view: no

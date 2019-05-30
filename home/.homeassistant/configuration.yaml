@@ -183,6 +183,11 @@ sensor:
     state_topic: home/sensors/rain
     unit_of_measurement: "mm"
     name: rain
+  - platform: mqtt
+    state_topic: home/sensors/light/shadow
+    unit_of_measurement: "%"
+    name: light_shadow
+    value_template: "{{ value | float / 10.24 }}"
 
   - platform: mqtt
     state_topic: home/devices/well_controller/availability
