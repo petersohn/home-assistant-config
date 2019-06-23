@@ -168,6 +168,10 @@ sensor:
     unit_of_measurement: "°C"
     name: temperature_furnace_wood
   - platform: mqtt
+    state_topic: home/sensors/temperature/furnace/wood_in
+    unit_of_measurement: "°C"
+    name: temperature_furnace_wood_in
+  - platform: mqtt
     state_topic: home/sensors/temperature/hot_water
     unit_of_measurement: "°C"
     name: temperature_hot_water
