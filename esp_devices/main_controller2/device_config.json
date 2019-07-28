@@ -1,0 +1,77 @@
+{
+    "debug": true,
+    "name": "main_controller",
+    "availabilityTopic": "home/devices/main_controller2/availability",
+    "debugTopic": "home/devices/main_controller2/debug",
+    "interfaces": [
+        {
+            "type": "output",
+            "name": "light1",
+            "commandTopic": "home/switches/lights/outside/1/set",
+            "invert": true,
+            "default": 0,
+            "pin": 0
+        },
+        {
+            "type": "output",
+            "name": "light2",
+            "commandTopic": "home/switches/lights/outside/2/set",
+            "invert": true,
+            "default": 0,
+            "pin": 2
+        },
+        {
+            "type": "output",
+            "name": "light3",
+            "commandTopic": "home/switches/lights/outside/3/set",
+            "invert": true,
+            "default": 0,
+            "pin": 3
+        },
+        {
+            "type": "output",
+            "name": "light4",
+            "commandTopic": "home/switches/lights/outside/4/set",
+            "invert": true,
+            "default": 0,
+            "pin": 4
+        },
+        {
+            "type": "analog",
+            "name": "light_sensor",
+            "interval": 30
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "light1",
+            "topic": "home/switches/lights/outside/1/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light2",
+            "topic": "home/switches/lights/outside/2/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light3",
+            "topic": "home/switches/lights/outside/3/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light4",
+            "topic": "home/switches/lights/outside/4/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light_sensor",
+            "topic": "home/sensors/light/sunlight",
+            "retain": true
+        }
+    ]
+}

@@ -1,0 +1,84 @@
+{
+    "debug": true,
+    "name": "well_controller",
+    "availabilityTopic": "home/devices/well_controller/availability",
+    "debugTopic": "home/devices/well_controller/debug",
+    "interfaces": [
+        {
+            "type": "input",
+            "name": "button",
+            "pin": 3
+        },
+        {
+            "type": "output",
+            "name": "manual",
+            "commandTopic": "home/switches/well/set",
+            "default": false,
+            "invert": true,
+            "pin": 0
+        },
+        {
+            "type": "output",
+            "name": "auto",
+            "commandTopic": "home/switches/auto_sprinkler/set",
+            "default": false,
+            "invert": true,
+            "pin": 4
+        },
+        {
+            "type": "output",
+            "name": "light",
+            "commandTopic": "home/switches/lights/christmas/tree/set",
+            "default": false,
+            "invert": true,
+            "pin": 5
+        },
+        {
+            "type": "dht",
+            "name": "dht",
+            "interval": 60,
+            "pin": 2
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "manual",
+            "topic": "home/switches/well/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "auto",
+            "topic": "home/switches/auto_sprinkler/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light",
+            "topic": "home/switches/lights/christmas/tree/state",
+            "retain": true
+        },
+        {
+            "type": "command",
+            "interface": "button",
+            "target": "manual",
+            "command": "toggle",
+            "value": "0"
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/temperature/outside",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/humidity/outside",
+            "template": "%2",
+            "retain": true
+        }
+    ]
+}
