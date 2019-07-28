@@ -69,7 +69,8 @@ class AutoSwitch(hass.Hass):
         self.log('Turning ' + state)
         if self.get_state(self.__target) != state:
             self.__intended_state = state
-            self.__timer = self.run_in(lambda _: self.__update(), 10)
+            self.__timer = self.run_in(
+                lambda _: self.__update(self.__state), 10)
 
     def __on_switch_change(self, entity, attribute, old, new, kwargs):
         if new == 'on':
