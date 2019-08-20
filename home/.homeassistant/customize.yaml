@@ -295,7 +295,11 @@ switch.light_garage:
   icon: mdi:lightbulb
 
 switch.light_christmas_front:
-  friendly_name: "Karácsonyi világítás"
+  friendly_name: "Karácsonyi világítás eresz alatt"
+  icon: mdi:lightbulb-outline
+
+switch.light_christmas_tree:
+  friendly_name: "Karácsonyi világítás fenyőfa"
   icon: mdi:lightbulb-outline
 
 input_select.light_christmas:

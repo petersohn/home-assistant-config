@@ -128,17 +128,17 @@ gate_reflector_motion_sensor:
   enabler: motion_sensor_enabler
   time: 1
 
-christmas_light_switch:
+christmas_light_switch_front:
   module: auto_switch
   class: AutoSwitch
   target: switch.light_christmas_front
-  switch: input_select.light_christmas
+  switch: input_select.light_christmas_front
 
-well_auto_switch:
+christmas_light_switch_tree:
   module: auto_switch
   class: AutoSwitch
-  target: switch.well
-  switch: input_select.well
+  target: switch.light_christmas_tree
+  switch: input_select.light_christmas_tree
 
 christmas_lights_date_enabler:
     module: enabler
@@ -160,11 +160,12 @@ christmas_light_switcher:
     class: EnabledSwitch
     module: enabled_switch
     dependencies:
-        - christmas_light_switch
+        - christmas_light_switch_front
+        - christmas_light_switch_tree
         - christmas_lights_enabler
     global_dependencies:
         - auto_switch
     enabler: christmas_lights_enabler
     targets:
-        - christmas_light_switch
-        - well_auto_switch
+        - christmas_light_switch_front
+        - christmas_light_switch_tree

@@ -36,7 +36,6 @@ switch:
   control: hidden
   entities:
     - switch.well
-    - input_select.well
 
 motion:
   view: no
@@ -61,7 +60,9 @@ lights:
     - switch.light_cellar
     - switch.light_garage
     - switch.light_christmas_front
-    - input_select.light_christmas
+    - input_select.light_christmas_front
+    - switch.light_christmas_tree
+    - input_select.light_christmas_tree
 
 weather_measurements:
   view: no

@@ -7,3 +7,20 @@
             entity_id: input_select.light_driveway
             option: '{{ trigger.payload }}'
 
+- trigger:
+      platform: mqtt
+      topic: home/input_select/light_christmas_front/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_christmas_front
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
+      topic: home/input_select/light_christmas_tree/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_christmas_tree
+            option: '{{ trigger.payload }}'
