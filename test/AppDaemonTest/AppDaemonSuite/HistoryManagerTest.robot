@@ -70,62 +70,78 @@ Nothing Happens For A Long Time
     Limited History Should Be  1 min  ${date}  ${42}
 
 History Enabler
-    Set State  ${entity}  3
-    Schedule Call At  20 min  set_sensor_state  ${entity}  5
-    Schedule Call At  40 min  set_sensor_state  ${entity}  1
-    State Should Change At  ${enabler}  on    4 min 10 s
-    State Should Change At  ${enabler}  off  23 min 10 s
-    State Should Change At  ${enabler}  on   42 min 10 s
-    State Should Change At  ${enabler}  off  44 min 10 s
+    Schedule Call At   2 min       set_sensor_state  ${entity}  3
+    Schedule Call At  20 min 30 s  set_sensor_state  ${entity}  5
+    Schedule Call At  40 min       set_sensor_state  ${entity}  1
+    State Should Change At  ${enabler}  on    6 min
+    State Should Change At  ${enabler}  off  23 min 30 s
+    State Should Change At  ${enabler}  on   42 min
+    State Should Change At  ${enabler}  off  44 min
 
 Aggregated Value
     Unblock For  1 min
     State Should Be As  ${sum_entity}  Int  ${0}
+    Unblock For  1 min
+    State Should Be As  ${sum_entity}  Int  ${0}
+    Set State  ${entity}  4
+    Unblock For  1 min
+    State Should Be As  ${sum_entity}  Int  ${4}   # 1*4
+    Unblock For  1 min
+    State Should Be As  ${sum_entity}  Int  ${8}   # 2*4
+    Unblock For  1 min
+    State Should Be As  ${sum_entity}  Int  ${12}  # 3*4
+    Unblock For  1 min
+    State Should Be As  ${sum_entity}  Int  ${12}  # 3*4
+    Set State  ${entity}  10
+    Unblock For  1 min
+    State Should Be As  ${sum_entity}  Int  ${18}  # 2*4 + 1*10
+    Unblock For  30 sec
+    State Should Be As  ${sum_entity}  Int  ${18}  # 2*4 + 1*10
     Set State  ${entity}  3
+    State Should Be As  ${sum_entity}  Int  ${21}  # 1.5*4 + 1.5*10
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${3}
-    Set State  ${entity}  5
+    State Should Be As  ${sum_entity}  Int  ${20}  # 0.5*4 + 1.5*10 + 1*3
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${8}
-    Set State  ${entity}  2
-    Set State  ${entity}  2
+    State Should Be As  ${sum_entity}  Int  ${16}  # 1*10 + 2*3
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${7}
-    Set State  ${entity}  5
+    State Should Be As  ${sum_entity}  Int  ${9}   # 3*3
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${7}
-    Set State  ${entity}  1
-    Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${6}
+    State Should Be As  ${sum_entity}  Int  ${9}   # 3*3
 
-# Aggregated Value With Base Interval
-#     Unblock For  20 sec
-#     Set State  ${entity}  3
-#     Unblock For  1 min
-#     State Should Be As  ${sum_entity_b}  Int  ${3}
-#     Set State  ${entity}  5
-#     Unblock For  1 min
-#     State Should Be As  ${sum_entity_b}  Int  ${8}
-#     Set State  ${entity}  2
-#     Set State  ${entity}  2
-#     Unblock For  1 min
-#     State Should Be As  ${sum_entity_b}  Int  ${10}
-#     Set State  ${entity}  5
-#     Unblock For  1 min
-#     State Should Be As  ${sum_entity_b}  Int  ${12}
-#     Set State  ${entity}  10
-#     Unblock For  1 min
-#     State Should Be As  ${sum_entity_b}  Int  ${17}
-#     Unblock For  1 min
-#     State Should Be As  ${sum_entity_b}  Int  ${25}
-#     Unblock For  1 min
-#     State Should Be As  ${sum_entity_b}  Int  ${30}
-#     Unblock For  1 min
-#     State Should Be As  ${sum_entity_b}  Int  ${30}
-#     Set State  ${entity}  1
-#     Unblock For  1 min
-#     State Should Be As  ${sum_entity_b}  Int  ${21}
-#
+Aggregated Value With Base Interval
+    Unblock For  20 sec
+    Set State  ${entity}  3
+    Unblock For  10 sec
+    State Should Be As  ${sum_entity_b}  Int  ${3}   # 1*3
+    Unblock For  10 sec
+    State Should Be As  ${sum_entity_b}  Int  ${6}   # 2*3
+    Unblock For  10 sec
+    State Should Be As  ${sum_entity_b}  Int  ${9}   # 3*3
+    Unblock For  30 sec
+    State Should Be As  ${sum_entity_b}  Int  ${18}  # 6*3
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_b}  Int  ${36}  # 12*3
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_b}  Int  ${54}  # 18*3
+    Unblock For  10 sec
+    State Should Be As  ${sum_entity_b}  Int  ${54}  # 18*3
+    Unblock For  10 sec
+    State Should Be As  ${sum_entity_b}  Int  ${54}  # 18*3
+    Set State  ${entity}  5
+    Unblock For  10 sec
+    State Should Be As  ${sum_entity_b}  Int  ${56}  # 17*3 + 1*5
+    Unblock For  10 sec
+    State Should Be As  ${sum_entity_b}  Int  ${58}  # 16*3 + 2*5
+    Unblock For  10 sec
+    State Should Be As  ${sum_entity_b}  Int  ${60}  # 15*3 + 3*5
+    Unblock For  30 sec
+    State Should Be As  ${sum_entity_b}  Int  ${66}  # 12*3 + 6*5
+    Unblock For  1 min
+    State Should Be As  ${sum_entity_b}  Int  ${78}  # 6*3 + 12*5
+    Unblock For  50 s
+    State Should Be As  ${sum_entity_b}  Int  ${88}  # 1*3 + 17*5
+    Unblock For  10 s
+    State Should Be As  ${sum_entity_b}  Int  ${90}  # 18*5
 
 Mean Value
     Set State  ${entity}  0
@@ -140,11 +156,16 @@ Mean Value Irregular Intervals
     Set State  ${entity}  20
     Unblock For  1 min
     Set State  ${entity}  16
+    State Should Be As  ${sum_entity}  Int  ${20}
     Unblock For  30 s
-    Set State  ${entity}  8
+    Set State  ${entity}  6
+    State Should Be As  ${sum_entity}  Int  ${28}
     Unblock For  30 s
-    Set State  ${entity}  0
-    Unblock For  2 min
+    Set State  ${entity}  2
+    State Should Be As  ${sum_entity}  Int  ${31}
+    Unblock For  1 min 30 s
+    State Should Be As  ${sum_entity}  Int  ${24}
+    # (0.5*20 + 0.5*16 + 0.5*6 + 1.5*2) / 3
     State Should Be As  ${mean_entity}  Int  ${8}
 
 
