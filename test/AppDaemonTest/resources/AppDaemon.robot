@@ -160,6 +160,10 @@ Schedule Call At Sunset
     ${target} =  Calculate Time  sunset  ${delay}
     Schedule Call At Date Time  ${target}  ${function}  @{args}  &{kwargs}
 
+Get Date
+    ${result} =  Call Function  get_date
+    [Return]  ${result}
+
 Get State
     [Arguments]  ${entity_id}  &{kwargs}
     ${value} =  Call Function  get_state  ${entity_id}  &{kwargs}

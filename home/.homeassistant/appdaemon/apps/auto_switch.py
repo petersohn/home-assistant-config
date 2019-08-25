@@ -103,25 +103,28 @@ class AutoSwitch(hass.Hass):
 
 class Switcher:
     def __init__(self, auto_switch):
-        self.__auto_switch = auto_switch
-        self.__state = False
+        self.auto_switch = auto_switch
+        self.state = False
 
     def turn_on(self):
-        if not self.__state:
-            self.__auto_switch.auto_turn_on()
-            self.__state = True
+        self.auto_switch.log('============>')
+        if not self.state:
+            self.auto_switch.auto_turn_on()
+            self.state = True
 
     def turn_off(self):
-        if self.__state:
-            self.__auto_switch.auto_turn_off()
-            self.__state = False
+        if self.state:
+            self.auto_switch.auto_turn_off()
+            self.state = False
 
 
 class MultiSwitcher:
     def __init__(self, app, targets):
+        self.app = app
         self.__targets = [Switcher(app.get_app(target)) for target in targets]
 
     def turn_on(self):
+        self.app.log('----------->')
         for target in self.__targets:
             target.turn_on()
 

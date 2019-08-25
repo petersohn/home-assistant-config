@@ -9,22 +9,22 @@ Test Teardown  Cleanup AppDaemon
 
 *** Variables ***
 
-${switch1} =           input_boolean.test_switch
-${switch2} =           input_boolean.test_switch2
-${enabler} =         test_enabler
+${switch1} =  input_boolean.test_switch
+${switch2} =  input_boolean.test_switch2
+${enabler} =  test_enabler
 
 
 *** Test Cases ***
 
 Switch States
     State Should Be  ${switch1}  off
-    State Should Be  ${switch1}  off
+    State Should Be  ${switch2}  off
     Set Enabled State  ${enabler}  enable
     State Should Be  ${switch1}  on
     State Should Be  ${switch2}  on
     Set Enabled State  ${enabler}  disable
     State Should Be  ${switch1}  off
-    State Should Be  ${switch1}  off
+    State Should Be  ${switch2}  off
 
 
 *** Keywords ***
