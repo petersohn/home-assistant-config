@@ -143,14 +143,7 @@ class AggregatorContext:
     def integral(self):
         result = 0.0
         for i in range(len(self.history)):
-            self.app.log('{}: [{} -> {} * {} = {})'.format(
-                self.history[i].time.strftime('%Y-%m-%dT%H:%M:%S%z'),
-                self._get_interval(i).total_seconds(),
-                self.history[i].value,
-                self._get_interval(i) / self.base_interval,
-                self._get_normalized(i)))
             result += self._get_normalized(i)
-        self.app.log('= {}'.format(result))
         return result
 
     def mean(self):

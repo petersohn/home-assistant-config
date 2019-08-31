@@ -107,7 +107,6 @@ class Switcher:
         self.state = False
 
     def turn_on(self):
-        self.auto_switch.log('============>')
         if not self.state:
             self.auto_switch.auto_turn_on()
             self.state = True
@@ -124,7 +123,6 @@ class MultiSwitcher:
         self.__targets = [Switcher(app.get_app(target)) for target in targets]
 
     def turn_on(self):
-        self.app.log('----------->')
         for target in self.__targets:
             target.turn_on()
 

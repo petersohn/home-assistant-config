@@ -33,7 +33,6 @@ class TestApp(hass.Hass):
         result_type = data.get('result_type')
 
         def convert(target_type, value):
-            self.log('--> type={} value={}'.format(target_type, value))
             if target_type is not None:
                 wrapper = eval(target_type, {
                     'convert_date': self.__convert_date,

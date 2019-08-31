@@ -108,7 +108,6 @@ class HistoryEnabler(Enabler):
 
     def __set_value(self, value):
         enabled = is_between(value, self.min, self.max)
-        self.log('--> set_value({}) = {}'.format(value, enabled))
         self._change(enabled)
 
 
