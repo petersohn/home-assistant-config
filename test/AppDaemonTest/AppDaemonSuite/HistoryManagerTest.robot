@@ -156,16 +156,12 @@ Mean Value Irregular Intervals
     Set State  ${entity}  20
     Unblock For  1 min
     Set State  ${entity}  16
-    State Should Be As  ${integral_entity}  Int  ${20}
     Unblock For  30 s
     Set State  ${entity}  6
-    State Should Be As  ${integral_entity}  Int  ${28}
     Unblock For  30 s
     Set State  ${entity}  2
-    State Should Be As  ${integral_entity}  Int  ${31}
     Unblock For  1 min 30 s
     Set State  ${entity}  0
-    State Should Be As  ${integral_entity}  Int  ${24}
     # (0.5*20 + 0.5*16 + 0.5*6 + 1.5*2) / 3
     State Should Be As  ${mean_entity}  Int  ${8}
 

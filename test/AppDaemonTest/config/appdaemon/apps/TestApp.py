@@ -172,6 +172,9 @@ class TestApp(hass.Hass):
     def is_blocked(self):
         return Blocker.main_blocker.is_blocked()
 
+    def is_state_stable(self):
+        return not Blocker.set_state_blocker.is_blocked()
+
     def call_on_app(self, app, function, *args, **kwargs):
         return getattr(self.get_app(app), function)(*args, **kwargs)
 

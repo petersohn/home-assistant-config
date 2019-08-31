@@ -69,6 +69,15 @@ Wait Until Blocked
     Wait Until Keyword Succeeds  ${timeout}  0.01s
     ...    Should Be Blocked
 
+State Should Be Stable
+    ${result} =  Call Function  is_state_stable
+    Should Be True  ${result}
+
+Wait Until State Is Stable
+    [Arguments]  ${timeout}=1s
+    Wait Until Keyword Succeeds  ${timeout}  0.01s
+    ...    State Should Be Stable
+
 Unblock Until
     [Arguments]  ${when}  ${real_timeout}=5s
     Call Function  unblock_until  ${when}
@@ -182,14 +191,17 @@ State Should Be As
 Set State
     [Arguments]  ${entity_id}  ${value}
     Call Function  set_sensor_state  ${entity_id}  ${value}
+    Wait Until State Is Stable
 
 Turn On
     [Arguments]  ${entity_id}
     Call Function  turn_on  ${entity_id}
+    Wait Until State Is Stable
 
 Turn Off
     [Arguments]  ${entity_id}
     Call Function  turn_off  ${entity_id}
+    Wait Until State Is Stable
 
 Turn On Or Off
     [Arguments]  ${entity_id}  ${state}
