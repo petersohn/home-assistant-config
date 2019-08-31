@@ -20,7 +20,7 @@ aggregated_value:
     module: history
     dependencies: test_history_manager
     manager: test_history_manager
-    target: sensor.test_sensor_sum
+    target: sensor.test_sensor_integral
     interval:
         minutes: 3
     aggregator: integral
@@ -30,7 +30,7 @@ aggregated_value_base_interval:
     module: history
     dependencies: test_history_manager
     manager: test_history_manager
-    target: sensor.test_sensor_sum_base_interval
+    target: sensor.test_sensor_integral_base_interval
     interval:
         minutes: 3
     base_interval:

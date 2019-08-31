@@ -13,8 +13,8 @@ Test Teardown  Cleanup AppDaemon
 
 ${name} =    test_history_manager
 ${entity} =  sensor.test_sensor
-${sum_entity} =  sensor.test_sensor_sum
-${sum_entity_b} =  sensor.test_sensor_sum_base_interval
+${integral_entity} =  sensor.test_sensor_integral
+${integral_entity_b} =  sensor.test_sensor_integral_base_interval
 ${mean_entity} =  sensor.test_sensor_mean
 ${enabler} =  input_boolean.test_switch
 
@@ -80,68 +80,68 @@ History Enabler
 
 Aggregated Value
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${0}
+    State Should Be As  ${integral_entity}  Int  ${0}
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${0}
+    State Should Be As  ${integral_entity}  Int  ${0}
     Set State  ${entity}  4
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${4}   # 1*4
+    State Should Be As  ${integral_entity}  Int  ${4}   # 1*4
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${8}   # 2*4
+    State Should Be As  ${integral_entity}  Int  ${8}   # 2*4
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${12}  # 3*4
+    State Should Be As  ${integral_entity}  Int  ${12}  # 3*4
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${12}  # 3*4
+    State Should Be As  ${integral_entity}  Int  ${12}  # 3*4
     Set State  ${entity}  10
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${18}  # 2*4 + 1*10
+    State Should Be As  ${integral_entity}  Int  ${18}  # 2*4 + 1*10
     Unblock For  30 sec
-    State Should Be As  ${sum_entity}  Int  ${18}  # 2*4 + 1*10
+    State Should Be As  ${integral_entity}  Int  ${18}  # 2*4 + 1*10
     Set State  ${entity}  3
-    State Should Be As  ${sum_entity}  Int  ${21}  # 1.5*4 + 1.5*10
+    State Should Be As  ${integral_entity}  Int  ${21}  # 1.5*4 + 1.5*10
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${20}  # 0.5*4 + 1.5*10 + 1*3
+    State Should Be As  ${integral_entity}  Int  ${20}  # 0.5*4 + 1.5*10 + 1*3
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${16}  # 1*10 + 2*3
+    State Should Be As  ${integral_entity}  Int  ${16}  # 1*10 + 2*3
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${9}   # 3*3
+    State Should Be As  ${integral_entity}  Int  ${9}   # 3*3
     Unblock For  1 min
-    State Should Be As  ${sum_entity}  Int  ${9}   # 3*3
+    State Should Be As  ${integral_entity}  Int  ${9}   # 3*3
 
 Aggregated Value With Base Interval
     Unblock For  20 sec
     Set State  ${entity}  3
     Unblock For  10 sec
-    State Should Be As  ${sum_entity_b}  Int  ${3}   # 1*3
+    State Should Be As  ${integral_entity_b}  Int  ${3}   # 1*3
     Unblock For  10 sec
-    State Should Be As  ${sum_entity_b}  Int  ${6}   # 2*3
+    State Should Be As  ${integral_entity_b}  Int  ${6}   # 2*3
     Unblock For  10 sec
-    State Should Be As  ${sum_entity_b}  Int  ${9}   # 3*3
+    State Should Be As  ${integral_entity_b}  Int  ${9}   # 3*3
     Unblock For  30 sec
-    State Should Be As  ${sum_entity_b}  Int  ${18}  # 6*3
+    State Should Be As  ${integral_entity_b}  Int  ${18}  # 6*3
     Unblock For  1 min
-    State Should Be As  ${sum_entity_b}  Int  ${36}  # 12*3
+    State Should Be As  ${integral_entity_b}  Int  ${36}  # 12*3
     Unblock For  1 min
-    State Should Be As  ${sum_entity_b}  Int  ${54}  # 18*3
+    State Should Be As  ${integral_entity_b}  Int  ${54}  # 18*3
     Unblock For  10 sec
-    State Should Be As  ${sum_entity_b}  Int  ${54}  # 18*3
+    State Should Be As  ${integral_entity_b}  Int  ${54}  # 18*3
     Unblock For  10 sec
-    State Should Be As  ${sum_entity_b}  Int  ${54}  # 18*3
+    State Should Be As  ${integral_entity_b}  Int  ${54}  # 18*3
     Set State  ${entity}  5
     Unblock For  10 sec
-    State Should Be As  ${sum_entity_b}  Int  ${56}  # 17*3 + 1*5
+    State Should Be As  ${integral_entity_b}  Int  ${56}  # 17*3 + 1*5
     Unblock For  10 sec
-    State Should Be As  ${sum_entity_b}  Int  ${58}  # 16*3 + 2*5
+    State Should Be As  ${integral_entity_b}  Int  ${58}  # 16*3 + 2*5
     Unblock For  10 sec
-    State Should Be As  ${sum_entity_b}  Int  ${60}  # 15*3 + 3*5
+    State Should Be As  ${integral_entity_b}  Int  ${60}  # 15*3 + 3*5
     Unblock For  30 sec
-    State Should Be As  ${sum_entity_b}  Int  ${66}  # 12*3 + 6*5
+    State Should Be As  ${integral_entity_b}  Int  ${66}  # 12*3 + 6*5
     Unblock For  1 min
-    State Should Be As  ${sum_entity_b}  Int  ${78}  # 6*3 + 12*5
+    State Should Be As  ${integral_entity_b}  Int  ${78}  # 6*3 + 12*5
     Unblock For  50 s
-    State Should Be As  ${sum_entity_b}  Int  ${88}  # 1*3 + 17*5
+    State Should Be As  ${integral_entity_b}  Int  ${88}  # 1*3 + 17*5
     Unblock For  10 s
-    State Should Be As  ${sum_entity_b}  Int  ${90}  # 18*5
+    State Should Be As  ${integral_entity_b}  Int  ${90}  # 18*5
 
 Mean Value
     Set State  ${entity}  0
@@ -156,15 +156,16 @@ Mean Value Irregular Intervals
     Set State  ${entity}  20
     Unblock For  1 min
     Set State  ${entity}  16
-    State Should Be As  ${sum_entity}  Int  ${20}
+    State Should Be As  ${integral_entity}  Int  ${20}
     Unblock For  30 s
     Set State  ${entity}  6
-    State Should Be As  ${sum_entity}  Int  ${28}
+    State Should Be As  ${integral_entity}  Int  ${28}
     Unblock For  30 s
     Set State  ${entity}  2
-    State Should Be As  ${sum_entity}  Int  ${31}
+    State Should Be As  ${integral_entity}  Int  ${31}
     Unblock For  1 min 30 s
-    State Should Be As  ${sum_entity}  Int  ${24}
+    Set State  ${entity}  0
+    State Should Be As  ${integral_entity}  Int  ${24}
     # (0.5*20 + 0.5*16 + 0.5*6 + 1.5*2) / 3
     State Should Be As  ${mean_entity}  Int  ${8}
 

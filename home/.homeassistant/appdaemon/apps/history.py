@@ -122,10 +122,11 @@ class HistoryManager(hass.Hass):
 
 
 class AggregatorContext:
-    def __init__(self, history, now, base_interval):
+    def __init__(self, history, now, base_interval, app):
         self.history = history
         self.now = now
         self.base_interval = base_interval
+        self.app = app
 
     def _get_interval(self, index):
         if index < 0 or index >= len(self.history):
@@ -142,7 +143,14 @@ class AggregatorContext:
     def integral(self):
         result = 0.0
         for i in range(len(self.history)):
+            self.app.log('{}: [{} -> {} * {} = {})'.format(
+                self.history[i].time.strftime('%Y-%m-%dT%H:%M:%S%z'),
+                self._get_interval(i).total_seconds(),
+                self.history[i].value,
+                self._get_interval(i) / self.base_interval,
+                self._get_normalized(i)))
             result += self._get_normalized(i)
+        self.app.log('= {}'.format(result))
         return result
 
     def mean(self):
@@ -196,7 +204,7 @@ class Aggregator:
     def __set_state(self):
         history = self.manager.get_history(self.interval)
         context = AggregatorContext(
-            history, self.manager.datetime(), self.base_interval)
+            history, self.manager.datetime(), self.base_interval, self.app)
         func = eval(self.expr, {}, context.get_functions())
         value = func()
         self.callback(value)
