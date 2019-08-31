@@ -130,14 +130,16 @@ State Should Change At
     ${deadline} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
     State Should Not Change  ${entity}  deadline=${deadline}
     Unblock For  ${appdaemon_interval}
-    State Should Be  ${entity}  ${value}
+    Wait Until Keyword Succeeds  1 s  0.01 s
+    ...    State Should Be  ${entity}  ${value}
 
 State Should Change In
     [Arguments]  ${entity}  ${value}  ${time}
     ${timeout} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
     State Should Not Change  ${entity}  timeout=${timeout}
     Unblock For  ${appdaemon_interval}
-    State Should Be  ${entity}  ${value}
+    Wait Until Keyword Succeeds  1 s  0.01 s
+    ...    State Should Be  ${entity}  ${value}
 
 Schedule Call At
     [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
