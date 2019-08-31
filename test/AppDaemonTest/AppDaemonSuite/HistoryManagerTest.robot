@@ -16,6 +16,9 @@ ${entity} =  sensor.test_sensor
 ${integral_entity} =  sensor.test_sensor_integral
 ${integral_entity_b} =  sensor.test_sensor_integral_base_interval
 ${mean_entity} =  sensor.test_sensor_mean
+${sum_entity} =  sensor.test_sensor_sum
+${min_entity} =  sensor.test_sensor_min
+${max_entity} =  sensor.test_sensor_max
 ${enabler} =  input_boolean.test_switch
 
 
@@ -164,6 +167,57 @@ Mean Value Irregular Intervals
     Set State  ${entity}  0
     # (0.5*20 + 0.5*16 + 0.5*6 + 1.5*2) / 3
     State Should Be As  ${mean_entity}  Int  ${8}
+
+Min Max Sum Values
+    Set State  ${entity}  20
+    State Should Be As  ${min_entity}  Int  ${20}
+    State Should Be As  ${max_entity}  Int  ${20}
+    State Should Be As  ${sum_entity}  Int  ${20}
+    Unblock For  1 min
+    Set State  ${entity}  6
+    State Should Be As  ${min_entity}  Int  ${6}
+    State Should Be As  ${max_entity}  Int  ${20}
+    State Should Be As  ${sum_entity}  Int  ${26}
+    Unblock For  30 s
+    Set State  ${entity}  10
+    State Should Be As  ${min_entity}  Int  ${6}
+    State Should Be As  ${max_entity}  Int  ${20}
+    State Should Be As  ${sum_entity}  Int  ${36}
+    Unblock For  30 s
+    Set State  ${entity}  -2
+    State Should Be As  ${min_entity}  Int  ${-2}
+    State Should Be As  ${max_entity}  Int  ${20}
+    State Should Be As  ${sum_entity}  Int  ${34}
+    Unblock For  30 s
+    Set State  ${entity}  12
+    State Should Be As  ${min_entity}  Int  ${-2}
+    State Should Be As  ${max_entity}  Int  ${20}
+    State Should Be As  ${sum_entity}  Int  ${46}
+    Unblock For  1 min
+    Set State  ${entity}  0
+    State Should Be As  ${min_entity}  Int  ${-2}
+    State Should Be As  ${max_entity}  Int  ${20}
+    State Should Be As  ${sum_entity}  Int  ${46}
+    Unblock For  1 min
+    State Should Be As  ${min_entity}  Int  ${-2}
+    State Should Be As  ${max_entity}  Int  ${20}
+    State Should Be As  ${sum_entity}  Int  ${46}
+    Unblock For  1 min
+    State Should Be As  ${min_entity}  Int  ${-2}
+    State Should Be As  ${max_entity}  Int  ${20}
+    State Should Be As  ${sum_entity}  Int  ${46}
+    Unblock For  1 min
+    State Should Be As  ${min_entity}  Int  ${-2}
+    State Should Be As  ${max_entity}  Int  ${12}
+    State Should Be As  ${sum_entity}  Int  ${20}
+    Unblock For  1 min
+    State Should Be As  ${min_entity}  Int  ${0}
+    State Should Be As  ${max_entity}  Int  ${12}
+    State Should Be As  ${sum_entity}  Int  ${12}
+    Unblock For  1 min
+    State Should Be As  ${min_entity}  Int  ${0}
+    State Should Be As  ${max_entity}  Int  ${0}
+    State Should Be As  ${sum_entity}  Int  ${0}
 
 
 *** Keywords ***

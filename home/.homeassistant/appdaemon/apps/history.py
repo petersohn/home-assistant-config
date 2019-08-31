@@ -163,10 +163,17 @@ class AggregatorContext:
         return aggregator.anglemean(values)
 
     def min(self):
-        return [min(e.value) for e in self.history]
+        if self.history:
+            return min(e.value for e in self.history)
+        return 0
 
     def max(self):
-        return [max(e.value) for e in self.history]
+        if self.history:
+            return max(e.value for e in self.history)
+        return 0
+
+    def sum(self):
+        return sum(e.value for e in self.history)
 
     def get_functions(self):
         return {
@@ -175,6 +182,7 @@ class AggregatorContext:
             'anglemean': self.anglemean,
             'min': self.min,
             'max': self.max,
+            'sum': self.sum,
         }
 
 
@@ -190,9 +198,9 @@ class Aggregator:
         else:
             self.interval = None
         self.callback = callback
+        self.__start_timer()
         app.listen_state(self.__on_change, self.manager.entity_id)
         self.__set_state()
-        self.__start_timer()
 
     def __set_state(self):
         history = self.manager.get_history(self.interval)
