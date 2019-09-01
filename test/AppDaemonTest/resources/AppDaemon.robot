@@ -69,6 +69,15 @@ Wait Until Blocked
     Wait Until Keyword Succeeds  ${timeout}  0.01s
     ...    Should Be Blocked
 
+State Should Be Stable
+    ${result} =  Call Function  is_state_stable
+    Should Be True  ${result}
+
+Wait Until State Is Stable
+    [Arguments]  ${timeout}=1s
+    Wait Until Keyword Succeeds  ${timeout}  0.01s
+    ...    State Should Be Stable
+
 Unblock Until
     [Arguments]  ${when}  ${real_timeout}=5s
     Call Function  unblock_until  ${when}
@@ -121,14 +130,16 @@ State Should Change At
     ${deadline} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
     State Should Not Change  ${entity}  deadline=${deadline}
     Unblock For  ${appdaemon_interval}
-    State Should Be  ${entity}  ${value}
+    Wait Until Keyword Succeeds  1 s  0.01 s
+    ...    State Should Be  ${entity}  ${value}
 
 State Should Change In
     [Arguments]  ${entity}  ${value}  ${time}
     ${timeout} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
     State Should Not Change  ${entity}  timeout=${timeout}
     Unblock For  ${appdaemon_interval}
-    State Should Be  ${entity}  ${value}
+    Wait Until Keyword Succeeds  1 s  0.01 s
+    ...    State Should Be  ${entity}  ${value}
 
 Schedule Call At
     [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
@@ -160,6 +171,10 @@ Schedule Call At Sunset
     ${target} =  Calculate Time  sunset  ${delay}
     Schedule Call At Date Time  ${target}  ${function}  @{args}  &{kwargs}
 
+Get Date
+    ${result} =  Call Function  get_date
+    [Return]  ${result}
+
 Get State
     [Arguments]  ${entity_id}  &{kwargs}
     ${value} =  Call Function  get_state  ${entity_id}  &{kwargs}
@@ -178,14 +193,17 @@ State Should Be As
 Set State
     [Arguments]  ${entity_id}  ${value}
     Call Function  set_sensor_state  ${entity_id}  ${value}
+    Wait Until State Is Stable
 
 Turn On
     [Arguments]  ${entity_id}
     Call Function  turn_on  ${entity_id}
+    Wait Until State Is Stable
 
 Turn Off
     [Arguments]  ${entity_id}
     Call Function  turn_off  ${entity_id}
+    Wait Until State Is Stable
 
 Turn On Or Off
     [Arguments]  ${entity_id}  ${state}

@@ -5,19 +5,23 @@ import datetime
 class Enabler(hass.Hass):
     def _init_enabler(self, state):
         self.__callbacks = []
-        self.__state = state
+        self.state = state
 
     def _change(self, state):
-        if self.__state != state:
-            self.__state = state
-            for callback in self.__callbacks:
-                callback(state)
+        if self.state != state:
+            self.state = state
+        self.__call_callbacks()
+
+    def __call_callbacks(self):
+        for callback in self.__callbacks:
+            callback(self.state)
 
     def on_change(self, func):
         self.__callbacks.append(func)
 
     def is_enabled(self):
-        return self.__state
+        assert self.state is not None
+        return self.state
 
 
 class ScriptEnabler(Enabler):
@@ -96,18 +100,15 @@ class DateEnabler(Enabler):
 
 class HistoryEnabler(Enabler):
     def initialize(self):
-        self.__min = self.args.get('min')
-        self.__max = self.args.get('max')
-        self.__initialized = False
+        self._init_enabler(None)
+        self.min = self.args.get('min')
+        self.max = self.args.get('max')
         import history
-        self.__aggregator_app = history.AggregatorApp(self, self.__set_value)
+        self.aggregator = history.Aggregator(self, self.__set_value)
 
     def __set_value(self, value):
-        enabled = is_between(value, self.__min, self.__max)
-        if not self.__initialized:
-            self._init_enabler(enabled)
-        else:
-            self._changed(enabled)
+        enabled = is_between(value, self.min, self.max)
+        self._change(enabled)
 
 
 class MultiEnabler(Enabler):

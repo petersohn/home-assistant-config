@@ -4,6 +4,7 @@ import Blocker
 from libraries import DateTimeUtil
 from robot.libraries import DateTime
 
+import datetime
 from itertools import zip_longest
 import pprint
 import traceback
@@ -27,9 +28,9 @@ class TestApp(hass.Hass):
     def __call(self, data):
         args = data.get('args', [])
         kwargs = data.get('kwargs', {})
-        result_type = data.get('result_type')
         arg_types = data.get('arg_types') or []
         kwarg_types = data.get('kwarg_types') or {}
+        result_type = data.get('result_type')
 
         def convert(target_type, value):
             if target_type is not None:
@@ -37,10 +38,40 @@ class TestApp(hass.Hass):
                     'convert_date': self.__convert_date,
                     'convert_time': self.__convert_time,
                     'convert_timedelta': self.__convert_timedelta,
-                    'Int': lambda val: int(float(val))}, {})
+                    'Int': lambda val: int(float(val)),
+                    'percent': lambda val: int(float(val) * 100.0)}, {})
                 return wrapper(value)
             else:
                 return value
+
+        def try_to_convert(value):
+            if result_type is not None:
+                try:
+                    return convert(result_type, value)
+                except TypeError:
+                    pass
+            return value
+
+        def convert_output(value):
+            if isinstance(value, str):
+                return try_to_convert(value)
+            if isinstance(value, dict):
+                return {convert_output(k): convert_output(v)
+                        for k, v in value.items()}
+
+            try:
+                i = (convert_output(v) for v in value)
+            except TypeError:
+                pass
+            else:
+                return list(i)
+
+            if isinstance(value, datetime.datetime):
+                return DateTime.convert_date(value, result_format='timestamp')
+            if isinstance(value, datetime.timedelta):
+                return DateTime.convert_time(value, result_format='timer')
+
+            return try_to_convert(value)
 
         function = data['function']
         self.log(
@@ -54,7 +85,7 @@ class TestApp(hass.Hass):
         result = getattr(self, function)(*args, **kwargs)
 
         self.log('Function returns: ' + function + ' = ' + str(result))
-        return convert(result_type, result)
+        return convert_output(result)
 
     def api_callback(self, data):
         try:
@@ -62,11 +93,14 @@ class TestApp(hass.Hass):
             return result, 200
         except:
             exception_str = traceback.format_exc()
-            self.log(exception_str, level='WARNING')
+            self.log(exception_str, level='ERROR')
             return exception_str, 500
 
     def test(self, arg):
         return arg
+
+    def test_wrap(self, arg):
+        return {'list': [arg, arg], 'tuple': (arg, arg)}
 
     def __convert_date(self, date):
         return DateTime.convert_date(date, result_format='datetime')
@@ -138,8 +172,14 @@ class TestApp(hass.Hass):
     def is_blocked(self):
         return Blocker.main_blocker.is_blocked()
 
+    def is_state_stable(self):
+        return not Blocker.set_state_blocker.is_blocked()
+
     def call_on_app(self, app, function, *args, **kwargs):
         return getattr(self.get_app(app), function)(*args, **kwargs)
+
+    def get_date(self):
+        return self.datetime()
 
     def __state_set(self, entity, attribute, old, new, kwargs):
         self.log(

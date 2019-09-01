@@ -1,6 +1,3 @@
-global_modules:
-    - aggregator
-
 test_history_manager:
     class: HistoryManager
     module: history
@@ -8,48 +5,93 @@ test_history_manager:
     max_interval:
         hours: 1
 
-test_history_manager_refresh_interval:
+test_history_manager_switch:
     class: HistoryManager
     module: history
-    entity: sensor.test_sensor
+    entity: input_boolean.test_switch
     max_interval:
         hours: 1
-    refresh_interval:
-        minutes: 1
 
 aggregated_value:
     class: AggregatedValue
     module: history
     dependencies: test_history_manager
     manager: test_history_manager
-    target: sensor.test_sensor_sum
-    default: 0
+    target: sensor.test_sensor_integral
     interval:
         minutes: 3
-    aggregator: sum
+    aggregator: integral
 
-aggregated_value_refresh_interval:
+aggregated_value_base_interval:
     class: AggregatedValue
     module: history
-    dependencies: test_history_manager_refresh_interval
-    manager: test_history_manager_refresh_interval
-    target: sensor.test_sensor_sum_refresh_interval
-    default: 0
+    dependencies: test_history_manager
+    manager: test_history_manager
+    target: sensor.test_sensor_integral_base_interval
     interval:
         minutes: 3
-    aggregator: sum
+    base_interval:
+        seconds: 10
+    aggregator: integral
 
 mean_value:
     class: AggregatedValue
     module: history
-    global_dependencies:
-        - aggregator
     dependencies: test_history_manager
     manager: test_history_manager
     target: sensor.test_sensor_mean
-    default: 0
     interval:
         minutes: 3
+    aggregator: mean
+
+sum_value:
+    class: AggregatedValue
+    module: history
+    dependencies: test_history_manager
+    manager: test_history_manager
+    target: sensor.test_sensor_sum
+    interval:
+        minutes: 5
+    aggregator: sum
+
+min_value:
+    class: AggregatedValue
+    module: history
+    dependencies: test_history_manager
+    manager: test_history_manager
+    target: sensor.test_sensor_min
+    interval:
+        minutes: 5
+    aggregator: min
+
+max_value:
+    class: AggregatedValue
+    module: history
+    dependencies: test_history_manager
+    manager: test_history_manager
+    target: sensor.test_sensor_max
+    interval:
+        minutes: 5
+    aggregator: max
+
+anglemean_value:
+    class: AggregatedValue
+    module: history
+    dependencies: test_history_manager
+    manager: test_history_manager
+    target: sensor.test_sensor_anglemean
+    interval:
+        minutes: 4
+    aggregator: anglemean
+
+switch_mean_value:
+    class: AggregatedValue
+    module: history
+    dependencies: test_history_manager_switch
+    manager: test_history_manager_switch
+    target: sensor.test_switch_mean
+    interval:
+        minutes: 5
     aggregator: mean
 
 test_history_enabler:
@@ -59,6 +101,25 @@ test_history_enabler:
     manager: test_history_manager
     interval:
         minutes: 5
-    aggregator: sum
-    min: 5
-    max: 10
+    aggregator: integral
+    base_interval:
+        minutes: 1
+    min: 10
+    max: 20
+
+test_history_enabled_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    global_dependencies:
+        - auto_switch
+    dependencies:
+        - test_history_enabler_auto_switch
+        - test_history_enabler
+    enabler: test_history_enabler
+    targets:
+        - test_history_enabler_auto_switch
+
+test_history_enabler_auto_switch:
+    module: auto_switch
+    class: AutoSwitch
+    target: input_boolean.test_switch

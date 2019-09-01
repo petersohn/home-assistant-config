@@ -19,9 +19,9 @@ async def _do_every(self, period, f):
         self.starttime, "%Y-%m-%d %H:%M:%S").timestamp()
     t = math.floor(self.now)
     while not self.stopping:
+        await self.loop.run_in_executor(queue_joiner, self.q.join)
         await Blocker.main_blocker.wait()
         await Blocker.set_state_blocker.wait()
-        await self.loop.run_in_executor(queue_joiner, self.q.join)
 
         if (Blocker.main_blocker.is_blocked()
                 or Blocker.set_state_blocker.is_blocked()):
