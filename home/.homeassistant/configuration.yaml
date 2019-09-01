@@ -54,7 +54,7 @@ mqtt:
   port: 1883
   client_id: home-assistant-1
   username: !secret mosquitto_username
-  password: !secret mosquitto_pasword
+  password: !secret mosquitto_password
 
 sensor:
   - platform: yr

@@ -27,12 +27,15 @@ class HistoryManager(hass.Hass):
         return self.loaded
 
     def __make_history_element(self, time, value):
-        if value == 'off':
+        try:
+            if value == 'off':
+                real_value = 0.0
+            elif value == 'on':
+                real_value = 1.0
+            else:
+                real_value = float(value)
+        except ValueError:
             real_value = 0.0
-        elif value == 'on':
-            real_value = 1.0
-        else:
-            real_value = float(value)
         return HistoryElement(time, real_value)
 
     def _get_limited_history(self, interval):
@@ -156,7 +159,6 @@ class AggregatorContext:
     def anglemean(self):
         if not self.history:
             return 0.0
-        self.app.log('history={}'.format(self.history))
         if self.now == self.history[0].time:
             return self.history[0].value % 360
         total_time = (self.now - self.history[0].time) / self.base_interval
