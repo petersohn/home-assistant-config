@@ -26,7 +26,7 @@ class AutoSwitch(hass.Hass):
 
     def __initialize_state(self, kwargs):
         switch_state = self.get_state(self.__switch)
-        self.log('Switch state=' + switch_state)
+        self.log('Switch state={}'.format(switch_state))
         if switch_state == 'on':
             self.log('Initially turning on')
             self.turn_on(self.__target)
@@ -51,7 +51,7 @@ class AutoSwitch(hass.Hass):
 
     def __update(self, state):
         self.__stop_timer()
-        self.log('Got new state: ' + str(state))
+        self.log('Got new state: {}'.format(state))
         self.__state = state
 
         if self.__switch and self.get_state(self.__switch) != 'auto':
