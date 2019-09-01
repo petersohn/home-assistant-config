@@ -16,6 +16,7 @@ ${entity} =  sensor.test_sensor
 ${integral_entity} =  sensor.test_sensor_integral
 ${integral_entity_b} =  sensor.test_sensor_integral_base_interval
 ${mean_entity} =  sensor.test_sensor_mean
+${anglemean_entity} =  sensor.test_sensor_anglemean
 ${sum_entity} =  sensor.test_sensor_sum
 ${min_entity} =  sensor.test_sensor_min
 ${max_entity} =  sensor.test_sensor_max
@@ -167,6 +168,34 @@ Mean Value Irregular Intervals
     Set State  ${entity}  0
     # (0.5*20 + 0.5*16 + 0.5*6 + 1.5*2) / 3
     State Should Be As  ${mean_entity}  Int  ${8}
+
+Anglemean
+    Set State  ${entity}  30
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${30}    # 1*30 / 1
+    Set State  ${entity}  60
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${45}   # (1*30 + 1*60) / 2
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${50}   # (1*30 + 2*60) / 3
+    Set State  ${entity}  300
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${22}   # (1*30 + 2*60 + 1*-60) / 4
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${0}    # (2*60 + 2*-60) / 4
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${330}  # (1*60 + 3*-60) / 4
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${300}  # (4*300) / 4
+    Set State  ${entity}  180
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${270}  # (3*300 + 1*180) / 4
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${240}  # (2*300 + 2*180) / 4
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${210}  # (1*300 + 3*180) / 4
+    Unblock For  1 min
+    State Should Be As  ${anglemean_entity}  Int  ${180}  # (4*180) / 4
 
 Min Max Sum Values
     Set State  ${entity}  20

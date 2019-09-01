@@ -7,8 +7,6 @@ from collections import namedtuple
 import re
 import traceback
 
-import aggregator
-
 
 HistoryElement = namedtuple('HistoryElement', ['time', 'value'])
 
@@ -32,7 +30,7 @@ class HistoryManager(hass.Hass):
         if value == 'off':
             real_value = 0.0
         elif value == 'on':
-            real_value = 1.1
+            real_value = 1.0
         else:
             real_value = float(value)
         return HistoryElement(time, real_value)
@@ -155,12 +153,38 @@ class AggregatorContext:
         return self.integral() / total_time
 
     def anglemean(self):
-        values = [self._get_normalized(i) for i in len(self.history)]
-        if not values:
+        if not self.history:
             return 0.0
-        if len(values) == 1:
-            return values[0]
-        return aggregator.anglemean(values)
+        self.app.log('history={}'.format(self.history))
+        if self.now == self.history[0].time:
+            return self.history[0].value % 360
+        total_time = (self.now - self.history[0].time) / self.base_interval
+
+        Normalized = namedtuple('Normalized', ['time', 'value360', 'value180'])
+        normalized = [
+            Normalized(
+                self._get_interval(i) / self.base_interval,
+                self.history[i].value % 360,
+                self.history[i].value - 360
+                if self.history[i].value >= 180
+                else self.history[i].value)
+            for i in range(len(self.history))]
+
+        mean360 = sum(x.value360 * x.time for x in normalized) / total_time
+        mean180 = sum(x.value180 * x.time for x in normalized) / total_time
+        variance360 = sum(
+            (x.value360 - mean360) * (x.value360 - mean360) * x.time
+            for x in normalized)
+        variance180 = sum(
+            (x.value180 - mean180) * (x.value180 - mean180) * x.time
+            for x in normalized)
+
+        if variance180 < variance360:
+            if mean180 < 0:
+                mean180 += 360
+            return mean180
+        else:
+            return mean360
 
     def min(self):
         if self.history:

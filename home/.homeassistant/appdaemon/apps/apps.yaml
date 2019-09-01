@@ -61,8 +61,6 @@ wind_direction_short_term:
   module: history
   class: HistoryManager
   entity: sensor.wind_direction
-  refresh_interval:
-    seconds: 10
 
 wind_disabler:
     module: enabler
