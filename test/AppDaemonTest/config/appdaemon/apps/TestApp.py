@@ -38,7 +38,8 @@ class TestApp(hass.Hass):
                     'convert_date': self.__convert_date,
                     'convert_time': self.__convert_time,
                     'convert_timedelta': self.__convert_timedelta,
-                    'Int': lambda val: int(float(val))}, {})
+                    'Int': lambda val: int(float(val)),
+                    'percent': lambda val: int(float(val) * 100.0)}, {})
                 return wrapper(value)
             else:
                 return value

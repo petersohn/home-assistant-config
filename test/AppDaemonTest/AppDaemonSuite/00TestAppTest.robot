@@ -233,6 +233,11 @@ Type Conversions
     123      int      ${123}
     41.5     float    ${41.5}
     41.0     Int      ${41}
+    0        percent  ${0}
+    1        percent  ${100}
+    0.5      percent  ${50}
+    0.426    percent  ${42}
+    2.0      percent  ${200}
     2019-01-04 12:30  convert_date       2019-01-04 12:30:00.000
     12:14:40.123      convert_timedelta  12:14:40.123
     03:10             convert_time       ${190.0}

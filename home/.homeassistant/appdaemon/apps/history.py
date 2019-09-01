@@ -121,6 +121,7 @@ class HistoryManager(hass.Hass):
 
 class AggregatorContext:
     def __init__(self, history, now, base_interval, app):
+        # app.log('history={} now={}'.format(history, now))
         self.history = history
         self.now = now
         self.base_interval = base_interval

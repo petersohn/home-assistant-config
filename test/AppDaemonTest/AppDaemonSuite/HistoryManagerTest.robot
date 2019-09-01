@@ -20,6 +20,8 @@ ${anglemean_entity} =  sensor.test_sensor_anglemean
 ${sum_entity} =  sensor.test_sensor_sum
 ${min_entity} =  sensor.test_sensor_min
 ${max_entity} =  sensor.test_sensor_max
+${switch_entity} =  input_boolean.test_switch
+${switch_mean_entity} =  sensor.test_switch_mean
 ${enabler} =  input_boolean.test_switch
 
 
@@ -172,30 +174,41 @@ Mean Value Irregular Intervals
 Anglemean
     Set State  ${entity}  30
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${30}    # 1*30 / 1
+    # 1*30 / 1
+    State Should Be As  ${anglemean_entity}  Int  ${30}
     Set State  ${entity}  60
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${45}   # (1*30 + 1*60) / 2
+    # (1*30 + 1*60) / 2
+    State Should Be As  ${anglemean_entity}  Int  ${45}
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${50}   # (1*30 + 2*60) / 3
+    # (1*30 + 2*60) / 3
+    State Should Be As  ${anglemean_entity}  Int  ${50}
     Set State  ${entity}  300
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${22}   # (1*30 + 2*60 + 1*-60) / 4
+    # (1*30 + 2*60 + 1*-60) / 4
+    State Should Be As  ${anglemean_entity}  Int  ${22}
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${0}    # (2*60 + 2*-60) / 4
+    # (2*60 + 2*-60) / 4
+    State Should Be As  ${anglemean_entity}  Int  ${0}
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${330}  # (1*60 + 3*-60) / 4
+    # (1*60 + 3*-60) / 4
+    State Should Be As  ${anglemean_entity}  Int  ${330}
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${300}  # (4*300) / 4
+    # (4*300) / 4
+    State Should Be As  ${anglemean_entity}  Int  ${300}
     Set State  ${entity}  180
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${270}  # (3*300 + 1*180) / 4
+    # (3*300 + 1*180) / 4
+    State Should Be As  ${anglemean_entity}  Int  ${270}
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${240}  # (2*300 + 2*180) / 4
+    # (2*300 + 2*180) / 4
+    State Should Be As  ${anglemean_entity}  Int  ${240}
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${210}  # (1*300 + 3*180) / 4
+    # (1*300 + 3*180) / 4
+    State Should Be As  ${anglemean_entity}  Int  ${210}
     Unblock For  1 min
-    State Should Be As  ${anglemean_entity}  Int  ${180}  # (4*180) / 4
+    # (4*180) / 4
+    State Should Be As  ${anglemean_entity}  Int  ${180}
 
 Min Max Sum Values
     Set State  ${entity}  20
@@ -248,6 +261,48 @@ Min Max Sum Values
     State Should Be As  ${max_entity}  Int  ${0}
     State Should Be As  ${sum_entity}  Int  ${0}
 
+Binary Input
+    Unblock Until  5 min
+    Turn On  ${switch_entity}
+    Unblock For  2 min
+    # 2*1 / 2
+    State Should Be As  ${switch_mean_entity}  percent  ${100}
+    Turn Off  ${switch_entity}
+    Unblock For  1 min
+    # (2*1 + 1*0) / 3
+    State Should Be As  ${switch_mean_entity}  percent  ${66}
+    Unblock For  1 min
+    # (2*1 + 2*0) / 4
+    State Should Be As  ${switch_mean_entity}  percent  ${50}
+    Unblock For  1 min
+    # (2*1 + 3*0) / 5
+    State Should Be As  ${switch_mean_entity}  percent  ${40}
+    Unblock For  1 min
+    # (1*1 + 4*0) / 5
+    State Should Be As  ${switch_mean_entity}  percent  ${20}
+    Turn On  ${switch_entity}
+    Unblock For  1 min
+    # (4*0 + 1*1) / 5
+    State Should Be As  ${switch_mean_entity}  percent  ${20}
+    Unblock For  30 s
+    Turn Off  ${switch_entity}
+    # (3.5*0 + 1.5*1) / 5
+    State Should Be As  ${switch_mean_entity}  percent  ${30}
+    Unblock For  1 min
+    # (2.5*0 + 1.5*1 + 1*0) / 5
+    State Should Be As  ${switch_mean_entity}  percent  ${30}
+    Unblock For  1 min
+    # (1.5*0 + 1.5*1 + 2*0) / 5
+    State Should Be As  ${switch_mean_entity}  percent  ${30}
+    Unblock For  1 min
+    # (0.5*0 + 1.5*1 + 3*0) / 5
+    State Should Be As  ${switch_mean_entity}  percent  ${30}
+    Unblock For  1 min
+    # (1*1 + 4*0) / 5
+    State Should Be As  ${switch_mean_entity}  percent  ${20}
+    Unblock For  1 min
+    # 5*0 / 5
+    State Should Be As  ${switch_mean_entity}  percent  ${0}
 
 *** Keywords ***
 
