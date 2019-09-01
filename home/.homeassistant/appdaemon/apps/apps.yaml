@@ -100,7 +100,8 @@ motion_sensor_driveway_uppest_average:
     hours: 1
   aggregator: mean
   attributes:
-    friendly_name: "Bejáró felső"
+    friendly_name: "Bejáró legfelső"
+    icon: mdi:percent
 
 motion_sensor_driveway_upper_history:
   module: history
@@ -118,6 +119,7 @@ motion_sensor_driveway_upper_average:
   aggregator: mean
   attributes:
     friendly_name: "Bejáró felső"
+    icon: mdi:percent
 
 motion_sensor_driveway_lower_history:
   module: history
@@ -134,7 +136,8 @@ motion_sensor_driveway_lower_average:
     hours: 1
   aggregator: mean
   attributes:
-    friendly_name: "Bejáró felső"
+    friendly_name: "Bejáró alsó"
+    icon: mdi:percent
 
 motion_sensor_enabler:
   module: enabler

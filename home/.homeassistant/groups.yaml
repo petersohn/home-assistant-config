@@ -43,8 +43,11 @@ motion:
   control: hidden
   entities:
     - binary_sensor.motion_sensor_driveway_uppest
+    - sensor.motion_sensor_driveway_uppest_average
     - binary_sensor.motion_sensor_driveway_upper
+    - sensor.motion_sensor_driveway_upper_average
     - binary_sensor.motion_sensor_driveway_lower
+    - sensor.motion_sensor_driveway_lower_average
 
 lights:
   view: no
