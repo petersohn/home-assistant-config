@@ -1,6 +1,3 @@
-global_modules:
-  - aggregator
-
 wind_direction_yr:
   class: WindDirection
   module: wind_direction
@@ -76,16 +73,68 @@ wind_disabler:
 wind_direction_average:
   module: history
   class: AggregatedValue
-  global_dependencies: aggregator
   dependencies: wind_direction_short_term
   manager: wind_direction_short_term
   target: sensor.wind_direction_average
   interval:
     minutes: 10
+  base_interval:
+    seconds: 10
   aggregator: anglemean
   attributes:
     unit_of_measurement: "°"
     friendly_name: "Szélirány"
+
+motion_sensor_driveway_uppest_history:
+  module: history
+  class: HistoryManager
+  entity: binary_sensor.motion_sensor_driveway_uppest
+
+motion_sensor_driveway_uppest_average:
+  module: history
+  class: AggregatedValue
+  dependencies: motion_sensor_driveway_uppest_history
+  manager: motion_sensor_driveway_uppest_history
+  target: sensor.motion_sensor_driveway_uppest_average
+  interval:
+    hours: 1
+  aggregator: mean
+  attributes:
+    friendly_name: "Bejáró felső"
+
+motion_sensor_driveway_upper_history:
+  module: history
+  class: HistoryManager
+  entity: binary_sensor.motion_sensor_driveway_upper
+
+motion_sensor_driveway_upper_average:
+  module: history
+  class: AggregatedValue
+  dependencies: motion_sensor_driveway_upper_history
+  manager: motion_sensor_driveway_upper_history
+  target: sensor.motion_sensor_driveway_upper_average
+  interval:
+    hours: 1
+  aggregator: mean
+  attributes:
+    friendly_name: "Bejáró felső"
+
+motion_sensor_driveway_lower_history:
+  module: history
+  class: HistoryManager
+  entity: binary_sensor.motion_sensor_driveway_lower
+
+motion_sensor_driveway_lower_average:
+  module: history
+  class: AggregatedValue
+  dependencies: motion_sensor_driveway_lower_history
+  manager: motion_sensor_driveway_lower_history
+  target: sensor.motion_sensor_driveway_lower_average
+  interval:
+    hours: 1
+  aggregator: mean
+  attributes:
+    friendly_name: "Bejáró felső"
 
 motion_sensor_enabler:
   module: enabler
