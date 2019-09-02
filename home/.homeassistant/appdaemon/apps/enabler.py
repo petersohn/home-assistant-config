@@ -1,27 +1,34 @@
-import appdaemon.plugins.hass.hassapi as hass
+﻿import appdaemon.plugins.hass.hassapi as hass
 import datetime
+import threading
 
 
 class Enabler(hass.Hass):
     def _init_enabler(self, state):
         self.callbacks = []
         self.state = state
+        self.state_lock = threading.Lock()
+        self.callbacks_lock = threading.Lock()
 
+    # This must not be called from within a callback!
     def _change(self, state):
-        if self.state != state:
-            self.state = state
-        self.__call_callbacks()
-
-    def __call_callbacks(self):
-        for callback in self.callbacks:
-            callback(self.state)
+        with self.callbacks_lock:
+            callbacks = self.callbacks[:]
+        with self.state_lock:
+            if self.state != state:
+                self.state = state
+            for callback in callbacks:
+                callback(self.state)
 
     def on_change(self, func):
-        self.callbacks.append(func)
+        with self.callbacks_lock:
+            self.callbacks.append(func)
 
+    # This must not be called from within a callback!
     def is_enabled(self):
-        assert self.state is not None
-        return self.state
+        with self.state_lock:
+            assert self.state is not None
+            return self.state
 
 
 class ScriptEnabler(Enabler):
@@ -38,11 +45,13 @@ class ScriptEnabler(Enabler):
 class EntityEnabler(Enabler):
     def initialize(self):
         self._entity = self.args['entity']
-        self.listen_state(self.__on_change, entity=self._entity)
+        self.listen_state(self.on_change, entity=self._entity)
+        self.lock = threading.Lock()
         self._init_enabler(self._get())
 
-    def __on_change(self, entity, attribute, old, new, kwargs):
-        self._change(self._get())
+    def on_change(self, entity, attribute, old, new, kwargs):
+        with self.lock:
+            self._change(self._get())
 
     def _get(self):
         return False
@@ -50,13 +59,13 @@ class EntityEnabler(Enabler):
 
 class ValueEnabler(EntityEnabler):
     def initialize(self):
-        self.__values = self.args.get('values')
-        if not self.__values:
-            self.__values = [self.args['value']]
+        self.values = self.args.get('values')
+        if not self.values:
+            self.values = [self.args['value']]
         EntityEnabler.initialize(self)
 
     def _get(self):
-        return self.get_state(self._entity) in self.__values
+        return self.get_state(self._entity) in self.values
 
 
 def is_between(value, min_value, max_value):
@@ -80,18 +89,17 @@ class RangeEnabler(EntityEnabler):
 
 class DateEnabler(Enabler):
     def initialize(self):
-        self.__begin =\
-            datetime.datetime.strptime(self.args['begin'], '%m-%d').date()
-        self.__end =\
-            datetime.datetime.strptime(self.args['end'], '%m-%d').date()
+        self.begin = datetime.datetime.strptime(
+            self.args['begin'], '%m-%d').date()
+        self.end = datetime.datetime.strptime(self.args['end'], '%m-%d').date()
         self._init_enabler(self._get())
         self.run_daily(
             lambda _: self._change(self._get()), datetime.time(0, 0, 1))
 
     def _get(self):
         now = self.date()
-        begin = datetime.date(now.year, self.__begin.month, self.__begin.day)
-        end = datetime.date(now.year, self.__end.month, self.__end.day)
+        begin = datetime.date(now.year, self.begin.month, self.begin.day)
+        end = datetime.date(now.year, self.end.month, self.end.day)
         if begin <= end:
             return begin <= now <= end
         else:  # begin > end
@@ -104,25 +112,28 @@ class HistoryEnabler(Enabler):
         self.min = self.args.get('min')
         self.max = self.args.get('max')
         import history
-        self.aggregator = history.Aggregator(self, self.__set_value)
+        self.aggregator = history.Aggregator(self, self.set_value)
 
-    def __set_value(self, value):
+    def set_value(self, value):
         enabled = is_between(value, self.min, self.max)
         self._change(enabled)
 
 
 class MultiEnabler(Enabler):
     def initialize(self):
-        self.log('lofasz0')
         self.enablers = [
             self.get_app(enabler) for enabler in self.args.get('enablers')]
-        self.log('lofasz1')
+        self.lock = threading.Lock()
         self._init_enabler(self.__get())
         for enabler in self.enablers:
-            enabler.on_change(lambda _: self.__on_change())
+            enabler.on_change(lambda _: self.on_change())
 
-    def __on_change(self):
-        self._change(self.__get())
+    def on_change(self):
+        self.run_in(self.get, 0)
+
+    def get(self, kwargs):
+        with self.lock:
+            self._change(self.__get())
 
     def __get(self):
         return all([enabler.is_enabled() for enabler in self.enablers])
