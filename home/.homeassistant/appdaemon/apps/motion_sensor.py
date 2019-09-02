@@ -12,6 +12,7 @@ class MotionSensor(hass.Hass):
         enabler = self.args.get('enabler')
         if enabler is not None:
             self.__enabler = self.get_app(enabler)
+            self.log('lofasz2')
             self.__enabler.on_change(self.__on_enabled_chaged)
         else:
             self.__enabler = None

@@ -5,6 +5,7 @@ import http.client
 import json
 from collections import namedtuple
 import re
+import threading
 import traceback
 
 
@@ -215,6 +216,7 @@ class AggregatorContext:
 
 class Aggregator:
     def __init__(self, app, callback):
+        self.lock = threading.Lock()
         self.app = app
         self.manager = app.get_app(app.args['manager'])
         self.expr = app.args['aggregator']
@@ -225,8 +227,10 @@ class Aggregator:
         else:
             self.interval = None
         self.callback = callback
+        self.timer = None
+
         self.__start_timer()
-        app.listen_state(self.__on_change, self.manager.entity_id)
+        app.listen_state(self.on_change, self.manager.entity_id)
         self.__set_state()
 
     def __set_state(self):
@@ -238,18 +242,22 @@ class Aggregator:
         self.callback(value)
 
     def __start_timer(self):
+        assert self.timer is None
         self.timer = self.app.run_every(
-            self.__on_interval,
+            self.on_interval,
             self.app.datetime() + self.base_interval,
             self.base_interval.total_seconds())
 
-    def __on_change(self, entity, attribute, old, new, kwargs):
-        self.app.cancel_timer(self.timer)
-        self.__set_state()
-        self.__start_timer()
+    def on_change(self, entity, attribute, old, new, kwargs):
+        with self.lock:
+            self.app.cancel_timer(self.timer)
+            self.timer = None
+            self.__set_state()
+            self.__start_timer()
 
-    def __on_interval(self, kwargs):
-        self.__set_state()
+    def on_interval(self, kwargs):
+        with self.lock:
+            self.__set_state()
 
 
 class AggregatedValue(hass.Hass):

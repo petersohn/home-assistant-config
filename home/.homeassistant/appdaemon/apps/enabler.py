@@ -4,7 +4,7 @@ import datetime
 
 class Enabler(hass.Hass):
     def _init_enabler(self, state):
-        self.__callbacks = []
+        self.callbacks = []
         self.state = state
 
     def _change(self, state):
@@ -13,11 +13,11 @@ class Enabler(hass.Hass):
         self.__call_callbacks()
 
     def __call_callbacks(self):
-        for callback in self.__callbacks:
+        for callback in self.callbacks:
             callback(self.state)
 
     def on_change(self, func):
-        self.__callbacks.append(func)
+        self.callbacks.append(func)
 
     def is_enabled(self):
         assert self.state is not None
@@ -113,14 +113,16 @@ class HistoryEnabler(Enabler):
 
 class MultiEnabler(Enabler):
     def initialize(self):
-        self.__enablers = [
+        self.log('lofasz0')
+        self.enablers = [
             self.get_app(enabler) for enabler in self.args.get('enablers')]
+        self.log('lofasz1')
         self._init_enabler(self.__get())
-        for enabler in self.__enablers:
+        for enabler in self.enablers:
             enabler.on_change(lambda _: self.__on_change())
 
     def __on_change(self):
         self._change(self.__get())
 
     def __get(self):
-        return all([enabler.is_enabled() for enabler in self.__enablers])
+        return all([enabler.is_enabled() for enabler in self.enablers])
