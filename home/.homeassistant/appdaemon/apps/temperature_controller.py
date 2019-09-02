@@ -1,33 +1,37 @@
 import appdaemon.plugins.hass.hassapi as hass
+import threading
 
 
 class TemperatureController(hass.Hass):
 
     def initialize(self):
-        self.__target = self.args['target']
-        self.__minimum = float(self.args['minimum'])
-        self.__tolerance = float(self.args.get('tolerance', 1.0))
-        self.__low_mode_start = float(
+        self.target = self.args['target']
+        self.minimum = float(self.args['minimum'])
+        self.tolerance = float(self.args.get('tolerance', 1.0))
+        self.low_mode_start = float(
             self.args.get('low_mode_start', 30)) * 60
-        self.__low_mode_time = float(self.args.get('low_mode_time', 5)) * 60
-        self.__timer = None
-        self.__low_mode_limit = None
+        self.low_mode_time = float(self.args.get('low_mode_time', 5)) * 60
+        self.timer = None
+        self.low_mode_limit = None
+        self.lock = threading.Lock()
         self.listen_state(self.trigger, entity=self.args['sensor'])
         self.listen_state(self.trigger, entity=self.args['availability'])
 
-        self.__check()
+        with self.lock:
+            self.__check()
 
     def trigger(self, entity, attribute, old, new, kwargs):
-        self.__check()
+        with self.lock:
+            self.__check()
 
     def __check(self):
         outside_temperature = float(
             self.get_state(self.args['outside_sensor']))
-        if type(self.__target) is dict:
-            min_temperature = float(self.__target['min_temperature'])
-            max_temperature = float(self.__target['max_temperature'])
-            min_target = float(self.__target['min_target'])
-            max_target = float(self.__target['max_target'])
+        if type(self.target) is dict:
+            min_temperature = float(self.target['min_temperature'])
+            max_temperature = float(self.target['max_temperature'])
+            min_target = float(self.target['min_target'])
+            max_target = float(self.target['max_target'])
             coefficient = (
                 (min_target - max_target)
                 / (min_temperature - max_temperature))
@@ -35,20 +39,20 @@ class TemperatureController(hass.Hass):
             target = coefficient * outside_temperature + constant
             target = min(min_target, max(max_target, target))
         else:
-            target = float(self.__target)
+            target = float(self.target)
 
         temperature = float(self.get_state(self.args['sensor']))
 
-        if temperature > target + self.__tolerance:
+        if temperature > target + self.tolerance:
             self.__stop_timer()
             self.turn_on(self.args['switch'])
-        elif temperature < self.__minimum:
+        elif temperature < self.minimum:
             self.__stop_timer()
             self.turn_off(self.args['switch'])
-        elif temperature < target - self.__tolerance:
-            if self.__low_mode_limit and temperature > self.__low_mode_limit:
+        elif temperature < target - self.tolerance:
+            if self.low_mode_limit and temperature > self.low_mode_limit:
                 self.__stop_timer()
-            if self.__timer is None:
+            if self.timer is None:
                 self.turn_off(self.args['switch'])
                 self.__schedule_start(temperature)
 
@@ -59,27 +63,29 @@ class TemperatureController(hass.Hass):
                 'Start pump if temperature remains below '
                 + str(current_temperature) + ' in '
                 + str(self.args['low_mode_start']) + ' minutes')
-        self.__low_mode_limit = current_temperature
-        self.__timer = self.run_in(
-            self.__on_start_timer, self.__low_mode_start)
+        self.low_mode_limit = current_temperature
+        self.timer = self.run_in(
+            self.on_start_timer, self.low_mode_start)
 
     def __schedule_stop(self):
         self.__stop_timer()
         self.log('Schedule low mode stop')
-        self.__timer = self.run_in(self.__on_stop_timer, self.__low_mode_time)
+        self.timer = self.run_in(self.on_stop_timer, self.low_mode_time)
 
     def __stop_timer(self):
-        if self.__timer is not None:
+        if self.timer is not None:
             self.log('Stop timer')
-            self.cancel_timer(self.__timer)
-            self.__timer = None
+            self.cancel_timer(self.timer)
+            self.timer = None
 
-    def __on_start_timer(self, kwargs):
-        self.log('Low mode start')
-        self.turn_on(self.args['switch'])
-        self.__schedule_stop()
+    def on_start_timer(self, kwargs):
+        with self.lock:
+            self.log('Low mode start')
+            self.turn_on(self.args['switch'])
+            self.__schedule_stop()
 
-    def __on_stop_timer(self, kwargs):
-        self.log('Low mode stop')
-        self.turn_off(self.args['switch'])
-        self.__schedule_start(float(self.get_state(self.args['sensor'])))
+    def on_stop_timer(self, kwargs):
+        with self.lock:
+            self.log('Low mode stop')
+            self.turn_off(self.args['switch'])
+            self.__schedule_start(float(self.get_state(self.args['sensor'])))

@@ -20,38 +20,42 @@ class MotionSensor(hass.Hass):
         self.lock = threading.Lock()
 
         for sensor in self.sensors:
-            self.listen_state(self.__on_motion_start, entity=sensor, new='on')
-            self.listen_state(self.__on_motion_stop, entity=sensor, new='off')
+            self.listen_state(self.on_motion_start, entity=sensor, new='on')
+            self.listen_state(self.on_motion_stop, entity=sensor, new='off')
 
     def on_enabled_chaged(self, value):
-        self.log('enabled changed to {}'.format(value))
-        if value:
-            if any([self.get_state(sensor) == 'on'
-                    for sensor in self.sensors]):
+        with self.lock:
+            self.log('enabled changed to {}'.format(value))
+            if value:
+                if any([self.get_state(sensor) == 'on'
+                        for sensor in self.sensors]):
+                    self.__start()
+            else:
+                self.__stop_timer()
+                self.targets.turn_off()
+
+    def on_motion_start(self, entity, attribute, old, new, kwargs):
+        with self.lock:
+            self.log('motion start: {} enabled={}'.format(
+                entity, self.__should_start()))
+            if self.__should_start():
                 self.__start()
-        else:
-            self.__stop_timer()
-            self.targets.turn_off()
 
-    def __on_motion_start(self, entity, attribute, old, new, kwargs):
-        self.log(
-            'motion start: {} enabled={}'.format(entity, self.__should_start()))
-        if self.__should_start():
-            self.__start()
-
-    def __on_motion_stop(self, entity, attribute, old, new, kwargs):
-        self.log('motion stop: {}'.format(entity))
-        if all([self.get_state(sensor) == 'off' for sensor in self.sensors]):
-            self.log('Starting timer')
-            self.timer = self.run_in(self.__on_timeout, self.time)
+    def on_motion_stop(self, entity, attribute, old, new, kwargs):
+        with self.lock:
+            self.log('motion stop: {}'.format(entity))
+            if all(self.get_state(sensor) == 'off' for sensor in self.sensors):
+                self.log('Starting timer')
+                self.timer = self.run_in(self.on_timeout, self.time)
 
     def __start(self):
         self.__stop_timer()
         self.targets.turn_on()
 
-    def __on_timeout(self, kwargs):
-        self.log('Timeout')
-        self.targets.turn_off()
+    def on_timeout(self, kwargs):
+        with self.lock:
+            self.log('Timeout')
+            self.targets.turn_off()
 
     def __stop_timer(self):
         if self.timer is not None:
