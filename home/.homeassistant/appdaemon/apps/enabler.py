@@ -45,11 +45,11 @@ class ScriptEnabler(Enabler):
 class EntityEnabler(Enabler):
     def initialize(self):
         self._entity = self.args['entity']
-        self.listen_state(self.on_change, entity=self._entity)
+        self.listen_state(self._on_change, entity=self._entity)
         self.lock = threading.Lock()
         self._init_enabler(self._get())
 
-    def on_change(self, entity, attribute, old, new, kwargs):
+    def _on_change(self, entity, attribute, old, new, kwargs):
         with self.lock:
             self._change(self._get())
 
@@ -126,9 +126,9 @@ class MultiEnabler(Enabler):
         self.lock = threading.Lock()
         self._init_enabler(self.__get())
         for enabler in self.enablers:
-            enabler.on_change(lambda _: self.on_change())
+            enabler.on_change(lambda _: self._on_change())
 
-    def on_change(self):
+    def _on_change(self):
         self.run_in(self.get, 0)
 
     def get(self, kwargs):
