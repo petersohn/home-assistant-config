@@ -22,7 +22,8 @@ class HistoryManager(hass.Hass):
             if config['type'] == 'hass'][0]
         self.history = []
         self.loaded = False
-        self.__load_config()
+        self.lock = threading.Lock()
+        self.load_config()
 
     def is_loaded(self):
         return self.loaded
@@ -61,66 +62,70 @@ class HistoryManager(hass.Hass):
         self.history = self._get_limited_history(self.max_interval)
 
     def get_history(self, interval=None):
-        self.__filter()
-        if interval is not None:
-            return self._get_limited_history(interval)
-        else:
-            return self.history
+        with self.lock:
+            self.__filter()
+            if interval is not None:
+                return self._get_limited_history(interval)
+            else:
+                return self.history
 
-    def __load_config(self, *args, **kwargs):
-        self.log('Loading history...')
-        try:
-            timestamp = (
-                datetime.datetime.now() - self.max_interval).strftime(
-                '%Y-%m-%dT%H:%M:%S%z')
-            url = (self.hass_config['ha_url'] + '/api/history/period/'
-                   + timestamp + '?filter_entity_id=' + self.entity_id)
-            self.log('Calling API: ' + url)
-            with request.urlopen(request.Request(
-                    url,
-                    headers={
-                        'Authorization':
-                            'Bearer ' + self.hass_config['token'],
-                    })) \
-                    as result:
-                if result.status >= 300:
-                    raise http.client.HTTPException(result.reason)
-                loaded_history = json.loads(result.read().decode())
+    def load_config(self, *args, **kwargs):
+        with self.lock:
+            self.log('Loading history...')
+            try:
+                timestamp = (
+                    datetime.datetime.now() - self.max_interval).strftime(
+                    '%Y-%m-%dT%H:%M:%S%z')
+                url = (self.hass_config['ha_url'] + '/api/history/period/'
+                       + timestamp + '?filter_entity_id=' + self.entity_id)
+                self.log('Calling API: ' + url)
+                with request.urlopen(request.Request(
+                        url,
+                        headers={
+                            'Authorization':
+                                'Bearer ' + self.hass_config['token'],
+                        })) \
+                        as result:
+                    if result.status >= 300:
+                        raise http.client.HTTPException(result.reason)
+                    loaded_history = json.loads(result.read().decode())
 
-                def get_date(s):
-                    s = re.sub(r'([-+][0-9]{2}):([0-9]{2})$', '', s)
-                    try:
-                        return datetime.datetime.strptime(
-                            s, '%Y-%m-%dT%H:%M:%S.%f')
-                    except ValueError:
-                        return datetime.datetime.strptime(
-                            s, '%Y-%m-%dT%H:%M:%S')
+                    def get_date(s):
+                        s = re.sub(r'([-+][0-9]{2}):([0-9]{2})$', '', s)
+                        try:
+                            return datetime.datetime.strptime(
+                                s, '%Y-%m-%dT%H:%M:%S.%f')
+                        except ValueError:
+                            return datetime.datetime.strptime(
+                                s, '%Y-%m-%dT%H:%M:%S')
 
-                now = self.datetime()
-                self.history = list(filter(
-                    lambda element:
-                        element.time <= now and element.value is not None,
-                    (self.__make_history_element(
-                        get_date(change['last_changed']),
-                        change['state'])
-                     for changes in loaded_history for change in changes)))
-        except:
-            self.log('Failed to load history.', level='WARNING')
-            self.log(traceback.format_exc(), level='WARNING')
-            self.run_in(self.__load_config, 2)
-            raise
+                    now = self.datetime()
+                    self.history = list(filter(
+                        lambda element:
+                            element.time <= now and element.value is not None,
+                        (self.__make_history_element(
+                            get_date(change['last_changed']),
+                            change['state'])
+                         for changes in loaded_history for change in changes)))
+            except:
+                self.log('Failed to load history.', level='WARNING')
+                self.log(traceback.format_exc(), level='WARNING')
+                self.run_in(self.load_config, 2)
+                raise
 
-        self.__filter()
-        self.listen_state(
-            self.__on_changed, entity=self.entity_id)
-        self.loaded = True
-        self.log('History loaded.')
+            self.__filter()
+            self.listen_state(
+                self.on_changed, entity=self.entity_id)
+            self.loaded = True
+            self.log('History loaded.')
 
-    def __on_changed(self, entity, attribute, old, new, kwargs):
-        if new == old:
-            return
-        self.__filter()
-        self.history.append(self.__make_history_element(self.datetime(), new))
+    def on_changed(self, entity, attribute, old, new, kwargs):
+        with self.lock:
+            if new == old:
+                return
+            self.__filter()
+            self.history.append(self.__make_history_element(
+                self.datetime(), self.get_state(self.entity_id)))
 
 
 class AggregatorContext:
@@ -231,7 +236,8 @@ class Aggregator:
 
         self.__start_timer()
         app.listen_state(self.on_change, self.manager.entity_id)
-        self.__set_state()
+        with self.lock:
+            self.__set_state()
 
     def __set_state(self):
         history = self.manager.get_history(self.interval)
