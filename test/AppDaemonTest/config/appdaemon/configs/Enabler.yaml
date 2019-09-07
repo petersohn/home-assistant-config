@@ -1,28 +1,33 @@
 script_enabler_default:
     module: enabler
     class: ScriptEnabler
+    dependencies: locker
 
 script_enabler_true:
     module: enabler
     class: ScriptEnabler
     initial: true
+    dependencies: locker
 
 script_enabler_false:
     module: enabler
     class: ScriptEnabler
     initial: false
+    dependencies: locker
 
 value_enabler_on:
     module: enabler
     class: ValueEnabler
     entity: binary_sensor.test_input
     value: 'on'
+    dependencies: locker
 
 value_enabler_off:
     module: enabler
     class: ValueEnabler
     entity: binary_sensor.test_input
     value: 'off'
+    dependencies: locker
 
 value_enabler_multiple:
     module: enabler
@@ -31,6 +36,7 @@ value_enabler_multiple:
     values:
         - foo
         - bar
+    dependencies: locker
 
 range_enabler:
     module: enabler
@@ -38,36 +44,42 @@ range_enabler:
     entity: sensor.test_input
     min: 10
     max: 20
+    dependencies: locker
 
 range_enabler_only_min:
     module: enabler
     class: RangeEnabler
     entity: sensor.test_input
     min: 15
+    dependencies: locker
 
 range_enabler_only_max:
     module: enabler
     class: RangeEnabler
     entity: sensor.test_input
     max: 15
+    dependencies: locker
 
 date_enabler_same:
     module: enabler
     class: DateEnabler
     begin: 03-11
     end: 03-11
+    dependencies: locker
 
 date_enabler_forward:
     module: enabler
     class: DateEnabler
     begin: 05-01
     end: 10-06
+    dependencies: locker
 
 date_enabler_backward:
     module: enabler
     class: DateEnabler
     begin: 06-20
     end: 04-30
+    dependencies: locker
 
 multi_enabler:
     module: enabler
@@ -76,6 +88,7 @@ multi_enabler:
         - script_enabler_default
         - script_enabler_true
         - script_enabler_false
+        - locker
     enablers:
         - script_enabler_default
         - script_enabler_true

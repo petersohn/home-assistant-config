@@ -5,7 +5,6 @@ import http.client
 import json
 from collections import namedtuple
 import re
-import threading
 import traceback
 
 
@@ -22,7 +21,7 @@ class HistoryManager(hass.Hass):
             if config['type'] == 'hass'][0]
         self.history = []
         self.loaded = False
-        self.lock = threading.Lock()
+        self.mutex = self.get_app('locker').get_mutex('HistoryManager')
         self.load_config()
 
     def is_loaded(self):
@@ -62,7 +61,7 @@ class HistoryManager(hass.Hass):
         self.history = self._get_limited_history(self.max_interval)
 
     def get_history(self, interval=None):
-        with self.lock:
+        with self.mutex.lock('get_history'):
             self.__filter()
             if interval is not None:
                 return self._get_limited_history(interval)
@@ -70,7 +69,7 @@ class HistoryManager(hass.Hass):
                 return self.history
 
     def load_config(self, *args, **kwargs):
-        with self.lock:
+        with self.mutex.lock('load_config'):
             self.log('Loading history...')
             try:
                 timestamp = (
@@ -120,7 +119,7 @@ class HistoryManager(hass.Hass):
             self.log('History loaded.')
 
     def on_changed(self, entity, attribute, old, new, kwargs):
-        with self.lock:
+        with self.mutex.lock('on_changed'):
             if new == old:
                 return
             self.__filter()
@@ -221,7 +220,7 @@ class AggregatorContext:
 
 class Aggregator:
     def __init__(self, app, callback):
-        self.lock = threading.Lock()
+        self.mutex = app.get_app('locker').get_mutex('Aggregator')
         self.app = app
         self.manager = app.get_app(app.args['manager'])
         self.expr = app.args['aggregator']
@@ -236,7 +235,7 @@ class Aggregator:
 
         self.__start_timer()
         app.listen_state(self.on_change, self.manager.entity_id)
-        with self.lock:
+        with self.mutex.lock('init'):
             self.__set_state()
 
     def __set_state(self):
@@ -255,14 +254,14 @@ class Aggregator:
             self.base_interval.total_seconds())
 
     def on_change(self, entity, attribute, old, new, kwargs):
-        with self.lock:
+        with self.mutex.lock('on_change'):
             self.app.cancel_timer(self.timer)
             self.timer = None
             self.__set_state()
             self.__start_timer()
 
     def on_interval(self, kwargs):
-        with self.lock:
+        with self.mutex.lock('on_interval'):
             self.__set_state()
 
 

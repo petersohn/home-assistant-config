@@ -122,7 +122,7 @@ Initialize
     Initialize States
     ...    ${target}=${initial_target_state}
     ...    ${switch}=${initial_switch_state}
-    ${apps} =  Create List  TestApp  auto_switch
+    ${apps} =  Create List  TestApp  locker  mutex_graph  auto_switch
     ${app_configs} =  Create List  TestApp  AutoSwitch${type}
     Initialize AppDaemon  ${apps}  ${app_configs}  suffix=${suffix}
     Unblock For  ${appdaemon_interval}

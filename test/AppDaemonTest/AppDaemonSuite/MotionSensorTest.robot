@@ -112,7 +112,8 @@ Initialize
     ...    ${motion_detector1}=off
     ...    ${motion_detector2}=off
     ...    ${switch}=off
-    ${apps} =  Create List  TestApp  motion_sensor  auto_switch  enabler
+    ${apps} =  Create List  TestApp  locker  mutex_graph  motion_sensor
+    ...                     auto_switch  enabler
     ${app_configs} =  Create List  TestApp  MotionSensor
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     Unblock For  ${appdaemon_interval}

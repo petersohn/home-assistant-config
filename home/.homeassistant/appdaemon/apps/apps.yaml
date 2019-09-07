@@ -1,208 +1,243 @@
+global_modules:
+    - mutex_graph
+
+locker:
+    module: locker
+    class: Locker
+    global_dependencies: mutex_graph
+    enable_logging: false
+
 wind_direction_yr:
-  class: WindDirection
-  module: wind_direction
-  entity: sensor.yr_wind_direction
+    class: WindDirection
+    module: wind_direction
+    entity: sensor.yr_wind_direction
 
 wind_direction:
-  class: WindDirection
-  module: wind_direction
-  entity: sensor.wind_direction
+    class: WindDirection
+    module: wind_direction
+    entity: sensor.wind_direction
 
 wind_direction_average_icon:
-  class: WindDirection
-  module: wind_direction
-  entity: sensor.wind_direction_average
+    class: WindDirection
+    module: wind_direction
+    entity: sensor.wind_direction_average
 
 heating_pump:
-  class: TemperatureController
-  module: temperature_controller
-  target:
-    min_temperature: 0
-    min_target: 65
-    max_temperature: 10
-    max_target: 55
-  minimum: 30
-  low_mode_start: 15
-  low_mode_time: 5
-  sensor: sensor.temperature_furnace_wood
-  outside_sensor: sensor.temperature_outside
-  availability: binary_sensor.furnace_temperature_available
-  switch: switch.heating_pump
+    class: TemperatureController
+    module: temperature_controller
+    dependencies: locker
+    target:
+        min_temperature: 0
+        min_target: 65
+        max_temperature: 10
+        max_target: 55
+    minimum: 30
+    low_mode_start: 15
+    low_mode_time: 5
+    sensor: sensor.temperature_furnace_wood
+    outside_sensor: sensor.temperature_outside
+    availability: binary_sensor.furnace_temperature_available
+    switch: switch.heating_pump
 
 auto_switch_light_driveway:
-  module: auto_switch
-  class: AutoSwitch
-  target: switch.light_driveway
-  switch: input_select.light_driveway
-  reentrant: true
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_driveway
+    switch: input_select.light_driveway
+    reentrant: true
 
 auto_switch_light_gate_reflector:
-  module: auto_switch
-  class: AutoSwitch
-  target: switch.light_gate_reflector
-  switch: input_select.light_gate_reflector
-  reentrant: true
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_gate_reflector
+    switch: input_select.light_gate_reflector
+    reentrant: true
 
 sun_enabler_night:
     module: enabler
     class: ValueEnabler
+    dependencies: locker
     entity: binary_sensor.night
     value: 'on'
 
 wind_short_term:
-  module: history
-  class: HistoryManager
-  entity: sensor.wind_strength
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: sensor.wind_strength
 
 wind_direction_short_term:
-  module: history
-  class: HistoryManager
-  entity: sensor.wind_direction
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: sensor.wind_direction
 
 wind_disabler:
     module: enabler
     class: HistoryEnabler
-    dependencies: wind_short_term
+    dependencies:
+        - wind_short_term
+        - locker
     manager: wind_short_term
     aggregator: max
     max: 40
     interval:
-      minutes: 10
+        minutes: 10
     default: 0
 
 wind_direction_average:
-  module: history
-  class: AggregatedValue
-  dependencies: wind_direction_short_term
-  manager: wind_direction_short_term
-  target: sensor.wind_direction_average
-  interval:
-    minutes: 10
-  base_interval:
-    seconds: 10
-  aggregator: anglemean
-  attributes:
-    unit_of_measurement: "°"
-    friendly_name: "Szélirány"
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - wind_direction_short_term
+        - locker
+    manager: wind_direction_short_term
+    target: sensor.wind_direction_average
+    interval:
+        minutes: 10
+    base_interval:
+        seconds: 10
+    aggregator: anglemean
+    attributes:
+        unit_of_measurement: "°"
+        friendly_name: "Szélirány"
 
 motion_sensor_driveway_uppest_history:
-  module: history
-  class: HistoryManager
-  entity: binary_sensor.motion_sensor_driveway_uppest
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: binary_sensor.motion_sensor_driveway_uppest
 
 motion_sensor_driveway_uppest_average:
-  module: history
-  class: AggregatedValue
-  dependencies: motion_sensor_driveway_uppest_history
-  manager: motion_sensor_driveway_uppest_history
-  target: sensor.motion_sensor_driveway_uppest_average
-  interval:
-    hours: 1
-  aggregator: mean
-  attributes:
-    friendly_name: "Bejáró legfelső"
-    icon: mdi:percent
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - motion_sensor_driveway_uppest_history
+        - locker
+    manager: motion_sensor_driveway_uppest_history
+    target: sensor.motion_sensor_driveway_uppest_average
+    interval:
+        hours: 1
+    aggregator: mean
+    attributes:
+        friendly_name: "Bejáró legfelső"
+        icon: mdi:percent
 
 motion_sensor_driveway_upper_history:
-  module: history
-  class: HistoryManager
-  entity: binary_sensor.motion_sensor_driveway_upper
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: binary_sensor.motion_sensor_driveway_upper
 
 motion_sensor_driveway_upper_average:
-  module: history
-  class: AggregatedValue
-  dependencies: motion_sensor_driveway_upper_history
-  manager: motion_sensor_driveway_upper_history
-  target: sensor.motion_sensor_driveway_upper_average
-  interval:
-    hours: 1
-  aggregator: mean
-  attributes:
-    friendly_name: "Bejáró felső"
-    icon: mdi:percent
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - motion_sensor_driveway_upper_history
+        - locker
+    manager: motion_sensor_driveway_upper_history
+    target: sensor.motion_sensor_driveway_upper_average
+    interval:
+        hours: 1
+    aggregator: mean
+    attributes:
+        friendly_name: "Bejáró felső"
+        icon: mdi:percent
 
 motion_sensor_driveway_lower_history:
-  module: history
-  class: HistoryManager
-  entity: binary_sensor.motion_sensor_driveway_lower
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: binary_sensor.motion_sensor_driveway_lower
 
 motion_sensor_driveway_lower_average:
-  module: history
-  class: AggregatedValue
-  dependencies: motion_sensor_driveway_lower_history
-  manager: motion_sensor_driveway_lower_history
-  target: sensor.motion_sensor_driveway_lower_average
-  interval:
-    hours: 1
-  aggregator: mean
-  attributes:
-    friendly_name: "Bejáró alsó"
-    icon: mdi:percent
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - motion_sensor_driveway_lower_history
+        - locker
+    manager: motion_sensor_driveway_lower_history
+    target: sensor.motion_sensor_driveway_lower_average
+    interval:
+        hours: 1
+    aggregator: mean
+    attributes:
+        friendly_name: "Bejáró alsó"
+        icon: mdi:percent
 
 motion_sensor_enabler:
-  module: enabler
-  class: MultiEnabler
-  dependencies:
-    - sun_enabler_night
-    - wind_disabler
-  enablers:
-    - sun_enabler_night
-    - wind_disabler
+    module: enabler
+    class: MultiEnabler
+    dependencies:
+        - sun_enabler_night
+        - wind_disabler
+        - locker
+    enablers:
+        - sun_enabler_night
+        - wind_disabler
 
 driveway_motion_sensor:
-  class: MotionSensor
-  module: motion_sensor
-  dependencies:
-    - auto_switch_light_driveway
-    - motion_sensor_enabler
-  sensors:
-    - binary_sensor.motion_sensor_driveway_uppest
-    - binary_sensor.motion_sensor_driveway_upper
-    - binary_sensor.motion_sensor_driveway_lower
-  targets:
-    - auto_switch_light_driveway
-  enabler: motion_sensor_enabler
-  time: 2
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_light_driveway
+        - motion_sensor_enabler
+        - locker
+    sensors:
+        - binary_sensor.motion_sensor_driveway_uppest
+        - binary_sensor.motion_sensor_driveway_upper
+        - binary_sensor.motion_sensor_driveway_lower
+    targets:
+        - auto_switch_light_driveway
+    enabler: motion_sensor_enabler
+    time: 2
 
 gate_reflector_motion_sensor:
-  class: MotionSensor
-  module: motion_sensor
-  dependencies:
-    - auto_switch_light_gate_reflector
-    - motion_sensor_enabler
-  sensors:
-    - binary_sensor.motion_sensor_driveway_uppest
-    - binary_sensor.motion_sensor_driveway_upper
-  targets:
-    - auto_switch_light_gate_reflector
-  enabler: motion_sensor_enabler
-  time: 1
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_light_gate_reflector
+        - motion_sensor_enabler
+        - locker
+    sensors:
+        - binary_sensor.motion_sensor_driveway_uppest
+        - binary_sensor.motion_sensor_driveway_upper
+    targets:
+        - auto_switch_light_gate_reflector
+    enabler: motion_sensor_enabler
+    time: 1
 
 christmas_light_switch_front:
-  module: auto_switch
-  class: AutoSwitch
-  target: switch.light_christmas_front
-  switch: input_select.light_christmas_front
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_christmas_front
+    switch: input_select.light_christmas_front
 
 christmas_light_switch_tree:
-  module: auto_switch
-  class: AutoSwitch
-  target: switch.light_christmas_tree
-  switch: input_select.light_christmas_tree
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_christmas_tree
+    switch: input_select.light_christmas_tree
 
 christmas_lights_date_enabler:
     module: enabler
     class: DateEnabler
+    dependencies: locker
     begin: 11-15
     end: 02-28
 
 christmas_lights_enabler:
-  module: enabler
-  class: MultiEnabler
-  dependencies:
+    module: enabler
+    class: MultiEnabler
+    dependencies:
         - christmas_lights_date_enabler
         - sun_enabler_night
-  enablers:
+        - locker
+    enablers:
         - christmas_lights_date_enabler
         - sun_enabler_night
 
@@ -213,6 +248,7 @@ christmas_light_switcher:
         - christmas_light_switch_front
         - christmas_light_switch_tree
         - christmas_lights_enabler
+        - locker
     global_dependencies:
         - auto_switch
     enabler: christmas_lights_enabler

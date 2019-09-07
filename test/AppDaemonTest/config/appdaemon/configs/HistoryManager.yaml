@@ -4,6 +4,7 @@ test_history_manager:
     entity: sensor.test_sensor
     max_interval:
         hours: 1
+    dependencies: locker
 
 test_history_manager_switch:
     class: HistoryManager
@@ -11,11 +12,14 @@ test_history_manager_switch:
     entity: input_boolean.test_switch
     max_interval:
         hours: 1
+    dependencies: locker
 
 aggregated_value:
     class: AggregatedValue
     module: history
-    dependencies: test_history_manager
+    dependencies:
+        - test_history_manager
+        - locker
     manager: test_history_manager
     target: sensor.test_sensor_integral
     interval:
@@ -25,7 +29,9 @@ aggregated_value:
 aggregated_value_base_interval:
     class: AggregatedValue
     module: history
-    dependencies: test_history_manager
+    dependencies:
+        - test_history_manager
+        - locker
     manager: test_history_manager
     target: sensor.test_sensor_integral_base_interval
     interval:
@@ -37,7 +43,9 @@ aggregated_value_base_interval:
 mean_value:
     class: AggregatedValue
     module: history
-    dependencies: test_history_manager
+    dependencies:
+        - test_history_manager
+        - locker
     manager: test_history_manager
     target: sensor.test_sensor_mean
     interval:
@@ -47,7 +55,9 @@ mean_value:
 sum_value:
     class: AggregatedValue
     module: history
-    dependencies: test_history_manager
+    dependencies:
+        - test_history_manager
+        - locker
     manager: test_history_manager
     target: sensor.test_sensor_sum
     interval:
@@ -57,7 +67,9 @@ sum_value:
 min_value:
     class: AggregatedValue
     module: history
-    dependencies: test_history_manager
+    dependencies:
+        - test_history_manager
+        - locker
     manager: test_history_manager
     target: sensor.test_sensor_min
     interval:
@@ -67,7 +79,9 @@ min_value:
 max_value:
     class: AggregatedValue
     module: history
-    dependencies: test_history_manager
+    dependencies:
+        - test_history_manager
+        - locker
     manager: test_history_manager
     target: sensor.test_sensor_max
     interval:
@@ -77,7 +91,9 @@ max_value:
 anglemean_value:
     class: AggregatedValue
     module: history
-    dependencies: test_history_manager
+    dependencies:
+        - test_history_manager
+        - locker
     manager: test_history_manager
     target: sensor.test_sensor_anglemean
     interval:
@@ -87,7 +103,9 @@ anglemean_value:
 switch_mean_value:
     class: AggregatedValue
     module: history
-    dependencies: test_history_manager_switch
+    dependencies:
+        - test_history_manager_switch
+        - locker
     manager: test_history_manager_switch
     target: sensor.test_switch_mean
     interval:
@@ -97,7 +115,9 @@ switch_mean_value:
 test_history_enabler:
     class: HistoryEnabler
     module: enabler
-    dependencies: test_history_manager
+    dependencies:
+        - test_history_manager
+        - locker
     manager: test_history_manager
     interval:
         minutes: 5
@@ -123,3 +143,4 @@ test_history_enabler_auto_switch:
     module: auto_switch
     class: AutoSwitch
     target: input_boolean.test_switch
+    dependencies: locker

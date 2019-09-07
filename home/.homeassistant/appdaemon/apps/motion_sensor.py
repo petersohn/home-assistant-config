@@ -1,6 +1,5 @@
 import appdaemon.plugins.hass.hassapi as hass
 import auto_switch
-import threading
 
 
 class MotionSensor(hass.Hass):
@@ -17,14 +16,15 @@ class MotionSensor(hass.Hass):
             self.enabler = None
 
         self.timer = None
-        self.lock = threading.Lock()
+        self.mutex = self.get_app('locker').get_mutex('MotionSensor')
 
         for sensor in self.sensors:
             self.listen_state(self.on_motion_start, entity=sensor, new='on')
             self.listen_state(self.on_motion_stop, entity=sensor, new='off')
 
-    def on_enabled_chaged(self, value):
-        with self.lock:
+    def on_enabled_chaged(self):
+        with self.mutex.lock('on_enabled_chaged'):
+            value = self.__should_start()
             self.log('enabled changed to {}'.format(value))
             if value:
                 if any([self.get_state(sensor) == 'on'
@@ -35,14 +35,14 @@ class MotionSensor(hass.Hass):
                 self.targets.turn_off()
 
     def on_motion_start(self, entity, attribute, old, new, kwargs):
-        with self.lock:
+        with self.mutex.lock('on_motion_start'):
             self.log('motion start: {} enabled={}'.format(
                 entity, self.__should_start()))
             if self.__should_start():
                 self.__start()
 
     def on_motion_stop(self, entity, attribute, old, new, kwargs):
-        with self.lock:
+        with self.mutex.lock('on_motion_stop'):
             self.log('motion stop: {}'.format(entity))
             if all(self.get_state(sensor) == 'off' for sensor in self.sensors):
                 self.log('Starting timer')
@@ -53,7 +53,7 @@ class MotionSensor(hass.Hass):
         self.targets.turn_on()
 
     def on_timeout(self, kwargs):
-        with self.lock:
+        with self.mutex.lock('on_timeout'):
             self.log('Timeout')
             self.targets.turn_off()
 

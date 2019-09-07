@@ -1,28 +1,26 @@
 ﻿import appdaemon.plugins.hass.hassapi as hass
 
-import threading
-
 
 class AutoSwitch(hass.Hass):
     def initialize(self):
-        self.__target = self.args['target']
-        self.__switch = self.args.get('switch')
-        self.__reentrant = self.args.get('reentrant', False)
-        self.__intended_state = None
-        self.__timer = None
+        self.target = self.args['target']
+        self.switch = self.args.get('switch')
+        self.reentrant = self.args.get('reentrant', False)
+        self.intended_state = None
+        self.timer = None
 
-        self.lock = threading.Lock()
+        self.mutex = self.get_app('locker').get_mutex('AutoSwitch')
 
-        with self.lock:
-            self.listen_state(self.on_target_change, entity=self.__target)
-            if self.__switch:
+        with self.mutex.lock('initialize'):
+            self.listen_state(self.on_target_change, entity=self.target)
+            if self.switch:
                 self.run_in(self.initialize_state, 0)
-                self.listen_state(self.on_switch_change, entity=self.__switch)
+                self.listen_state(self.on_switch_change, entity=self.switch)
             self.__state = None
             self.run_in(lambda _: self.init(), 0)
 
     def init(self):
-        with self.lock:
+        with self.mutex.lock('init'):
             try:
                 self.__update(0)
             except:
@@ -30,28 +28,28 @@ class AutoSwitch(hass.Hass):
                 raise
 
     def initialize_state(self, kwargs):
-        with self.lock:
-            switch_state = self.get_state(self.__switch)
+        with self.mutex.lock('initialize_state'):
+            switch_state = self.get_state(self.switch)
             self.log('Switch state={}'.format(switch_state))
             if switch_state == 'on':
                 self.log('Initially turning on')
-                self.turn_on(self.__target)
+                self.turn_on(self.target)
             elif switch_state == 'off':
                 self.log('Initially turning off')
-                self.turn_off(self.__target)
+                self.turn_off(self.target)
 
     def auto_turn_on(self):
-        with self.lock:
+        with self.mutex.lock('auto_turn_on'):
             self.log('turn on')
-            if self.__reentrant:
+            if self.reentrant:
                 self.__update(self.__state + 1)
             else:
                 self.__update(1)
 
     def auto_turn_off(self):
-        with self.lock:
+        with self.mutex.lock('auto_turn_off'):
             self.log('turn off')
-            if self.__reentrant:
+            if self.reentrant:
                 assert self.__state != 0
                 self.__update(self.__state - 1)
             else:
@@ -62,72 +60,74 @@ class AutoSwitch(hass.Hass):
         self.log('Got new state: {}'.format(state))
         self.__state = state
 
-        if self.__switch and self.get_state(self.__switch) != 'auto':
+        if self.switch and self.get_state(self.switch) != 'auto':
             self.log('On manual mode')
             return
 
         if state == 0:
             self.__set_intended_state('off')
-            self.turn_off(self.__target)
+            self.turn_off(self.target)
         else:
             self.__set_intended_state('on')
-            self.turn_on(self.__target)
+            self.turn_on(self.target)
 
     def update(self):
-        with self.lock:
+        with self.mutex.lock('update'):
             self.__update(self.__state)
 
     def __set_intended_state(self, state):
         self.log('Turning ' + state)
-        if self.get_state(self.__target) != state:
-            self.__intended_state = state
-            self.__timer = self.run_in(self.update, 10)
+        if self.get_state(self.target) != state:
+            self.intended_state = state
+            self.timer = self.run_in(self.update, 10)
 
     def on_switch_change(self, entity, attribute, old, new, kwargs):
-        with self.lock:
-            if new == 'on':
+        with self.mutex.lock('on_switch_change'):
+            value = self.get_state(entity)
+            if value == 'on':
                 self.log('Manually turning on')
-                self.turn_on(self.__target)
+                self.turn_on(self.target)
                 self.__stop_timer()
-            elif new == 'off':
+            elif value == 'off':
                 self.log('Manually turning off')
-                self.turn_off(self.__target)
+                self.turn_off(self.target)
                 self.__stop_timer()
             else:
                 self.log('Setting to auto')
                 self.__update(self.__state)
 
     def on_target_change(self, entity, attribute, old, new, kwargs):
-        with self.lock:
-            if not self.__intended_state and self.__switch:
+        with self.mutex.lock('on_target_change'):
+            value = self.get_state(entity)
+            if not self.intended_state and self.switch:
                 self.log('Switching to manual mode')
-                self.select_option(entity_id=self.__switch, option=new)
-                self.__intended_state = None
+                self.select_option(entity_id=self.switch, option=value)
+                self.intended_state = None
                 self.__stop_timer()
-            elif new == self.__intended_state:
-                self.__intended_state = None
+            elif value == self.intended_state:
+                self.intended_state = None
                 self.__stop_timer()
 
     def __stop_timer(self):
-        if self.__timer:
-            self.cancel_timer(self.__timer)
-            self.__timer = None
+        if self.timer:
+            self.cancel_timer(self.timer)
+            self.timer = None
 
 
 class Switcher:
     def __init__(self, auto_switch):
-        self.lock = threading.Lock()
+        self.mutex = auto_switch.get_app('locker').get_mutex('Switcher')
         self.auto_switch = auto_switch
         self.state = False
 
     def turn_on(self):
-        with self.lock:
+        with self.mutex.lock('turn_on'):
             if not self.state:
                 self.auto_switch.auto_turn_on()
                 self.state = True
 
     def turn_off(self):
-        with self.lock:
+        with self.mutex.lock('turn_off'):
             if self.state:
                 self.auto_switch.auto_turn_off()
                 self.state = False

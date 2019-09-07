@@ -337,7 +337,8 @@ Initialize
     Clean States And History
     Initialize States
     ...    ${entity}=${0}
-    ${apps} =  Create List  TestApp  history  enabler  aggregator  auto_switch
+    ${apps} =  Create List  TestApp  history  enabler
+    ...                     aggregator  locker  mutex_graph  auto_switch
     ...                     enabled_switch
     ${app_configs} =  Create List  TestApp  HistoryManager
     Initialize AppDaemon  ${apps}  ${app_configs}

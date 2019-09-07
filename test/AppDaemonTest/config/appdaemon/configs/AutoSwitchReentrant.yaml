@@ -3,3 +3,4 @@ test_auto_switch:
     module: auto_switch
     target: input_boolean.test_switch
     reentrant: true
+    dependencies: locker

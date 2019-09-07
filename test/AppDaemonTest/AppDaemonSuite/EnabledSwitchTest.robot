@@ -35,7 +35,8 @@ Initialize
     Initialize States
     ...    ${switch1}=off
     ...    ${switch2}=off
-    ${apps} =  Create List  TestApp  enabled_switch  auto_switch  enabler
+    ${apps} =  Create List  TestApp  locker  mutex_graph  enabled_switch
+    ...                     auto_switch  enabler
     ${app_configs} =  Create List  TestApp  EnabledSwitch
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     Unblock For  ${appdaemon_interval}

@@ -1,6 +1,7 @@
 import appdaemon.plugins.hass.hassapi as hass
 
 import Blocker
+import mutex_graph
 from libraries import DateTimeUtil
 from robot.libraries import DateTime
 
@@ -223,3 +224,9 @@ class TestApp(hass.Hass):
     def turn_off(self, entity):
         self.__block_for_state_change(entity, 'off')
         super(TestApp, self).turn_off(entity)
+
+    def check_deadlock(self):
+        graph = self.get_app('locker').global_graph
+        if mutex_graph.find_cycle(graph):
+            raise mutex_graph.Deadlock(
+                mutex_graph.format_graph(graph, 'GlobalDeadlock'))

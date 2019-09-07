@@ -114,6 +114,6 @@ Initialize
     ...    ${outside_sensor}=${10}
     ...    ${availability_sensor}=on
     ...    ${switch}=off
-    ${apps} =  Create List  TestApp  temperature_controller
+    ${apps} =  Create List  TestApp  locker  mutex_graph  temperature_controller
     ${app_configs} =  Create List  TestApp  TemperatureController
     Initialize AppDaemon  ${apps}  ${app_configs}

@@ -1,3 +1,14 @@
+global_modules:
+    - mutex_graph
+
+locker:
+    module: locker
+    class: Locker
+    global_dependencies: mutex_graph
+    enable_logging: true
+
 test:
     module: TestApp
     class: TestApp
+    global_dependencies: mutex_graph
+    dependencies: locker

@@ -25,6 +25,7 @@ Initialize AppDaemon
     Wait For App Daemon To Start
 
 Cleanup AppDaemon
+    Call Function  check_deadlock
     Stop AppDaemon
     Wait For AppDaemon To Stop
 

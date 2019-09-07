@@ -1,32 +1,31 @@
 ﻿import appdaemon.plugins.hass.hassapi as hass
 import datetime
-import threading
 
 
 class Enabler(hass.Hass):
     def _init_enabler(self, state):
         self.callbacks = []
         self.state = state
-        self.state_lock = threading.Lock()
-        self.callbacks_lock = threading.Lock()
+        self.state_mutex = self.get_app('locker').get_mutex('Enabler.State')
+        self.callbacks_mutex = self.get_app('locker').get_mutex(
+            'Enabler.Callbacks')
 
     # This must not be called from within a callback!
     def _change(self, state):
-        with self.callbacks_lock:
+        with self.callbacks_mutex.lock('_change'):
             callbacks = self.callbacks[:]
-        with self.state_lock:
+        with self.state_mutex.lock('_change'):
             if self.state != state:
                 self.state = state
-            for callback in callbacks:
-                callback(self.state)
+        for callback in callbacks:
+            callback()
 
     def on_change(self, func):
-        with self.callbacks_lock:
+        with self.callbacks_mutex.lock('on_change'):
             self.callbacks.append(func)
 
-    # This must not be called from within a callback!
     def is_enabled(self):
-        with self.state_lock:
+        with self.state_mutex.lock('is_enabled'):
             assert self.state is not None
             return self.state
 
@@ -46,11 +45,11 @@ class EntityEnabler(Enabler):
     def initialize(self):
         self._entity = self.args['entity']
         self.listen_state(self._on_change, entity=self._entity)
-        self.lock = threading.Lock()
+        self.mutex = self.get_app('locker').get_mutex('EntityEnabler')
         self._init_enabler(self._get())
 
     def _on_change(self, entity, attribute, old, new, kwargs):
-        with self.lock:
+        with self.mutex.lock('_on_change'):
             self._change(self._get())
 
     def _get(self):
@@ -123,16 +122,16 @@ class MultiEnabler(Enabler):
     def initialize(self):
         self.enablers = [
             self.get_app(enabler) for enabler in self.args.get('enablers')]
-        self.lock = threading.Lock()
+        self.mutex = self.get_app('locker').get_mutex('MultiEnabler')
         self._init_enabler(self.__get())
         for enabler in self.enablers:
-            enabler.on_change(lambda _: self._on_change())
+            enabler.on_change(lambda: self._on_change())
 
     def _on_change(self):
         self.run_in(self.get, 0)
 
     def get(self, kwargs):
-        with self.lock:
+        with self.mutex.lock('get'):
             self._change(self.__get())
 
     def __get(self):

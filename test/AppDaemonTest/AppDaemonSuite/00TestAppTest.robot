@@ -297,13 +297,13 @@ Initialize
     Initialize States
     ...    ${test_sensor}=${test_sensor_value}
     ...    ${test_sensor2}=${test_sensor_value}
-    ${apps} =  Create List  TestApp
+    ${apps} =  Create List  TestApp  locker  mutex_graph
     ${app_configs} =  Create List  TestApp
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
 
 Initialize With External Test App
     Clean States
-    ${apps} =  Create List  TestApp  TestOtherApp
+    ${apps} =  Create List  TestApp  locker  mutex_graph  TestOtherApp
     ${app_configs} =  Create List  TestApp  TestOtherApp
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
 

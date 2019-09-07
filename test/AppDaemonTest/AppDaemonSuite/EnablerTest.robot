@@ -70,6 +70,7 @@ Entity Based Enablers
 
 Date Enabler
     [Setup]  NONE
+    [Teardown]  NONE
     [Template]  Test Date Enabler
     # start_date  enabler                expected_state
     2018-01-01    date_enabler_same      ${False}
@@ -132,7 +133,7 @@ Initialize
     Initialize States
     ...    ${input_binary}=off
     ...    ${input_sensor}=0
-    ${apps} =  Create List  TestApp  enabler
+    ${apps} =  Create List  TestApp  locker  mutex_graph  enabler
     ${app_configs} =  Create List  TestApp  Enabler
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     ...                   start_date=${start_date}  suffix=${suffix}
