@@ -16,6 +16,7 @@ class MotionSensor(hass.Hass):
             self.enabler = None
 
         self.timer = None
+        self.was_enabled = None
         self.mutex = self.get_app('locker').get_mutex('MotionSensor')
 
         for sensor in self.sensors:
@@ -25,14 +26,16 @@ class MotionSensor(hass.Hass):
     def on_enabled_chaged(self):
         with self.mutex.lock('on_enabled_chaged'):
             value = self.__should_start()
-            self.log('enabled changed to {}'.format(value))
-            if value:
-                if any([self.get_state(sensor) == 'on'
-                        for sensor in self.sensors]):
-                    self.__start()
-            else:
-                self.__stop_timer()
-                self.targets.turn_off()
+            if self.was_enabled != value:
+                self.was_enabled = value
+                self.log('enabled changed to {}'.format(value))
+                if value:
+                    if any([self.get_state(sensor) == 'on'
+                            for sensor in self.sensors]):
+                        self.__start()
+                else:
+                    self.__stop_timer()
+                    self.targets.turn_off()
 
     def on_motion_start(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_motion_start'):
