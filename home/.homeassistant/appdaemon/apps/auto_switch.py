@@ -94,7 +94,7 @@ class AutoSwitch(hass.Hass):
                 self.__stop_timer()
             else:
                 self.log('Setting to auto')
-                self.__update()
+                self.__update(self.__state)
 
     def on_target_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_target_change'):
