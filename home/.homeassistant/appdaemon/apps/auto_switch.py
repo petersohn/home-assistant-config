@@ -71,7 +71,7 @@ class AutoSwitch(hass.Hass):
             self.__set_intended_state('on')
             self.turn_on(self.target)
 
-    def update(self):
+    def update(self, kwargs):
         with self.mutex.lock('update'):
             self.__update(self.__state)
 
