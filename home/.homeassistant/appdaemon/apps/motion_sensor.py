@@ -40,7 +40,7 @@ class MotionSensor(hass.Hass):
     def on_motion_start(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_motion_start'):
             # self.log('motion start: {} enabled={}'.format(
-                entity, self.__should_start()))
+                # entity, self.__should_start()))
             if self.__should_start():
                 self.__start()
 
