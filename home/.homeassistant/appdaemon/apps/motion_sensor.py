@@ -39,16 +39,16 @@ class MotionSensor(hass.Hass):
 
     def on_motion_start(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_motion_start'):
-            self.log('motion start: {} enabled={}'.format(
+            # self.log('motion start: {} enabled={}'.format(
                 entity, self.__should_start()))
             if self.__should_start():
                 self.__start()
 
     def on_motion_stop(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_motion_stop'):
-            self.log('motion stop: {}'.format(entity))
+            # self.log('motion stop: {}'.format(entity))
             if all(self.get_state(sensor) == 'off' for sensor in self.sensors):
-                self.log('Starting timer')
+                # self.log('Starting timer')
                 self.timer = self.run_in(self.on_timeout, self.time)
 
     def __start(self):
@@ -57,7 +57,7 @@ class MotionSensor(hass.Hass):
 
     def on_timeout(self, kwargs):
         with self.mutex.lock('on_timeout'):
-            self.log('Timeout')
+            # self.log('Timeout')
             self.targets.turn_off()
 
     def __stop_timer(self):
