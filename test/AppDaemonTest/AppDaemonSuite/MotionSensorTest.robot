@@ -12,7 +12,7 @@ Test Teardown  Cleanup AppDaemon
 
 ${motion_detector1} =  binary_sensor.motion_detector1
 ${motion_detector2} =  binary_sensor.motion_detector2
-${switch} =            input_boolean.motion_light
+${switch} =            input_boolean.test_switch
 ${enabler} =           test_enabler
 ${delay} =             1 min
 
