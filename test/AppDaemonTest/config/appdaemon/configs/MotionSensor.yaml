@@ -5,6 +5,13 @@ auto_switch_light:
     reentrant: true
     dependencies: locker
 
+auto_switch_light2:
+    class: AutoSwitch
+    module: auto_switch
+    target: input_boolean.test_switch2
+    reentrant: true
+    dependencies: locker
+
 test_enabler:
     class: ScriptEnabler
     module: enabler
@@ -14,7 +21,7 @@ test_motion_sensor:
     class: MotionSensor
     module: motion_sensor
     dependencies:
-        - auto_switch
+        - auto_switch_light
         - locker
     sensors:
         - binary_sensor.motion_detector1
@@ -22,4 +29,29 @@ test_motion_sensor:
     targets:
         - auto_switch_light
     enabler: test_enabler
+    time: 1
+
+sensor_enabler1:
+    class: ScriptEnabler
+    module: enabler
+    dependencies: locker
+
+sensor_enabler2:
+    class: ScriptEnabler
+    module: enabler
+    dependencies: locker
+
+test_motion_sensor_2:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_light2
+        - locker
+        - sensor_enabler1
+        - sensor_enabler2
+    enabled_sensors:
+        binary_sensor.motion_detector1: sensor_enabler1
+        binary_sensor.motion_detector2: sensor_enabler2
+    targets:
+        - auto_switch_light2
     time: 1

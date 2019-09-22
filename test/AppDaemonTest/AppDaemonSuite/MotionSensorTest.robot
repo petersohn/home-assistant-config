@@ -13,6 +13,7 @@ Test Teardown  Cleanup AppDaemon
 ${motion_detector1} =  binary_sensor.motion_detector1
 ${motion_detector2} =  binary_sensor.motion_detector2
 ${switch} =            input_boolean.test_switch
+${switch2} =            input_boolean.test_switch2
 ${enabler} =           test_enabler
 ${delay} =             1 min
 
@@ -121,6 +122,35 @@ Stop At Disabling And Restart At Enabling While In Motion
     State Should Change At  ${switch}  off  30 sec
     State Should Change At  ${switch}  on   1 min
     State Should Change At  ${switch}  off  2 min 30 sec
+
+Do Not Start On Disabled Sensor
+    Set Enabled State  sensor_enabler1  disable
+    Set Enabled State  sensor_enabler2  enable
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector2}  on
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector2}  off
+    Schedule Call At  50 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+
+    State Should Change At  ${switch2}  on  30 sec
+    State Should Change At  ${switch2}  off  1 min 40 sec
+
+Start And Stop On Sensor Enabled Change
+    Set Enabled State  sensor_enabler1  disable
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
+    ...    call_on_app  sensor_enabler1  enable
+    Schedule Call At  50 sec
+    ...    call_on_app  sensor_enabler1  disable
+    Schedule Call At  1 min 10 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+
+    State Should Change At  ${switch2}  on  30 sec
+    State Should Change At  ${switch2}  off  1 min 50 sec
 
 
 *** Keywords ***

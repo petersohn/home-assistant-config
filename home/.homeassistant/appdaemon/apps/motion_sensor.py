@@ -5,7 +5,12 @@ import auto_switch
 class MotionSensor(hass.Hass):
 
     def initialize(self):
-        self.sensors = self.args['sensors']
+        enabled_sensors = self.args.get('enabled_sensors', {})
+        self.sensors = self.args.get('sensors', [])
+        self.sensors.extend(enabled_sensors.keys())
+        self.sensors = list(set(self.sensors))
+        self.sensor_enablers = {
+            k: self.get_app(v) for k, v in enabled_sensors.items()}
         self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
         self.time = float(self.args['time']) * 60
         enabler = self.args.get('enabler')
@@ -15,6 +20,10 @@ class MotionSensor(hass.Hass):
         else:
             self.enabler = None
 
+        for sensor, enabler in self.sensor_enablers.items():
+            enabler.on_change(lambda: self.on_sensor_enabled_changed(sensor))
+            enabler._motion_sensor_was_enabled = enabler.is_enabled()
+
         self.timer = None
         self.was_enabled = None
         self.mutex = self.get_app('locker').get_mutex('MotionSensor')
@@ -22,6 +31,17 @@ class MotionSensor(hass.Hass):
         for sensor in self.sensors:
             self.listen_state(self.on_motion_start, entity=sensor, new='on')
             self.listen_state(self.on_motion_stop, entity=sensor, new='off')
+
+    def on_sensor_enabled_changed(self, sensor):
+        with self.mutex.lock('on_sensor_enabled_changed'):
+            enabler = self.sensor_enablers[sensor]
+            value = enabler.is_enabled()
+            if enabler._motion_sensor_was_enabled != value:
+                enabler._motion_sensor_was_enabled = value
+                if value:
+                    self.__handle_start(sensor)
+                else:
+                    self.__handle_stop(sensor)
 
     def on_enabled_chaged(self):
         with self.mutex.lock('on_enabled_chaged'):
@@ -37,19 +57,32 @@ class MotionSensor(hass.Hass):
                     self.__stop_timer()
                     self.targets.turn_off()
 
+    def __is_sensor_enabled(self, sensor):
+        if sensor not in self.sensor_enablers:
+            return True
+        return self.sensor_enablers[sensor].is_enabled()
+
+    def __handle_start(self, entity):
+        # self.log('motion start: {} enabled={}'.format(
+        #     entity, self.__should_start()))
+        if self.__should_start() and self.__is_sensor_enabled(entity):
+            self.__start()
+
     def on_motion_start(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_motion_start'):
-            # self.log('motion start: {} enabled={}'.format(
-                # entity, self.__should_start()))
-            if self.__should_start():
-                self.__start()
+            self.__handle_start(entity)
+
+    def __handle_stop(self, entity):
+        # self.log('motion stop: {}'.format(entity))
+        if all(not self.__is_sensor_enabled(sensor)
+               or self.get_state(sensor) == 'off'
+               for sensor in self.sensors):
+            # self.log('Starting timer')
+            self.timer = self.run_in(self.on_timeout, self.time)
 
     def on_motion_stop(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_motion_stop'):
-            # self.log('motion stop: {}'.format(entity))
-            if all(self.get_state(sensor) == 'off' for sensor in self.sensors):
-                # self.log('Starting timer')
-                self.timer = self.run_in(self.on_timeout, self.time)
+            self.__handle_stop(entity)
 
     def __start(self):
         self.__stop_timer()
