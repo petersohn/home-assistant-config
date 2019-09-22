@@ -1,6 +1,6 @@
 *** Settings ***
 
-Library  mutex_graph.py
+Library  resources/mutex_graph.py
 
 
 *** Test Cases ***
