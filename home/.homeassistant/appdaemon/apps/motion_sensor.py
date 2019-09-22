@@ -1,5 +1,6 @@
 import appdaemon.plugins.hass.hassapi as hass
 import auto_switch
+import copy
 
 
 class MotionSensor(hass.Hass):
@@ -20,8 +21,11 @@ class MotionSensor(hass.Hass):
         else:
             self.enabler = None
 
+        def stupid_python_workaround(sensor):
+            return lambda: self.on_sensor_enabled_changed(sensor)
+
         for sensor, enabler in self.sensor_enablers.items():
-            enabler.on_change(lambda: self.on_sensor_enabled_changed(sensor))
+            enabler.on_change(stupid_python_workaround(sensor))
             enabler._motion_sensor_was_enabled = enabler.is_enabled()
 
         self.timer = None
@@ -36,6 +40,8 @@ class MotionSensor(hass.Hass):
         with self.mutex.lock('on_sensor_enabled_changed'):
             enabler = self.sensor_enablers[sensor]
             value = enabler.is_enabled()
+            self.log('sensor enabled changed: {}: {}->{}'.format(
+                sensor, enabler._motion_sensor_was_enabled, value))
             if enabler._motion_sensor_was_enabled != value:
                 enabler._motion_sensor_was_enabled = value
                 if value:
@@ -63,8 +69,8 @@ class MotionSensor(hass.Hass):
         return self.sensor_enablers[sensor].is_enabled()
 
     def __handle_start(self, entity):
-        # self.log('motion start: {} enabled={}'.format(
-        #     entity, self.__should_start()))
+        # self.log('motion start: {} enabled={} sensor_enabled={}'.format(
+        #     entity, self.__should_start(), self.__is_sensor_enabled(entity)))
         if self.__should_start() and self.__is_sensor_enabled(entity):
             self.__start()
 
