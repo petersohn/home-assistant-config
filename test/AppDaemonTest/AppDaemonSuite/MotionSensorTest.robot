@@ -1,6 +1,7 @@
 *** Settings ***
 
 Resource       resources/Config.robot
+Resource       resources/Enabler.robot
 Library        DateTime
 Library        libraries/DateTimeUtil.py
 Test Setup     Initialize  00:00:00
@@ -12,7 +13,7 @@ Test Teardown  Cleanup AppDaemon
 ${motion_detector1} =  binary_sensor.motion_detector1
 ${motion_detector2} =  binary_sensor.motion_detector2
 ${switch} =            input_boolean.motion_light
-${enabler} =          test_enabler
+${enabler} =           test_enabler
 ${delay} =             1 min
 
 
@@ -57,10 +58,33 @@ Switch Off After Motion Restarts
     State Should Change At  ${switch}  off  2 min
 
 Do Not Start If Enabler Is Disabled
-    Disable  ${enabler}
+    Set Enabled State  ${enabler}  disable
     Set State  ${motion_detector1}  on
     Set State  ${motion_detector1}  off
     State Should Be  ${switch}  off
+
+Switch Off When Enabler Is Disabled
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call At  1 min
+    ...    call_on_app  ${enabler}  disable
+
+    State Should Change At  ${switch}  on  30 sec
+    State Should Change At  ${switch}  off  1 min
+
+Switch On When Enabler Is Enabled While In Motion
+    Set Enabled State  ${enabler}  disable
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  50 sec
+    ...    call_on_app  ${enabler}  enable
+    Schedule Call At  1 min
+    ...    set_sensor_state  ${motion_detector1}  off
+
+    State Should Change At  ${switch}  on  50 sec
+    State Should Change At  ${switch}  off  2 min
 
 Stop At Disabling And Restart After Enabling
     Set State  ${motion_detector1}  on
@@ -100,10 +124,6 @@ Stop At Disabling And Restart At Enabling While In Motion
 
 
 *** Keywords ***
-
-Disable
-    [Arguments]  ${enabler}
-    Call Function  call_on_app  ${enabler}  disable
 
 Initialize
     [Arguments]  ${start_time}

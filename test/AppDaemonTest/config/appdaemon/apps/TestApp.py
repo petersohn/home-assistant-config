@@ -7,7 +7,6 @@ from robot.libraries import DateTime
 
 import datetime
 from itertools import zip_longest
-import pprint
 import traceback
 
 
@@ -122,6 +121,8 @@ class TestApp(hass.Hass):
         self.__block_timers.clear()
 
     def __block_on_state(self, entity, attribute, old, new, kwargs):
+        if entity not in self.__block_listeners:
+            return
         del self.__block_listeners[entity]
         Blocker.main_blocker.block()
 
@@ -142,7 +143,6 @@ class TestApp(hass.Hass):
 
     def unblock_until_state_change(
             self, entity, timeout=None, deadline=None, **kwargs):
-        pprint.pprint(kwargs)
         # TODO: Use oneshot when home-assistant/appdaemon#299 is pulled
         self.__block_listeners[entity] = \
             self.listen_state(self.__block_on_state, entity, **kwargs)
