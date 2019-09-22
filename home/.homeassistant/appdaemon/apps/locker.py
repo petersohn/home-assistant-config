@@ -68,13 +68,7 @@ class Locker(hass.Hass):
                 raise WrongUnlockOrder()
             self.current_graph[edge_target(stack[-1])].remove(element)
 
-    def dump_global_graph(self):
+    def get_global_graph(self):
+        import copy
         with self.lock:
-            return json.dumps(self.global_graph)
-
-    def load_global_graph(self, graph):
-        with self.lock:
-            for vertex, edges in graph.items():
-                v = self.global_graph.setdefault(vertex, set())
-                for edge in edges:
-                    v.add(edge)
+            return copy.deepcopy(self.global_graph)

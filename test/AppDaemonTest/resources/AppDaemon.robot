@@ -231,3 +231,11 @@ Stop AppDaemon
 Wait For AppDaemon To Stop
     Wait For Process  ${app_daemon_process}  timeout=10 sec  on_timeout=kill
     Process Should Be Stopped
+
+Append And Check Mutex Graph
+    ${mutex_graph} =  Call Function  call_on_app  locker  get_global_graph
+    Append Graph  ${global_mutex_graph}  ${mutex_graph}
+    ${graph_str} =  Format Graph  ${mutex_graph}  Mutex Graph
+    Log  ${graph_str}
+    ${deadlock} =  Find Cycle  ${mutex_graph}
+    Should Be Equal  ${deadlock}  ${False}

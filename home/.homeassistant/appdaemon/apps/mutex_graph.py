@@ -57,4 +57,17 @@ def format_graph(graph, name):
         for edge in edges:
             result += '    "{}" -> "{}" [label="{}"]\n'.format(
                 vertex, edge_target(edge), edge_name(edge))
-    return 'digraph {}{{\n{}}}\n'.format(name, result)
+    return 'digraph "{}"{{\n{}}}\n'.format(name, result)
+
+
+def _list_to_set(l):
+    return set(tuple(e) for e in l)
+
+
+def append_graph(graph, new):
+    for vertex, new_edges in new.items():
+        edges = graph.setdefault(vertex, set())
+        if type(edges) is not set:
+            edges = _list_to_set(edges)
+            graph[vertex] = edges
+        edges |= _list_to_set(new_edges)

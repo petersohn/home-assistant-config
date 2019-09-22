@@ -3,6 +3,7 @@
 Library   OperatingSystem
 Library   libraries/AppDaemon.py
 Library   libraries/Config.py
+Library   libraries/mutex_graph.py
 Resource  resources/HomeAssistant.robot
 Resource  resources/AppDaemon.robot
 
@@ -25,7 +26,7 @@ Initialize AppDaemon
     Wait For App Daemon To Start
 
 Cleanup AppDaemon
-    Call Function  check_deadlock
+    Append And Check Mutex Graph
     Stop AppDaemon
     Wait For AppDaemon To Stop
 
