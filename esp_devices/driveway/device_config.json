@@ -9,6 +9,14 @@
             "name": "relay",
             "commandTopic": "home/switches/lights/driveway/set",
             "pin": 3
+        },
+        {
+            "type": "keepalive",
+            "name": "keepalive",
+            "pin": 0,
+            "interval": 10000,
+            "resetInterval": 20,
+            "
         }
     ],
     "actions": [
