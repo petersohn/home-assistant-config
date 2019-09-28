@@ -40,9 +40,9 @@ class MotionSensor(hass.Hass):
         with self.mutex.lock('on_sensor_enabled_changed'):
             enabler = self.sensor_enablers[sensor]
             value = enabler.is_enabled()
-            self.log('sensor enabled changed: {}: {}->{}'.format(
-                sensor, enabler._motion_sensor_was_enabled, value))
             if enabler._motion_sensor_was_enabled != value:
+                self.log('sensor enabled changed: {}: {}'.format(
+                    sensor, value))
                 enabler._motion_sensor_was_enabled = value
                 if value:
                     self.__handle_start(sensor)
