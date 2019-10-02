@@ -1,0 +1,30 @@
+{
+    "debug": true,
+    "name": "well_remote",
+    "availabilityTopic": "home/devices/well_remote/availability",
+    "debugTopic": "home/devices/well_remote/debug",
+    "interfaces": [
+        {
+            "type": "input",
+            "name": "button",
+            "pin": 0
+        },
+        {
+            "type": "output",
+            "name": "led",
+            "commandTopic": "home/switches/well/state",
+            "default": false,
+            "pin": 2
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "button",
+            "topic": "home/switches/well/set",
+            "value": 0,
+            "template": "toggle",
+            "retain": false
+        }
+    ]
+}
