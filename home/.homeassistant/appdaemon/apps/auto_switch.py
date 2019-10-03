@@ -16,7 +16,7 @@ class AutoSwitch(hass.Hass):
             if self.switch:
                 self.run_in(self.initialize_state, 0)
                 self.listen_state(self.on_switch_change, entity=self.switch)
-            self.__state = None
+            self.state = None
             self.run_in(lambda _: self.init(), 0)
 
     def init(self):
@@ -42,7 +42,7 @@ class AutoSwitch(hass.Hass):
         with self.mutex.lock('auto_turn_on'):
             self.log('turn on')
             if self.reentrant:
-                self.__update(self.__state + 1)
+                self.__update(self.state + 1)
             else:
                 self.__update(1)
 
@@ -50,15 +50,15 @@ class AutoSwitch(hass.Hass):
         with self.mutex.lock('auto_turn_off'):
             self.log('turn off')
             if self.reentrant:
-                assert self.__state != 0
-                self.__update(self.__state - 1)
+                assert self.state != 0
+                self.__update(self.state - 1)
             else:
                 self.__update(0)
 
     def __update(self, state):
         self.__stop_timer()
         self.log('Got new state: {}'.format(state))
-        self.__state = state
+        self.state = state
 
         if self.switch and self.get_state(self.switch) != 'auto':
             self.log('On manual mode')
@@ -73,7 +73,7 @@ class AutoSwitch(hass.Hass):
 
     def update(self, kwargs):
         with self.mutex.lock('update'):
-            self.__update(self.__state)
+            self.__update(self.state)
 
     def __set_intended_state(self, state):
         self.log('Turning ' + state)
@@ -94,16 +94,18 @@ class AutoSwitch(hass.Hass):
                 self.__stop_timer()
             else:
                 self.log('Setting to auto')
-                self.__update(self.__state)
+                self.__update(self.state)
 
     def on_target_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_target_change'):
             value = self.get_state(entity)
-            if not self.intended_state and self.switch:
-                self.log('Switching to manual mode')
-                self.select_option(entity_id=self.switch, option=value)
-                self.intended_state = None
-                self.__stop_timer()
+            if not self.intended_state:
+                if self.switch:
+                    if self.get_state(self.switch) == 'auto':
+                        self.log('State change detected: {}'.format(value))
+                        self.__update(self.state)
+                    else:
+                        self.select_option(entity_id=self.switch, option=value)
             elif value == self.intended_state:
                 self.intended_state = None
                 self.__stop_timer()

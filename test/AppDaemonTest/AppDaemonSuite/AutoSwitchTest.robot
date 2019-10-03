@@ -35,11 +35,26 @@ Switch On And Off Manually
     off      auto     off
 
 Target State Changes
-    [Template]  Manually Change Target State
-    on   off  off
-    on   on   auto
-    off  off  auto
-    off  on   on
+    [Teardown]  Cleanup AppDaemon
+    Initialize  Switched
+    Set Manual Switch State  ${switch}  off
+    State Should Be  ${target}  off
+    Turn On Or Off  ${target}  on
+    State Should Be  ${target}  on
+    State Should Be  ${switch}  on
+    Turn On Or Off  ${target}  off
+    State Should Be  ${target}  off
+    State Should Be  ${switch}  off
+
+    Set Manual Switch State  ${switch}  auto
+    Turn On Or Off Auto Switch  ${name}  off
+    Turn On Or Off  ${target}  on
+    State Should Be  ${target}  off
+    State Should Be  ${switch}  auto
+    Turn On Or Off Auto Switch  ${name}  on
+    Turn On Or Off  ${target}  off
+    State Should Be  ${target}  on
+    State Should Be  ${switch}  auto
 
 Reentrancy
     [Template]  Switch On And Off Multiple Times
