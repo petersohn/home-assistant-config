@@ -44,10 +44,11 @@ class MotionSensor(hass.Hass):
                 self.log('sensor enabled changed: {}: {}'.format(
                     sensor, value))
                 enabler._motion_sensor_was_enabled = value
-                if value:
-                    self.__handle_start(sensor)
-                else:
-                    self.__handle_stop(sensor)
+                if self.get_state(sensor) == 'on':
+                    if value:
+                        self.__handle_start(sensor)
+                    else:
+                        self.__handle_stop(sensor)
 
     def on_enabled_chaged(self):
         with self.mutex.lock('on_enabled_chaged'):

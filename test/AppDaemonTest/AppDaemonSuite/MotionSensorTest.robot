@@ -152,6 +152,18 @@ Start And Stop On Sensor Enabled Change
     State Should Change At  ${switch2}  on  30 sec
     State Should Change At  ${switch2}  off  1 min 50 sec
 
+Start And Stop On Sensor Enabled Change 2
+    Set Enabled State  sensor_enabler1  disable
+    Schedule Call At  20 sec
+    ...    call_on_app  sensor_enabler1  enable
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  50 sec
+    ...    call_on_app  sensor_enabler1  disable
+
+    State Should Change At  ${switch2}  on  30 sec
+    State Should Change At  ${switch2}  off  1 min 50 sec
+
 
 *** Keywords ***
 
