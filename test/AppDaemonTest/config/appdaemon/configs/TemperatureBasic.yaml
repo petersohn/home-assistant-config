@@ -1,15 +1,6 @@
 heating_pump:
     class: TemperatureBasic
     module: temperature_basic
-    target:
-        min_temperature: 0
-        min_target: 60
-        max_temperature: 10
-        max_target: 50
-    minimum: 30
-    low_mode_start: 5
-    low_mode_time: 2
-    tolerance: 1
     sensor_in: sensor.furnace_in
     sensor_out: sensor.furnace_out
     target: input_boolean.temperature_controller_pump

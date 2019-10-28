@@ -23,21 +23,17 @@ wind_direction_average_icon:
     entity: sensor.wind_direction_average
 
 heating_pump:
-    class: TemperatureController
-    module: temperature_controller
+    class: TemperatureBasic
+    module: temperature_basic
     dependencies: locker
-    target:
-        min_temperature: 0
-        min_target: 65
-        max_temperature: 10
-        max_target: 55
-    minimum: 30
-    low_mode_start: 15
-    low_mode_time: 5
-    sensor: sensor.temperature_furnace_wood
+    sensor_out: sensor.temperature_furnace_wood
+    sensor_in: sensor.temperature_furnace_wood_in
     outside_sensor: sensor.temperature_outside
-    availability: binary_sensor.furnace_temperature_available
-    switch: switch.heating_pump
+    target: switch.heating_pump
+    target_difference: 4
+    tolerance: 1
+    maximum_out: 80
+    minimum_out: 30
 
 auto_switch_light_driveway:
     module: auto_switch
