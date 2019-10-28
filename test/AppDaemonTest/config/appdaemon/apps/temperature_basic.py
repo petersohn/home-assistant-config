@@ -1,0 +1,1 @@
+../../../../../home/.homeassistant/appdaemon/apps/temperature_basic.py
