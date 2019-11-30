@@ -32,8 +32,6 @@ class TemperatureBasic(hass.Hass):
     def on_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_change'):
             if self.__get_value():
-                self.log('on')
                 self.turn_on(self.target)
             else:
-                self.log('off')
                 self.turn_off(self.target)
