@@ -199,7 +199,6 @@ motion_sensor_enabler:
         - locker
     enablers:
         - sun_enabler_night
-        - wind_disabler
 
 driveway_motion_sensor:
     class: MotionSensor
