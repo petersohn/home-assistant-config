@@ -51,6 +51,14 @@ auto_switch_light_gate_reflector:
     switch: input_select.light_gate_reflector
     reentrant: true
 
+auto_switch_light_garage:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_garage
+    switch: input_select.light_garage
+    reentrant: true
+
 sun_enabler_night:
     module: enabler
     class: ValueEnabler
@@ -78,7 +86,7 @@ wind_disabler:
         - locker
     manager: wind_short_term
     aggregator: max
-    max: 40
+    max: 50
     interval:
         minutes: 10
     default: 0
@@ -190,12 +198,41 @@ motion_sensor_driveway_lower_lockout:
     entity: sensor.motion_sensor_driveway_lower_average
     max: 0.2
 
+motion_sensor_garage_history:
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: binary_sensor.motion_sensor_garage
+
+motion_sensor_garage_average:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - motion_sensor_garage_history
+        - locker
+    manager: motion_sensor_garage_history
+    target: sensor.motion_sensor_garage_average
+    interval:
+        hours: 1
+    aggregator: mean
+    attributes:
+        friendly_name: "Garázs"
+        icon: mdi:percent
+
+motion_sensor_garage_lockout:
+    module: enabler
+    class: RangeEnabler
+    dependencies:
+        - locker
+        - motion_sensor_garage_average
+    entity: sensor.motion_sensor_garage_average
+    max: 0.2
+
 motion_sensor_enabler:
     module: enabler
     class: MultiEnabler
     dependencies:
         - sun_enabler_night
-        - wind_disabler
         - locker
     enablers:
         - sun_enabler_night
@@ -230,6 +267,20 @@ gate_reflector_motion_sensor:
         - auto_switch_light_gate_reflector
     enabler: motion_sensor_enabler
     time: 1
+
+garage_motion_sensor:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_light_garage
+        - motion_sensor_enabler
+        - locker
+    enabled_sensors:
+        binary_sensor.motion_sensor_garage: motion_sensor_garage_lockout
+    targets:
+        - auto_switch_light_garage
+    enabler: motion_sensor_enabler
+    time: 3
 
 christmas_light_switch_front:
     module: auto_switch

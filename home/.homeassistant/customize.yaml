@@ -294,6 +294,9 @@ switch.light_garage:
   friendly_name: "Garázs"
   icon: mdi:lightbulb
 
+input_select.light_garage:
+  icon: mdi:lightbulb
+
 switch.light_christmas_front:
   friendly_name: "Karácsonyi világítás eresz alatt"
   icon: mdi:lightbulb-outline
@@ -332,6 +335,10 @@ binary_sensor.motion_sensor_driveway_upper:
 
 binary_sensor.motion_sensor_driveway_lower:
   friendly_name: "Bejáró alsó"
+  icon: mdi:walk
+
+binary_sensor.motion_sensor_garage:
+  friendly_name: "Garázs"
   icon: mdi:walk
 
 sensor.light_shadow:

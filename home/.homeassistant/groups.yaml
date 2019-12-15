@@ -49,6 +49,7 @@ motion:
     - binary_sensor.motion_sensor_driveway_lower
     - sensor.motion_sensor_driveway_lower_average
     - binary_sensor.motion_sensor_garage
+    - sensor.motion_sensor_garage_average
 
 lights:
   view: no
@@ -63,6 +64,7 @@ lights:
     - switch.light_attic_upstairs
     - switch.light_cellar
     - switch.light_garage
+    - input_select.light_garage
     - switch.light_christmas_front
     - input_select.light_christmas_front
     - switch.light_christmas_tree

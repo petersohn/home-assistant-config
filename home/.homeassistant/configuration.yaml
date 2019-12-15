@@ -529,6 +529,13 @@ input_select:
             - "on"
             - "off"
         initial: "auto"
+    light_garage:
+        name: Garázs világítás
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
     light_christmas_front:
         name: Karácsonyi világítás eresz alatt
         options:
