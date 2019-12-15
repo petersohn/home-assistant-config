@@ -19,7 +19,7 @@
         },
         {
             "type": "input",
-            "name": "light_switch_garage",
+            "name": "motion_sensor_garage",
             "pin": 3
         },
         {
@@ -87,16 +87,15 @@
             "retain": false
         },
         {
-            "type": "command",
-            "interface": "light_switch_cellar",
-            "target": "light_cellar",
-            "command": "toggle",
-            "value": "0"
+            "type": "publish",
+            "interface": "motion_sensor_garage",
+            "topic": "home/sensors/motion/garage",
+            "retain": false
         },
         {
             "type": "command",
-            "interface": "light_switch_garage",
-            "target": "light_garage",
+            "interface": "light_switch_cellar",
+            "target": "light_cellar",
             "command": "toggle",
             "value": "0"
         },
