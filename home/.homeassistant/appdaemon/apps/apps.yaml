@@ -243,11 +243,14 @@ driveway_motion_sensor:
     dependencies:
         - auto_switch_light_driveway
         - motion_sensor_enabler
+        - motion_sensor_driveway_uppest_lockout
+        - motion_sensor_driveway_upper_lockout
+        - motion_sensor_driveway_lower_lockout
         - locker
     enabled_sensors:
         binary_sensor.motion_sensor_driveway_uppest: motion_sensor_driveway_uppest_lockout
         binary_sensor.motion_sensor_driveway_upper: motion_sensor_driveway_upper_lockout
-        binary_sensor.motion_sensor_driveway_lower: motion_sensor_driveway_uppest_lockout
+        binary_sensor.motion_sensor_driveway_lower: motion_sensor_driveway_lower_lockout
     targets:
         - auto_switch_light_driveway
     enabler: motion_sensor_enabler
@@ -259,6 +262,8 @@ gate_reflector_motion_sensor:
     dependencies:
         - auto_switch_light_gate_reflector
         - motion_sensor_enabler
+        - motion_sensor_driveway_uppest_lockout
+        - motion_sensor_driveway_upper_lockout
         - locker
     enabled_sensors:
         binary_sensor.motion_sensor_driveway_uppest: motion_sensor_driveway_uppest_lockout
@@ -274,6 +279,7 @@ garage_motion_sensor:
     dependencies:
         - auto_switch_light_garage
         - motion_sensor_enabler
+        - motion_sensor_garage_lockout
         - locker
     enabled_sensors:
         binary_sensor.motion_sensor_garage: motion_sensor_garage_lockout

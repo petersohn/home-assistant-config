@@ -9,6 +9,7 @@ class Enabler(hass.Hass):
         self.state_mutex = self.get_app('locker').get_mutex('Enabler.State')
         self.callbacks_mutex = self.get_app('locker').get_mutex(
             'Enabler.Callbacks')
+        self.log('Init: {}'.format(self.state))
 
     # This must not be called from within a callback!
     def _change(self, state):
@@ -16,6 +17,7 @@ class Enabler(hass.Hass):
             callbacks = self.callbacks[:]
         with self.state_mutex.lock('_change'):
             if self.state != state:
+                self.log('state change {} -> {}'.format(self.state, state))
                 self.state = state
         for callback in callbacks:
             callback()

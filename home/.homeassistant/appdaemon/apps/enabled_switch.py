@@ -9,6 +9,8 @@ class EnabledSwitch(hass.Hass):
         self.enabler = self.get_app(self.args['enabler'])
         self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
         self.enabler.on_change(self.set_state)
+        if self.enabler.is_enabled():
+            self.targets.turn_on()
 
     def set_state(self):
         with self.mutex.lock('set_state'):
