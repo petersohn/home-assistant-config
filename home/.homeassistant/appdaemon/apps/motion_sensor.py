@@ -36,6 +36,9 @@ class MotionSensor(hass.Hass):
             self.listen_state(self.on_motion_start, entity=sensor, new='on')
             self.listen_state(self.on_motion_stop, entity=sensor, new='off')
 
+    def terminate(self):
+        self.targets.turn_off()
+
     def on_sensor_enabled_changed(self, sensor):
         with self.mutex.lock('on_sensor_enabled_changed'):
             enabler = self.sensor_enablers[sensor]

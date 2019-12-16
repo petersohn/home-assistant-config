@@ -12,6 +12,9 @@ class EnabledSwitch(hass.Hass):
         if self.enabler.is_enabled():
             self.run_in(lambda _: self.targets.turn_on(), 0)
 
+    def terminate(self):
+        self.targets.turn_off()
+
     def set_state(self):
         with self.mutex.lock('set_state'):
             if self.enabler.is_enabled():
