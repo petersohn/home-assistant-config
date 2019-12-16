@@ -9,13 +9,11 @@ class EnabledSwitch(hass.Hass):
         self.enabler = self.get_app(self.args['enabler'])
         self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
         self.enabler.on_change(self.set_state)
-        self.log('---> init={}'.format(self.enabler.is_enabled()))
         if self.enabler.is_enabled():
             self.run_in(lambda _: self.targets.turn_on(), 0)
 
     def set_state(self):
         with self.mutex.lock('set_state'):
-            self.log('---> enabled={}'.format(self.enabler.is_enabled()))
             if self.enabler.is_enabled():
                 self.targets.turn_on()
             else:
