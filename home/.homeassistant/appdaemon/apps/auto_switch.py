@@ -22,7 +22,8 @@ class AutoSwitch(hass.Hass):
     def init(self):
         with self.mutex.lock('init'):
             try:
-                self.__update(0)
+                if self.state is None:
+                    self.__update(0)
             except:
                 self.run_in(lambda _: self.init(), 1)
                 raise
@@ -57,7 +58,7 @@ class AutoSwitch(hass.Hass):
 
     def __update(self, state):
         self.__stop_timer()
-        self.log('Got new state: {}'.format(state))
+        self.log('Got new state: {} -> {}'.format(self.state, state))
         self.state = state
 
         if self.switch and self.get_state(self.switch) != 'auto':
@@ -73,6 +74,7 @@ class AutoSwitch(hass.Hass):
 
     def update(self, kwargs):
         with self.mutex.lock('update'):
+            self.log('update')
             self.__update(self.state)
 
     def __set_intended_state(self, state):
