@@ -217,6 +217,12 @@ class TestApp(hass.Hass):
         self.__block_for_state_change(entity, state)
         self.set_state(entity, state=state)
 
+    def select_option(self, entity, state):
+        self.log('asd')
+        state = str(state)
+        self.__block_for_state_change(entity, state)
+        super(TestApp, self).select_option(entity_id=entity, option=state)
+
     def turn_on(self, entity):
         self.__block_for_state_change(entity, 'on')
         super(TestApp, self).turn_on(entity)

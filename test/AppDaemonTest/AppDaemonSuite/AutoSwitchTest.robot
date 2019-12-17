@@ -121,7 +121,7 @@ Turn Off Auto Switch
 
 Set Manual Switch State
     [Arguments]  ${entity_id}  ${state}
-    Call Function  select_option  entity_id=${entity_id}  option=${state}
+    Select Option  ${entity_id}  ${state}
 
 Turn On Or Off Auto Switch
     [Arguments]  ${app_name}  ${state}

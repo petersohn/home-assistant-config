@@ -20,6 +20,12 @@ input_boolean:
     temperature_controller_pump:
 
 input_select:
+    test_input_select:
+        options:
+            - "one"
+            - "two"
+            - "three"
+            - "four"
     test_auto_switch_switch:
         options:
             - "auto"

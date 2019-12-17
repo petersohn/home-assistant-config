@@ -195,6 +195,11 @@ Set State
     Call Function  set_sensor_state  ${entity_id}  ${value}
     Wait Until State Is Stable
 
+Select Option
+    [Arguments]  ${entity_id}  ${value}
+    Call Function  select_option  ${entity_id}  ${value}
+    Wait Until State Is Stable
+
 Turn On
     [Arguments]  ${entity_id}
     Call Function  turn_on  ${entity_id}

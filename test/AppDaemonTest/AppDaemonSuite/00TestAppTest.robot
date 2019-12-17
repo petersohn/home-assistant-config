@@ -15,6 +15,7 @@ ${test_sensor_value} =           sensor state
 ${intermediate_sensor_value} =   intermediate sensor state
 ${new_sensor_value} =            new sensor state
 ${test_switch} =                 input_boolean.test_switch
+${test_selector} =               input_select.test_input_select
 ${start_time} =                  01:00:00
 ${alternate_start_time} =        10:11:20
 
@@ -63,6 +64,20 @@ Set State
     Set State  ${test_sensor}  ${new_sensor_value}
     Wait Until State Becomes  ${test_sensor}  ${new_sensor_value}
     State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Select Option
+    Select Option  ${test_selector}  two
+    Wait Until State Becomes  ${test_selector}  two
+    State Should Be  ${test_selector}  two
+    Select Option  ${test_selector}  one
+    Wait Until State Becomes  ${test_selector}  one
+    State Should Be  ${test_selector}  one
+    Select Option  ${test_selector}  four
+    Wait Until State Becomes  ${test_selector}  four
+    State Should Be  ${test_selector}  four
+    Select Option  ${test_selector}  three
+    Wait Until State Becomes  ${test_selector}  three
+    State Should Be  ${test_selector}  three
 
 Turn On And Off
     Turn On  ${test_switch}
@@ -297,6 +312,7 @@ Initialize
     Initialize States
     ...    ${test_sensor}=${test_sensor_value}
     ...    ${test_sensor2}=${test_sensor_value}
+    ...    ${test_selector}=one
     ${apps} =  Create List  TestApp  locker  mutex_graph
     ${app_configs} =  Create List  TestApp
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
