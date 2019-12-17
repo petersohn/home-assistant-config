@@ -30,7 +30,7 @@ heating_pump:
     sensor_in: sensor.temperature_furnace_wood_in
     outside_sensor: sensor.temperature_outside
     target: switch.heating_pump
-    target_difference: 5
+    target_difference: 6
     tolerance: 1
     maximum_out: 80
     minimum_out: 30
