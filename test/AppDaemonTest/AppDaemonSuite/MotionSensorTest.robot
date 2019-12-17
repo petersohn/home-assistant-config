@@ -123,22 +123,7 @@ Stop At Disabling And Restart At Enabling While In Motion
     State Should Change At  ${switch}  on   1 min
     State Should Change At  ${switch}  off  2 min 30 sec
 
-Do Not Start On Disabled Sensor
-    Set Enabled State  sensor_enabler1  disable
-    Set Enabled State  sensor_enabler2  enable
-    Schedule Call At  20 sec
-    ...    set_sensor_state  ${motion_detector1}  on
-    Schedule Call At  30 sec
-    ...    set_sensor_state  ${motion_detector2}  on
-    Schedule Call At  40 sec
-    ...    set_sensor_state  ${motion_detector2}  off
-    Schedule Call At  50 sec
-    ...    set_sensor_state  ${motion_detector1}  off
-
-    State Should Change At  ${switch2}  on  30 sec
-    State Should Change At  ${switch2}  off  1 min 40 sec
-
-Start And Stop On Sensor Enabled Change
+Start And Stop On Sensor Enabled Change 1
     Set Enabled State  sensor_enabler1  disable
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector1}  on
@@ -164,24 +149,88 @@ Start And Stop On Sensor Enabled Change 2
     State Should Change At  ${switch2}  on  30 sec
     State Should Change At  ${switch2}  off  1 min 50 sec
 
-Disregard State Change Of Disabled Sensor
-    Set Enabled State  sensor_enabler1  enable
-    Set Enabled State  sensor_enabler2  disable
+Disregard State Change Of Disabled Sensor 1
+    Set Enabled State  sensor_enabler1  disable
+    Set Enabled State  sensor_enabler2  enable
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector2}  on
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector2}  off
     Schedule Call At  50 sec
     ...    set_sensor_state  ${motion_detector1}  off
-    Schedule Call At  40 sec
+
+    State Should Change At  ${switch2}  on  30 sec
+    State Should Change At  ${switch2}  off  1 min 40 sec
+
+Disregard State Change Of Disabled Sensor 2
+    Set Enabled State  sensor_enabler1  disable
+    Set Enabled State  sensor_enabler2  enable
+    Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector2}  on
-    Schedule Call At  1 min
+    Schedule Call At  50 sec
     ...    set_sensor_state  ${motion_detector2}  off
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  1 min
+    ...    set_sensor_state  ${motion_detector1}  off
     Schedule Call At  1 min 10 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  1 min 20 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+
+    State Should Change At  ${switch2}  on  20 sec
+    State Should Change At  ${switch2}  off  1 min 50 sec
+
+Disregard State Change Of Disabled Sensor 3
+    Set Enabled State  sensor_enabler1  disable
+    Set Enabled State  sensor_enabler2  enable
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call At  1 min
     ...    set_sensor_state  ${motion_detector2}  on
     Schedule Call At  1 min 20 sec
     ...    set_sensor_state  ${motion_detector2}  off
 
-    State Should Change At  ${switch2}  on  20 sec
-    State Should Change At  ${switch2}  off  1 min 50 sec
+    State Should Change At  ${switch2}  on  1 min
+    State Should Change At  ${switch2}  off  2 min 20 sec
+
+Disregard State Change Of Disabled Sensor 4
+    Set Enabled State  sensor_enabler1  disable
+    Set Enabled State  sensor_enabler2  enable
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector2}  on
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call At  1 min
+    ...    set_sensor_state  ${motion_detector2}  off
+
+    State Should Change At  ${switch2}  on  30 sec
+    State Should Change At  ${switch2}  off  2 min
+
+Disregard State Change Of Disabled Sensor 5
+    Set Enabled State  sensor_enabler1  disable
+    Set Enabled State  sensor_enabler2  enable
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  50 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call At  1 min
+    ...    set_sensor_state  ${motion_detector2}  on
+    Schedule Call At  1 min 10 sec
+    ...    set_sensor_state  ${motion_detector2}  off
+
+    State Should Change At  ${switch2}  on  1 min
+    State Should Change At  ${switch2}  off  2 min 10 sec
 
 
 *** Keywords ***

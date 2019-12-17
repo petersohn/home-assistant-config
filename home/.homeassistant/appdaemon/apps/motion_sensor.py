@@ -88,7 +88,8 @@ class MotionSensor(hass.Hass):
                or self.get_state(sensor) == 'off'
                for sensor in self.sensors):
             # self.log('Starting timer')
-            self.timer = self.run_in(self.on_timeout, self.time)
+            if self.timer is None:
+                self.timer = self.run_in(self.on_timeout, self.time)
 
     def on_motion_stop(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_motion_stop'):
