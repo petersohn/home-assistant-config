@@ -164,6 +164,25 @@ Start And Stop On Sensor Enabled Change 2
     State Should Change At  ${switch2}  on  30 sec
     State Should Change At  ${switch2}  off  1 min 50 sec
 
+Disregard State Change Of Disabled Sensor
+    Set Enabled State  sensor_enabler1  enable
+    Set Enabled State  sensor_enabler2  disable
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  50 sec
+    ...    set_sensor_state  ${motion_detector1}  off
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector2}  on
+    Schedule Call At  1 min
+    ...    set_sensor_state  ${motion_detector2}  off
+    Schedule Call At  1 min 10 sec
+    ...    set_sensor_state  ${motion_detector2}  on
+    Schedule Call At  1 min 20 sec
+    ...    set_sensor_state  ${motion_detector2}  off
+
+    State Should Change At  ${switch2}  on  20 sec
+    State Should Change At  ${switch2}  off  1 min 50 sec
+
 
 *** Keywords ***
 
