@@ -1,4 +1,5 @@
 import os
+import yaml
 import Directories
 
 
@@ -23,14 +24,19 @@ def create_appdaemon_configuration(target_directory, apps, app_configs):
         target_file = os.path.join(apps_dir, file_name)
         os.symlink(source_file, target_file)
 
-    with open(apps_yaml, 'w') as target:
+        content = {}
         for config in app_configs:
             source_file = os.path.join(
                 Directories.appdaemon_config_path, 'configs', config + '.yaml')
             with open(source_file, 'r') as source:
-                target.write(source.read())
+                content.update(yaml.safe_load(source))
+
+            content['test']['dependencies'] = [
+                name for name in content.keys()
+                if name not in ['test', 'global_modules']]
+
+    with open(apps_yaml, 'w') as target:
+        yaml.dump(content, target)
 
     with open(secrets_yaml, 'w') as secrets:
-        secrets.write(
-            'logfile: "' + log_file + '"\n'
-            'errorfile: "' + error_file + '"\n')
+        yaml.dump({'logfile': log_file, 'errorfile': error_file}, secrets)

@@ -11,4 +11,3 @@ test:
     module: TestApp
     class: TestApp
     global_dependencies: mutex_graph
-    dependencies: locker
