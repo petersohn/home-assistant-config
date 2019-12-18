@@ -229,6 +229,25 @@ State Should Change At Next Time Frame
     State Should Be  ${test_sensor}  ${new_sensor_value}
     Current Time Should Be  ${time}
 
+State Changes Too Early
+    ${time} =  Set Variable  01:00:10
+    ${expected} =  Add Time To Time  ${time}  ${appdaemon_interval}
+    Schedule Call At  ${time}
+    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
+    Run Keyword And Expect Error  ${new_sensor_value} != ${test_sensor_value}
+    ...    State Should Change At  ${test_sensor}  ${new_sensor_value}
+    ...    ${expected}
+
+State Changes Too Late
+    ${expected} =  Set Variable  01:00:10
+    ${time} =  Add Time To Time  ${expected}  ${appdaemon_interval}
+    Schedule Call At  ${time}
+    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
+    Run Keyword And Expect Error
+    ...    *failed after retrying *${test_sensor_value} != ${new_sensor_value}
+    ...    State Should Change At  ${test_sensor}  ${new_sensor_value}
+    ...    ${expected}
+
 Clean Home Assistant States
     Turn On  ${test_switch}
     Clean States

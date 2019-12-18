@@ -232,6 +232,24 @@ Disregard State Change Of Disabled Sensor 5
     State Should Change At  ${switch2}  on  1 min
     State Should Change At  ${switch2}  off  2 min 10 sec
 
+Enabled Change While Sensor Is Disabled
+    Set Enabled State  sensor_enabler1  disable
+    Set Enabled State  sensor_enabler2  enable
+    Set Enabled State  ${enabler}  disable
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector1}  on
+    Schedule Call At  30 sec
+    ...    call_on_app  ${enabler}  enable
+    Schedule Call At  40 sec
+    ...    set_sensor_state  ${motion_detector2}  on
+    Schedule Call At  50 sec
+    ...    set_sensor_state  ${motion_detector2}  off
+    Schedule Call At  1 min
+    ...    set_sensor_state  ${motion_detector1}  off
+
+    State Should Change At  ${switch2}  on  40 sec
+    State Should Change At  ${switch2}  off  1 min 50 sec
+
 
 *** Keywords ***
 

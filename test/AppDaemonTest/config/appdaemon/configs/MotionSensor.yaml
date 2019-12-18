@@ -54,4 +54,5 @@ test_motion_sensor_2:
         binary_sensor.motion_detector2: sensor_enabler2
     targets:
         - auto_switch_light2
+    enabler: test_enabler
     time: 1
