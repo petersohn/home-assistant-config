@@ -9,6 +9,24 @@
 
 - trigger:
       platform: mqtt
+      topic: home/input_select/light_garage/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_garage
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
+      topic: home/input_select/light_gate_reflector/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_gate_reflector
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
       topic: home/input_select/light_christmas_front/set
   action:
       - service: input_select.select_option
