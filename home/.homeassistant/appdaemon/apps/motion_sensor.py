@@ -60,10 +60,9 @@ class MotionSensor(hass.Hass):
                 self.was_enabled = value
                 self.log('enabled changed to {}'.format(value))
                 if value:
-                    if any(
-                            self.__is_sensor_enabled(sensor)
-                            and self.get_state(sensor) == 'on'
-                            for sensor in self.sensors):
+                    if any(self.__is_sensor_enabled(sensor)
+                           and self.get_state(sensor) == 'on'
+                           for sensor in self.sensors):
                         self.__start()
                 else:
                     self.__stop_timer()
