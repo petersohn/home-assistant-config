@@ -6,12 +6,7 @@ import copy
 class MotionSensor(hass.Hass):
 
     def initialize(self):
-        enabled_sensors = self.args.get('enabled_sensors', {})
-        self.sensors = self.args.get('sensors', [])
-        self.sensors.extend(enabled_sensors.keys())
-        self.sensors = list(set(self.sensors))
-        self.sensor_enablers = {
-            k: self.get_app(v) for k, v in enabled_sensors.items()}
+        self.sensor = self.args['sensor']
         self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
         self.time = float(self.args['time']) * 60
         enabler = self.args.get('enabler')
@@ -21,37 +16,15 @@ class MotionSensor(hass.Hass):
         else:
             self.enabler = None
 
-        def stupid_python_workaround(sensor):
-            return lambda: self.on_sensor_enabled_changed(sensor)
-
-        for sensor, enabler in self.sensor_enablers.items():
-            enabler.on_change(stupid_python_workaround(sensor))
-            enabler._motion_sensor_was_enabled = enabler.is_enabled()
-
         self.timer = None
         self.was_enabled = None
         self.mutex = self.get_app('locker').get_mutex('MotionSensor')
 
-        for sensor in self.sensors:
-            self.listen_state(self.on_motion_start, entity=sensor, new='on')
-            self.listen_state(self.on_motion_stop, entity=sensor, new='off')
+        self.listen_state(self.on_motion_start, entity=self.sensor, new='on')
+        self.listen_state(self.on_motion_stop, entity=self.sensor, new='off')
 
     def terminate(self):
         self.targets.turn_off()
-
-    def on_sensor_enabled_changed(self, sensor):
-        with self.mutex.lock('on_sensor_enabled_changed'):
-            enabler = self.sensor_enablers[sensor]
-            value = enabler.is_enabled()
-            if enabler._motion_sensor_was_enabled != value:
-                self.log('sensor enabled changed: {}: {}'.format(
-                    sensor, value))
-                enabler._motion_sensor_was_enabled = value
-                if self.get_state(sensor) == 'on':
-                    if value:
-                        self.__handle_start(sensor)
-                    else:
-                        self.__handle_stop(sensor)
 
     def on_enabled_chaged(self):
         with self.mutex.lock('on_enabled_chaged'):
@@ -60,23 +33,16 @@ class MotionSensor(hass.Hass):
                 self.was_enabled = value
                 self.log('enabled changed to {}'.format(value))
                 if value:
-                    if any(self.__is_sensor_enabled(sensor)
-                           and self.get_state(sensor) == 'on'
-                           for sensor in self.sensors):
+                    if self.get_state(self.sensor) == 'on':
                         self.__start()
                 else:
                     self.__stop_timer()
                     self.targets.turn_off()
 
-    def __is_sensor_enabled(self, sensor):
-        if sensor not in self.sensor_enablers:
-            return True
-        return self.sensor_enablers[sensor].is_enabled()
-
     def __handle_start(self, entity):
         # self.log('motion start: {} enabled={} sensor_enabled={}'.format(
         #     entity, self.__should_start(), self.__is_sensor_enabled(entity)))
-        if self.__should_start() and self.__is_sensor_enabled(entity):
+        if self.__should_start():
             self.__start()
 
     def on_motion_start(self, entity, attribute, old, new, kwargs):
@@ -85,12 +51,8 @@ class MotionSensor(hass.Hass):
 
     def __handle_stop(self, entity):
         # self.log('motion stop: {}'.format(entity))
-        if all(not self.__is_sensor_enabled(sensor)
-               or self.get_state(sensor) == 'off'
-               for sensor in self.sensors):
-            # self.log('Starting timer')
-            if self.timer is None:
-                self.timer = self.run_in(self.on_timeout, self.time)
+        if self.timer is None:
+            self.timer = self.run_in(self.on_timeout, self.time)
 
     def on_motion_stop(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_motion_stop'):

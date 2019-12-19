@@ -138,6 +138,17 @@ motion_sensor_driveway_uppest_lockout:
     entity: sensor.motion_sensor_driveway_uppest_average
     max: 0.2
 
+motion_sensor_driveway_uppest_enabler:
+    module: enabler
+    class: MultiEnabler
+    dependencies:
+        - motion_sensor_driveway_uppest_lockout
+        - sun_enabler_night
+        - locker
+    enablers:
+        - motion_sensor_driveway_uppest_lockout
+        - sun_enabler_night
+
 motion_sensor_driveway_upper_history:
     module: history
     class: HistoryManager
@@ -167,6 +178,17 @@ motion_sensor_driveway_upper_lockout:
         - motion_sensor_driveway_upper_average
     entity: sensor.motion_sensor_driveway_upper_average
     max: 0.2
+
+motion_sensor_driveway_upper_enabler:
+    module: enabler
+    class: MultiEnabler
+    dependencies:
+        - motion_sensor_driveway_upper_lockout
+        - sun_enabler_night
+        - locker
+    enablers:
+        - motion_sensor_driveway_upper_lockout
+        - sun_enabler_night
 
 motion_sensor_driveway_lower_history:
     module: history
@@ -198,6 +220,17 @@ motion_sensor_driveway_lower_lockout:
     entity: sensor.motion_sensor_driveway_lower_average
     max: 0.2
 
+motion_sensor_driveway_lower_enabler:
+    module: enabler
+    class: MultiEnabler
+    dependencies:
+        - motion_sensor_driveway_lower_lockout
+        - sun_enabler_night
+        - locker
+    enablers:
+        - motion_sensor_driveway_lower_lockout
+        - sun_enabler_night
+
 motion_sensor_garage_history:
     module: history
     class: HistoryManager
@@ -228,61 +261,90 @@ motion_sensor_garage_lockout:
     entity: sensor.motion_sensor_garage_average
     max: 0.2
 
-motion_sensor_enabler:
+motion_sensor_garage_enabler:
     module: enabler
     class: MultiEnabler
     dependencies:
+        - motion_sensor_garage_lockout
         - sun_enabler_night
         - locker
     enablers:
+        - motion_sensor_garage_lockout
         - sun_enabler_night
 
-driveway_motion_sensor:
+driveway_uppest_reflector_motion_sensor:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_light_gate_reflector
+        - motion_sensor_driveway_uppest_enabler
+        - locker
+    sensor: binary_sensor.motion_sensor_driveway_uppest
+    targets:
+        - auto_switch_light_gate_reflector
+    enabler: motion_sensor_driveway_uppest_enabler
+    time: 1
+
+driveway_uppest_motion_sensor:
     class: MotionSensor
     module: motion_sensor
     dependencies:
         - auto_switch_light_driveway
-        - motion_sensor_enabler
-        - motion_sensor_driveway_uppest_lockout
-        - motion_sensor_driveway_upper_lockout
-        - motion_sensor_driveway_lower_lockout
+        - motion_sensor_driveway_uppest_enabler
         - locker
-    enabled_sensors:
-        binary_sensor.motion_sensor_driveway_uppest: motion_sensor_driveway_uppest_lockout
-        binary_sensor.motion_sensor_driveway_upper: motion_sensor_driveway_upper_lockout
-        binary_sensor.motion_sensor_driveway_lower: motion_sensor_driveway_lower_lockout
+    sensor: binary_sensor.motion_sensor_driveway_uppest
     targets:
         - auto_switch_light_driveway
-    enabler: motion_sensor_enabler
+    enabler: motion_sensor_driveway_uppest_enabler
     time: 2
 
-gate_reflector_motion_sensor:
+driveway_upper_reflector_motion_sensor:
     class: MotionSensor
     module: motion_sensor
     dependencies:
         - auto_switch_light_gate_reflector
-        - motion_sensor_enabler
-        - motion_sensor_driveway_uppest_lockout
-        - motion_sensor_driveway_upper_lockout
+        - motion_sensor_driveway_upper_enabler
         - locker
-    enabled_sensors:
-        binary_sensor.motion_sensor_driveway_uppest: motion_sensor_driveway_uppest_lockout
-        binary_sensor.motion_sensor_driveway_upper: motion_sensor_driveway_upper_lockout
+    sensor: binary_sensor.motion_sensor_driveway_upper
     targets:
         - auto_switch_light_gate_reflector
-    enabler: motion_sensor_enabler
+    enabler: motion_sensor_driveway_upper_enabler
     time: 1
+
+driveway_upper_motion_sensor:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_light_driveway
+        - motion_sensor_driveway_upper_enabler
+        - locker
+    sensor: binary_sensor.motion_sensor_driveway_upper
+    targets:
+        - auto_switch_light_driveway
+    enabler: motion_sensor_driveway_upper_enabler
+    time: 2
+
+driveway_lower_motion_sensor:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_light_driveway
+        - motion_sensor_driveway_lower_enabler
+        - locker
+    sensor: binary_sensor.motion_sensor_driveway_lower
+    targets:
+        - auto_switch_light_driveway
+    enabler: motion_sensor_driveway_lower_enabler
+    time: 2
 
 garage_motion_sensor:
     class: MotionSensor
     module: motion_sensor
     dependencies:
         - auto_switch_light_garage
-        - motion_sensor_enabler
-        - motion_sensor_garage_lockout
+        - motion_sensor_garage_enabler
         - locker
-    enabled_sensors:
-        binary_sensor.motion_sensor_garage: motion_sensor_garage_lockout
+    sensor: binary_sensor.motion_sensor_garage
     targets:
         - auto_switch_light_garage
     enabler: motion_sensor_enabler
