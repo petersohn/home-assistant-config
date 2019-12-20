@@ -60,11 +60,12 @@ class MotionSensor(hass.Hass):
 
     def __start(self):
         self.__stop_timer()
+        self.log('Turn on')
         self.targets.turn_on()
 
     def on_timeout(self, kwargs):
         with self.mutex.lock('on_timeout'):
-            # self.log('Timeout')
+            self.log('Turn off')
             self.targets.turn_off()
 
     def __stop_timer(self):
