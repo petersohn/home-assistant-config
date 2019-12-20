@@ -347,7 +347,7 @@ garage_motion_sensor:
     sensor: binary_sensor.motion_sensor_garage
     targets:
         - auto_switch_light_garage
-    enabler: motion_sensor_enabler
+    enabler: motion_sensor_garage_enabler
     time: 3
 
 christmas_light_switch_front:
