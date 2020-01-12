@@ -272,6 +272,45 @@ motion_sensor_garage_enabler:
         - motion_sensor_garage_lockout
         - sun_enabler_night
 
+motion_sensor_garage2_history:
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: binary_sensor.motion_sensor_garage2
+
+motion_sensor_garage2_average:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - motion_sensor_garage2_history
+        - locker
+    manager: motion_sensor_garage2_history
+    target: sensor.motion_sensor_garage2_average
+    interval:
+        hours: 1
+    aggregator: mean
+    attributes:
+        friendly_name: "Garázs 2"
+        icon: mdi:percent
+
+motion_sensor_garage2_lockout:
+    module: enabler
+    class: RangeEnabler
+    dependencies:
+        - locker
+        - motion_sensor_garage2_average
+    entity: sensor.motion_sensor_garage2_average
+    max: 0.3
+
+motion_sensor_garage2_enabler:
+    module: enabler
+    class: MultiEnabler
+    dependencies:
+        - motion_sensor_garage2_lockout
+        - locker
+    enablers:
+        - motion_sensor_garage2_lockout
+
 driveway_uppest_reflector_motion_sensor:
     class: MotionSensor
     module: motion_sensor
@@ -348,7 +387,20 @@ garage_motion_sensor:
     targets:
         - auto_switch_light_garage
     enabler: motion_sensor_garage_enabler
-    time: 3
+    time: 1
+
+garage2_motion_sensor:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_light_garage
+        - motion_sensor_garage2_enabler
+        - locker
+    sensor: binary_sensor.motion_sensor_garage2
+    targets:
+        - auto_switch_light_garage
+    enabler: motion_sensor_garage2_enabler
+    time: 2
 
 christmas_light_switch_front:
     module: auto_switch

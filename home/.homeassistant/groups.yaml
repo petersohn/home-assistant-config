@@ -50,6 +50,8 @@ motion:
     - sensor.motion_sensor_driveway_lower_average
     - binary_sensor.motion_sensor_garage
     - sensor.motion_sensor_garage_average
+    - binary_sensor.motion_sensor_garage2
+    - sensor.motion_sensor_garage2_average
 
 lights:
   view: no

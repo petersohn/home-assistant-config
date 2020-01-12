@@ -341,6 +341,10 @@ binary_sensor.motion_sensor_garage:
   friendly_name: "Garázs"
   icon: mdi:walk
 
+binary_sensor.motion_sensor_garage2:
+  friendly_name: "Garázs 2"
+  icon: mdi:walk
+
 sensor.light_shadow:
   friendly_name: "Fény árnyékban"
   icon: mdi:weather-sunset
