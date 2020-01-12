@@ -15,7 +15,7 @@
             "commandTopic": "home/switches/lights/cellar/set",
             "invert": true,
             "default": 0,
-            "pin": 2
+            "pin": 5
         },
         {
             "type": "input",
@@ -23,17 +23,22 @@
             "pin": 3
         },
         {
+            "type": "input",
+            "name": "motion_sensor_garage2",
+            "pin": 4
+        },
+        {
             "type": "output",
             "name": "light_garage",
             "commandTopic": "home/switches/lights/garage/set",
             "invert": true,
             "default": 0,
-            "pin": 4
+            "pin": 16
         },
         {
             "type": "dht",
             "name": "temperature_cellar",
-            "pin": 5
+            "pin": 2
         },
         {
             "type": "input",
@@ -90,6 +95,12 @@
             "type": "publish",
             "interface": "motion_sensor_garage",
             "topic": "home/sensors/motion/garage",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "motion_sensor_garage2",
+            "topic": "home/sensors/motion/garage2",
             "retain": false
         },
         {
