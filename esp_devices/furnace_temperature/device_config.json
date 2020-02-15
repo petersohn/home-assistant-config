@@ -1,5 +1,5 @@
 {
-    "debug": true,
+    "debug": false,
     "name": "furnaceTemperature",
     "availabilityTopic": "home/devices/furnaceTemperature/availability",
     "debugTopic": "home/devices/furnaceTemperature/debug",
@@ -23,6 +23,13 @@
             "name": "dht",
             "interval": 60,
             "pin": 0
+        },
+        {
+            "type": "output",
+            "name": "heat_switch",
+            "default": false,
+            "invert": true,
+            "pin": 1
         }
     ],
     "actions": [
@@ -93,6 +100,20 @@
                 },
                 "then": "0",
                 "else": ""
+            }
+        },
+        {
+            "type": "command",
+            "interface": "dallas",
+            "target": "heat_switch",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": ">=",
+                    "ops": [{"type": "value", "index": 3}, 30]
+                },
+                "then": "1",
+                "else": "0"
             }
         }
     ]
