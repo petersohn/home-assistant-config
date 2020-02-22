@@ -214,6 +214,16 @@ sensor:
     value_template: '{{ value_json.uptime }}'
     unit_of_measurement: "ms"
   - platform: mqtt
+    state_topic: home/devices/main_controller2/availability
+    name: main_controller2_free_memory
+    value_template: '{{ value_json.freeMemory }}'
+    unit_of_measurement: "b"
+  - platform: mqtt
+    state_topic: home/devices/main_controller2/availability
+    name: main_controller2_uptime
+    value_template: '{{ value_json.uptime }}'
+    unit_of_measurement: "ms"
+  - platform: mqtt
     state_topic: home/devices/furnaceTemperature/availability
     name: furnace_temperature_free_memory
     value_template: '{{ value_json.freeMemory }}'
@@ -307,6 +317,12 @@ binary_sensor:
     payload_on: true
     payload_off: false
   - platform: mqtt
+    state_topic: home/devices/main_controller2/availability
+    name: main_controller2_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
     state_topic: home/devices/furnaceTemperature/availability
     name: furnace_temperature_available
     value_template: '{{ value_json.available }}'
@@ -358,6 +374,12 @@ binary_sensor:
   - platform: mqtt
     state_topic: home/devices/main_controller/availability
     name: main_controller_restarted
+    value_template: '{{ value_json.restarted }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/main_controller2/availability
+    name: main_controller2_restarted
     value_template: '{{ value_json.restarted }}'
     payload_on: true
     payload_off: false
@@ -516,6 +538,42 @@ switch:
     name: light_gate_reflector
     command_topic: home/switches/lights/gate_reflector/set
     state_topic: home/switches/lights/gate_reflector/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: light_outside_1
+    command_topic: home/switches/lights/outside/1/set
+    state_topic: home/switches/lights/outside/1/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: light_outside_2
+    command_topic: home/switches/lights/outside/2/set
+    state_topic: home/switches/lights/outside/2/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: light_outside_3
+    command_topic: home/switches/lights/outside/3/set
+    state_topic: home/switches/lights/outside/3/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: light_outside_4
+    command_topic: home/switches/lights/outside/4/set
+    state_topic: home/switches/lights/outside/4/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: light_outside_5
+    command_topic: home/switches/lights/outside/5/set
+    state_topic: home/switches/lights/outside/5/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: light_outside_6
+    command_topic: home/switches/lights/outside/6/set
+    state_topic: home/switches/lights/outside/6/state
     payload_on: 1
     payload_off: 0
 

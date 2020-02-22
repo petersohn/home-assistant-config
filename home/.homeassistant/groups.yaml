@@ -71,6 +71,12 @@ lights:
     - input_select.light_christmas_front
     - switch.light_christmas_tree
     - input_select.light_christmas_tree
+    - switch.light_outside_1
+    - switch.light_outside_2
+    - switch.light_outside_3
+    - switch.light_outside_4
+    - switch.light_outside_5
+    - switch.light_outside_6
 
 weather_measurements:
   view: no
@@ -142,6 +148,7 @@ device_availability:
     - binary_sensor.furnace_temperature_available
     - binary_sensor.well_controller_available
     - binary_sensor.main_controller_available
+    - binary_sensor.main_controller2_available
     - binary_sensor.driveway_available
     - binary_sensor.cellar_controller_available
     - binary_sensor.living_room_temperature_available
@@ -156,6 +163,7 @@ device_memory:
     - sensor.furnace_temperature_free_memory
     - sensor.well_controller_free_memory
     - sensor.main_controller_free_memory
+    - sensor.main_controller2_free_memory
     - sensor.driveway_free_memory
     - sensor.cellar_controller_free_memory
     - sensor.living_room_temperature_free_memory
@@ -170,6 +178,7 @@ device_uptime:
     - sensor.furnace_temperature_uptime
     - sensor.well_controller_uptime
     - sensor.main_controller_uptime
+    - sensor.main_controller2_uptime
     - sensor.driveway_uptime
     - sensor.cellar_controller_uptime
     - sensor.living_room_temperature_uptime
