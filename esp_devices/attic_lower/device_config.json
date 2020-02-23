@@ -1,0 +1,49 @@
+{
+    "debug": true,
+    "name": "attic_lower",
+    "availabilityTopic": "home/devices/attic_lower/availability",
+    "debugTopic": "home/devices/attic_lower/debug",
+    "interfaces": [
+        {
+            "type": "input",
+            "name": "hatch",
+            "pin": 3
+        },
+        {
+            "type": "output",
+            "name": "light5",
+            "commandTopic": "home/switches/lights/outside/5/set",
+            "invert": true,
+            "default": 0,
+            "pin": 0
+        },
+        {
+            "type": "output",
+            "name": "light6",
+            "commandTopic": "home/switches/lights/outside/6/set",
+            "invert": true,
+            "default": 0,
+            "pin": 2
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "light5",
+            "topic": "home/switches/lights/outside/5/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light6",
+            "topic": "home/switches/lights/outside/6/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "hatch",
+            "topic": "home/sensors/door/attic_hatch",
+            "retain": true
+        },
+    ]
+}
