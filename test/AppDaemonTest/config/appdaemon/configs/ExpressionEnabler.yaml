@@ -1,0 +1,45 @@
+enabler1:
+    module: enabler
+    class: ScriptEnabler
+    dependencies: locker
+
+enabler2:
+    module: enabler
+    class: ScriptEnabler
+    dependencies: locker
+
+enablers_and:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+        - enabler1
+        - enabler2
+    expr: e.enabler1 and e.enabler2
+
+enablers_nand:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+        - enabler1
+        - enabler2
+    expr: 'not (e.enabler1 and e.enabler2)'
+
+enablers_and_not:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+        - enabler1
+        - enabler2
+    expr: e.enabler1 and not e.enabler2
+
+enablers_or:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+        - enabler1
+        - enabler2
+    expr: e.enabler1 or e.enabler2
