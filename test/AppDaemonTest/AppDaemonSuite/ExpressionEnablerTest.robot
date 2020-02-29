@@ -17,31 +17,28 @@ ${input_sensor} =  sensor.test_input
 
 Enablers
     [Template]  Test Enablers
-    enablers_and      disable  disable  ${False}
-    enablers_and      disable  enable   ${False}
-    enablers_and      enable   disable  ${False}
-    enablers_and      enable   enable   ${True}
-    enablers_nand     disable  disable  ${True}
-    enablers_nand     disable  enable   ${True}
-    enablers_nand     enable   disable  ${True}
-    enablers_nand     enable   enable   ${False}
-    enablers_and_not  disable  disable  ${False}
-    enablers_and_not  disable  enable   ${False}
-    enablers_and_not  enable   disable  ${True}
-    enablers_and_not  enable   enable   ${False}
-    enablers_or       disable  disable  ${False}
-    enablers_or       disable  enable   ${True}
-    enablers_or       enable   disable  ${True}
-    enablers_or       enable   enable   ${True}
+    disable  disable
+    ...    enablers_and=${False}  enablers_nand=${True}
+    ...    enablers_and_not=${False}  enablers_or=${False}
+    disable  enable
+    ...    enablers_and=${False}  enablers_nand=${True}
+    ...    enablers_and_not=${False}  enablers_or=${True}
+    enable   disable
+    ...    enablers_and=${False}  enablers_nand=${True}
+    ...    enablers_and_not=${True}  enablers_or=${True}
+    enable   enable
+    ...    enablers_and=${True}  enablers_nand=${False}
+    ...    enablers_and_not=${False}  enablers_or=${True}
 
 *** Keywords ***
 
 Test Enablers
-    [Arguments]  ${name}  ${enabler1}  ${enabler2}  ${expected_state}
+    [Arguments]  ${enabler1}  ${enabler2}  &{expected_states}
     Set Enabled State  enabler1  ${enabler1}
     Set Enabled State  enabler2  ${enabler2}
     Unblock For  ${appdaemon_interval}
-    Enabled State Should Be  ${name}  ${expected_state}
+    :FOR  ${name}  IN  @{expected_states.keys()}
+    \   Enabled State Should Be  ${name}  ${expected_states['${name}']}
 
 Initialize
     [Arguments]  ${start_time}  ${start_date}=${default_start_date}
