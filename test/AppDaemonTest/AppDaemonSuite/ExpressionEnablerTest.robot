@@ -92,6 +92,17 @@ Binary Sensors
     on  on
     ...    binary_and=${True}   binary_or=${True}
 
+Enabler And Binary Sensor
+    [Template]  Test Enabler And Binary Sensor
+    disable  off
+    ...    enabler_and_binary_and=${False}  enabler_and_binary_or=${False}
+    disable  on
+    ...    enabler_and_binary_and=${False}  enabler_and_binary_or=${True}
+    enable  off
+    ...    enabler_and_binary_and=${False}  enabler_and_binary_or=${True}
+    enable  on
+    ...    enabler_and_binary_and=${True}   enabler_and_binary_or=${True}
+
 *** Keywords ***
 
 Check Expected States
@@ -116,6 +127,13 @@ Test Binary Sensors
     [Arguments]  ${sensor1}  ${sensor2}  &{expected_states}
     Set State  ${input_binary1}  ${sensor1}
     Set State  ${input_binary2}  ${sensor2}
+    Check Expected States  &{expected_states}
+
+Test Enabler And Binary Sensor
+    [Arguments]  ${enabler}  ${sensor}  &{expected_states}
+    Set Enabled State  enabler1  ${enabler}
+    Set State  ${input_binary1}  ${sensor}
+    Unblock For  ${appdaemon_interval}
     Check Expected States  &{expected_states}
 
 Initialize
