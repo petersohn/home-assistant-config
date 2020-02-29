@@ -43,3 +43,31 @@ enablers_or:
         - enabler1
         - enabler2
     expr: e.enabler1 or e.enabler2
+
+value_less:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: 'v["sensor.test_input1"] < v["sensor.test_input2"]'
+
+value_equal:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: 'v["sensor.test_input1"] == v["sensor.test_input2"]'
+
+binary_and:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: 'v["binary_sensor.test_input1"] and v["binary_sensor.test_input2"]'
+
+binary_or:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: 'v["binary_sensor.test_input1"] or v["binary_sensor.test_input2"]'

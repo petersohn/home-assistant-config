@@ -142,28 +142,14 @@ class MultiEnabler(Enabler):
 
 class ExpressionEnabler(Enabler):
     def initialize(self):
-        self.expr = self.args['expr']
-        entities = set()
-        enablers = set()
-
         self.mutex = self.get_app('locker').get_mutex('ExpressionEnabler')
 
-        def e(name):
-            enablers.add(name)
-            return self._get_enabled(name)
-
-        def v(name):
-            entities.add(name)
-            return self._get_value(name)
-
-        value = eval(self.expr, self._create_evaluators(e, v))
+        self.expr = self.args['expr']
+        self.entities = set()
+        self.enablers = set()
         self.evaluators = self._create_evaluators(
             self._get_enabled, self._get_value)
-        for entity in entities:
-            self.listen_state(self.get, entity=entity)
-        for enabler in enablers:
-            self.get_app(enabler).on_change(lambda: self._on_enabler_change())
-        self._init_enabler(value)
+        self._init_enabler(self._get())
 
     def _create_evaluators(self, e, v):
         class Evaluator:
@@ -173,27 +159,46 @@ class ExpressionEnabler(Enabler):
             def __getattr__(self, value):
                 return self.__func(value)
 
+            def __getitem__(self, value):
+                return self.__func(str(value))
+
         return {'e': Evaluator(e), 'v': Evaluator(v)}
 
     def _get_value(self, entity):
+        if entity not in self.entities:
+            self.listen_state(self._on_entity_change, entity=entity)
+            self.entities.add(entity)
         value = self.get_state(entity)
+        self.log('_get_value: {} = {}'.format(entity, value))
+        if value == 'on':
+            return True
+        if value == 'off':
+            return False
         try:
             return float(value)
         except ValueError:
             return value
 
     def _get_enabled(self, enabler):
-        value = self.get_app(enabler).is_enabled()
+        app = self.get_app(enabler)
+        if enabler not in self.enablers:
+            app.on_change(lambda: self._on_enabler_change())
+            self.enablers.add(enabler)
+        value = app.is_enabled()
         return value
 
     def _on_enabler_change(self):
         self.run_in(self.get, 0)
 
     def _on_entity_change(self, entity, attribute, old, new, kwargs):
+        self.log('state change({}): {} -> {}'.format(entity, old, new))
         if new != old:
-            self.get()
+            self.get({})
+
+    def _get(self):
+        return eval(self.expr, self.evaluators)
 
     def get(self, kwargs):
         with self.mutex.lock('get'):
-            value = eval(self.expr, self.evaluators)
+            value = self._get()
             self._change(value)
