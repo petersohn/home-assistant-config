@@ -293,6 +293,17 @@ sensor:
     name: gate_reflector_uptime
     value_template: '{{ value_json.uptime }}'
     unit_of_measurement: "ms"
+  - platform: mqtt
+    state_topic: home/devices/attic_lower/availability
+    name: attic_lower_free_memory
+    value_template: '{{ value_json.freeMemory }}'
+    unit_of_measurement: "b"
+  - platform: mqtt
+    state_topic: home/devices/attic_lower/availability
+    name: attic_lower_uptime
+    value_template: '{{ value_json.uptime }}'
+    unit_of_measurement: "ms"
+
 
   - platform: command_line
     command: "df /tmp | tail -n 1 | awk '{print $4}'"
@@ -364,6 +375,12 @@ binary_sensor:
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/attic_lower/availability
+    name: attic_lower_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
 
   - platform: mqtt
     state_topic: home/devices/well_controller/availability
@@ -425,6 +442,12 @@ binary_sensor:
     value_template: '{{ value_json.restarted }}'
     payload_on: true
     payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/attic_lower/availability
+    name: attic_lower_restarted
+    value_template: '{{ value_json.restarted }}'
+    payload_on: true
+    payload_off: false
 
   - platform: mqtt
     state_topic: home/sensors/motion/gate_reflector
@@ -449,6 +472,11 @@ binary_sensor:
   - platform: mqtt
     state_topic: home/sensors/motion/garage2
     name: motion_sensor_garage2
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    state_topic: home/sensors/door/attic_hatch
+    name: door_attic_hatch
     payload_on: 1
     payload_off: 0
   - platform: mqtt

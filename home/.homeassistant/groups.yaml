@@ -4,6 +4,7 @@ default_view:
   entities:
     - group.switch
     - group.motion
+    - group.doors
     - group.lights
     - group.weather_measurements
     - group.weather_inside
@@ -52,6 +53,13 @@ motion:
     - sensor.motion_sensor_garage_average
     - binary_sensor.motion_sensor_garage2
     - sensor.motion_sensor_garage2_average
+
+doors:
+  view: no
+  name: Ajtók
+  control: hidden
+  entities:
+    - binary_sensor.door_attic_hatch
 
 lights:
   view: no
@@ -155,6 +163,7 @@ device_availability:
     - binary_sensor.bedroom_temperature_available
     - binary_sensor.dishwasher_sensor_available
     - binary_sensor.gate_reflector_available
+    - binary_sensor.attic_lower_available
 
 device_memory:
   view: no
@@ -170,6 +179,7 @@ device_memory:
     - sensor.bedroom_temperature_free_memory
     - sensor.dishwasher_sensor_free_memory
     - sensor.gate_reflector_free_memory
+    - sensor.attic_lower_free_memory
 
 device_uptime:
   view: no
@@ -185,6 +195,7 @@ device_uptime:
     - sensor.bedroom_temperature_uptime
     - sensor.dishwasher_sensor_uptime
     - sensor.gate_reflector_uptime
+    - sensor.attic_lower_uptime
 
 local_device:
   view: no

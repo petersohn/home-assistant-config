@@ -85,6 +85,10 @@ binary_sensor.gate_reflector_available:
   friendly_name: Gate Reflector Available
   icon: mdi:chip
 
+binary_sensor.attic_lower_available:
+  friendly_name: Attic Lower Available
+  icon: mdi:chip
+
 sensor.furnace_temperature_free_memory:
   friendly_name: Furnace Temperature
   icon: mdi:memory
@@ -125,6 +129,10 @@ sensor.gate_reflector_free_memory:
   friendly_name: Gate Reflector
   icon: mdi:memory
 
+sensor.attic_lower_free_memory:
+  friendly_name: Attic Lower
+  icon: mdi:memory
+
 sensor.furnace_temperature_uptime:
   friendly_name: Furnace Temperature
   icon: mdi:clock
@@ -163,6 +171,10 @@ sensor.bedroom_temperature_uptime:
 
 sensor.gate_reflector_uptime:
   friendly_name: Gate Reflector
+  icon: mdi:clock
+
+sensor.attic_lower_uptime:
+  friendly_name: Attic Lower
   icon: mdi:clock
 
 sensor.temperature_outside:
@@ -380,6 +392,10 @@ binary_sensor.motion_sensor_garage:
 binary_sensor.motion_sensor_garage2:
   friendly_name: "Garázs 2"
   icon: mdi:walk
+
+binary_sensor.door_attic_hatch:
+  friendly_name: "Padlás feljáró"
+  icon: mdi:door
 
 sensor.light_shadow:
   friendly_name: "Fény árnyékban"
