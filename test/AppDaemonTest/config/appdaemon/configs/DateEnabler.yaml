@@ -1,0 +1,20 @@
+date_enabler_same:
+    module: enabler
+    class: DateEnabler
+    begin: 03-11
+    end: 03-11
+    dependencies: locker
+
+date_enabler_forward:
+    module: enabler
+    class: DateEnabler
+    begin: 05-01
+    end: 10-06
+    dependencies: locker
+
+date_enabler_backward:
+    module: enabler
+    class: DateEnabler
+    begin: 06-20
+    end: 04-30
+    dependencies: locker

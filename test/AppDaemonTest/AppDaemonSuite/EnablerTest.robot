@@ -3,7 +3,6 @@
 Resource       resources/AppDaemon.robot
 Resource       resources/Config.robot
 Resource       resources/Enabler.robot
-Test Setup     Initialize  00:00:00
 Test Teardown  Cleanup AppDaemon
 
 
@@ -16,6 +15,7 @@ ${input_sensor} =  sensor.test_input
 *** Test Cases ***
 
 Script Enabler
+    [Setup]  Initialize With Config  00:00:00  ScriptEnabler
     Enabled State Should Be  script_enabler_default  ${True}
     Enabled State Should Be  script_enabler_true  ${True}
     Enabled State Should Be  script_enabler_false  ${False}
@@ -36,6 +36,7 @@ Script Enabler
     Enabled State Should Be  script_enabler_false  ${False}
 
 Entity Based Enablers
+    [Setup]  Initialize With Config  00:00:00  ValueEnabler
     [Template]  Set Value And Check State
     # entity         value    enabler                 expected_state
     ${input_binary}  off      value_enabler_on        ${False}
@@ -96,6 +97,7 @@ Date Enabler
     2018-12-31    date_enabler_backward  ${True}
 
 Multi Enabler
+    [Setup]  Initialize With Config  00:00:00  ScriptEnabler  MultiEnabler
     [Template]  Test Multi Enabler
     ${False}  script_enabler_default=disable  script_enabler_true=disable  script_enabler_false=disable
     ${False}  script_enabler_default=disable  script_enabler_true=disable  script_enabler_false=enable
@@ -116,7 +118,8 @@ Set Value And Check State
 Test Date Enabler
     [Teardown]  Cleanup AppDaemon
     [Arguments]  ${start_date}  ${enabler}  ${expected_state}
-    Initialize  10:00:00  ${start_date}  ${enabler}-${start_date}
+    ${configs} =  Create List  DateEnabler
+    Initialize Base  10:00:00  ${configs}  ${start_date}  ${enabler}-${start_date}
     Enabled State Should Be  ${enabler}  ${expected_state}
 
 Test Multi Enabler
@@ -126,15 +129,20 @@ Test Multi Enabler
     Unblock For  ${appdaemon_interval}
     Enabled State Should Be  multi_enabler  ${expected_state}
 
-Initialize
-    [Arguments]  ${start_time}  ${start_date}=${default_start_date}
+Initialize With Config
+    [Arguments]  ${start_time}  @{configs}
+    Initialize Base  ${start_time}  configs=${configs}
+
+Initialize Base
+    [Arguments]  ${start_time}  ${configs}=${Empty}
+    ...          ${start_date}=${default_start_date}
     ...          ${suffix}=${Empty}
     Clean States
     Initialize States
     ...    ${input_binary}=off
     ...    ${input_sensor}=0
     ${apps} =  Create List  TestApp  locker  mutex_graph  enabler
-    ${app_configs} =  Create List  TestApp  Enabler
+    ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     ...                   start_date=${start_date}  suffix=${suffix}
     Unblock For  ${appdaemon_interval}
