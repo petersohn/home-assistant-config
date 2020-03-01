@@ -501,15 +501,15 @@ light_outside_switcher_1:
     class: EnabledSwitch
     module: enabled_switch
     dependencies:
-        - light_outside_switcher_1
+        - auto_switch_light_outside_1
         - locker
     global_dependencies:
         - auto_switch
     enabler: sun_enabler_night
     targets:
-        - light_outside_switcher_1
+        - auto_switch_light_outside_1
 
-light_outside_2_3_enabler:
+light_outside_2_4_enabler:
     module: enabler
     class: ExpressionEnabler
     expr: 'e.sun_enabler_night and v["input_select.lighting_mode"] != "sleep"'
@@ -517,21 +517,21 @@ light_outside_2_3_enabler:
         - sun_enabler_night
         - locker
 
-light_outside_switcher_2_3:
+light_outside_switcher_2_4:
     class: EnabledSwitch
     module: enabled_switch
     dependencies:
-        - light_outside_switcher_2
-        - light_outside_switcher_3
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_4
         - locker
     global_dependencies:
         - auto_switch
-    enabler: light_outside_2_3_enabler
+    enabler: light_outside_2_4_enabler
     targets:
-        - light_outside_switcher_2
-        - light_outside_switcher_3
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_4
 
-light_outside_4_5_6_enabler:
+light_outside_3_5_6_enabler:
     module: enabler
     class: ExpressionEnabler
     expr: 'e.sun_enabler_night and v["input_select.lighting_mode"] == "home"'
@@ -539,21 +539,21 @@ light_outside_4_5_6_enabler:
         - sun_enabler_night
         - locker
 
-light_outside_switcher_4_5_6:
+light_outside_switcher_3_5_6:
     class: EnabledSwitch
     module: enabled_switch
     dependencies:
-        - light_outside_switcher_4
-        - light_outside_switcher_5
-        - light_outside_switcher_6
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_5
+        - auto_switch_light_outside_6
         - locker
     global_dependencies:
         - auto_switch
-    enabler: light_outside_4_5_6_enabler
+    enabler: light_outside_3_5_6_enabler
     targets:
-        - light_outside_switcher_4
-        - light_outside_switcher_5
-        - light_outside_switcher_6
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_5
+        - auto_switch_light_outside_6
 
 home_light_switcher:
     class: MotionSensor
@@ -571,3 +571,4 @@ home_light_switcher:
         - auto_switch_light_driveway
     enabler: sun_enabler_night
     time: 5
+
