@@ -9,6 +9,7 @@ views:
           - switch.well
           - device_tracker.homeassistant_owntrackssamsung
         title: Kapcsolók
+        state_color: true
         show_header_toggle: false
       - type: entities
         state_color: true
@@ -47,11 +48,17 @@ views:
           - input_select.light_christmas_front
           - switch.light_christmas_tree
           - input_select.light_christmas_tree
+          - input_select.light_outside_1
           - switch.light_outside_1
+          - input_select.light_outside_2
           - switch.light_outside_2
+          - input_select.light_outside_3
           - switch.light_outside_3
+          - input_select.light_outside_4
           - switch.light_outside_4
+          - input_select.light_outside_5
           - switch.light_outside_5
+          - input_select.light_outside_6
           - switch.light_outside_6
         title: Világítás
         state_color: true

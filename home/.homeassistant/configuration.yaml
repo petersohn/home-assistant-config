@@ -644,6 +644,48 @@ input_select:
             - "on"
             - "off"
         initial: "auto"
+    light_outside_1:
+        name: Körvilágítás 1
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
+    light_outside_2:
+        name: Körvilágítás 2
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
+    light_outside_3:
+        name: Körvilágítás 3
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
+    light_outside_4:
+        name: Körvilágítás 4
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
+    light_outside_5:
+        name: Körvilágítás 5
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
+    light_outside_6:
+        name: Körvilágítás 6
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
     lighting_mode:
         name: Világítás mód
         options:

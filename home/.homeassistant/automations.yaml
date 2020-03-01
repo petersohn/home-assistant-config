@@ -45,6 +45,60 @@
 
 - trigger:
       platform: mqtt
+      topic: home/input_select/light_outside_1/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_outside_1
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
+      topic: home/input_select/light_outside_2/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_outside_2
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
+      topic: home/input_select/light_outside_3/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_outside_3
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
+      topic: home/input_select/light_outside_4/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_outside_4
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
+      topic: home/input_select/light_outside_5/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_outside_5
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
+      topic: home/input_select/light_outside_6/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.light_outside_6
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
       topic: home/input_select/lighting_mode/set
   action:
       - service: input_select.select_option

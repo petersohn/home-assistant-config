@@ -59,6 +59,54 @@ auto_switch_light_garage:
     switch: input_select.light_garage
     reentrant: true
 
+auto_switch_light_outside_1:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_outside_1
+    switch: input_select.light_outside_1
+    reentrant: true
+
+auto_switch_light_outside_2:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_outside_2
+    switch: input_select.light_outside_2
+    reentrant: true
+
+auto_switch_light_outside_3:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_outside_3
+    switch: input_select.light_outside_3
+    reentrant: true
+
+auto_switch_light_outside_4:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_outside_4
+    switch: input_select.light_outside_4
+    reentrant: true
+
+auto_switch_light_outside_5:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_outside_5
+    switch: input_select.light_outside_5
+    reentrant: true
+
+auto_switch_light_outside_6:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_outside_6
+    switch: input_select.light_outside_6
+    reentrant: true
+
 sun_enabler_night:
     module: enabler
     class: ValueEnabler
@@ -448,3 +496,61 @@ christmas_light_switcher:
     targets:
         - christmas_light_switch_front
         - christmas_light_switch_tree
+
+light_outside_switcher_1:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - light_outside_switcher_1
+        - locker
+    global_dependencies:
+        - auto_switch
+    enabler: sun_enabler_night
+    targets:
+        - light_outside_switcher_1
+
+light_outside_2_3_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    expr: 'e.sun_enabler_night and v["input_select.lighting_mode"] != "sleep"'
+    dependencies:
+        - sun_enabler_night
+        - locker
+
+light_outside_switcher_2_3:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - light_outside_switcher_2
+        - light_outside_switcher_3
+        - locker
+    global_dependencies:
+        - auto_switch
+    enabler: light_outside_2_3_enabler
+    targets:
+        - light_outside_switcher_2
+        - light_outside_switcher_3
+
+light_outside_4_5_6_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    expr: 'e.sun_enabler_night and v["input_select.lighting_mode"] == "home"'
+    dependencies:
+        - sun_enabler_night
+        - locker
+
+light_outside_switcher_4_5_6:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - light_outside_switcher_4
+        - light_outside_switcher_5
+        - light_outside_switcher_6
+        - locker
+    global_dependencies:
+        - auto_switch
+    enabler: light_outside_4_5_6_enabler
+    targets:
+        - light_outside_switcher_4
+        - light_outside_switcher_5
+        - light_outside_switcher_6
