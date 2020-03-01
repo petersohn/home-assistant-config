@@ -45,6 +45,8 @@ class MotionSensor(hass.Hass):
             self.__start()
 
     def on_state_change(self, entity, attribute, old, new, kwargs):
+        self.log('state changed: {} -> {} target={}'.format(
+            old, new, self.target_state))
         with self.mutex.lock('on_state_change'):
             if old == new:
                 # This shouldn't happen, but just in case.

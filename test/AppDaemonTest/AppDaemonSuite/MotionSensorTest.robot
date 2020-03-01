@@ -131,14 +131,24 @@ Edge Trigger
     State Should Change At  ${switch}  on   3 min
     State Should Change At  ${switch}  off  4 min
 
+Other Target State
+    [Setup]  Initialize  00:00:00  MotionSensorInverted  on
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector}  off
+    Schedule Call At  50 sec
+    ...    set_sensor_state  ${motion_detector}  on
+
+    State Should Change At  ${switch}  on   20 sec
+    State Should Change At  ${switch}  off  1 min 50 s
+
 
 *** Keywords ***
 
 Initialize
-    [Arguments]  ${start_time}  ${config}
+    [Arguments]  ${start_time}  ${config}  ${sensor_state}=off
     Clean States
     Initialize States
-    ...    ${motion_detector}=off
+    ...    ${motion_detector}=${sensor_state}
     ...    ${switch}=off
     ${apps} =  Create List  TestApp  locker  mutex_graph  motion_sensor
     ...                     auto_switch  enabler
