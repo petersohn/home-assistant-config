@@ -27,6 +27,9 @@ http:
 # https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
 updater:
 
+lovelace:
+  mode: yaml
+
 recorder:
   purge_interval: 1
   purge_keep_days: 5
@@ -659,6 +662,5 @@ influxdb:
 
 system_health:
 
-group: !include groups.yaml
 automation: !include automations.yaml
 script: !include script.yaml
