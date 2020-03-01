@@ -42,3 +42,34 @@
         data_template:
             entity_id: input_select.light_christmas_tree
             option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
+      topic: home/input_select/lighting_mode/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.lighting_mode
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: zone
+      entity_id: device_tracker.homeassistant_owntrackssamsung
+      zone: zone.home
+      event: leave
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.lighting_mode
+            option: 'away'
+
+- trigger:
+      platform: zone
+      entity_id: device_tracker.homeassistant_owntrackssamsung
+      zone: zone.home
+      event: enter
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.lighting_mode
+            option: 'home'

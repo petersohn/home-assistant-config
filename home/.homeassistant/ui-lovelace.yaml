@@ -33,6 +33,7 @@ views:
         show_header_toggle: false
       - type: entities
         entities:
+          - input_select.lighting_mode
           - switch.light_driveway
           - input_select.light_driveway
           - switch.light_gate_reflector

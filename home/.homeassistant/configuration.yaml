@@ -644,6 +644,12 @@ input_select:
             - "on"
             - "off"
         initial: "auto"
+    lighting_mode:
+        name: Világítás mód
+        options:
+            - "home"
+            - "away"
+            - "sleep"
 
 owntracks:
   region_mapping:
