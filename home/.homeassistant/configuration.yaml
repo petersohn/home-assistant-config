@@ -645,6 +645,10 @@ input_select:
             - "off"
         initial: "auto"
 
+owntracks:
+  region_mapping:
+    home: Home
+
 mqtt_statestream:
   base_topic: home
   include:

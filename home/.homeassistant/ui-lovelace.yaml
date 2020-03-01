@@ -7,6 +7,7 @@ views:
       - type: entities
         entities:
           - switch.well
+          - device_tracker.homeassistant_owntrackssamsung
         title: Kapcsolók
         show_header_toggle: false
       - type: entities
@@ -53,39 +54,6 @@ views:
           - switch.light_outside_6
         title: Világítás
         state_color: true
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - sensor.temperature_outside
-          - sensor.temperature_outside2
-          - sensor.humidity_outside
-          - sensor.humidity_outside2
-          - sensor.wind_direction
-          - sensor.wind_direction_average
-          - sensor.wind_strength
-          - sensor.rain
-          - sensor.light_shadow
-        title: Időjárás
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - sensor.temperature_furnace_room
-          - sensor.humidity_furnace_room
-          - sensor.temperature_cellar
-          - sensor.humidity_cellar
-          - sensor.temperature_attic
-          - sensor.humidity_attic
-          - sensor.temperature_living_room_lower
-          - sensor.humidity_living_room_lower
-          - sensor.temperature_living_room_upper
-          - sensor.humidity_living_room_upper
-          - sensor.temperature_bedroom_lower
-          - sensor.humidity_bedroom_lower
-          - sensor.temperature_bedroom_upper
-          - sensor.humidity_bedroom_upper
-          - sensor.temperature_kitchen
-          - sensor.humidity_kitchen
-        title: Beltéri időjárás
         show_header_toggle: false
       - type: entities
         entities:
