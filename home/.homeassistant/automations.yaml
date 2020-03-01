@@ -127,3 +127,24 @@
         data_template:
             entity_id: input_select.lighting_mode
             option: 'home'
+
+- trigger:
+      platform: state
+      entity_id: binary_sensor.door_attic_hatch
+      to: 'on'
+  action:
+      - service: homeassistant.turn_on
+        data_template:
+            entity_id: switch.light_attic_downstairs
+
+- trigger:
+      platform: state
+      entity_id: binary_sensor.door_attic_hatch
+      to: 'off'
+  action:
+      - service: homeassistant.turn_off
+        data_template:
+            entity_id: switch.light_attic_downstairs
+      - service: homeassistant.turn_off
+        data_template:
+            entity_id: switch.light_attic_upstairs
