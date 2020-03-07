@@ -7,7 +7,6 @@ views:
       - type: entities
         entities:
           - switch.well
-          - device_tracker.homeassistant_owntrackssamsung
         title: Kapcsolók
         state_color: true
         show_header_toggle: false
@@ -299,113 +298,117 @@ views:
               service_data:
                 auto_switch: input_select.light_christmas_tree
                 target: switch.light_christmas_tree
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: button
+                entity: switch.light_outside_1
+                state_color: true
+                tap_action:
+                  action: call-service
+                  service: script.auto_switch_manual
+                  service_data:
+                    auto_switch: input_select.light_outside_1
+                    target: switch.light_outside_1
+                hold_action:
+                  action: call-service
+                  service: script.toggle_auto_switch
+                  service_data:
+                    auto_switch: input_select.light_outside_1
+                    target: switch.light_outside_1
+              - type: button
+                entity: switch.light_outside_2
+                state_color: true
+                tap_action:
+                  action: call-service
+                  service: script.auto_switch_manual
+                  service_data:
+                    auto_switch: input_select.light_outside_2
+                    target: switch.light_outside_2
+                hold_action:
+                  action: call-service
+                  service: script.toggle_auto_switch
+                  service_data:
+                    auto_switch: input_select.light_outside_2
+                    target: switch.light_outside_2
+              - type: button
+                entity: switch.light_outside_3
+                state_color: true
+                tap_action:
+                  action: call-service
+                  service: script.auto_switch_manual
+                  service_data:
+                    auto_switch: input_select.light_outside_3
+                    target: switch.light_outside_3
+                hold_action:
+                  action: call-service
+                  service: script.toggle_auto_switch
+                  service_data:
+                    auto_switch: input_select.light_outside_3
+                    target: switch.light_outside_3
+          - type: horizontal-stack
+            cards:
+              - type: button
+                entity: switch.light_outside_4
+                state_color: true
+                tap_action:
+                  action: call-service
+                  service: script.auto_switch_manual
+                  service_data:
+                    auto_switch: input_select.light_outside_4
+                    target: switch.light_outside_4
+                hold_action:
+                  action: call-service
+                  service: script.toggle_auto_switch
+                  service_data:
+                    auto_switch: input_select.light_outside_4
+                    target: switch.light_outside_4
+              - type: button
+                entity: switch.light_outside_5
+                state_color: true
+                tap_action:
+                  action: call-service
+                  service: script.auto_switch_manual
+                  service_data:
+                    auto_switch: input_select.light_outside_5
+                    target: switch.light_outside_5
+                hold_action:
+                  action: call-service
+                  service: script.toggle_auto_switch
+                  service_data:
+                    auto_switch: input_select.light_outside_5
+                    target: switch.light_outside_5
+              - type: button
+                entity: switch.light_outside_6
+                state_color: true
+                tap_action:
+                  action: call-service
+                  service: script.auto_switch_manual
+                  service_data:
+                    auto_switch: input_select.light_outside_6
+                    target: switch.light_outside_6
+                hold_action:
+                  action: call-service
+                  service: script.toggle_auto_switch
+                  service_data:
+                    auto_switch: input_select.light_outside_6
+                    target: switch.light_outside_6
       - type: horizontal-stack
         cards:
-          - type: button
-            entity: switch.light_outside_1
+          - type: entities
+            entities:
+              - input_select.light_driveway
+              - input_select.light_gate_reflector
+              - input_select.light_garage
+              - input_select.light_christmas_front
+              - input_select.light_christmas_tree
+          - type: entities
+            entities:
+              - input_select.light_outside_1
+              - input_select.light_outside_2
+              - input_select.light_outside_3
+              - input_select.light_outside_4
+              - input_select.light_outside_5
+              - input_select.light_outside_6
             state_color: true
-            tap_action:
-              action: call-service
-              service: script.auto_switch_manual
-              service_data:
-                auto_switch: input_select.light_outside_1
-                target: switch.light_outside_1
-            hold_action:
-              action: call-service
-              service: script.toggle_auto_switch
-              service_data:
-                auto_switch: input_select.light_outside_1
-                target: switch.light_outside_1
-          - type: button
-            entity: switch.light_outside_2
-            state_color: true
-            tap_action:
-              action: call-service
-              service: script.auto_switch_manual
-              service_data:
-                auto_switch: input_select.light_outside_2
-                target: switch.light_outside_2
-            hold_action:
-              action: call-service
-              service: script.toggle_auto_switch
-              service_data:
-                auto_switch: input_select.light_outside_2
-                target: switch.light_outside_2
-          - type: button
-            entity: switch.light_outside_3
-            state_color: true
-            tap_action:
-              action: call-service
-              service: script.auto_switch_manual
-              service_data:
-                auto_switch: input_select.light_outside_3
-                target: switch.light_outside_3
-            hold_action:
-              action: call-service
-              service: script.toggle_auto_switch
-              service_data:
-                auto_switch: input_select.light_outside_3
-                target: switch.light_outside_3
-      - type: horizontal-stack
-        cards:
-          - type: button
-            entity: switch.light_outside_4
-            state_color: true
-            tap_action:
-              action: call-service
-              service: script.auto_switch_manual
-              service_data:
-                auto_switch: input_select.light_outside_4
-                target: switch.light_outside_4
-            hold_action:
-              action: call-service
-              service: script.toggle_auto_switch
-              service_data:
-                auto_switch: input_select.light_outside_4
-                target: switch.light_outside_4
-          - type: button
-            entity: switch.light_outside_5
-            state_color: true
-            tap_action:
-              action: call-service
-              service: script.auto_switch_manual
-              service_data:
-                auto_switch: input_select.light_outside_5
-                target: switch.light_outside_5
-            hold_action:
-              action: call-service
-              service: script.toggle_auto_switch
-              service_data:
-                auto_switch: input_select.light_outside_5
-                target: switch.light_outside_5
-          - type: button
-            entity: switch.light_outside_6
-            state_color: true
-            tap_action:
-              action: call-service
-              service: script.auto_switch_manual
-              service_data:
-                auto_switch: input_select.light_outside_6
-                target: switch.light_outside_6
-            hold_action:
-              action: call-service
-              service: script.toggle_auto_switch
-              service_data:
-                auto_switch: input_select.light_outside_6
-                target: switch.light_outside_6
-      - type: entities
-        entities:
-          - input_select.light_driveway
-          - input_select.light_gate_reflector
-          - input_select.light_garage
-          - input_select.light_christmas_front
-          - input_select.light_christmas_tree
-      - type: entities
-        entities:
-          - input_select.light_outside_1
-          - input_select.light_outside_2
-          - input_select.light_outside_3
-          - input_select.light_outside_4
-          - input_select.light_outside_5
-          - input_select.light_outside_6
-        state_color: true
