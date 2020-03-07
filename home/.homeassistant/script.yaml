@@ -1,6 +1,27 @@
-set_driveway_motion_sensor_auto:
+toggle_auto_switch:
     sequence:
         - service: input_select.select_option
-          data:
-              entity_id: input_select.light_driveway
-              option: auto
+          data_template:
+              entity_id: '{{ auto_switch }}'
+              option: >
+                  {% if is_state(auto_switch, 'auto') %}
+                      {% if is_state(target, 'on') %}
+                          off
+                      {% else %}
+                          on
+                      {% endif %}
+                  {% else %}
+                      auto
+                  {% endif %}
+
+auto_switch_manual:
+    sequence:
+        - service: input_select.select_option
+          data_template:
+              entity_id: '{{ auto_switch }}'
+              option: >
+                  {% if is_state(target, 'on') %}
+                      off
+                  {% else %}
+                      on
+                  {% endif %}
