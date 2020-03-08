@@ -40,10 +40,12 @@ binary_sensor.gateway_available:
 binary_sensor.ssh_tunnel_available:
   friendly_name: SSH tunnel
   icon: mdi:download-network
+  device_class: connectivity
 
 binary_sensor.mosquitto_bridge_available:
   friendly_name: Mosquitto Bridge
   icon: mdi:bridge
+  device_class: connectivity
 
 binary_sensor.furnace_temperature_available:
   friendly_name: Furnace Temperature
@@ -179,88 +181,103 @@ sensor.attic_lower_uptime:
 
 sensor.temperature_outside:
   friendly_name: "Kinti hőmérséklet"
+  device_class: temperature
 
 sensor.humidity_outside:
   friendly_name: "Kinti páratartalom"
-  icon: mdi:water-percent
+  device_class: humidity
 
 sensor.temperature_outside2:
   friendly_name: "Kinti hőmérséklet 2"
+  device_class: temperature
 
 sensor.humidity_outside2:
   friendly_name: "Kinti páratartalom 2"
-  icon: mdi:water-percent
+  device_class: humidity
 
 sensor.temperature_living_room_lower:
   friendly_name: "Nappali hőmérséklet lent"
+  device_class: temperature
 
 sensor.humidity_living_room_lower:
   friendly_name: "Nappali páratartalom lent"
-  icon: mdi:water-percent
+  device_class: humidity
 
 sensor.temperature_living_room_upper:
   friendly_name: "Nappali hőmérséklet fent"
+  device_class: temperature
 
 sensor.humidity_living_room_upper:
   friendly_name: "Nappali páratartalom fent"
-  icon: mdi:water-percent
+  device_class: humidity
 
 sensor.temperature_bedroom_lower:
   friendly_name: "Hálószoba hőmérséklet lent"
+  device_class: temperature
 
 sensor.humidity_bedroom_lower:
   friendly_name: "Hálószoba páratartalom lent"
-  icon: mdi:water-percent
+  device_class: humidity
 
 sensor.temperature_bedroom_upper:
   friendly_name: "Hálószoba hőmérséklet fent"
+  device_class: temperature
 
 sensor.humidity_bedroom_upper:
   friendly_name: "Hálószoba páratartalom fent"
-  icon: mdi:water-percent
+  device_class: humidity
 
 sensor.temperature_kitchen:
   friendly_name: "Konyha hőmérséklet"
+  device_class: temperature
 
 sensor.humidity_kitchen:
   friendly_name: "Konyha páratartalom"
-  icon: mdi:water-percent
+  device_class: humidity
 
 sensor.temperature_furnace_room:
   friendly_name: "Kazánház hőmérséklet"
+  device_class: temperature
 
 sensor.humidity_furnace_room:
   friendly_name: "Kazánház páratartalom"
-  icon: mdi:water-percent
+  device_class: humidity
 
 sensor.temperature_cellar:
   friendly_name: "Pince hőmérséklet"
+  device_class: temperature
 
 sensor.humidity_cellar:
   friendly_name: "Pince páratartalom"
-  icon: mdi:water-percent
+  device_class: humidity
 
 sensor.temperature_attic:
   friendly_name: "Padlás hőmérséklet"
+  device_class: temperature
 
 sensor.humidity_attic:
   friendly_name: "Padlás páratartalom"
-  icon: mdi:water-percent
+  device_class: humidity
 
 sensor.temperature_furnace_gas:
   friendly_name: "Gázkazán"
+  device_class: temperature
 
 sensor.temperature_furnace_wood:
   friendly_name: "Fakazán"
+  device_class: temperature
 
 sensor.temperature_furnace_wood_in:
   friendly_name: "Fakazán bemenet"
+  device_class: temperature
 
 sensor.temperature_hot_water:
   friendly_name: "Melegvíz"
+  device_class: temperature
 
 sensor.temperature_dishwasher:
   friendly_name: "Mosogatógép hőmérséklet"
+  device_class: temperature
 
 sensor.water_usage_dishwasher:
   friendly_name: "Mosogatógép vízhasználat"
@@ -375,27 +392,27 @@ binary_sensor.night:
 
 binary_sensor.motion_sensor_driveway_uppest:
   friendly_name: "Bejáró legfelső"
-  icon: mdi:walk
+  device_class: motion
 
 binary_sensor.motion_sensor_driveway_upper:
   friendly_name: "Bejáró felső"
-  icon: mdi:walk
+  device_class: motion
 
 binary_sensor.motion_sensor_driveway_lower:
   friendly_name: "Bejáró alsó"
-  icon: mdi:walk
+  device_class: motion
 
 binary_sensor.motion_sensor_garage:
   friendly_name: "Garázs"
-  icon: mdi:walk
+  device_class: motion
 
 binary_sensor.motion_sensor_garage2:
   friendly_name: "Garázs 2"
-  icon: mdi:walk
+  device_class: motion
 
 binary_sensor.door_attic_hatch:
   friendly_name: "Padlás feljáró"
-  icon: mdi:door
+  device_class: door
 
 sensor.light_shadow:
   friendly_name: "Fény árnyékban"
