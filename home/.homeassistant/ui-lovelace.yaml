@@ -76,60 +76,79 @@ views:
         show_header_toggle: false
     icon: 'mdi:home'
   - path: weather
-    title: weather
+    title: Időjárás
     badges: []
     cards:
-      - type: entities
+      - type: glance
         entities:
           - sun.sun
           - sensor.moon
           - binary_sensor.night
-        title: State
         show_header_toggle: false
-      - type: entities
-        entities:
-          - sensor.yr_symbol
-          - sensor.yr_temperature
-          - sensor.yr_humidity
-          - sensor.yr_precipitation
-          - sensor.yr_wind_speed
-          - sensor.yr_wind_direction
-          - sensor.yr_cloudiness
-        title: YR
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - sensor.temperature_outside
-          - sensor.temperature_outside2
-          - sensor.humidity_outside
-          - sensor.humidity_outside2
-          - sensor.wind_direction
-          - sensor.wind_direction_average
-          - sensor.wind_strength
-          - sensor.rain
-          - sensor.light_shadow
-        title: Időjárás
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - sensor.temperature_furnace_room
-          - sensor.humidity_furnace_room
-          - sensor.temperature_cellar
-          - sensor.humidity_cellar
-          - sensor.temperature_attic
-          - sensor.humidity_attic
-          - sensor.temperature_living_room_lower
-          - sensor.humidity_living_room_lower
-          - sensor.temperature_living_room_upper
-          - sensor.humidity_living_room_upper
-          - sensor.temperature_bedroom_lower
-          - sensor.humidity_bedroom_lower
-          - sensor.temperature_bedroom_upper
-          - sensor.humidity_bedroom_upper
-          - sensor.temperature_kitchen
-          - sensor.humidity_kitchen
-        title: Beltéri időjárás
-        show_header_toggle: false
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_outside
+                graph: line
+              # - type: sensor
+              #   entity: sensor.humidity_outside
+              #   graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_outside2
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_outside2
+                graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_bedroom_upper
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_bedroom_upper
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_bedroom_lower
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_bedroom_lower
+                graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_living_room_upper
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_living_room_upper
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_living_room_lower
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_living_room_lower
+                graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_kitchen
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_kitchen
+                graph: line
     icon: 'mdi:weather-pouring'
   - path: state
     title: state
