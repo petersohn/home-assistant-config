@@ -246,10 +246,10 @@ views:
                 target: switch.light_gate_reflector
             hold_action:
               action: call-service
-              service: script.toggle_auto_switch
+              service: input_select.select_option
               service_data:
-                auto_switch: input_select.light_gate_reflector
-                target: switch.light_gate_reflector
+                entity_id: input_select.light_gate_reflector
+                option: 'auto'
           - type: button
             entity: switch.light_driveway
             state_color: true
@@ -261,10 +261,10 @@ views:
                 target: switch.light_driveway
             hold_action:
               action: call-service
-              service: script.toggle_auto_switch
+              service: input_select.select_option
               service_data:
-                auto_switch: input_select.light_driveway
-                target: switch.light_driveway
+                entity_id: input_select.light_driveway
+                option: 'auto'
       - type: horizontal-stack
         cards:
           - type: button
@@ -278,10 +278,10 @@ views:
                 target: switch.light_garage
             hold_action:
               action: call-service
-              service: script.toggle_auto_switch
+              service: input_select.select_option
               service_data:
-                auto_switch: input_select.light_garage
-                target: switch.light_garage
+                entity_id: input_select.light_garage
+                option: 'auto'
           - type: button
             entity: switch.light_cellar
             state_color: true
@@ -298,10 +298,10 @@ views:
                 target: switch.light_christmas_front
             hold_action:
               action: call-service
-              service: script.toggle_auto_switch
+              service: input_select.select_option
               service_data:
-                auto_switch: input_select.light_christmas_front
-                target: switch.light_christmas_front
+                entity_id: input_select.light_christmas_front
+                option: 'auto'
           - type: button
             entity: switch.light_christmas_tree
             state_color: true
@@ -313,10 +313,10 @@ views:
                 target: switch.light_christmas_tree
             hold_action:
               action: call-service
-              service: script.toggle_auto_switch
+              service: input_select.select_option
               service_data:
-                auto_switch: input_select.light_christmas_tree
-                target: switch.light_christmas_tree
+                entity_id: input_select.light_christmas_tree
+                option: 'auto'
       - type: vertical-stack
         cards:
           - type: horizontal-stack
@@ -332,10 +332,10 @@ views:
                     target: switch.light_outside_1
                 hold_action:
                   action: call-service
-                  service: script.toggle_auto_switch
+                  service: input_select.select_option
                   service_data:
-                    auto_switch: input_select.light_outside_1
-                    target: switch.light_outside_1
+                    entity_id: input_select.light_outside_1
+                    option: 'auto'
               - type: button
                 entity: switch.light_outside_2
                 state_color: true
@@ -347,10 +347,10 @@ views:
                     target: switch.light_outside_2
                 hold_action:
                   action: call-service
-                  service: script.toggle_auto_switch
+                  service: input_select.select_option
                   service_data:
-                    auto_switch: input_select.light_outside_2
-                    target: switch.light_outside_2
+                    entity_id: input_select.light_outside_2
+                    option: 'auto'
               - type: button
                 entity: switch.light_outside_3
                 state_color: true
@@ -362,10 +362,10 @@ views:
                     target: switch.light_outside_3
                 hold_action:
                   action: call-service
-                  service: script.toggle_auto_switch
+                  service: input_select.select_option
                   service_data:
-                    auto_switch: input_select.light_outside_3
-                    target: switch.light_outside_3
+                    entity_id: input_select.light_outside_3
+                    option: 'auto'
           - type: horizontal-stack
             cards:
               - type: button
@@ -379,10 +379,10 @@ views:
                     target: switch.light_outside_4
                 hold_action:
                   action: call-service
-                  service: script.toggle_auto_switch
+                  service: input_select.select_option
                   service_data:
-                    auto_switch: input_select.light_outside_4
-                    target: switch.light_outside_4
+                    entity_id: input_select.light_outside_4
+                    option: 'auto'
               - type: button
                 entity: switch.light_outside_5
                 state_color: true
@@ -394,10 +394,10 @@ views:
                     target: switch.light_outside_5
                 hold_action:
                   action: call-service
-                  service: script.toggle_auto_switch
+                  service: input_select.select_option
                   service_data:
-                    auto_switch: input_select.light_outside_5
-                    target: switch.light_outside_5
+                    entity_id: input_select.light_outside_5
+                    option: 'auto'
               - type: button
                 entity: switch.light_outside_6
                 state_color: true
@@ -409,10 +409,10 @@ views:
                     target: switch.light_outside_6
                 hold_action:
                   action: call-service
-                  service: script.toggle_auto_switch
+                  service: input_select.select_option
                   service_data:
-                    auto_switch: input_select.light_outside_6
-                    target: switch.light_outside_6
+                    entity_id: input_select.light_outside_6
+                    option: 'auto'
       - type: horizontal-stack
         cards:
           - type: entities
