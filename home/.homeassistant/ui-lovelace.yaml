@@ -4,63 +4,14 @@ views:
     title: default_view
     badges: []
     cards:
-      - type: entities
-        entities:
-          - switch.well
-        title: Kapcsolók
+      - type: button
+        entity: switch.well
         state_color: true
-        show_header_toggle: false
-      - type: entities
-        state_color: true
-        entities:
-          - binary_sensor.motion_sensor_driveway_uppest
-          - sensor.motion_sensor_driveway_uppest_average
-          - binary_sensor.motion_sensor_driveway_upper
-          - sensor.motion_sensor_driveway_upper_average
-          - binary_sensor.motion_sensor_driveway_lower
-          - sensor.motion_sensor_driveway_lower_average
-          - binary_sensor.motion_sensor_garage
-          - sensor.motion_sensor_garage_average
-          - binary_sensor.motion_sensor_garage2
-          - sensor.motion_sensor_garage2_average
-        title: Mozgásérzékelők
-        show_header_toggle: false
       - type: entities
         state_color: true
         entities:
           - binary_sensor.door_attic_hatch
         title: Ajtók
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - input_select.lighting_mode
-          - switch.light_driveway
-          - input_select.light_driveway
-          - switch.light_gate_reflector
-          - input_select.light_gate_reflector
-          - switch.light_attic_downstairs
-          - switch.light_attic_upstairs
-          - switch.light_cellar
-          - switch.light_garage
-          - input_select.light_garage
-          - switch.light_christmas_front
-          - input_select.light_christmas_front
-          - switch.light_christmas_tree
-          - input_select.light_christmas_tree
-          - input_select.light_outside_1
-          - switch.light_outside_1
-          - input_select.light_outside_2
-          - switch.light_outside_2
-          - input_select.light_outside_3
-          - switch.light_outside_3
-          - input_select.light_outside_4
-          - switch.light_outside_4
-          - input_select.light_outside_5
-          - switch.light_outside_5
-          - input_select.light_outside_6
-          - switch.light_outside_6
-        title: Világítás
-        state_color: true
         show_header_toggle: false
       - type: entities
         entities:
@@ -75,149 +26,6 @@ views:
         title: Gépészet
         show_header_toggle: false
     icon: 'mdi:home'
-  - path: weather
-    title: Időjárás
-    badges: []
-    cards:
-      - type: glance
-        entities:
-          - sun.sun
-          - sensor.moon
-          - binary_sensor.night
-        show_header_toggle: false
-      - type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_outside
-                graph: line
-              # - type: sensor
-              #   entity: sensor.humidity_outside
-              #   graph: line
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_outside2
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_outside2
-                graph: line
-      - type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_bedroom_upper
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_bedroom_upper
-                graph: line
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_bedroom_lower
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_bedroom_lower
-                graph: line
-      - type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_living_room_upper
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_living_room_upper
-                graph: line
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_living_room_lower
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_living_room_lower
-                graph: line
-      - type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_kitchen
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_kitchen
-                graph: line
-    icon: 'mdi:weather-pouring'
-  - path: state
-    title: state
-    badges: []
-    cards:
-      - type: entities
-        entities:
-          - binary_sensor.network_available
-          - binary_sensor.desktop_available
-          - binary_sensor.internet_available
-          - binary_sensor.gateway_available
-          - binary_sensor.ssh_tunnel_available
-          - binary_sensor.mosquitto_bridge_available
-        title: Hálózat
-        state_color: true
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - binary_sensor.furnace_temperature_available
-          - binary_sensor.well_controller_available
-          - binary_sensor.main_controller_available
-          - binary_sensor.main_controller2_available
-          - binary_sensor.driveway_available
-          - binary_sensor.cellar_controller_available
-          - binary_sensor.living_room_temperature_available
-          - binary_sensor.bedroom_temperature_available
-          - binary_sensor.dishwasher_sensor_available
-          - binary_sensor.gate_reflector_available
-          - binary_sensor.attic_lower_available
-        title: device_availability
-        state_color: true
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - sensor.furnace_temperature_free_memory
-          - sensor.well_controller_free_memory
-          - sensor.main_controller_free_memory
-          - sensor.main_controller2_free_memory
-          - sensor.driveway_free_memory
-          - sensor.cellar_controller_free_memory
-          - sensor.living_room_temperature_free_memory
-          - sensor.bedroom_temperature_free_memory
-          - sensor.dishwasher_sensor_free_memory
-          - sensor.gate_reflector_free_memory
-          - sensor.attic_lower_free_memory
-        title: device_memory
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - sensor.furnace_temperature_uptime
-          - sensor.well_controller_uptime
-          - sensor.main_controller_uptime
-          - sensor.main_controller2_uptime
-          - sensor.driveway_uptime
-          - sensor.cellar_controller_uptime
-          - sensor.living_room_temperature_uptime
-          - sensor.bedroom_temperature_uptime
-          - sensor.dishwasher_sensor_uptime
-          - sensor.gate_reflector_uptime
-          - sensor.attic_lower_uptime
-        title: device_uptime
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - sensor.tmp_free_space
-          - sensor.var_log_free_space
-        title: local_device
-        show_header_toggle: false
-    icon: 'mdi:wrench'
   - path: lights
     title: 'Világítás'
     icon: 'mdi:lightbulb'
@@ -475,3 +283,146 @@ views:
               max: 1.0
         title: Mozgásérzékelők
         show_header_toggle: false
+  - path: weather
+    title: Időjárás
+    badges: []
+    cards:
+      - type: glance
+        entities:
+          - sun.sun
+          - sensor.moon
+          - binary_sensor.night
+        show_header_toggle: false
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_outside
+                graph: line
+              # - type: sensor
+              #   entity: sensor.humidity_outside
+              #   graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_outside2
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_outside2
+                graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_bedroom_upper
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_bedroom_upper
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_bedroom_lower
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_bedroom_lower
+                graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_living_room_upper
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_living_room_upper
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_living_room_lower
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_living_room_lower
+                graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_kitchen
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_kitchen
+                graph: line
+    icon: 'mdi:weather-pouring'
+  - path: state
+    title: state
+    badges: []
+    cards:
+      - type: entities
+        entities:
+          - binary_sensor.network_available
+          - binary_sensor.desktop_available
+          - binary_sensor.internet_available
+          - binary_sensor.gateway_available
+          - binary_sensor.ssh_tunnel_available
+          - binary_sensor.mosquitto_bridge_available
+        title: Hálózat
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - binary_sensor.furnace_temperature_available
+          - binary_sensor.well_controller_available
+          - binary_sensor.main_controller_available
+          - binary_sensor.main_controller2_available
+          - binary_sensor.driveway_available
+          - binary_sensor.cellar_controller_available
+          - binary_sensor.living_room_temperature_available
+          - binary_sensor.bedroom_temperature_available
+          - binary_sensor.dishwasher_sensor_available
+          - binary_sensor.gate_reflector_available
+          - binary_sensor.attic_lower_available
+        title: device_availability
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - sensor.furnace_temperature_free_memory
+          - sensor.well_controller_free_memory
+          - sensor.main_controller_free_memory
+          - sensor.main_controller2_free_memory
+          - sensor.driveway_free_memory
+          - sensor.cellar_controller_free_memory
+          - sensor.living_room_temperature_free_memory
+          - sensor.bedroom_temperature_free_memory
+          - sensor.dishwasher_sensor_free_memory
+          - sensor.gate_reflector_free_memory
+          - sensor.attic_lower_free_memory
+        title: device_memory
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - sensor.furnace_temperature_uptime
+          - sensor.well_controller_uptime
+          - sensor.main_controller_uptime
+          - sensor.main_controller2_uptime
+          - sensor.driveway_uptime
+          - sensor.cellar_controller_uptime
+          - sensor.living_room_temperature_uptime
+          - sensor.bedroom_temperature_uptime
+          - sensor.dishwasher_sensor_uptime
+          - sensor.gate_reflector_uptime
+          - sensor.attic_lower_uptime
+        title: device_uptime
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - sensor.tmp_free_space
+          - sensor.var_log_free_space
+        title: local_device
+        show_header_toggle: false
+    icon: 'mdi:wrench'
