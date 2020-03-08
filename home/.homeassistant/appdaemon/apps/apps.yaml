@@ -348,7 +348,7 @@ motion_sensor_garage2_lockout:
         - locker
         - motion_sensor_garage2_average
     entity: sensor.motion_sensor_garage2_average
-    max: 0.3
+    max: 0.8
 
 motion_sensor_garage2_enabler:
     module: enabler
@@ -571,4 +571,3 @@ home_light_switcher:
         - auto_switch_light_driveway
     enabler: sun_enabler_night
     time: 5
-

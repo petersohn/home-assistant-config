@@ -431,3 +431,47 @@ views:
               - input_select.light_outside_5
               - input_select.light_outside_6
             state_color: true
+      - type: vertical-stack
+        cards:
+        - type: horizontal-stack
+          cards:
+            - type: button
+              entity: binary_sensor.motion_sensor_driveway_uppest
+            - type: gauge
+              entity: sensor.motion_sensor_driveway_uppest_average
+              min: 0.0
+              max: 1.0
+        - type: horizontal-stack
+          cards:
+            - type: button
+              entity: binary_sensor.motion_sensor_driveway_upper
+            - type: gauge
+              entity: sensor.motion_sensor_driveway_upper_average
+              min: 0.0
+              max: 1.0
+        - type: horizontal-stack
+          cards:
+            - type: button
+              entity: binary_sensor.motion_sensor_driveway_lower
+            - type: gauge
+              entity: sensor.motion_sensor_driveway_lower_average
+              min: 0.0
+              max: 1.0
+        - type: horizontal-stack
+          cards:
+            - type: button
+              entity: binary_sensor.motion_sensor_garage
+            - type: gauge
+              entity: sensor.motion_sensor_garage_average
+              min: 0.0
+              max: 1.0
+        - type: horizontal-stack
+          cards:
+            - type: button
+              entity: binary_sensor.motion_sensor_garage2
+            - type: gauge
+              entity: sensor.motion_sensor_garage2_average
+              min: 0.0
+              max: 1.0
+        title: Mozgásérzékelők
+        show_header_toggle: false
