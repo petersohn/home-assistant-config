@@ -118,6 +118,16 @@
             option: 'away'
 
 - trigger:
+      platform: state
+      entity_id: binary_sensor.door_main_entrance
+      to: 'on'
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.lighting_mode
+            option: 'home'
+
+- trigger:
       platform: zone
       entity_id: device_tracker.homeassistant_owntrackssamsung
       zone: zone.home
