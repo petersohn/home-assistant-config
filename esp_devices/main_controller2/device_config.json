@@ -37,6 +37,11 @@
             "pin": 4
         },
         {
+            "type": "input",
+            "name": "door",
+            "pin": 5
+        },
+        {
             "type": "analog",
             "name": "light_sensor",
             "interval": 30
@@ -71,6 +76,12 @@
             "type": "publish",
             "interface": "light_sensor",
             "topic": "home/sensors/light/sunlight",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "door",
+            "topic": "home/sensors/door/main_entrance",
             "retain": true
         }
     ]

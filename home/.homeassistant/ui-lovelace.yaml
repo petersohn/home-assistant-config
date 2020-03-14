@@ -11,6 +11,7 @@ views:
         state_color: true
         entities:
           - binary_sensor.door_attic_hatch
+          - binary_sensor.door_main_entrance
         title: Ajtók
         show_header_toggle: false
       - type: entities

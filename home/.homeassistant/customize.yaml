@@ -59,7 +59,7 @@ binary_sensor.main_controller_available:
   friendly_name: Main Controller
   icon: mdi:chip
 
-binary_sensor.main_controller_available:
+binary_sensor.main_controller2_available:
   friendly_name: Main Controller 2
   icon: mdi:chip
 
@@ -103,7 +103,7 @@ sensor.main_controller_free_memory:
   friendly_name: Main Controller
   icon: mdi:memory
 
-sensor.main_controller_free_memory:
+sensor.main_controller2_free_memory:
   friendly_name: Main Controller 2
   icon: mdi:memory
 
@@ -147,7 +147,7 @@ sensor.main_controller_uptime:
   friendly_name: Main Controller
   icon: mdi:clock
 
-sensor.main_controller_uptime:
+sensor.main_controller2_uptime:
   friendly_name: Main Controller 2
   icon: mdi:clock
 
@@ -412,6 +412,10 @@ binary_sensor.motion_sensor_garage2:
 
 binary_sensor.door_attic_hatch:
   friendly_name: "Padlás feljáró"
+  device_class: door
+
+binary_sensor.door_main_entrance:
+  friendly_name: "Bejárati ajtó"
   device_class: door
 
 sensor.light_shadow:

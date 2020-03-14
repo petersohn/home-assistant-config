@@ -44,6 +44,6 @@
             "interface": "hatch",
             "topic": "home/sensors/door/attic_hatch",
             "retain": true
-        },
+        }
     ]
 }
