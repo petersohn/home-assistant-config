@@ -308,6 +308,10 @@ switch.heating_pump:
   friendly_name: "Keringető szivattyú"
   icon: mdi:engine
 
+switch.hot_water_pump:
+  friendly_name: "Meleg víz keringető"
+  icon: mdi:shower-head
+
 switch.well:
   friendly_name: "Kút"
   icon: mdi:water-pump
