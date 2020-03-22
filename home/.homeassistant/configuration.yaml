@@ -60,6 +60,10 @@ mqtt:
   password: !secret mosquitto_password
 
 sensor:
+  - platform: time_date
+    display_options:
+      - 'date'
+      - 'time'
   - platform: yr
     monitored_conditions:
       - temperature
