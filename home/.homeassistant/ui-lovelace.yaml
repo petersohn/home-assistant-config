@@ -16,6 +16,11 @@ views:
         show_header_toggle: false
       - type: entities
         entities:
+          - sensor.date
+          - sensor.time
+        title: Idő
+      - type: entities
+        entities:
           - sensor.temperature_furnace_gas
           - sensor.temperature_furnace_wood
           - sensor.temperature_furnace_wood_in
