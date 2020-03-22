@@ -16,6 +16,7 @@
             "name": "pump",
             "commandTopic": "home/switches/heating_pump/set",
             "default": false,
+            "invert": true,
             "pin": 3
         },
         {
@@ -29,7 +30,15 @@
             "name": "heat_switch",
             "default": false,
             "invert": true,
-            "pin": 1
+            "pin": 5
+        },
+        {
+            "type": "output",
+            "name": "hot_water_pump",
+            "commandTopic": "home/switches/hot_water_pump/set",
+            "default": false,
+            "invert": true,
+            "pin": 4
         }
     ],
     "actions": [
@@ -72,6 +81,12 @@
             "type": "publish",
             "interface": "pump",
             "topic": "home/switches/heating_pump/status",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "hot_water_pump",
+            "topic": "home/switches/hot_water_pump/status",
             "retain": true
         },
         {
