@@ -69,3 +69,14 @@ class ExpressionEvaluator:
         with self.mutex.lock('fire_callback'):
             value = self._get()
             self.callback(value)
+
+
+class Expression(hass.Hass):
+    def initialize(self):
+        self.target = self.args['target']
+        self.evaluator = ExpressionEvaluator(
+            self, self.args['expr'], self._set)
+        self._set(self.evaluator.get())
+
+    def _set(self, value):
+        self.set_state(self.target, state=value)
