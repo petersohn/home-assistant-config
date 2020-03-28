@@ -9,7 +9,7 @@ homeassistant:
   # metric for Metric, imperial for Imperial
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-  time_zone: UTC
+  time_zone: Europe/Budapest
   customize: !include customize.yaml
 
 # Enables the frontend
@@ -533,6 +533,12 @@ switch:
     payload_on: 1
     payload_off: 0
   - platform: mqtt
+    name: hot_water_pump
+    command_topic: home/switches/hot_water_pump/set
+    state_topic: home/switches/hot_water_pump/status
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
     name: light_driveway
     command_topic: home/switches/lights/driveway/set
     state_topic: home/switches/lights/driveway/state
@@ -701,6 +707,36 @@ input_select:
             - "home"
             - "away"
             - "sleep"
+
+input_datetime:
+  hot_water_monday:
+    name: Hétfő
+    has_date: false
+    has_time: true
+  hot_water_tuesday:
+    name: Kedd
+    has_date: false
+    has_time: true
+  hot_water_wednesday:
+    name: Szerda
+    has_date: false
+    has_time: true
+  hot_water_thursday:
+    name: Csütörtök
+    has_date: false
+    has_time: true
+  hot_water_friday:
+    name: Péntek
+    has_date: false
+    has_time: true
+  hot_water_saturday:
+    name: Szombat
+    has_date: false
+    has_time: true
+  hot_water_sunday:
+    name: Vasárnap
+    has_date: false
+    has_time: true
 
 owntracks:
   region_mapping:

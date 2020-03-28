@@ -4,9 +4,14 @@ views:
     title: default_view
     badges: []
     cards:
-      - type: button
-        entity: switch.well
-        state_color: true
+      - type: horizontal-stack
+        cards:
+          - type: button
+            entity: switch.well
+            state_color: true
+          - type: button
+            entity: switch.hot_water_pump
+            state_color: true
       - type: entities
         state_color: true
         entities:
@@ -30,6 +35,17 @@ views:
           - sensor.temperature_dishwasher
           - sensor.water_usage
         title: Gépészet
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - input_datetime.hot_water_monday
+          - input_datetime.hot_water_tuesday
+          - input_datetime.hot_water_wednesday
+          - input_datetime.hot_water_thursday
+          - input_datetime.hot_water_friday
+          - input_datetime.hot_water_saturday
+          - input_datetime.hot_water_sunday
+        title: Melegvíz bekapcsolás
         show_header_toggle: false
     icon: 'mdi:home'
   - path: lights
