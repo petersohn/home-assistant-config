@@ -1,5 +1,6 @@
 global_modules:
     - mutex_graph
+    - expression
 
 locker:
     module: locker
@@ -516,6 +517,8 @@ light_outside_2_4_enabler:
     dependencies:
         - sun_enabler_night
         - locker
+    global_dependencies:
+        - expression
 
 light_outside_switcher_2_4:
     class: EnabledSwitch
@@ -538,6 +541,8 @@ light_outside_3_5_6_enabler:
     dependencies:
         - sun_enabler_night
         - locker
+    global_dependencies:
+        - expression
 
 light_outside_switcher_3_5_6:
     class: EnabledSwitch

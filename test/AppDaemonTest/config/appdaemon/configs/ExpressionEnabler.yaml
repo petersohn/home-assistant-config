@@ -1,3 +1,6 @@
+global_modules:
+    - expression
+
 enabler1:
     module: enabler
     class: ScriptEnabler
@@ -15,6 +18,8 @@ enablers_and:
         - locker
         - enabler1
         - enabler2
+    global_dependencies:
+        - expression
     expr: e.enabler1 and e.enabler2
 
 enablers_nand:
@@ -24,6 +29,8 @@ enablers_nand:
         - locker
         - enabler1
         - enabler2
+    global_dependencies:
+        - expression
     expr: 'not (e.enabler1 and e.enabler2)'
 
 enablers_and_not:
@@ -33,6 +40,8 @@ enablers_and_not:
         - locker
         - enabler1
         - enabler2
+    global_dependencies:
+        - expression
     expr: e.enabler1 and not e.enabler2
 
 enablers_or:
@@ -42,6 +51,8 @@ enablers_or:
         - locker
         - enabler1
         - enabler2
+    global_dependencies:
+        - expression
     expr: e.enabler1 or e.enabler2
 
 value_less:
@@ -49,6 +60,8 @@ value_less:
     class: ExpressionEnabler
     dependencies:
         - locker
+    global_dependencies:
+        - expression
     expr: 'v["sensor.test_input1"] < v["sensor.test_input2"]'
 
 value_equal:
@@ -56,6 +69,8 @@ value_equal:
     class: ExpressionEnabler
     dependencies:
         - locker
+    global_dependencies:
+        - expression
     expr: 'v["sensor.test_input1"] == v["sensor.test_input2"]'
 
 binary_and:
@@ -63,6 +78,8 @@ binary_and:
     class: ExpressionEnabler
     dependencies:
         - locker
+    global_dependencies:
+        - expression
     expr: 'v["binary_sensor.test_input1"] and v["binary_sensor.test_input2"]'
 
 binary_or:
@@ -70,6 +87,8 @@ binary_or:
     class: ExpressionEnabler
     dependencies:
         - locker
+    global_dependencies:
+        - expression
     expr: 'v["binary_sensor.test_input1"] or v["binary_sensor.test_input2"]'
 
 enabler_and_binary_and:
@@ -77,6 +96,8 @@ enabler_and_binary_and:
     class: ExpressionEnabler
     dependencies:
         - locker
+    global_dependencies:
+        - expression
     expr: 'e.enabler1 and v["binary_sensor.test_input1"]'
 
 enabler_and_binary_or:
@@ -84,4 +105,6 @@ enabler_and_binary_or:
     class: ExpressionEnabler
     dependencies:
         - locker
+    global_dependencies:
+        - expression
     expr: 'e.enabler1 or v["binary_sensor.test_input1"]'

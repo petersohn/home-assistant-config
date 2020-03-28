@@ -25,15 +25,22 @@ def create_appdaemon_configuration(target_directory, apps, app_configs):
         os.symlink(source_file, target_file)
 
         content = {}
+        global_modules = []
         for config in app_configs:
             source_file = os.path.join(
                 Directories.appdaemon_config_path, 'configs', config + '.yaml')
             with open(source_file, 'r') as source:
                 content.update(yaml.safe_load(source))
+            current_global = content.get('global_modules', [])
+            if type(current_global) is list:
+                global_modules.extend(current_global)
+            else:
+                global_modules.append(current_global)
 
-            content['test']['dependencies'] = [
-                name for name in content.keys()
-                if name not in ['test', 'global_modules']]
+        content['global_modules'] = global_modules
+        content['test']['dependencies'] = [
+            name for name in content.keys()
+            if name not in ['test', 'global_modules']]
 
     with open(apps_yaml, 'w') as target:
         yaml.dump(content, target)
