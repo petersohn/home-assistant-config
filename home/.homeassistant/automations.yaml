@@ -120,6 +120,7 @@
 - trigger:
       platform: state
       entity_id: binary_sensor.door_main_entrance
+      from: 'off'
       to: 'on'
   action:
       - service: input_select.select_option
@@ -141,6 +142,7 @@
 - trigger:
       platform: state
       entity_id: binary_sensor.door_attic_hatch
+      from: 'off'
       to: 'on'
   action:
       - service: homeassistant.turn_on
@@ -150,6 +152,7 @@
 - trigger:
       platform: state
       entity_id: binary_sensor.door_attic_hatch
+      from: 'on'
       to: 'off'
   action:
       - service: homeassistant.turn_off
@@ -158,3 +161,38 @@
       - service: homeassistant.turn_off
         data_template:
             entity_id: switch.light_attic_upstairs
+
+- trigger:
+      platform: state
+      entity_id: input_select.lighting_mode
+      from: 'home'
+      to:
+        - 'away'
+        - 'sleep'
+  action:
+      - service: homeassistant.turn_off
+        data_template:
+            entity_id: switch.hot_water_pump
+
+- trigger:
+    - platform: state
+      entity_id: input_select.lighting_mode
+      from: 'away'
+      to: 'home'
+  action:
+      - service: homeassistant.turn_on
+        data_template:
+            entity_id: switch.hot_water_pump
+
+- trigger:
+    - platform: template
+      value_template: >
+        {{ states('sensor.time') + ':00' ==states('sensor.hot_water_start_time') }}
+  condition:
+      condition: state
+      entity_id: input_select.lighting_mode
+      state: 'sleep'
+  action:
+      - service: homeassistant.turn_on
+        data_template:
+            entity_id: switch.hot_water_pump

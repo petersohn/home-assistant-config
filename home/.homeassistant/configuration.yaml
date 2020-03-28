@@ -64,6 +64,7 @@ sensor:
     display_options:
       - 'date'
       - 'time'
+      - 'date_time'
   - platform: yr
     monitored_conditions:
       - temperature

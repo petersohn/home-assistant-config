@@ -576,3 +576,20 @@ home_light_switcher:
         - auto_switch_light_driveway
     enabler: sun_enabler_night
     time: 5
+
+hot_water_timer_selector:
+    class: Expression
+    module: expression
+    dependencies:
+        - locker
+    target: sensor.hot_water_start_time
+    expr: >
+        v['input_datetime.hot_water_' + args['weekdays'][now().weekday()]]
+    weekdays:
+        - monday
+        - tuesday
+        - wednesday
+        - thursday
+        - friday
+        - saturday
+        - sunday

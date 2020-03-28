@@ -45,6 +45,7 @@ views:
           - input_datetime.hot_water_friday
           - input_datetime.hot_water_saturday
           - input_datetime.hot_water_sunday
+          - sensor.hot_water_start_time
         title: Melegvíz bekapcsolás
         show_header_toggle: false
     icon: 'mdi:home'
