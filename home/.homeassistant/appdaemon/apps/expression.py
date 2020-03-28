@@ -10,9 +10,13 @@ class ExpressionEvaluator:
         self.expr = expr
         self.callback = callback
         self.entities = set()
-        self.enablers = set()
+        self.enablers = {}
         self.evaluators = self._create_evaluators()
         self.timer = None
+
+    def cleanup(self):
+        for enabler, id in self.enablers.items():
+            self.get_app(enabler).remove_callback(id)
 
     def _create_evaluators(self):
         class Evaluator:
@@ -58,11 +62,11 @@ class ExpressionEvaluator:
             return value
 
     def _get_enabled(self, enabler):
-        app = self.app.get_app(enabler)
+        enabler_app = self.app.get_app(enabler)
         if enabler not in self.enablers:
-            app.on_change(lambda: self._on_enabler_change())
-            self.enablers.add(enabler)
-        value = app.is_enabled()
+            id = enabler_app.on_change(lambda: self._on_enabler_change())
+            self.enablers[enabler] = id
+        value = enabler_app.is_enabled()
         return value
 
     def _on_enabler_change(self):

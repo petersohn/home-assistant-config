@@ -13,9 +13,10 @@ class MotionSensor(hass.Hass):
         enabler = self.args.get('enabler')
         if enabler is not None:
             self.enabler = self.get_app(enabler)
-            self.enabler.on_change(self.on_enabled_chaged)
+            self.enabler_id = self.enabler.on_change(self.on_enabled_chaged)
         else:
             self.enabler = None
+            self.enabler_id = None
 
         self.timer = None
         self.was_enabled = None
@@ -25,6 +26,7 @@ class MotionSensor(hass.Hass):
 
     def terminate(self):
         self.targets.turn_off()
+        self.enabler.remove_callback(self.enabler_id)
 
     def on_enabled_chaged(self):
         with self.mutex.lock('on_enabled_chaged'):

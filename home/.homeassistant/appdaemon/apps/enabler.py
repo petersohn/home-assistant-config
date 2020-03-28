@@ -4,7 +4,8 @@ import datetime
 
 class Enabler(hass.Hass):
     def _init_enabler(self, state):
-        self.callbacks = []
+        self.callbacks = {}
+        self.callback_id = 0
         self.state = state
         self.state_mutex = self.get_app('locker').get_mutex('Enabler.State')
         self.callbacks_mutex = self.get_app('locker').get_mutex(
@@ -14,7 +15,7 @@ class Enabler(hass.Hass):
     # This must not be called from within a callback!
     def _change(self, state):
         with self.callbacks_mutex.lock('_change'):
-            callbacks = self.callbacks[:]
+            callbacks = list(self.callbacks.values())
         with self.state_mutex.lock('_change'):
             if self.state != state:
                 self.log('state change {} -> {}'.format(self.state, state))
@@ -24,7 +25,14 @@ class Enabler(hass.Hass):
 
     def on_change(self, func):
         with self.callbacks_mutex.lock('on_change'):
-            self.callbacks.append(func)
+            id = self.callback_id
+            self.callbacks[id] = func
+            self.callback_id += 1
+            return id
+
+    def remove_callback(self, id):
+        with self.callbacks_mutex.lock('remove_callback'):
+            del self.callbacks[id]
 
     def is_enabled(self):
         with self.state_mutex.lock('is_enabled'):
@@ -126,8 +134,13 @@ class MultiEnabler(Enabler):
             self.get_app(enabler) for enabler in self.args.get('enablers')]
         self.mutex = self.get_app('locker').get_mutex('MultiEnabler')
         self._init_enabler(self.__get())
+        self.ids = []
         for enabler in self.enablers:
-            enabler.on_change(lambda: self._on_change())
+            self.ids.append(enabler.on_change(lambda: self._on_change()))
+
+    def terminate(self):
+        for enabler, id in zip(self.enablers, self.ids):
+            enabler.remove_callback(id)
 
     def _on_change(self):
         self.run_in(self.get, 0)
