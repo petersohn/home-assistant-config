@@ -11,10 +11,10 @@ class ExpressionEvaluator:
         self.callback = callback
         self.entities = set()
         self.enablers = set()
-        self.evaluators = self._create_evaluators(
-            self._get_enabled, self._get_value)
+        self.evaluators = self._create_evaluators()
+        self.timer = None
 
-    def _create_evaluators(self, e, v):
+    def _create_evaluators(self):
         class Evaluator:
             def __init__(self, func):
                 self.__func = func
@@ -25,7 +25,21 @@ class ExpressionEvaluator:
             def __getitem__(self, value):
                 return self.__func(str(value))
 
-        return {'e': Evaluator(e), 'v': Evaluator(v)}
+        return {
+            'e': Evaluator(self._get_enabled),
+            'v': Evaluator(self._get_value),
+            'now': self._get_now,
+            'strptime': datetime.datetime.strptime,
+            'strftime': datetime.datetime.strftime,
+        }
+
+    def _get_now(self):
+        now_ts = int(self.app.get_now_ts())
+        if self.timer is None:
+            self.timer = self.app.run_every(
+                self.fire_callback,
+                datetime.datetime.fromtimestamp(now_ts + 1), 1)
+        return datetime.datetime.fromtimestamp(now_ts)
 
     def _get_value(self, entity):
         if entity not in self.entities:

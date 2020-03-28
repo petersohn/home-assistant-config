@@ -5,3 +5,11 @@ expression_add:
         - locker
     expr: 'v["sensor.test_input1"] + v["sensor.test_input2"]'
     target: sensor.test_output
+
+expression_now:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: 'strftime(now(), "%Y-%m-%d %H:%M:%S")'
+    target: sensor.now
