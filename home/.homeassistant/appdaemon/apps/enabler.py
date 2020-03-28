@@ -1,6 +1,5 @@
 ﻿import appdaemon.plugins.hass.hassapi as hass
 import datetime
-import expression
 
 
 class Enabler(hass.Hass):
@@ -143,6 +142,7 @@ class MultiEnabler(Enabler):
 
 class ExpressionEnabler(Enabler):
     def initialize(self):
+        import expression
         self.evaluator = expression.ExpressionEvaluator(
             self, self.args['expr'], self._change)
         self._init_enabler(self.evaluator.get())
