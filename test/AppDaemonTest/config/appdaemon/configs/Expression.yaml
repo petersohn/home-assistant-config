@@ -13,3 +13,21 @@ expression_now:
         - locker
     expr: 'strftime(now(), "%Y-%m-%d %H:%M:%S")'
     target: sensor.now
+
+expression_args:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+        args['list'][int(v['sensor.test_input1'])] +
+        args['dict'][v['sensor.test_input2']]
+    target: sensor.args
+    list:
+        - first
+        - second
+        - third
+    dict:
+        a: foo
+        b: bar
+        c: baz

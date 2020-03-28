@@ -31,6 +31,7 @@ class ExpressionEvaluator:
             'now': self._get_now,
             'strptime': datetime.datetime.strptime,
             'strftime': datetime.datetime.strftime,
+            'args': self.app.args,
         }
 
     def _get_now(self):

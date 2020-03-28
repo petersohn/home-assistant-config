@@ -12,7 +12,8 @@ Test Teardown  Cleanup AppDaemon
 ${input_sensor1} =  sensor.test_input1
 ${input_sensor2} =  sensor.test_input2
 ${output_sensor} =  sensor.test_output
-${now_sensor} =  sensor.now
+${now_sensor} =     sensor.now
+${args_sensor} =    sensor.args
 
 
 *** Test Cases ***
@@ -35,13 +36,32 @@ Get Now
     ${result} =  Get State  ${now_sensor}
     Date Should Equal Time  ${result}  ${default_start_date}  01:12:20
 
+Args
+    [Template]  Test Args
+    ${0}  c  firstbaz
+    ${1}  a  secondfoo
+    ${2}  b  thirdbar
+
 *** Keywords ***
 
-Test Sensors
-    [Arguments]  ${sensor1}  ${sensor2}  ${expected_output}
+Check Expected States
+    [Arguments]  ${type}  &{expected_states}
+    :FOR  ${name}  IN  @{expected_states.keys()}
+    \   State Should Be As  ${name}  ${type}  ${expected_states['${name}']}
+
+Test States
+    [Arguments]  ${sensor1}  ${sensor2}  ${type}  &{expected_states}
     Set State  ${input_sensor1}  ${sensor1}
     Set State  ${input_sensor2}  ${sensor2}
-    State Should Be As  ${output_sensor}  Int  ${expected_output}
+    Check Expected States  ${type}  &{expected_states}
+
+Test Sensors
+    [Arguments]  ${sensor1}  ${sensor2}  ${expected_result}
+    Test States  ${sensor1}  ${sensor2}  Int  ${output_sensor}=${expected_result}
+
+Test Args
+    [Arguments]  ${sensor1}  ${sensor2}  ${expected_result}
+    Test States  ${sensor1}  ${sensor2}  str  ${args_sensor}=${expected_result}
 
 Initialize
     [Arguments]  ${start_time}  ${start_date}=${default_start_date}
