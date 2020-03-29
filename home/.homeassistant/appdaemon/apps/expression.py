@@ -51,7 +51,6 @@ class ExpressionEvaluator:
             self.app.listen_state(self._on_entity_change, entity=entity)
             self.entities.add(entity)
         value = self.app.get_state(entity)
-        self.app.log('_get_value: {} = {}'.format(entity, value))
         if value == 'on':
             return True
         if value == 'off':
