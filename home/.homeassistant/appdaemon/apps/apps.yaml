@@ -503,6 +503,7 @@ light_outside_switcher_1:
     module: enabled_switch
     dependencies:
         - auto_switch_light_outside_1
+        - sun_enabler_night
         - locker
     global_dependencies:
         - auto_switch
@@ -527,6 +528,7 @@ light_outside_switcher_2_4:
         - auto_switch_light_outside_2
         - auto_switch_light_outside_4
         - locker
+        - light_outside_2_4_enabler
     global_dependencies:
         - auto_switch
     enabler: light_outside_2_4_enabler
@@ -551,6 +553,7 @@ light_outside_switcher_3_5_6:
         - auto_switch_light_outside_3
         - auto_switch_light_outside_5
         - auto_switch_light_outside_6
+        - light_outside_3_5_6_enabler
         - locker
     global_dependencies:
         - auto_switch
