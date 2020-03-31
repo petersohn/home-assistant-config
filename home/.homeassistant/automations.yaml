@@ -163,7 +163,7 @@
             entity_id: switch.light_attic_upstairs
 
 - trigger:
-      platform: state
+    - platform: state
       entity_id: input_select.lighting_mode
       from: 'home'
       to:
@@ -179,6 +179,20 @@
       entity_id: input_select.lighting_mode
       from: 'away'
       to: 'home'
+  action:
+      - service: homeassistant.turn_on
+        data_template:
+            entity_id: switch.hot_water_pump
+
+- trigger:
+    - platform: state
+      entity_id: binary_sensor.furnace_temperature_restarted
+      from: 'off'
+      to: 'on'
+  condition:
+      condition: state
+      entity_id: input_select.lighting_mode
+      state: 'home'
   action:
       - service: homeassistant.turn_on
         data_template:
