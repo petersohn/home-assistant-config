@@ -4,14 +4,9 @@ views:
     title: default_view
     badges: []
     cards:
-      - type: horizontal-stack
-        cards:
-          - type: button
-            entity: switch.well
-            state_color: true
-          - type: button
-            entity: switch.hot_water_pump
-            state_color: true
+      - type: button
+        entity: switch.well
+        state_color: true
       - type: entities
         state_color: true
         entities:
@@ -38,6 +33,8 @@ views:
         show_header_toggle: false
       - type: entities
         entities:
+          - switch.hot_water_pump
+          - input_select.hot_water_pump
           - input_datetime.hot_water_monday
           - input_datetime.hot_water_tuesday
           - input_datetime.hot_water_wednesday
@@ -45,7 +42,7 @@ views:
           - input_datetime.hot_water_friday
           - input_datetime.hot_water_saturday
           - input_datetime.hot_water_sunday
-          - sensor.hot_water_start_time
+        state_color: true
         title: Melegvíz bekapcsolás
         show_header_toggle: false
     icon: 'mdi:home'

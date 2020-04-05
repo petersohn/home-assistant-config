@@ -702,6 +702,13 @@ input_select:
             - "on"
             - "off"
         initial: "auto"
+    hot_water_pump:
+        name: Melegvíz
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
     lighting_mode:
         name: Világítás mód
         options:

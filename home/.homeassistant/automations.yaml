@@ -99,6 +99,15 @@
 
 - trigger:
       platform: mqtt
+      topic: home/input_select/hot_water_pump/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.hot_water_pump
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
       topic: home/input_select/lighting_mode/set
   action:
       - service: input_select.select_option
@@ -161,52 +170,3 @@
       - service: homeassistant.turn_off
         data_template:
             entity_id: switch.light_attic_upstairs
-
-- trigger:
-    - platform: state
-      entity_id: input_select.lighting_mode
-      from: 'home'
-      to:
-        - 'away'
-        - 'sleep'
-  action:
-      - service: homeassistant.turn_off
-        data_template:
-            entity_id: switch.hot_water_pump
-
-- trigger:
-    - platform: state
-      entity_id: input_select.lighting_mode
-      from: 'away'
-      to: 'home'
-  action:
-      - service: homeassistant.turn_on
-        data_template:
-            entity_id: switch.hot_water_pump
-
-- trigger:
-    - platform: state
-      entity_id: binary_sensor.furnace_temperature_restarted
-      from: 'off'
-      to: 'on'
-  condition:
-      condition: state
-      entity_id: input_select.lighting_mode
-      state: 'home'
-  action:
-      - service: homeassistant.turn_on
-        data_template:
-            entity_id: switch.hot_water_pump
-
-- trigger:
-    - platform: template
-      value_template: >
-        {{ states('sensor.time') + ':00' ==states('sensor.hot_water_start_time') }}
-  condition:
-      condition: state
-      entity_id: input_select.lighting_mode
-      state: 'sleep'
-  action:
-      - service: homeassistant.turn_on
-        data_template:
-            entity_id: switch.hot_water_pump
