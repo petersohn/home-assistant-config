@@ -6,6 +6,7 @@ class ExpressionEvaluator:
     def __init__(self, app, expr, callback):
         self.mutex = app.get_app('locker').get_mutex('ExpressionEvaluator')
 
+        app.log(expr)
         self.app = app
         self.expr = expr
         self.callback = callback
@@ -13,6 +14,7 @@ class ExpressionEvaluator:
         self.enablers = {}
         self.evaluators = self._create_evaluators()
         self.timer = None
+
 
     def cleanup(self):
         for enabler, id in self.enablers.items():

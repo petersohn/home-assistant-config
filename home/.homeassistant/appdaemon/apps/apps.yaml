@@ -620,7 +620,9 @@ hot_water_timer_selector:
         - locker
     target: sensor.hot_water_start_time
     expr: >
+        'now' if v['sensor.time'] + ':00' ==
         v['input_datetime.hot_water_' + args['weekdays'][now().weekday()]]
+        else 'later'
     weekdays:
         - monday
         - tuesday
@@ -629,3 +631,19 @@ hot_water_timer_selector:
         - friday
         - saturday
         - sunday
+
+hot_water_pump_timer:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_hot_water_pump
+        - hot_water_pump_timer_enabler
+        - hot_water_pump_timer_selector
+        - locker
+    sensor: sensor.hot_water_start_time
+    target_state: 'now'
+    edge_trigger: true
+    targets:
+        - auto_switch_hot_water_pump
+    enabler: hot_water_pump_timer_enabler
+    time: 300
