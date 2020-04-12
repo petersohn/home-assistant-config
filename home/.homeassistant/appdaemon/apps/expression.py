@@ -51,7 +51,6 @@ class ExpressionEvaluator:
         return datetime.datetime.fromtimestamp(now_ts)
 
     def _get_value(self, entity):
-        self.app.log('AAAAAAAAAAAAAAAAAAAAAAAA' + entity)
         if '.' not in entity:
             return Evaluator(self._get_value, entity + '.')
 
