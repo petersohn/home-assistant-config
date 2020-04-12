@@ -15,6 +15,12 @@
             "name": "upper",
             "interval": 60,
             "pin": 2
+        },
+        {
+            "type": "input",
+            "name": "button",
+            "interval": 60,
+            "pin": 3
         }
     ],
     "actions": [
@@ -46,5 +52,13 @@
             "template": "%2",
             "retain": true
         },
+        {
+            "type": "publish",
+            "interface": "button",
+            "topic": "home/input_select/lighting_mode/set",
+            "value": 0,
+            "template": "sleep",
+            "retain": false
+        }
     ]
 }
