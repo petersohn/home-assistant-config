@@ -62,7 +62,7 @@ value_less:
         - locker
     global_dependencies:
         - expression
-    expr: 'v["sensor.test_input1"] < v["sensor.test_input2"]'
+    expr: 'v.sensor.test_input1 < v.sensor.test_input2'
 
 value_equal:
     module: enabler
@@ -71,7 +71,7 @@ value_equal:
         - locker
     global_dependencies:
         - expression
-    expr: 'v["sensor.test_input1"] == v["sensor.test_input2"]'
+    expr: 'v.sensor.test_input1 == v.sensor.test_input2'
 
 binary_and:
     module: enabler
@@ -80,7 +80,7 @@ binary_and:
         - locker
     global_dependencies:
         - expression
-    expr: 'v["binary_sensor.test_input1"] and v["binary_sensor.test_input2"]'
+    expr: 'v.binary_sensor.test_input1 and v.binary_sensor.test_input2'
 
 binary_or:
     module: enabler
@@ -89,7 +89,7 @@ binary_or:
         - locker
     global_dependencies:
         - expression
-    expr: 'v["binary_sensor.test_input1"] or v["binary_sensor.test_input2"]'
+    expr: 'v.binary_sensor.test_input1 or v.binary_sensor.test_input2'
 
 enabler_and_binary_and:
     module: enabler
@@ -98,7 +98,7 @@ enabler_and_binary_and:
         - locker
     global_dependencies:
         - expression
-    expr: 'e.enabler1 and v["binary_sensor.test_input1"]'
+    expr: 'e.enabler1 and v.binary_sensor.test_input1'
 
 enabler_and_binary_or:
     module: enabler
@@ -107,4 +107,4 @@ enabler_and_binary_or:
         - locker
     global_dependencies:
         - expression
-    expr: 'e.enabler1 or v["binary_sensor.test_input1"]'
+    expr: 'e.enabler1 or v.binary_sensor.test_input1'

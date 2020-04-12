@@ -2,6 +2,18 @@ import appdaemon.plugins.hass.hassapi as hass
 import datetime
 
 
+class Evaluator:
+    def __init__(self, func, prefix=''):
+        self.__prefix = prefix
+        self.__func = func
+
+    def __getattr__(self, value):
+        return self.__func(self.__prefix + value)
+
+    def __getitem__(self, value):
+        return self.__func(self.__prefix + str(value))
+
+
 class ExpressionEvaluator:
     def __init__(self, app, expr, callback):
         self.mutex = app.get_app('locker').get_mutex('ExpressionEvaluator')
@@ -21,16 +33,6 @@ class ExpressionEvaluator:
             self.get_app(enabler).remove_callback(id)
 
     def _create_evaluators(self):
-        class Evaluator:
-            def __init__(self, func):
-                self.__func = func
-
-            def __getattr__(self, value):
-                return self.__func(value)
-
-            def __getitem__(self, value):
-                return self.__func(str(value))
-
         return {
             'e': Evaluator(self._get_enabled),
             'v': Evaluator(self._get_value),
@@ -49,6 +51,10 @@ class ExpressionEvaluator:
         return datetime.datetime.fromtimestamp(now_ts)
 
     def _get_value(self, entity):
+        self.app.log('AAAAAAAAAAAAAAAAAAAAAAAA' + entity)
+        if '.' not in entity:
+            return Evaluator(self._get_value, entity + '.')
+
         if entity not in self.entities:
             self.app.listen_state(self._on_entity_change, entity=entity)
             self.entities.add(entity)

@@ -3,7 +3,7 @@ expression_add:
     class: Expression
     dependencies:
         - locker
-    expr: 'v["sensor.test_input1"] + v["sensor.test_input2"]'
+    expr: 'v.sensor.test_input1 + v["sensor.test_input2"]'
     target: sensor.test_output
 
 expression_now:
