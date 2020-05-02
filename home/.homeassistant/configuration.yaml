@@ -491,6 +491,11 @@ binary_sensor:
     payload_on: 1
     payload_off: 0
   - platform: mqtt
+    state_topic: home/sensors/motion/well
+    name: motion_sensor_well
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
     state_topic: home/sensors/door/attic_hatch
     name: door_attic_hatch
     payload_on: 1
@@ -551,6 +556,12 @@ switch:
     name: light_driveway
     command_topic: home/switches/lights/driveway/set
     state_topic: home/switches/lights/driveway/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: light_well
+    command_topic: home/switches/lights/well/set
+    state_topic: home/switches/lights/well/state
     payload_on: 1
     payload_off: 0
   - platform: mqtt
@@ -635,6 +646,13 @@ switch:
 input_select:
     light_driveway:
         name: Bejáró világítás
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
+    light_well:
+        name: Kút világítás
         options:
             - "auto"
             - "on"

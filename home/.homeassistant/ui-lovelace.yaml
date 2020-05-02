@@ -94,6 +94,21 @@ views:
               service_data:
                 entity_id: input_select.light_driveway
                 option: 'auto'
+          - type: button
+            entity: switch.light_well
+            state_color: true
+            tap_action:
+              action: call-service
+              service: script.auto_switch_manual
+              service_data:
+                auto_switch: input_select.light_well
+                target: switch.light_well
+            hold_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: input_select.light_well
+                option: 'auto'
       - type: horizontal-stack
         cards:
           - type: button
@@ -251,6 +266,7 @@ views:
               - input_select.light_garage
               - input_select.light_christmas_front
               - input_select.light_christmas_tree
+              - input_select.light_well
           - type: entities
             entities:
               - input_select.light_outside_1
@@ -300,6 +316,14 @@ views:
               entity: binary_sensor.motion_sensor_garage2
             - type: gauge
               entity: sensor.motion_sensor_garage2_average
+              min: 0.0
+              max: 1.0
+        - type: horizontal-stack
+          cards:
+            - type: button
+              entity: binary_sensor.motion_sensor_well
+            - type: gauge
+              entity: sensor.motion_sensor_well_average
               min: 0.0
               max: 1.0
         title: Mozgásérzékelők

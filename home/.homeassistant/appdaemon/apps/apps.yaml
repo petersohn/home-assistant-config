@@ -44,6 +44,14 @@ auto_switch_light_driveway:
     switch: input_select.light_driveway
     reentrant: true
 
+auto_switch_light_well:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_well
+    switch: input_select.light_well
+    reentrant: true
+
 auto_switch_light_gate_reflector:
     module: auto_switch
     class: AutoSwitch
