@@ -60,6 +60,14 @@ mqtt:
   password: !secret mosquitto_password
 
 sensor:
+  - platform: nut
+    username: !secret nut_username
+    password: !secret nut_password
+    resources:
+      - ups.load
+      - input.voltage
+      - battery.voltage
+      - battery.charge
   - platform: time_date
     display_options:
       - 'date'

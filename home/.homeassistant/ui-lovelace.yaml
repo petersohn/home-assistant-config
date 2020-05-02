@@ -446,4 +446,12 @@ views:
           - sensor.var_log_free_space
         title: local_device
         show_header_toggle: false
+      - type: entities
+        entities:
+          - sensor.apc_input_voltage
+          - sensor.apc_battery_voltage
+          - sensor.apc_battery_charge
+          - sensor.apc_load
+        title: local_device
+        show_header_toggle: false
     icon: 'mdi:wrench'
