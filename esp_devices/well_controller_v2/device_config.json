@@ -34,6 +34,19 @@
             "pin": 5
         },
         {
+            "type": "output",
+            "name": "reflector",
+            "commandTopic": "home/switches/lights/well/set",
+            "default": false,
+            "invert": true,
+            "pin": 12
+        },
+        {
+            "type": "input",
+            "name": "motion_sensor",
+            "pin": 13
+        },
+        {
             "type": "dht",
             "name": "dht",
             "interval": 60,
@@ -60,6 +73,12 @@
             "retain": true
         },
         {
+            "type": "publish",
+            "interface": "reflector",
+            "topic": "home/switches/lights/well/state",
+            "retain": true
+        },
+        {
             "type": "command",
             "interface": "button",
             "target": "manual",
@@ -72,6 +91,12 @@
             "topic": "home/sensors/temperature/outside",
             "template": "%1",
             "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "motion_sensor",
+            "topic": "home/sensors/motion/well",
+            "retain": false
         },
         {
             "type": "publish",
