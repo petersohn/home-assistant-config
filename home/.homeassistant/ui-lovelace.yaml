@@ -33,6 +33,7 @@ views:
         show_header_toggle: false
       - type: entities
         entities:
+          - input_boolean.hot_water_pump
           - switch.hot_water_pump
           - input_select.hot_water_pump
           - input_datetime.hot_water_monday
@@ -43,6 +44,8 @@ views:
           - input_datetime.hot_water_saturday
           - input_datetime.hot_water_sunday
           - sensor.hot_water_start_time
+          - sensor.hot_water_is_hot
+          - sensor.temperature_hot_water
         state_color: true
         title: Melegvíz bekapcsolás
         show_header_toggle: false

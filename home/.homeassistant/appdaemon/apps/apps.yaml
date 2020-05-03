@@ -599,7 +599,7 @@ auto_switch_hot_water_pump:
     module: auto_switch
     class: AutoSwitch
     dependencies: locker
-    target: switch.hot_water_pump
+    target: input_boolean.hot_water_pump
     switch: input_select.hot_water_pump
     reentrant: true
 
@@ -655,3 +655,45 @@ hot_water_pump_timer:
         - auto_switch_hot_water_pump
     enabler: hot_water_pump_timer_enabler
     time: 300
+
+auto_switch_hot_water_pump_backend:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.hot_water_pump
+    reentrant: true
+
+hot_water_backend:
+    class: Expression
+    module: expression
+    dependencies:
+        - locker
+    target: sensor.hot_water_is_hot
+    expr: >
+        'cold' if v.binary_sensor.cellar_controller_available is not True or
+        v.sensor.temperature_hot_water == 'unknown' or
+        v.sensor.temperature_hot_water <= 40 else 'hot'
+
+hot_water_backend_enabler:
+    module: enabler
+    class: ValueEnabler
+    dependencies: locker
+    entity: input_boolean.hot_water_pump
+    value: 'on'
+
+hot_water_pump_timer:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_hot_water_pump_backend
+        - hot_water_backend_enabler
+        - hot_water_backend
+        - locker
+    sensor: sensor.hot_water_is_hot
+    target_state: 'cold'
+    edge_trigger: false
+    targets:
+        - auto_switch_hot_water_pump_backend
+    enabler: hot_water_backend_enabler
+    time: 2
+

@@ -742,6 +742,11 @@ input_select:
             - "away"
             - "sleep"
 
+input_boolean:
+  hot_water_pump:
+    name: "Meleg víz keringető"
+    icon: mdi:shower-head
+
 input_datetime:
   hot_water_monday:
     name: Hétfő

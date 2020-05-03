@@ -101,12 +101,11 @@ class AutoSwitch(hass.Hass):
         with self.mutex.lock('on_target_change'):
             value = self.get_state(entity)
             if not self.intended_state:
-                if self.switch:
-                    if self.get_state(self.switch) == 'auto':
-                        self.log('State change detected: {}'.format(value))
-                        self.__update(self.state)
-                    else:
-                        self.select_option(entity_id=self.switch, option=value)
+                if self.switch is None or self.get_state(self.switch) == 'auto':
+                    self.log('State change detected: {}'.format(value))
+                    self.__update(self.state)
+                else:
+                    self.select_option(entity_id=self.switch, option=value)
             elif value == self.intended_state:
                 self.intended_state = None
                 self.__stop_timer()
