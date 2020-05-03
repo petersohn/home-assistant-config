@@ -27,10 +27,9 @@ class ExpressionEvaluator:
         self.evaluators = self._create_evaluators()
         self.timer = None
 
-
     def cleanup(self):
         for enabler, id in self.enablers.items():
-            self.get_app(enabler).remove_callback(id)
+            self.app.get_app(enabler).remove_callback(id)
 
     def _create_evaluators(self):
         return {
@@ -102,6 +101,9 @@ class Expression(hass.Hass):
         self.evaluator = ExpressionEvaluator(
             self, self.args['expr'], self._set)
         self._set(self.evaluator.get())
+
+    def terminate(self):
+        self.evaluator.cleanup()
 
     def _set(self, value):
         self.set_state(self.target, state=value)

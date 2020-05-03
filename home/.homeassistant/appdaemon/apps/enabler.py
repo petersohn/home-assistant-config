@@ -159,3 +159,6 @@ class ExpressionEnabler(Enabler):
         self.evaluator = expression.ExpressionEvaluator(
             self, self.args['expr'], self._change)
         self._init_enabler(self.evaluator.get())
+
+    def terminate(self):
+        self.evaluator.cleanup()
