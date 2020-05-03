@@ -36,7 +36,7 @@ class MotionSensor(hass.Hass):
                 self.log('enabled changed to {}'.format(enabled))
                 if enabled:
                     if not self.edge_trigger and \
-                            self.get_state(self.sensor) == 'on':
+                            self.get_state(self.sensor) == self.target_state:
                         self.__start()
                 else:
                     self.__stop_timer()
