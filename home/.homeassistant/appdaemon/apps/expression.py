@@ -78,7 +78,7 @@ class ExpressionEvaluator:
         self.app.run_in(self.fire_callback, 0)
 
     def _on_entity_change(self, entity, attribute, old, new, kwargs):
-        self.app.log('state change({}): {} -> {}'.format(entity, old, new))
+        # self.app.log('state change({}): {} -> {}'.format(entity, old, new))
         if new != old:
             self.fire_callback({})
 
