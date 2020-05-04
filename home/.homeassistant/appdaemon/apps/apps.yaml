@@ -646,7 +646,7 @@ hot_water_pump_timer:
     dependencies:
         - auto_switch_hot_water_pump
         - hot_water_pump_timer_enabler
-        - hot_water_pump_timer_selector
+        - hot_water_timer_selector
         - locker
     sensor: sensor.hot_water_start_time
     target_state: 'now'
@@ -681,7 +681,7 @@ hot_water_backend_enabler:
     entity: input_boolean.hot_water_pump
     value: 'on'
 
-hot_water_pump_timer:
+hot_water_pump_backend_timer:
     class: MotionSensor
     module: motion_sensor
     dependencies:
