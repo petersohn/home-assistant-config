@@ -18,7 +18,6 @@ class ExpressionEvaluator:
     def __init__(self, app, expr, callback):
         self.mutex = app.get_app('locker').get_mutex('ExpressionEvaluator')
 
-        app.log(expr)
         self.app = app
         self.expr = expr
         self.callback = callback

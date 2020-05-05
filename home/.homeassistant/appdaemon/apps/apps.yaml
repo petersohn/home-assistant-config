@@ -672,7 +672,7 @@ hot_water_backend:
     expr: >
         'cold' if v.binary_sensor.cellar_controller_available is not True or
         v.sensor.temperature_hot_water == 'unknown' or
-        v.sensor.temperature_hot_water <= 40 else 'hot'
+        v.sensor.temperature_hot_water <= 41 else 'hot'
 
 hot_water_backend_enabler:
     module: enabler
