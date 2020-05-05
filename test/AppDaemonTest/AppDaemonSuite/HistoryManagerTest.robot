@@ -22,7 +22,7 @@ ${min_entity} =  sensor.test_sensor_min
 ${max_entity} =  sensor.test_sensor_max
 ${switch_entity} =  input_boolean.test_switch
 ${switch_mean_entity} =  sensor.test_switch_mean
-${enabler} =  input_boolean.test_switch
+${enabler} =  input_boolean.test_switch2
 
 
 *** Test Cases ***

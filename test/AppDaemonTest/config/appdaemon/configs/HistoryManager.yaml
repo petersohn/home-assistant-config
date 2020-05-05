@@ -142,5 +142,5 @@ test_history_enabled_switch:
 test_history_enabler_auto_switch:
     module: auto_switch
     class: AutoSwitch
-    target: input_boolean.test_switch
+    target: input_boolean.test_switch2
     dependencies: locker
