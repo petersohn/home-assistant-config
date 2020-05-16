@@ -1,5 +1,5 @@
 {
-    "debug": true,
+    "debug": false,
     "name": "well_controller",
     "availabilityTopic": "home/devices/well_controller/availability",
     "debugTopic": "home/devices/well_controller/debug",
@@ -7,7 +7,7 @@
         {
             "type": "input",
             "name": "button",
-            "pin": 3
+            "pin": 15
         },
         {
             "type": "output",
@@ -19,11 +19,35 @@
         },
         {
             "type": "output",
-            "name": "auto",
-            "commandTopic": "home/switches/auto_sprinkler/set",
+            "name": "auto1",
+            "commandTopic": "home/switches/auto_sprinkler1/set",
+            "default": false,
+            "invert": true,
+            "pin": 1
+        },
+        {
+            "type": "output",
+            "name": "auto2",
+            "commandTopic": "home/switches/auto_sprinkler2/set",
+            "default": false,
+            "invert": true,
+            "pin": 3
+        },
+        {
+            "type": "output",
+            "name": "auto3",
+            "commandTopic": "home/switches/auto_sprinkler3/set",
             "default": false,
             "invert": true,
             "pin": 4
+        },
+        {
+            "type": "output",
+            "name": "auto4",
+            "commandTopic": "home/switches/auto_sprinkler4/set",
+            "default": false,
+            "invert": true,
+            "pin": 16
         },
         {
             "type": "output",
@@ -62,8 +86,26 @@
         },
         {
             "type": "publish",
-            "interface": "auto",
-            "topic": "home/switches/auto_sprinkler/state",
+            "interface": "auto1",
+            "topic": "home/switches/auto_sprinkler1/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "auto2",
+            "topic": "home/switches/auto_sprinkler2/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "auto3",
+            "topic": "home/switches/auto_sprinkler3/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "auto4",
+            "topic": "home/switches/auto_sprinkler4/state",
             "retain": true
         },
         {
@@ -83,7 +125,7 @@
             "interface": "button",
             "target": "manual",
             "command": "toggle",
-            "value": "0"
+            "value": "1"
         },
         {
             "type": "publish",
