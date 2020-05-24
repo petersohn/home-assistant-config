@@ -1,5 +1,6 @@
 import appdaemon.plugins.hass.hassapi as hass
 import auto_switch
+import traceback
 
 
 class MotionSensor(hass.Hass):
@@ -7,7 +8,10 @@ class MotionSensor(hass.Hass):
     def initialize(self):
         self.sensor = self.args['sensor']
         self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
-        self.time = float(self.args['time']) * 60
+        try:
+            self.time = float(self.args['time']) * 60
+        except ValueError:
+            self.time = self.args['time']
         self.edge_trigger = self.args.get('edge_trigger', False)
         self.target_state = self.args.get('target_state', 'on')
         enabler = self.args.get('enabler')
@@ -62,7 +66,15 @@ class MotionSensor(hass.Hass):
 
     def __handle_stop(self):
         if self.timer is None:
-            self.timer = self.run_in(self.on_timeout, self.time)
+            if type(self.time) is float:
+                time = self.time
+            else:
+                try:
+                    time = float(self.get_state(self.time)) * 60
+                except Exception:
+                    self.error(traceback.format_exc())
+                    time = 0
+            self.timer = self.run_in(self.on_timeout, time)
 
     def __start(self):
         self.__stop_timer()

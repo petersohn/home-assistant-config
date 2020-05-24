@@ -12,7 +12,7 @@ Test Teardown  Cleanup AppDaemon
 ${motion_detector} =   binary_sensor.motion_detector
 ${switch} =            input_boolean.test_switch
 ${enabler} =           test_enabler
-${delay} =             1 min
+${time_entity} =       sensor.motion_sensor_time
 
 
 *** Test Cases ***
@@ -22,7 +22,7 @@ Switch On And Off
     Set State  ${motion_detector}  on
     Set State  ${motion_detector}  off
     State Should Be  ${switch}  on
-    State Should Change In  ${switch}  off  ${delay}
+    State Should Change In  ${switch}  off  1 min
 
 Switch Off After Motion Restarts
     [Setup]  Initialize  00:00:00  MotionSensorNormal
@@ -140,6 +140,39 @@ Other Target State
 
     State Should Change At  ${switch}  on   20 sec
     State Should Change At  ${switch}  off  1 min 50 s
+
+Indirect Time
+    [Setup]  Initialize  00:00:00  MotionSensorIndirectTime
+    Set State  ${time_entity}  1.5
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${motion_detector}  on
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector}  off
+    Schedule Call At  3 min
+    ...    set_sensor_state  ${motion_detector}  on
+    Schedule Call At  3 min 20 sec
+    ...    set_sensor_state  ${time_entity}  2
+    Schedule Call At  3 min 30 sec
+    ...    set_sensor_state  ${motion_detector}  off
+    Schedule Call At  6 min
+    ...    set_sensor_state  ${motion_detector}  on
+    Schedule Call At  6 min 10 s
+    ...    set_sensor_state  ${motion_detector}  off
+    Schedule Call At  6 min 20 sec
+    ...    set_sensor_state  ${time_entity}  1
+    Schedule Call At  9 min
+    ...    set_sensor_state  ${motion_detector}  on
+    Schedule Call At  9 min 10 s
+    ...    set_sensor_state  ${motion_detector}  off
+
+    State Should Change At  ${switch}  on   20 sec
+    State Should Change At  ${switch}  off  2 min
+    State Should Change At  ${switch}  on   3 min
+    State Should Change At  ${switch}  off  5 min 30 sec
+    State Should Change At  ${switch}  on   6 min
+    State Should Change At  ${switch}  off  8 min 10 sec
+    State Should Change At  ${switch}  on   9 min
+    State Should Change At  ${switch}  off  10 min 10 sec
 
 
 *** Keywords ***
