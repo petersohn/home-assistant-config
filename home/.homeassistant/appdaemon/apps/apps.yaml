@@ -368,6 +368,47 @@ motion_sensor_garage2_enabler:
     enablers:
         - motion_sensor_garage2_lockout
 
+motion_sensor_well_history:
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: binary_sensor.motion_sensor_well
+
+motion_sensor_well_average:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - motion_sensor_well_history
+        - locker
+    manager: motion_sensor_well_history
+    target: sensor.motion_sensor_well_average
+    interval:
+        hours: 1
+    aggregator: mean
+    attributes:
+        friendly_name: "Kút"
+        icon: mdi:percent
+
+motion_sensor_well_lockout:
+    module: enabler
+    class: RangeEnabler
+    dependencies:
+        - locker
+        - motion_sensor_well_average
+    entity: sensor.motion_sensor_well_average
+    max: 0.2
+
+motion_sensor_well_enabler:
+    module: enabler
+    class: MultiEnabler
+    dependencies:
+        - motion_sensor_well_lockout
+        - sun_enabler_night
+        - locker
+    enablers:
+        - motion_sensor_well_lockout
+        - sun_enabler_night
+
 driveway_uppest_reflector_motion_sensor:
     class: MotionSensor
     module: motion_sensor
@@ -457,6 +498,19 @@ garage2_motion_sensor:
     targets:
         - auto_switch_light_garage
     enabler: motion_sensor_garage2_enabler
+    time: 1
+
+well_motion_sensor:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_light_well
+        - motion_sensor_well_enabler
+        - locker
+    sensor: binary_sensor.motion_sensor_well
+    targets:
+        - auto_switch_light_well
+    enabler: motion_sensor_well_enabler
     time: 1
 
 christmas_light_switch_front:
