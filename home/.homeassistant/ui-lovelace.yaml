@@ -10,6 +10,15 @@ views:
       - type: entities
         state_color: true
         entities:
+          - switch.auto_sprinkler1
+          - switch.auto_sprinkler2
+          - switch.auto_sprinkler3
+          - switch.auto_sprinkler4
+        title: Locsoló
+        show_header_toggle: false
+      - type: entities
+        state_color: true
+        entities:
           - binary_sensor.door_attic_hatch
           - binary_sensor.door_main_entrance
         title: Ajtók

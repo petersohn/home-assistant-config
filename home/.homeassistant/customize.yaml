@@ -316,6 +316,22 @@ switch.well:
   friendly_name: "Kút"
   icon: mdi:water-pump
 
+switch.auto_sprinkler1:
+  friendly_name: "Auto locsoló 1"
+  icon: mdi:sprinkler
+
+switch.auto_sprinkler2:
+  friendly_name: "Auto locsoló 2"
+  icon: mdi:sprinkler
+
+switch.auto_sprinkler3:
+  friendly_name: "Auto locsoló 3"
+  icon: mdi:sprinkler
+
+switch.auto_sprinkler4:
+  friendly_name: "Auto locsoló 4"
+  icon: mdi:sprinkler
+
 switch.light_driveway:
   friendly_name: "Bejáró"
   icon: mdi:lightbulb

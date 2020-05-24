@@ -541,6 +541,30 @@ switch:
     payload_on: 1
     payload_off: 0
   - platform: mqtt
+    name: auto_sprinkler1
+    command_topic: home/switches/auto_sprinkler1/set
+    state_topic: home/switches/auto_sprinkler1/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: auto_sprinkler2
+    command_topic: home/switches/auto_sprinkler2/set
+    state_topic: home/switches/auto_sprinkler2/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: auto_sprinkler3
+    command_topic: home/switches/auto_sprinkler3/set
+    state_topic: home/switches/auto_sprinkler3/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: auto_sprinkler4
+    command_topic: home/switches/auto_sprinkler4/set
+    state_topic: home/switches/auto_sprinkler4/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
     name: heating_pump
     command_topic: home/switches/heating_pump/set
     state_topic: home/switches/heating_pump/status
