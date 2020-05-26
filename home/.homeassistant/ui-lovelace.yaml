@@ -10,10 +10,15 @@ views:
       - type: entities
         state_color: true
         entities:
+          - input_boolean.sprinkler
           - switch.auto_sprinkler1
           - switch.auto_sprinkler2
           - switch.auto_sprinkler3
           - switch.auto_sprinkler4
+          - input_select.auto_sprinkler1
+          - input_select.auto_sprinkler2
+          - input_select.auto_sprinkler3
+          - sensor.sprinkler_run_time
         title: Locsoló
         show_header_toggle: false
       - type: entities

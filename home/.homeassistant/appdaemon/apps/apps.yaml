@@ -815,3 +815,111 @@ maximum_temperature_last_day:
         friendly_name: "Maximum hőmérséklet 1 nap"
         icon: mdi:thermometer-high
 
+sprinkler_run_time:
+    class: Expression
+    module: expression
+    dependencies:
+        - locker
+        - rain_last_7_days
+        - maximum_temperature_last_day
+    target: sensor.sprinkler_run_time
+    expr: >
+        1.5 * v.sensor.maximum_temperature_last_day - 14.0
+        - 5.0 * v.sensor.rain_last_7_days
+    attributes:
+        unit_of_measurement: min
+        friendly_name: "Locsolás idő"
+        icon: mdi:timer
+
+sprinkler_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    expr: >
+        v.input_boolean.sprinkler and v.sensor.sprinkler_run_time > 2.0
+        and v.rain_last_day < 1.0
+    dependencies:
+        - locker
+        - sprinkler_run_time
+        - rain_last_day
+    global_dependencies:
+        - expression
+
+auto_switch_sprinkler_1:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.auto_sprinkler1
+    switch: input_select.auto_sprinkler1
+    reentrant: true
+
+auto_switch_sprinkler_2:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.auto_sprinkler2
+    switch: input_select.auto_sprinkler2
+    reentrant: true
+
+auto_switch_sprinkler_3:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.auto_sprinkler3
+    switch: input_select.auto_sprinkler3
+    reentrant: true
+
+sprinkler_1_start_time:
+    class: Expression
+    module: expression
+    dependencies:
+        - locker
+    target: sensor.sprinkler_1_start_time
+    expr: >
+        'now' if v.sensor.time == '21:00' else 'later'
+
+sprinkler_2_start_time:
+    class: Expression
+    module: expression
+    dependencies:
+        - locker
+        - sprinkler_run_time
+    target: sensor.sprinkler_1_start_time
+    expr: >
+        'now' if v.sensor.time ==
+        (strptime('21:00', '%H:%M') + dt(minutes=v.sensor.sprinkler_run_time))
+        .strftime('%H:%M')
+        else 'later'
+
+sprinkler_1_timer:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_sprinkler_1
+        - sprinkler_1_start_time
+        - sprinkler_enabler
+        - sprinkler_run_time
+        - locker
+    sensor: sensor.sprinkler_1_start_time
+    target_state: 'now'
+    edge_trigger: true
+    targets:
+        - auto_switch_sprinkler_1
+    enabler: sprinkler_enabler
+    time: sensor.sprinkler_run_time
+
+sprinkler_2_timer:
+    class: MotionSensor
+    module: motion_sensor
+    dependencies:
+        - auto_switch_sprinkler_2
+        - sprinkler_2_start_time
+        - sprinkler_enabler
+        - sprinkler_run_time
+        - locker
+    sensor: sensor.sprinkler_2_start_time
+    target_state: 'now'
+    edge_trigger: true
+    targets:
+        - auto_switch_sprinkler_2
+    enabler: sprinkler_enabler
+    time: sensor.sprinkler_run_time

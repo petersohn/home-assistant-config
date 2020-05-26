@@ -752,6 +752,27 @@ input_select:
             - "on"
             - "off"
         initial: "auto"
+    auto_sprinkler1:
+        name: Auto locsoló 1
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
+    auto_sprinkler2:
+        name: Auto locsoló 2
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
+    auto_sprinkler3:
+        name: Auto locsoló 3
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
     hot_water_pump:
         name: Melegvíz
         options:
@@ -770,6 +791,9 @@ input_boolean:
   hot_water_pump:
     name: "Meleg víz keringető"
     icon: mdi:shower-head
+  sprinkler:
+    name: "Locsolás"
+    icon: mdi:sprinkler-variant
 
 input_datetime:
   hot_water_monday:

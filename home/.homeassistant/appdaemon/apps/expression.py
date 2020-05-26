@@ -37,6 +37,8 @@ class ExpressionEvaluator:
             'now': self._get_now,
             'strptime': datetime.datetime.strptime,
             'strftime': datetime.datetime.strftime,
+            'dt': datetime.timedelta,
+            't': datetime.datetime,
             'args': self.app.args,
         }
 
@@ -97,6 +99,7 @@ class ExpressionEvaluator:
 class Expression(hass.Hass):
     def initialize(self):
         self.target = self.args['target']
+        self.attributes = self.args.get('attributes', {})
         self.evaluator = ExpressionEvaluator(
             self, self.args['expr'], self._set)
         self._set(self.evaluator.get())
@@ -105,4 +108,4 @@ class Expression(hass.Hass):
         self.evaluator.cleanup()
 
     def _set(self, value):
-        self.set_state(self.target, state=value)
+        self.set_state(self.target, state=value, attributes=self.attributes)
