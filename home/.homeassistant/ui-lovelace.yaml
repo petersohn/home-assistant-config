@@ -350,6 +350,11 @@ views:
           - sensor.moon
           - binary_sensor.night
         show_header_toggle: false
+      - type: glance
+        entities:
+          - sensor.rain_last_day
+          - sensor.rain_last_7_days
+        show_header_toggle: false
       - type: vertical-stack
         cards:
           - type: horizontal-stack

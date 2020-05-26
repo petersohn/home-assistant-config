@@ -1,6 +1,6 @@
 import appdaemon.plugins.hass.hassapi as hass
 import datetime
-import dateutil
+from dateutil import tz
 from urllib import request
 import http.client
 import json
@@ -73,12 +73,19 @@ class HistoryManager(hass.Hass):
         with self.mutex.lock('load_config'):
             self.log('Loading history...')
             try:
-                timestamp = (
-                    datetime.datetime.now() - self.max_interval).strftime(
-                    '%Y-%m-%dT%H:%M:%S%z')
-                url = (self.hass_config['ha_url'] + '/api/history/period/'
-                       + timestamp + '?filter_entity_id=' + self.entity_id)
+                now = datetime.datetime.now()
+                begin_timestamp = (
+                    now - self.max_interval).strftime(
+                        '%Y-%m-%dT%H:%M:%S')
+                end_timestamp = now.strftime('%Y-%m-%dT%H:%M:%S')
+                url = '{}/api/history/period/{}?filter_entity_id={}&end_time={}' \
+                    .format(
+                        self.hass_config['ha_url'],
+                        begin_timestamp,
+                        self.entity_id,
+                        end_timestamp)
                 self.log('Calling API: ' + url)
+
                 with request.urlopen(request.Request(
                         url,
                         headers={
@@ -88,16 +95,19 @@ class HistoryManager(hass.Hass):
                         as result:
                     if result.status >= 300:
                         raise http.client.HTTPException(result.reason)
-                    loaded_history = json.loads(result.read().decode())
+                    x = result.read().decode()
+                    loaded_history = json.loads(x)
 
                     def get_date(s):
                         s = re.sub(r'([-+][0-9]{2}):([0-9]{2})$', '', s)
                         try:
-                            return datetime.datetime.strptime(
+                            time = datetime.datetime.strptime(
                                 s, '%Y-%m-%dT%H:%M:%S.%f')
                         except ValueError:
-                            return datetime.datetime.strptime(
+                            time = datetime.datetime.strptime(
                                 s, '%Y-%m-%dT%H:%M:%S')
+                        return time.replace(tzinfo=tz.tzutc()). \
+                            astimezone(tz.tzlocal()).replace(tzinfo=None)
 
                     now = self.datetime()
                     self.history = list(filter(
@@ -108,8 +118,8 @@ class HistoryManager(hass.Hass):
                             change['state'])
                          for changes in loaded_history for change in changes)))
             except:
-                self.log('Failed to load history.', level='WARNING')
-                self.log(traceback.format_exc(), level='WARNING')
+                self.error('Failed to load history.', level='WARNING')
+                self.error(traceback.format_exc(), level='WARNING')
                 self.run_in(self.load_config, 2)
                 raise
 

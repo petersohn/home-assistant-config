@@ -751,3 +751,42 @@ hot_water_pump_backend_timer:
     enabler: hot_water_backend_enabler
     time: 2
 
+rain_history:
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: sensor.rain
+    max_interval:
+        days: 7
+
+rain_last_day:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - rain_history
+        - locker
+    manager: rain_history
+    target: sensor.rain_last_day
+    interval:
+        days: 1
+    aggregator: sum
+    attributes:
+        unit_of_measurement: "mm"
+        friendly_name: "Eső 1 nap"
+        icon: mdi:weather-rainy
+
+rain_last_7_days:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - rain_history
+        - locker
+    manager: rain_history
+    target: sensor.rain_last_7_days
+    interval:
+        days: 7
+    aggregator: sum
+    attributes:
+        unit_of_measurement: "mm"
+        friendly_name: "Eső 7 nap"
+        icon: mdi:weather-rainy
