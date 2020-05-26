@@ -354,6 +354,7 @@ views:
         entities:
           - sensor.rain_last_day
           - sensor.rain_last_7_days
+          - sensor.maximum_temperature_last_day
         show_header_toggle: false
       - type: vertical-stack
         cards:

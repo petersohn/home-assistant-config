@@ -790,3 +790,28 @@ rain_last_7_days:
         unit_of_measurement: "mm"
         friendly_name: "Eső 7 nap"
         icon: mdi:weather-rainy
+
+temperature_history:
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: sensor.temperature_outside
+    max_interval:
+        days: 1
+
+maximum_temperature_last_day:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - temperature_history
+        - locker
+    manager: temperature_history
+    target: sensor.maximum_temperature_last_day
+    interval:
+        days: 1
+    aggregator: max
+    attributes:
+        unit_of_measurement: "°C"
+        friendly_name: "Maximum hőmérséklet 1 nap"
+        icon: mdi:thermometer-high
+
