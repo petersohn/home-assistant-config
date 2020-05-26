@@ -4,23 +4,6 @@ views:
     title: default_view
     badges: []
     cards:
-      - type: button
-        entity: switch.well
-        state_color: true
-      - type: entities
-        state_color: true
-        entities:
-          - input_boolean.sprinkler
-          - switch.auto_sprinkler1
-          - switch.auto_sprinkler2
-          - switch.auto_sprinkler3
-          - switch.auto_sprinkler4
-          - input_select.auto_sprinkler1
-          - input_select.auto_sprinkler2
-          - input_select.auto_sprinkler3
-          - sensor.sprinkler_run_time
-        title: Locsoló
-        show_header_toggle: false
       - type: entities
         state_color: true
         entities:
@@ -64,6 +47,80 @@ views:
         title: Melegvíz bekapcsolás
         show_header_toggle: false
     icon: 'mdi:home'
+  - path: garden
+    title: 'Kert'
+    icon: 'mdi:tree'
+    cards:
+      - type: button
+        entity: switch.well
+        state_color: true
+      - type: button
+        entity: input_boolean.sprinkler
+        state_color: true
+      - type: sensor
+        entity: sensor.temperature_outside
+        graph: line
+      - type: horizontal-stack
+        cards:
+          - type: button
+            entity: switch.auto_sprinkler1
+            state_color: true
+            tap_action:
+              action: call-service
+              service: script.auto_switch_manual
+              service_data:
+                auto_switch: input_select.auto_sprinkler1
+                target: switch.auto_sprinkler1
+            hold_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: input_select.auto_sprinkler1
+                option: 'auto'
+          - type: button
+            entity: switch.auto_sprinkler2
+            state_color: true
+            tap_action:
+              action: call-service
+              service: script.auto_switch_manual
+              service_data:
+                auto_switch: input_select.auto_sprinkler2
+                target: switch.auto_sprinkler2
+            hold_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: input_select.auto_sprinkler2
+                option: 'auto'
+          - type: button
+            entity: switch.auto_sprinkler3
+            state_color: true
+            tap_action:
+              action: call-service
+              service: script.auto_switch_manual
+              service_data:
+                auto_switch: input_select.auto_sprinkler3
+                target: switch.auto_sprinkler3
+            hold_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: input_select.auto_sprinkler3
+                option: 'auto'
+      - type: entities
+        state_color: true
+        entities:
+          - input_select.auto_sprinkler1
+          - input_select.auto_sprinkler2
+          - input_select.auto_sprinkler3
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - sensor.maximum_temperature_last_day
+          - sensor.rain_last_day
+          - sensor.rain_last_7_days
+          - sensor.sprinkler_run_time
+        show_header_toggle: false
   - path: lights
     title: 'Világítás'
     icon: 'mdi:lightbulb'
