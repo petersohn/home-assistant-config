@@ -510,8 +510,9 @@ well_motion_sensor:
     sensor: binary_sensor.motion_sensor_well
     targets:
         - auto_switch_light_well
+        - auto_switch_light_driveway
     enabler: motion_sensor_well_enabler
-    time: 1
+    time: 2
 
 christmas_light_switch_front:
     module: auto_switch
