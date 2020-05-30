@@ -102,6 +102,7 @@
             "interface": "rain",
             "topic": "home/sensors/rain",
             "value": 0,
+            "minimumSendInterval": 2000,
             "payload": "0.2794"
         },
         {
