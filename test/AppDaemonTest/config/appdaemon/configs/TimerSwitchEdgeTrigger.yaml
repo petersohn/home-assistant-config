@@ -1,6 +1,6 @@
-test_motion_sensor:
-    class: MotionSensor
-    module: motion_sensor
+test_timer_switch:
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - test_auto_switch
         - locker
@@ -8,5 +8,6 @@ test_motion_sensor:
     targets:
         - test_auto_switch
     enabler: test_enabler
-    target_state: 'off'
+    edge_trigger: true
     time: 1
+

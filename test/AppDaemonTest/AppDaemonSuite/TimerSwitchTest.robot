@@ -12,20 +12,20 @@ Test Teardown  Cleanup AppDaemon
 ${motion_detector} =   binary_sensor.motion_detector
 ${switch} =            input_boolean.test_switch
 ${enabler} =           test_enabler
-${time_entity} =       sensor.motion_sensor_time
+${time_entity} =       sensor.timer_switch_time
 
 
 *** Test Cases ***
 
 Switch On And Off
-    [Setup]  Initialize  00:00:00  MotionSensorNormal
+    [Setup]  Initialize  00:00:00  TimerSwitchNormal
     Set State  ${motion_detector}  on
     Set State  ${motion_detector}  off
     State Should Be  ${switch}  on
     State Should Change In  ${switch}  off  1 min
 
 Switch Off After Motion Restarts
-    [Setup]  Initialize  00:00:00  MotionSensorNormal
+    [Setup]  Initialize  00:00:00  TimerSwitchNormal
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector}  on
     Schedule Call At  30 sec
@@ -39,14 +39,14 @@ Switch Off After Motion Restarts
     State Should Change At  ${switch}  off  2 min
 
 Do Not Start If Enabler Is Disabled
-    [Setup]  Initialize  00:00:00  MotionSensorNormal
+    [Setup]  Initialize  00:00:00  TimerSwitchNormal
     Set Enabled State  ${enabler}  disable
     Set State  ${motion_detector}  on
     Set State  ${motion_detector}  off
     State Should Be  ${switch}  off
 
 Switch Off When Enabler Is Disabled
-    [Setup]  Initialize  00:00:00  MotionSensorNormal
+    [Setup]  Initialize  00:00:00  TimerSwitchNormal
     Schedule Call At  30 sec
     ...    set_sensor_state  ${motion_detector}  on
     Schedule Call At  40 sec
@@ -58,7 +58,7 @@ Switch Off When Enabler Is Disabled
     State Should Change At  ${switch}  off  1 min
 
 Switch On When Enabler Is Enabled While In Motion
-    [Setup]  Initialize  00:00:00  MotionSensorNormal
+    [Setup]  Initialize  00:00:00  TimerSwitchNormal
     Set Enabled State  ${enabler}  disable
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector}  on
@@ -71,7 +71,7 @@ Switch On When Enabler Is Enabled While In Motion
     State Should Change At  ${switch}  off  2 min
 
 Stop At Disabling And Restart After Enabling
-    [Setup]  Initialize  00:00:00  MotionSensorNormal
+    [Setup]  Initialize  00:00:00  TimerSwitchNormal
     Set State  ${motion_detector}  on
     Set State  ${motion_detector}  off
     State Should Be  ${switch}  on
@@ -93,7 +93,7 @@ Stop At Disabling And Restart After Enabling
     State Should Change At  ${switch}  off  3 min 50 sec
 
 Stop At Disabling And Restart At Enabling While In Motion
-    [Setup]  Initialize  00:00:00  MotionSensorNormal
+    [Setup]  Initialize  00:00:00  TimerSwitchNormal
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector}  on
     Schedule Call At  30 sec
@@ -109,7 +109,7 @@ Stop At Disabling And Restart At Enabling While In Motion
     State Should Change At  ${switch}  off  2 min 30 sec
 
 Edge Trigger
-    [Setup]  Initialize  00:00:00  MotionSensorEdgeTrigger
+    [Setup]  Initialize  00:00:00  TimerSwitchEdgeTrigger
     Set Enabled State  ${enabler}  disable
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector}  on
@@ -132,7 +132,7 @@ Edge Trigger
     State Should Change At  ${switch}  off  4 min
 
 Other Target State
-    [Setup]  Initialize  00:00:00  MotionSensorInverted  on
+    [Setup]  Initialize  00:00:00  TimerSwitchInverted  on
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector}  off
     Schedule Call At  50 sec
@@ -142,7 +142,7 @@ Other Target State
     State Should Change At  ${switch}  off  1 min 50 s
 
 Indirect Time
-    [Setup]  Initialize  00:00:00  MotionSensorIndirectTime
+    [Setup]  Initialize  00:00:00  TimerSwitchIndirectTime
     Set State  ${time_entity}  1.5
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector}  on
@@ -183,8 +183,8 @@ Initialize
     Initialize States
     ...    ${motion_detector}=${sensor_state}
     ...    ${switch}=off
-    ${apps} =  Create List  TestApp  locker  mutex_graph  motion_sensor
+    ${apps} =  Create List  TestApp  locker  mutex_graph  timer_switch
     ...                     auto_switch  enabler
-    ${app_configs} =  Create List  TestApp  MotionSensorBase  ${config}
+    ${app_configs} =  Create List  TestApp  TimerSwitchBase  ${config}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     Unblock For  ${appdaemon_interval}

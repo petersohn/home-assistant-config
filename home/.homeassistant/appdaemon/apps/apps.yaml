@@ -410,8 +410,8 @@ motion_sensor_well_enabler:
         - sun_enabler_night
 
 driveway_uppest_reflector_motion_sensor:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_light_gate_reflector
         - motion_sensor_driveway_uppest_enabler
@@ -423,8 +423,8 @@ driveway_uppest_reflector_motion_sensor:
     time: 1
 
 driveway_uppest_motion_sensor:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_light_driveway
         - motion_sensor_driveway_uppest_enabler
@@ -436,8 +436,8 @@ driveway_uppest_motion_sensor:
     time: 2
 
 driveway_upper_reflector_motion_sensor:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_light_gate_reflector
         - motion_sensor_driveway_upper_enabler
@@ -449,8 +449,8 @@ driveway_upper_reflector_motion_sensor:
     time: 1
 
 driveway_upper_motion_sensor:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_light_driveway
         - motion_sensor_driveway_upper_enabler
@@ -462,8 +462,8 @@ driveway_upper_motion_sensor:
     time: 2
 
 driveway_lower_motion_sensor:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_light_driveway
         - motion_sensor_driveway_lower_enabler
@@ -475,8 +475,8 @@ driveway_lower_motion_sensor:
     time: 2
 
 garage_motion_sensor:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_light_garage
         - motion_sensor_garage_enabler
@@ -488,8 +488,8 @@ garage_motion_sensor:
     time: 1
 
 garage2_motion_sensor:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_light_garage
         - motion_sensor_garage2_enabler
@@ -501,8 +501,8 @@ garage2_motion_sensor:
     time: 1
 
 well_motion_sensor:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_light_well
         - motion_sensor_well_enabler
@@ -627,8 +627,8 @@ light_outside_switcher_3_5_6:
         - auto_switch_light_outside_6
 
 home_light_switcher:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_light_gate_reflector
         - auto_switch_light_driveway
@@ -696,8 +696,8 @@ hot_water_timer_selector:
         - sunday
 
 hot_water_pump_timer:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_hot_water_pump
         - hot_water_pump_timer_enabler
@@ -737,8 +737,8 @@ hot_water_backend_enabler:
     value: 'on'
 
 hot_water_pump_backend_timer:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_hot_water_pump_backend
         - hot_water_backend_enabler
@@ -892,8 +892,8 @@ sprinkler_2_start_time:
         else 'later'
 
 sprinkler_1_timer:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_sprinkler_1
         - sprinkler_1_start_time
@@ -909,8 +909,8 @@ sprinkler_1_timer:
     time: sensor.sprinkler_run_time
 
 sprinkler_2_timer:
-    class: MotionSensor
-    module: motion_sensor
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
         - auto_switch_sprinkler_2
         - sprinkler_2_start_time

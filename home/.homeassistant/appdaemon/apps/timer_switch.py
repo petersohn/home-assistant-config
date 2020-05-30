@@ -3,7 +3,7 @@ import auto_switch
 import traceback
 
 
-class MotionSensor(hass.Hass):
+class TimerSwitch(hass.Hass):
 
     def initialize(self):
         self.sensor = self.args['sensor']
@@ -24,7 +24,7 @@ class MotionSensor(hass.Hass):
 
         self.timer = None
         self.was_enabled = None
-        self.mutex = self.get_app('locker').get_mutex('MotionSensor')
+        self.mutex = self.get_app('locker').get_mutex('TimerSwitch')
 
         self.listen_state(self.on_state_change, entity=self.sensor)
 
