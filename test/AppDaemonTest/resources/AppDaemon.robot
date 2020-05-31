@@ -130,7 +130,7 @@ State Should Change At
     ${deadline} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
     State Should Not Change  ${entity}  deadline=${deadline}
     Unblock For  ${appdaemon_interval}
-    Wait Until Keyword Succeeds  1 s  0.01 s
+    Wait Until Keyword Succeeds  5 s  0.01 s
     ...    State Should Be  ${entity}  ${value}
 
 State Should Change In
@@ -138,7 +138,7 @@ State Should Change In
     ${timeout} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
     State Should Not Change  ${entity}  timeout=${timeout}
     Unblock For  ${appdaemon_interval}
-    Wait Until Keyword Succeeds  1 s  0.01 s
+    Wait Until Keyword Succeeds  5 s  0.01 s
     ...    State Should Be  ${entity}  ${value}
 
 Schedule Call At
@@ -224,7 +224,7 @@ Check AppDaemon
     Should Be Equal  ${result}  ${test_arg}
 
 Wait For AppDaemon To Start
-    Wait Until Keyword Succeeds  10 sec  0.2 sec
+    Wait Until Keyword Succeeds  30 sec  0.2 sec
     ...    Run In Http Context  ${app_daemon_host}
     ...    Check AppDaemon
     Create Http Context  ${app_daemon_host}
