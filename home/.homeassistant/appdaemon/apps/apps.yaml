@@ -616,16 +616,21 @@ hot_water_pump_timer_enabler:
     entity: input_select.lighting_mode
     value: 'sleep'
 
-hot_water_timer_selector:
-    class: Expression
-    module: expression
+hot_water_pump_timer:
+    class: TimerSwitch
+    module: timer_switch
     dependencies:
+        - auto_switch_hot_water_pump
+        - hot_water_pump_timer_enabler
         - locker
-    target: sensor.hot_water_start_time
+    edge_trigger: true
     expr: >
-        'now' if v['sensor.time'] + ':00' ==
+        v['sensor.time'] + ':00' ==
         v['input_datetime.hot_water_' + args['weekdays'][now().weekday()]]
-        else 'later'
+    targets:
+        - auto_switch_hot_water_pump
+    enabler: hot_water_pump_timer_enabler
+    time: 300
     weekdays:
         - monday
         - tuesday
@@ -635,39 +640,12 @@ hot_water_timer_selector:
         - saturday
         - sunday
 
-hot_water_pump_timer:
-    class: TimerSwitch
-    module: timer_switch
-    dependencies:
-        - auto_switch_hot_water_pump
-        - hot_water_pump_timer_enabler
-        - hot_water_timer_selector
-        - locker
-    sensor: sensor.hot_water_start_time
-    target_state: 'now'
-    edge_trigger: true
-    targets:
-        - auto_switch_hot_water_pump
-    enabler: hot_water_pump_timer_enabler
-    time: 300
-
 auto_switch_hot_water_pump_backend:
     module: auto_switch
     class: AutoSwitch
     dependencies: locker
     target: switch.hot_water_pump
     reentrant: true
-
-hot_water_backend:
-    class: Expression
-    module: expression
-    dependencies:
-        - locker
-    target: sensor.hot_water_is_hot
-    expr: >
-        'cold' if v.binary_sensor.cellar_controller_available is not True or
-        v.sensor.temperature_hot_water == 'unknown' or
-        v.sensor.temperature_hot_water <= 41 else 'hot'
 
 hot_water_backend_enabler:
     module: enabler
@@ -682,10 +660,11 @@ hot_water_pump_backend_timer:
     dependencies:
         - auto_switch_hot_water_pump_backend
         - hot_water_backend_enabler
-        - hot_water_backend
         - locker
-    sensor: sensor.hot_water_is_hot
-    target_state: 'cold'
+    expr: >
+        v.binary_sensor.cellar_controller_available is not True or
+        v.sensor.temperature_hot_water == 'unknown' or
+        v.sensor.temperature_hot_water <= 41
     edge_trigger: false
     targets:
         - auto_switch_hot_water_pump_backend
@@ -809,39 +788,15 @@ auto_switch_sprinkler_3:
     switch: input_select.auto_sprinkler3
     reentrant: true
 
-sprinkler_1_start_time:
-    class: Expression
-    module: expression
-    dependencies:
-        - locker
-    target: sensor.sprinkler_1_start_time
-    expr: >
-        'now' if v.sensor.time == '21:00' else 'later'
-
-sprinkler_2_start_time:
-    class: Expression
-    module: expression
-    dependencies:
-        - locker
-        - sprinkler_run_time
-    target: sensor.sprinkler_1_start_time
-    expr: >
-        'now' if v.sensor.time ==
-        (strptime('21:00', '%H:%M') + dt(minutes=v.sensor.sprinkler_run_time))
-        .strftime('%H:%M')
-        else 'later'
-
 sprinkler_1_timer:
     class: TimerSwitch
     module: timer_switch
     dependencies:
         - auto_switch_sprinkler_1
-        - sprinkler_1_start_time
         - sprinkler_enabler
         - sprinkler_run_time
         - locker
-    sensor: sensor.sprinkler_1_start_time
-    target_state: 'now'
+    expr: v.sensor.time == '21:00'
     edge_trigger: true
     targets:
         - auto_switch_sprinkler_1
@@ -853,12 +808,13 @@ sprinkler_2_timer:
     module: timer_switch
     dependencies:
         - auto_switch_sprinkler_2
-        - sprinkler_2_start_time
         - sprinkler_enabler
         - sprinkler_run_time
         - locker
-    sensor: sensor.sprinkler_2_start_time
-    target_state: 'now'
+    expr: >
+        v.sensor.time ==
+        (strptime('21:00', '%H:%M') + dt(minutes=v.sensor.sprinkler_run_time))
+        .strftime('%H:%M')
     edge_trigger: true
     targets:
         - auto_switch_sprinkler_2

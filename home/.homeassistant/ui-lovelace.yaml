@@ -40,8 +40,6 @@ views:
           - input_datetime.hot_water_friday
           - input_datetime.hot_water_saturday
           - input_datetime.hot_water_sunday
-          - sensor.hot_water_start_time
-          - sensor.hot_water_is_hot
           - sensor.temperature_hot_water
         state_color: true
         title: Melegvíz bekapcsolás
