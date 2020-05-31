@@ -21,7 +21,10 @@ Initialize AppDaemon
     [Arguments]  ${apps}  ${app_configs}  ${start_time}=00:00:00
     ...    ${start_date}=${default_start_date}  ${suffix}=${Empty}
     Setup Output Directory  ${suffix}
-    Create AppDaemon Configuration  ${OUTPUT_DIRECTORY}  ${apps}  ${app_configs}
+    Set Suite Variable  ${app_daemon_api_port}  ${home_assistant_port + 1000}
+    ...                 children=true
+    Create AppDaemon Configuration  ${OUTPUT_DIRECTORY}  ${home_assistant_host}
+    ...    ${app_daemon_api_port}  ${apps}  ${app_configs}
     Start App Daemon  ${start_time}  ${start_date}
     Wait For App Daemon To Start
 

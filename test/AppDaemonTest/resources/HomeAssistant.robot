@@ -3,31 +3,35 @@
 Library    HttpLibrary.HTTP
 Library    Process
 Library    OperatingSystem
+Library    libraries/HomeAssistant.py
 Resource   resources/Http.robot
 Variables  libraries/Directories.py
 
 
 *** Variables ***
 
-${home_assistant_host}  127.0.0.1:18123
 ${home_assistant_token}  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkY2U3MDgwNDIwYmI0Mjg3OWIyYjQ1MjQ4OTQzNjI4YiIsImlhdCI6MTU0NjI1MDYyNiwiZXhwIjoxODYxNjEwNjI2fQ.1YmZVaw3EH2bu0jExU2Q6mIyrD1Qf0cPPJmt877mNC0
 
 
 *** Keywords ***
 
 Start Home Assistant
-    ${config_path} =    Set Variable  ${base_output_directory}/config
-    Remove Directory    ${config_path}  recursive=${True}
-    Copy File           ${hass_config_path}/configuration.yaml
-    ...                 ${config_path}/
+    ${index_str} =      Get Variable Value  ${PABOTQUEUEINDEX}  0
+    ${index} =          Convert To Integer  ${index_str}
+    Set Suite Variable  ${home_assistant_port}  ${index + 18000}  children=true
+    Set Suite Variable  ${home_assistant_host}  127.0.0.1:${home_assistant_port}
+    ...                 children=true
+    ${hass_path} =    Set Variable  ${base_output_directory}/hass/${index}
+    Remove Directory    ${hass_path}  recursive=${True}
+    Create Home Assistant Configuration  ${hass_path}  ${home_assistant_port}
     Copy File           ${hass_config_path}//auth
-    ...                 ${config_path}/.storage/
+    ...                 ${hass_path}/.storage/
     ${hass_process} =   Start Process   ./hass
     ...    --verbose
-    ...    --config     ${config_path}
-    ...    --log-file   ${base_output_directory}/homeassistant.log
-    ...    stdout=${base_output_directory}/homeassistant.stdout
-    ...    stderr=${base_output_directory}/homeassistant.stderr
+    ...    --config     ${hass_path}
+    ...    --log-file   ${hass_path}/homeassistant.log
+    ...    stdout=${hass_path}/homeassistant.stdout
+    ...    stderr=${hass_path}/homeassistant.stderr
     Set Suite Variable  ${hass_process}
 
 Check Home Assistant

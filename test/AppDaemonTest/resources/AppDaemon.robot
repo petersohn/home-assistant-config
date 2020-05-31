@@ -11,7 +11,6 @@ Variables  libraries/Directories.py
 
 *** Variables ***
 
-${app_daemon_host}  127.0.0.1:18124
 ${test_arg}         This is a test
 
 
@@ -19,6 +18,7 @@ ${test_arg}         This is a test
 
 Start AppDaemon
     [Arguments]  ${start_time}  ${start_date}=${default_start_date}
+    Set Test Variable  ${app_daemon_host}  127.0.0.1:${app_daemon_api_port}
     ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}
     ...    exclude_millis=true
     ${app_daemon_process} =  Start Process   ./appdaemon
@@ -74,17 +74,17 @@ State Should Be Stable
     Should Be True  ${result}
 
 Wait Until State Is Stable
-    [Arguments]  ${timeout}=1s
+    [Arguments]  ${timeout}=10s
     Wait Until Keyword Succeeds  ${timeout}  0.01s
     ...    State Should Be Stable
 
 Unblock Until
-    [Arguments]  ${when}  ${real_timeout}=5s
+    [Arguments]  ${when}  ${real_timeout}=30s
     Call Function  unblock_until  ${when}
     Wait Until Blocked  ${real_timeout}
 
 Unblock For
-    [Arguments]  ${delay}  ${real_timeout}=5s
+    [Arguments]  ${delay}  ${real_timeout}=30s
     Call Function  unblock_for  ${delay}
     Wait Until Blocked  ${real_timeout}
 
@@ -92,14 +92,14 @@ Unblock Until State Change
     [Arguments]  ${entity}
     ...          ${timeout}=${None}
     ...          ${deadline}=${None}
-    ...          ${real_timeout}=5s
+    ...          ${real_timeout}=30s
     ...          &{kwargs}
     Call Function  unblock_until_state_change  ${entity}
     ...    timeout=${timeout}  deadline=${deadline}  &{kwargs}
     Wait Until Blocked  ${real_timeout}
 
 Unblock Until Date Time
-    [Arguments]  ${when}  ${real_timeout}=5s
+    [Arguments]  ${when}  ${real_timeout}=30s
     Call Function  unblock_until_date_time  ${when}
     Wait Until Blocked  ${real_timeout}
 
@@ -110,12 +110,12 @@ Calculate Time
     [Return]  ${result}
 
 Unblock Until Sunrise
-    [Arguments]  ${delay}=${0}  ${real_timeout}=5s
+    [Arguments]  ${delay}=${0}  ${real_timeout}=30s
     ${target} =  Calculate Time  sunrise  ${delay}
     Unblock Until Date Time  ${target}  ${real_timeout}
 
 Unblock Until Sunset
-    [Arguments]  ${delay}=${0}  ${real_timeout}=5s
+    [Arguments]  ${delay}=${0}  ${real_timeout}=30s
     ${target} =  Calculate Time  sunset  ${delay}
     Unblock Until Date Time  ${target}  ${real_timeout}
 

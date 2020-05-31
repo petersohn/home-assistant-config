@@ -4,9 +4,9 @@ log:
 
 appdaemon:
     threads: 1
-    api_port: 18124
+    api_port: !secret api_port
     plugins:
         HASS:
             type: hass
-            ha_url: http://localhost:18123
+            ha_url: !secret url
             token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkY2U3MDgwNDIwYmI0Mjg3OWIyYjQ1MjQ4OTQzNjI4YiIsImlhdCI6MTU0NjI1MDYyNiwiZXhwIjoxODYxNjEwNjI2fQ.1YmZVaw3EH2bu0jExU2Q6mIyrD1Qf0cPPJmt877mNC0

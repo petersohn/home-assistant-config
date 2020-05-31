@@ -9,4 +9,4 @@ mkdir -p output
 export PYTHONPATH="${script_dir}:${root_dir}/robotframework-httplibrary/src:${PYTHONPATH}"
 export TZ=Europe/Budapest
 
-exec robot --outputdir=output "$@" .
+exec pabot --testlevelsplit --processes 8 --outputdir=output "$@" .

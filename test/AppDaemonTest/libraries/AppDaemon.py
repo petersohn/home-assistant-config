@@ -3,7 +3,8 @@ import yaml
 import Directories
 
 
-def create_appdaemon_configuration(target_directory, apps, app_configs):
+def create_appdaemon_configuration(
+        target_directory, hass_host, api_port, apps, app_configs):
     log_file = os.path.join(target_directory, 'appdaemon.log')
     error_file = os.path.join(target_directory, 'error.log')
     apps_dir = os.path.join(target_directory, 'apps')
@@ -46,4 +47,9 @@ def create_appdaemon_configuration(target_directory, apps, app_configs):
         yaml.dump(content, target)
 
     with open(secrets_yaml, 'w') as secrets:
-        yaml.dump({'logfile': log_file, 'errorfile': error_file}, secrets)
+        yaml.dump({
+            'logfile': log_file,
+            'errorfile': error_file,
+            'url': 'http://' + hass_host,
+            'api_port': api_port,
+        }, secrets)
