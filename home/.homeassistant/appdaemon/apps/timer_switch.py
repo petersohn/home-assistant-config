@@ -39,10 +39,10 @@ class TimerSwitch(hass.Hass):
         self.listen_state(self.on_state_change, entity=self.sensor)
 
     def terminate(self):
-        self.targets.turn_off()
-        self.enabler.remove_callback(self.enabler_id)
         if self.expression is not None:
             self.expression.cleanup()
+        self.targets.turn_off()
+        self.enabler.remove_callback(self.enabler_id)
 
     def _is_on(self):
         if self.expression is not None:
