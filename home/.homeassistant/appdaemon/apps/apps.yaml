@@ -186,25 +186,15 @@ motion_sensor_driveway_uppest_average:
         friendly_name: "Bejáró legfelső"
         icon: mdi:percent
 
-motion_sensor_driveway_uppest_lockout:
-    module: enabler
-    class: RangeEnabler
-    dependencies:
-        - locker
-        - motion_sensor_driveway_uppest_average
-    entity: sensor.motion_sensor_driveway_uppest_average
-    max: 0.2
-
 motion_sensor_driveway_uppest_enabler:
     module: enabler
-    class: MultiEnabler
+    class: ExpressionEnabler
     dependencies:
-        - motion_sensor_driveway_uppest_lockout
         - sun_enabler_night
         - locker
-    enablers:
-        - motion_sensor_driveway_uppest_lockout
-        - sun_enabler_night
+    expr: >
+        e.sun_enabler_night and
+        v.sensor.motion_sensor_driveway_uppest_average <= 0.2
 
 motion_sensor_driveway_upper_history:
     module: history
@@ -227,25 +217,15 @@ motion_sensor_driveway_upper_average:
         friendly_name: "Bejáró felső"
         icon: mdi:percent
 
-motion_sensor_driveway_upper_lockout:
-    module: enabler
-    class: RangeEnabler
-    dependencies:
-        - locker
-        - motion_sensor_driveway_upper_average
-    entity: sensor.motion_sensor_driveway_upper_average
-    max: 0.2
-
 motion_sensor_driveway_upper_enabler:
     module: enabler
-    class: MultiEnabler
+    class: ExpressionEnabler
     dependencies:
-        - motion_sensor_driveway_upper_lockout
         - sun_enabler_night
         - locker
-    enablers:
-        - motion_sensor_driveway_upper_lockout
-        - sun_enabler_night
+    expr: >
+        e.sun_enabler_night and
+        v.sensor.motion_sensor_driveway_upper_average <= 0.2
 
 motion_sensor_driveway_lower_history:
     module: history
@@ -268,25 +248,15 @@ motion_sensor_driveway_lower_average:
         friendly_name: "Bejáró alsó"
         icon: mdi:percent
 
-motion_sensor_driveway_lower_lockout:
-    module: enabler
-    class: RangeEnabler
-    dependencies:
-        - locker
-        - motion_sensor_driveway_lower_average
-    entity: sensor.motion_sensor_driveway_lower_average
-    max: 0.2
-
 motion_sensor_driveway_lower_enabler:
     module: enabler
-    class: MultiEnabler
+    class: ExpressionEnabler
     dependencies:
-        - motion_sensor_driveway_lower_lockout
         - sun_enabler_night
         - locker
-    enablers:
-        - motion_sensor_driveway_lower_lockout
-        - sun_enabler_night
+    expr: >
+        e.sun_enabler_night and
+        v.sensor.motion_sensor_driveway_lower_average <= 0.2
 
 motion_sensor_garage_history:
     module: history
@@ -309,25 +279,15 @@ motion_sensor_garage_average:
         friendly_name: "Garázs"
         icon: mdi:percent
 
-motion_sensor_garage_lockout:
+motion_sensor_driveway_uppest_enabler:
     module: enabler
-    class: RangeEnabler
+    class: ExpressionEnabler
     dependencies:
-        - locker
-        - motion_sensor_garage_average
-    entity: sensor.motion_sensor_garage_average
-    max: 0.2
-
-motion_sensor_garage_enabler:
-    module: enabler
-    class: MultiEnabler
-    dependencies:
-        - motion_sensor_garage_lockout
         - sun_enabler_night
         - locker
-    enablers:
-        - motion_sensor_garage_lockout
-        - sun_enabler_night
+    expr: >
+        e.sun_enabler_night and
+        v.sensor.motion_sensor_driveway_uppest_average <= 0.2
 
 motion_sensor_garage2_history:
     module: history
@@ -350,23 +310,13 @@ motion_sensor_garage2_average:
         friendly_name: "Garázs 2"
         icon: mdi:percent
 
-motion_sensor_garage2_lockout:
-    module: enabler
-    class: RangeEnabler
-    dependencies:
-        - locker
-        - motion_sensor_garage2_average
-    entity: sensor.motion_sensor_garage2_average
-    max: 0.8
-
 motion_sensor_garage2_enabler:
     module: enabler
-    class: MultiEnabler
+    class: ExpressionEnabler
     dependencies:
-        - motion_sensor_garage2_lockout
         - locker
-    enablers:
-        - motion_sensor_garage2_lockout
+    expr: >
+        v.sensor.motion_sensor_garage2_average <= 0.8
 
 motion_sensor_well_history:
     module: history
@@ -389,25 +339,15 @@ motion_sensor_well_average:
         friendly_name: "Kút"
         icon: mdi:percent
 
-motion_sensor_well_lockout:
-    module: enabler
-    class: RangeEnabler
-    dependencies:
-        - locker
-        - motion_sensor_well_average
-    entity: sensor.motion_sensor_well_average
-    max: 0.2
-
 motion_sensor_well_enabler:
     module: enabler
-    class: MultiEnabler
+    class: ExpressionEnabler
     dependencies:
-        - motion_sensor_well_lockout
         - sun_enabler_night
         - locker
-    enablers:
-        - motion_sensor_well_lockout
-        - sun_enabler_night
+    expr: >
+        e.sun_enabler_night and
+        v.sensor.motion_sensor_well_average <= 0.2
 
 driveway_uppest_reflector_motion_sensor:
     class: TimerSwitch
