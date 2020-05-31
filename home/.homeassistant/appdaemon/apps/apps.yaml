@@ -279,7 +279,7 @@ motion_sensor_garage_average:
         friendly_name: "Garázs"
         icon: mdi:percent
 
-motion_sensor_driveway_uppest_enabler:
+motion_sensor_garage_enabler:
     module: enabler
     class: ExpressionEnabler
     dependencies:
