@@ -42,7 +42,7 @@ Check Home Assistant
     Json Value Should Equal  ${body}  /message  "API running."
 
 Wait For Home Assistant To Start
-    Wait Until Keyword Succeeds  30 sec  0.2 sec
+    Wait Until Keyword Succeeds  2 min  0.2 sec
     ...    Run In Http Context  ${home_assistant_host}
     ...    Check Home Assistant
 
@@ -50,7 +50,7 @@ Stop Home Assistant
     Send Signal To Process  TERM  ${hass_process}
 
 Wait For Home Assistant To Stop
-    Wait For Process  ${hass_process}  timeout=10 sec  on_timeout=kill
+    Wait For Process  ${hass_process}  timeout=30 sec  on_timeout=kill
     Process Should Be Stopped
 
 Authenticate
@@ -130,7 +130,7 @@ Do Clean States And History
     Do Clean History
 
 Wait Until State Becomes
-    [Arguments]  ${entity}  ${state}  ${timeout}=1s
+    [Arguments]  ${entity}  ${state}  ${timeout}=2s
     ${result} =  Run In Http Context
     ...    ${home_assistant_host}
     ...    Wait Until Keyword Succeeds  ${timeout}  0.01 s
