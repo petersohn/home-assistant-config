@@ -4,9 +4,15 @@ script_dir=$(readlink -e "$(dirname "$0")")
 root_dir=$(readlink -e "${script_dir}/../..")
 
 cd "$script_dir"
-mkdir -p output
 
 export PYTHONPATH="${script_dir}:${root_dir}/robotframework-httplibrary/src:${PYTHONPATH}"
 export TZ=Europe/Budapest
 
-exec pabot --testlevelsplit --processes 8 --outputdir=output "$@" .
+i=1
+while [ -e "output/${i}" ]; do
+    (( ++i ))
+done
+output_dir="${PWD}/output/${i}"
+mkdir -p "${output_dir}"
+
+exec pabot --testlevelsplit --processes 8 --outputdir="${output_dir}" --variable "base_output_directory:${output_dir}" "$@" .
