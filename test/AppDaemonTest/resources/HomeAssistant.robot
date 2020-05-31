@@ -93,8 +93,9 @@ Do Get States
 
 Do Clean States
     @{content} =  Do Get States
-    :FOR  ${entity}  IN  @{content}
-    \    Do Clean State  ${entity['entity_id']}
+    FOR  ${entity}  IN  @{content}
+        Do Clean State  ${entity['entity_id']}
+    END
 
 Do Initialize State
     [Arguments]  ${entity}  ${state}
@@ -105,8 +106,9 @@ Do Initialize State
 
 Do Initialize States
     [Arguments]  &{states}
-    :FOR  ${entity}  IN  @{states.keys()}
-    \    Do Initialize State  ${entity}  ${states['${entity}']}
+    FOR  ${entity}  IN  @{states.keys()}
+        Do Initialize State  ${entity}  ${states['${entity}']}
+    END
 
 Do Check State
     [Arguments]  ${entity}  ${expected_state}

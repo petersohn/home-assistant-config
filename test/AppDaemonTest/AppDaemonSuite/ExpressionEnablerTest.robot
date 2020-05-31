@@ -107,8 +107,9 @@ Enabler And Binary Sensor
 
 Check Expected States
     [Arguments]  &{expected_states}
-    :FOR  ${name}  IN  @{expected_states.keys()}
-    \   Enabled State Should Be  ${name}  ${expected_states['${name}']}
+    FOR  ${name}  IN  @{expected_states.keys()}
+       Enabled State Should Be  ${name}  ${expected_states['${name}']}
+   END
 
 Test Enablers
     [Arguments]  ${enabler1}  ${enabler2}  &{expected_states}

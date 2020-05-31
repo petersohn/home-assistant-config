@@ -46,8 +46,9 @@ Args
 
 Check Expected States
     [Arguments]  ${type}  &{expected_states}
-    :FOR  ${name}  IN  @{expected_states.keys()}
-    \   State Should Be As  ${name}  ${type}  ${expected_states['${name}']}
+    FOR  ${name}  IN  @{expected_states.keys()}
+       State Should Be As  ${name}  ${type}  ${expected_states['${name}']}
+    END
 
 Test States
     [Arguments]  ${sensor1}  ${sensor2}  ${type}  &{expected_states}

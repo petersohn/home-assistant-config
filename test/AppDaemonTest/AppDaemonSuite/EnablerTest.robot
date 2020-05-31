@@ -124,8 +124,9 @@ Test Date Enabler
 
 Test Multi Enabler
     [Arguments]  ${expected_state}  &{kwargs}
-    :FOR  ${name}  IN  @{kwargs.keys()}
-    \    Set Enabled State  ${name}  ${kwargs['${name}']}
+    FOR  ${name}  IN  @{kwargs.keys()}
+        Set Enabled State  ${name}  ${kwargs['${name}']}
+    END
     Unblock For  ${appdaemon_interval}
     Enabled State Should Be  multi_enabler  ${expected_state}
 
