@@ -15,4 +15,4 @@ done
 output_dir="${PWD}/output/${i}"
 mkdir -p "${output_dir}"
 
-exec pabot --testlevelsplit --processes 8 --outputdir="${output_dir}" --variable "base_output_directory:${output_dir}" "$@" .
+exec pabot --processes 8 --outputdir="${output_dir}" --variable "base_output_directory:${output_dir}" "$@" .
