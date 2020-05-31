@@ -415,6 +415,11 @@ views:
           - sensor.rain_last_day
           - sensor.rain_last_7_days
           - sensor.maximum_temperature_last_day
+      - type: glance
+        entities:
+          - sensor.wind_strength
+          - sensor.wind_direction
+          - sensor.wind_direction_average
         show_header_toggle: false
       - type: vertical-stack
         cards:
