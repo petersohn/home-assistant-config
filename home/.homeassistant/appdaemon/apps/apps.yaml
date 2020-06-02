@@ -756,7 +756,7 @@ sprinkler_enabler:
     class: ExpressionEnabler
     expr: >
         v.input_boolean.sprinkler and v.sensor.sprinkler_run_time >= 5.0
-        and v.rain_last_day < 1.0
+        and v.sensor.rain_last_day < 1.0
     dependencies:
         - locker
         - sprinkler_run_time
