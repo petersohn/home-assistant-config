@@ -1,0 +1,11 @@
+decay_sum_value:
+    class: AggregatedValue
+    module: history
+    dependencies:
+        - test_history_manager
+        - locker
+    manager: test_history_manager
+    target: sensor.test_sensor_aggregated
+    interval:
+        minutes: 10
+    aggregator: decay_sum(0.5, minutes=1)
