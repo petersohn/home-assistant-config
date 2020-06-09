@@ -5,13 +5,13 @@ Library        libraries/HistoryUtil.py
 Library        Collections
 Resource       resources/Config.robot
 Resource       resources/Enabler.robot
-Test Setup     Initialize
 Test Teardown  Cleanup AppDaemon
 
 
 *** Variables ***
 
 ${name} =    test_history_manager
+${binary_name} =    test_history_manager_switch
 ${entity} =  sensor.test_sensor
 ${integral_entity} =  sensor.test_sensor_integral
 ${integral_entity_b} =  sensor.test_sensor_integral_base_interval
@@ -28,6 +28,7 @@ ${enabler} =  input_boolean.test_switch2
 *** Test Cases ***
 
 Get History
+    [Setup]  Initialize With History Manager
     Set State  ${entity}  3
     ${date1} =  Get Date
     Unblock For  1 min
@@ -49,6 +50,7 @@ Get History
     ...                              ${date4}  ${0}
 
 Old History Elements Are Removed
+    [Setup]  Initialize With History Manager
     Set State  ${entity}  20
     ${date1} =  Get Date
     Unblock For  20 min
@@ -69,6 +71,7 @@ Old History Elements Are Removed
     ...                ${date4}  ${54}
 
 Nothing Happens For A Long Time
+    [Setup]  Initialize With History Manager
     Set State  ${entity}  42
     Unblock For  2 min
     ${now} =  Get Date
@@ -76,6 +79,7 @@ Nothing Happens For A Long Time
     Limited History Should Be  1 min  ${date}  ${42}
 
 History Enabler
+    [Setup]  Initialize With History Manager  HistoryEnabler
     Schedule Call At   2 min       set_sensor_state  ${entity}  3
     Schedule Call At  20 min 30 s  set_sensor_state  ${entity}  5
     Schedule Call At  40 min       set_sensor_state  ${entity}  1
@@ -85,6 +89,7 @@ History Enabler
     State Should Change At  ${enabler}  off  44 min
 
 Aggregated Value
+    [Setup]  Initialize With History Manager  HistoryAggregatedValue
     Unblock For  1 min
     State Should Be As  ${integral_entity}  Int  ${0}
     Unblock For  1 min
@@ -115,6 +120,7 @@ Aggregated Value
     State Should Be As  ${integral_entity}  Int  ${9}   # 3*3
 
 Aggregated Value With Base Interval
+    [Setup]  Initialize With History Manager  HistoryAggregatedValueBaseInterval
     Unblock For  20 sec
     Set State  ${entity}  3
     Unblock For  10 sec
@@ -150,6 +156,7 @@ Aggregated Value With Base Interval
     State Should Be As  ${integral_entity_b}  Int  ${90}  # 18*5
 
 Mean Value
+    [Setup]  Initialize With History Manager  HistoryMeanValue
     Set State  ${entity}  0
     Unblock For  1 min
     Set State  ${entity}  20
@@ -159,6 +166,7 @@ Mean Value
     State Should Be As  ${mean_entity}  Int  ${15}
 
 Mean Value Irregular Intervals
+    [Setup]  Initialize With History Manager  HistoryMeanValue
     Set State  ${entity}  20
     Unblock For  1 min
     Set State  ${entity}  16
@@ -172,6 +180,7 @@ Mean Value Irregular Intervals
     State Should Be As  ${mean_entity}  Int  ${8}
 
 Anglemean
+    [Setup]  Initialize With History Manager  HistoryAnglemeanValue
     Set State  ${entity}  30
     Unblock For  1 min
     # 1*30 / 1
@@ -211,6 +220,7 @@ Anglemean
     State Should Be As  ${anglemean_entity}  Int  ${180}
 
 Min Max Sum Values
+    [Setup]  Initialize With History Manager  HistoryMinmaxValue
     Set State  ${entity}  20
     State Should Be As  ${min_entity}  Int  ${20}
     State Should Be As  ${max_entity}  Int  ${20}
@@ -262,6 +272,7 @@ Min Max Sum Values
     State Should Be As  ${sum_entity}  Int  ${0}
 
 Binary Input
+    [Setup]  Initialize With Binary History Manager
     Unblock Until  5 min
     Turn On  ${switch_entity}
     Unblock For  2 min
@@ -311,7 +322,8 @@ Get Values
     [Return]  ${result}
 
 Should Be Loaded
-    ${result} =  Call Function  call_on_app  ${name}  is_loaded
+    [Arguments]  ${app}
+    ${result} =  Call Function  call_on_app  ${app}  is_loaded
     Should Be True  ${result}
 
 History Should Be
@@ -331,6 +343,7 @@ Limited History Should Be
     Lists Should Be Equal  ${converted_values}  ${converted_expected_values}
 
 Initialize
+    [Arguments]  @{configs}
     Initialize States
     ...    ${entity}=${0}
     ...    ${enabler}=off
@@ -340,7 +353,16 @@ Initialize
     ${apps} =  Create List  TestApp  history  enabler
     ...                     aggregator  locker  mutex_graph  auto_switch
     ...                     enabled_switch
-    ${app_configs} =  Create List  TestApp  HistoryManager
+    ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}
     Unblock For  ${appdaemon_interval}
-    Wait Until Keyword Succeeds  30 sec  1 sec  Should Be Loaded
+
+Initialize With History Manager
+    [Arguments]  @{configs}
+    Initialize  HistoryManagerBase  @{configs}
+    Wait Until Keyword Succeeds  30 sec  1 sec  Should Be Loaded  ${name}
+
+Initialize With Binary History Manager
+    [Arguments]  @{configs}
+    Initialize  HistoryManagerBinary  @{configs}
+    Wait Until Keyword Succeeds  30 sec  1 sec  Should Be Loaded  ${binary_name}

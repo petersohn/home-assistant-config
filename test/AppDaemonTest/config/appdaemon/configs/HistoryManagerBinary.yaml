@@ -1,0 +1,20 @@
+test_history_manager_switch:
+    class: HistoryManager
+    module: history
+    entity: input_boolean.test_switch
+    max_interval:
+        hours: 1
+    dependencies: locker
+
+switch_mean_value:
+    class: AggregatedValue
+    module: history
+    dependencies:
+        - test_history_manager_switch
+        - locker
+    manager: test_history_manager_switch
+    target: sensor.test_switch_mean
+    interval:
+        minutes: 5
+    aggregator: mean
+

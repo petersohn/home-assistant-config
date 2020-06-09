@@ -1,0 +1,11 @@
+anglemean_value:
+    class: AggregatedValue
+    module: history
+    dependencies:
+        - test_history_manager
+        - locker
+    manager: test_history_manager
+    target: sensor.test_sensor_anglemean
+    interval:
+        minutes: 4
+    aggregator: anglemean

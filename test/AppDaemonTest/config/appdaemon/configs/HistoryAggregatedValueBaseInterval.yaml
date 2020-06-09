@@ -1,0 +1,13 @@
+aggregated_value_base_interval:
+    class: AggregatedValue
+    module: history
+    dependencies:
+        - test_history_manager
+        - locker
+    manager: test_history_manager
+    target: sensor.test_sensor_integral_base_interval
+    interval:
+        minutes: 3
+    base_interval:
+        seconds: 10
+    aggregator: integral
