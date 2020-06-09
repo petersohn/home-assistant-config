@@ -52,9 +52,13 @@ views:
       - type: button
         entity: switch.well
         state_color: true
+        double_tap_action:
+          action: more-info
       - type: button
         entity: input_boolean.sprinkler
         state_color: true
+        double_tap_action:
+          action: more-info
       - type: sensor
         entity: sensor.temperature_outside
         graph: line
@@ -75,6 +79,8 @@ views:
               service_data:
                 entity_id: input_select.auto_sprinkler1
                 option: 'auto'
+            double_tap_action:
+              action: more-info
           - type: button
             entity: switch.auto_sprinkler2
             state_color: true
@@ -90,6 +96,8 @@ views:
               service_data:
                 entity_id: input_select.auto_sprinkler2
                 option: 'auto'
+            double_tap_action:
+              action: more-info
           - type: button
             entity: switch.auto_sprinkler3
             state_color: true
@@ -105,6 +113,8 @@ views:
               service_data:
                 entity_id: input_select.auto_sprinkler3
                 option: 'auto'
+            double_tap_action:
+              action: more-info
       - type: entities
         state_color: true
         entities:
@@ -116,7 +126,7 @@ views:
         entities:
           - sensor.maximum_temperature_last_day
           - sensor.rain_last_day
-          - sensor.rain_last_7_days
+          - sensor.rain_last_5_days
           - sensor.sprinkler_run_time
         show_header_toggle: false
   - path: lights
@@ -131,9 +141,13 @@ views:
           - type: button
             entity: switch.light_attic_downstairs
             state_color: true
+            double_tap_action:
+              action: more-info
           - type: button
             entity: switch.light_attic_upstairs
             state_color: true
+            double_tap_action:
+              action: more-info
       - type: horizontal-stack
         cards:
           - type: button
@@ -151,6 +165,8 @@ views:
               service_data:
                 entity_id: input_select.light_gate_reflector
                 option: 'auto'
+            double_tap_action:
+              action: more-info
           - type: button
             entity: switch.light_driveway
             state_color: true
@@ -166,6 +182,8 @@ views:
               service_data:
                 entity_id: input_select.light_driveway
                 option: 'auto'
+            double_tap_action:
+              action: more-info
           - type: button
             entity: switch.light_well
             state_color: true
@@ -181,6 +199,8 @@ views:
               service_data:
                 entity_id: input_select.light_well
                 option: 'auto'
+            double_tap_action:
+              action: more-info
       - type: horizontal-stack
         cards:
           - type: button
@@ -198,9 +218,13 @@ views:
               service_data:
                 entity_id: input_select.light_garage
                 option: 'auto'
+            double_tap_action:
+              action: more-info
           - type: button
             entity: switch.light_cellar
             state_color: true
+            double_tap_action:
+              action: more-info
       - type: horizontal-stack
         cards:
           - type: button
@@ -218,6 +242,8 @@ views:
               service_data:
                 entity_id: input_select.light_christmas_front
                 option: 'auto'
+            double_tap_action:
+              action: more-info
           - type: button
             entity: switch.light_christmas_tree
             state_color: true
@@ -233,6 +259,8 @@ views:
               service_data:
                 entity_id: input_select.light_christmas_tree
                 option: 'auto'
+            double_tap_action:
+              action: more-info
       - type: vertical-stack
         cards:
           - type: horizontal-stack
@@ -252,6 +280,8 @@ views:
                   service_data:
                     entity_id: input_select.light_outside_1
                     option: 'auto'
+                double_tap_action:
+                  action: more-info
               - type: button
                 entity: switch.light_outside_2
                 state_color: true
@@ -267,6 +297,8 @@ views:
                   service_data:
                     entity_id: input_select.light_outside_2
                     option: 'auto'
+                double_tap_action:
+                  action: more-info
               - type: button
                 entity: switch.light_outside_3
                 state_color: true
@@ -282,6 +314,8 @@ views:
                   service_data:
                     entity_id: input_select.light_outside_3
                     option: 'auto'
+                double_tap_action:
+                  action: more-info
           - type: horizontal-stack
             cards:
               - type: button
@@ -299,6 +333,8 @@ views:
                   service_data:
                     entity_id: input_select.light_outside_4
                     option: 'auto'
+                double_tap_action:
+                  action: more-info
               - type: button
                 entity: switch.light_outside_5
                 state_color: true
@@ -314,6 +350,8 @@ views:
                   service_data:
                     entity_id: input_select.light_outside_5
                     option: 'auto'
+                double_tap_action:
+                  action: more-info
               - type: button
                 entity: switch.light_outside_6
                 state_color: true
@@ -329,6 +367,8 @@ views:
                   service_data:
                     entity_id: input_select.light_outside_6
                     option: 'auto'
+                double_tap_action:
+                  action: more-info
       - type: horizontal-stack
         cards:
           - type: entities
@@ -413,8 +453,13 @@ views:
       - type: glance
         entities:
           - sensor.rain_last_day
-          - sensor.rain_last_7_days
+          - sensor.rain_last_5_days
           - sensor.maximum_temperature_last_day
+      - type: glance
+        entities:
+          - sensor.wind_strength
+          - sensor.wind_direction
+          - sensor.wind_direction_average
         show_header_toggle: false
       - type: vertical-stack
         cards:
