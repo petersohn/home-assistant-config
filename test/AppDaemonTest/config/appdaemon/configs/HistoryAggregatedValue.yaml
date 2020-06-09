@@ -5,7 +5,7 @@ aggregated_value:
         - test_history_manager
         - locker
     manager: test_history_manager
-    target: sensor.test_sensor_integral
+    target: sensor.test_sensor_aggregated
     interval:
         minutes: 3
     aggregator: integral

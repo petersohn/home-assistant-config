@@ -13,7 +13,7 @@ switch_mean_value:
         - test_history_manager_switch
         - locker
     manager: test_history_manager_switch
-    target: sensor.test_switch_mean
+    target: sensor.test_sensor_aggregated
     interval:
         minutes: 5
     aggregator: mean
