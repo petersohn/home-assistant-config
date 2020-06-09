@@ -695,20 +695,20 @@ rain_last_day:
         friendly_name: "Eső 1 nap"
         icon: mdi:weather-rainy
 
-rain_last_5_days:
+rain_decaying:
     module: history
     class: AggregatedValue
     dependencies:
         - rain_history
         - locker
     manager: rain_history
-    target: sensor.rain_last_5_days
+    target: sensor.rain_decaying
     interval:
         days: 5
-    aggregator: sum
+    aggregator: decay_sum(0.8, days=1)
     attributes:
         unit_of_measurement: "mm"
-        friendly_name: "Eső 5 nap"
+        friendly_name: "Eső amortizált"
         icon: mdi:weather-rainy
 
 temperature_history:
@@ -740,12 +740,12 @@ sprinkler_run_time:
     module: expression
     dependencies:
         - locker
-        - rain_last_5_days
+        - rain_decaying
         - maximum_temperature_last_day
     target: sensor.sprinkler_run_time
     expr: >
         1.5 * v.sensor.maximum_temperature_last_day - 14.0
-        - 5.0 * v.sensor.rain_last_5_days
+        - 5.0 * v.sensor.rain_decaying
     attributes:
         unit_of_measurement: min
         friendly_name: "Locsolás idő"
