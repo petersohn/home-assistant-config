@@ -267,6 +267,26 @@ Min Max Sum Values
     State Should Be As  ${max_entity}  Int  ${0}
     State Should Be As  ${sum_entity}  Int  ${0}
 
+Decaying Sum Value
+    [Setup]  Initialize With History Manager  HistoryDecaySumValue
+    Set State  ${entity}  100
+    State Should Be As  ${aggregated_entity}  float  ${100.0}
+    Unblock For  1 min
+    State Should Be As  ${aggregated_entity}  float  ${50.0}
+    Unblock For  1 min
+    State Should Be As  ${aggregated_entity}  float  ${25.0}
+    Set State  ${entity}  1
+    State Should Be As  ${aggregated_entity}  float  ${26.0}
+    Unblock For  1 min
+    # 100*2^-3 + 1*2^-1 = 12.5 + 0.5
+    State Should Be As  ${aggregated_entity}  float  ${13.0}
+    Unblock For  1 min
+    # 100*2^-4 + 1*2^-2 = 6.25 + 0.25
+    State Should Be As  ${aggregated_entity}  float  ${6.5}
+    Unblock For  6 min
+    # 100*2^-10 + 1*2^-8 = 0.09765625 + 0.00390625
+    State Should Be As  ${aggregated_entity}  float  ${0.1015625}
+
 Binary Input
     [Setup]  Initialize With Binary History Manager
     Unblock Until  5 min

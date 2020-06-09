@@ -218,6 +218,19 @@ class AggregatorContext:
     def sum(self):
         return sum(e.value for e in self.history)
 
+    def decay_sum(self, fraction, **kwargs):
+        interval = datetime.timedelta(**kwargs).total_seconds()
+
+        def get_value(e):
+            diff = (self.now - e.time).total_seconds()
+            quotient = fraction ** (diff / interval)
+            result = e.value * quotient
+            self.app.log('diff={} value={} q={} --> {}'.format(
+                diff, e.value, quotient, result))
+            return result
+
+        return lambda: sum(get_value(e) for e in self.history)
+
     def get_functions(self):
         return {
             'integral': self.integral,
@@ -226,6 +239,7 @@ class AggregatorContext:
             'min': self.min,
             'max': self.max,
             'sum': self.sum,
+            'decay_sum': self.decay_sum,
         }
 
 
