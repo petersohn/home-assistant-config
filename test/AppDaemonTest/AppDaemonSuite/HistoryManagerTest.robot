@@ -5,29 +5,26 @@ Library        libraries/HistoryUtil.py
 Library        Collections
 Resource       resources/Config.robot
 Resource       resources/Enabler.robot
-Test Setup     Initialize
 Test Teardown  Cleanup AppDaemon
 
 
 *** Variables ***
 
 ${name} =    test_history_manager
+${binary_name} =    test_history_manager_switch
 ${entity} =  sensor.test_sensor
-${integral_entity} =  sensor.test_sensor_integral
-${integral_entity_b} =  sensor.test_sensor_integral_base_interval
-${mean_entity} =  sensor.test_sensor_mean
-${anglemean_entity} =  sensor.test_sensor_anglemean
+${aggregated_entity} =  sensor.test_sensor_aggregated
 ${sum_entity} =  sensor.test_sensor_sum
 ${min_entity} =  sensor.test_sensor_min
 ${max_entity} =  sensor.test_sensor_max
 ${switch_entity} =  input_boolean.test_switch
-${switch_mean_entity} =  sensor.test_switch_mean
 ${enabler} =  input_boolean.test_switch2
 
 
 *** Test Cases ***
 
 Get History
+    [Setup]  Initialize With History Manager
     Set State  ${entity}  3
     ${date1} =  Get Date
     Unblock For  1 min
@@ -49,6 +46,7 @@ Get History
     ...                              ${date4}  ${0}
 
 Old History Elements Are Removed
+    [Setup]  Initialize With History Manager
     Set State  ${entity}  20
     ${date1} =  Get Date
     Unblock For  20 min
@@ -69,6 +67,7 @@ Old History Elements Are Removed
     ...                ${date4}  ${54}
 
 Nothing Happens For A Long Time
+    [Setup]  Initialize With History Manager
     Set State  ${entity}  42
     Unblock For  2 min
     ${now} =  Get Date
@@ -76,6 +75,7 @@ Nothing Happens For A Long Time
     Limited History Should Be  1 min  ${date}  ${42}
 
 History Enabler
+    [Setup]  Initialize With History Manager  HistoryEnabler
     Schedule Call At   2 min       set_sensor_state  ${entity}  3
     Schedule Call At  20 min 30 s  set_sensor_state  ${entity}  5
     Schedule Call At  40 min       set_sensor_state  ${entity}  1
@@ -85,80 +85,84 @@ History Enabler
     State Should Change At  ${enabler}  off  44 min
 
 Aggregated Value
+    [Setup]  Initialize With History Manager  HistoryAggregatedValue
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${0}
+    State Should Be As  ${aggregated_entity}  Int  ${0}
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${0}
+    State Should Be As  ${aggregated_entity}  Int  ${0}
     Set State  ${entity}  4
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${4}   # 1*4
+    State Should Be As  ${aggregated_entity}  Int  ${4}   # 1*4
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${8}   # 2*4
+    State Should Be As  ${aggregated_entity}  Int  ${8}   # 2*4
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${12}  # 3*4
+    State Should Be As  ${aggregated_entity}  Int  ${12}  # 3*4
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${12}  # 3*4
+    State Should Be As  ${aggregated_entity}  Int  ${12}  # 3*4
     Set State  ${entity}  10
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${18}  # 2*4 + 1*10
+    State Should Be As  ${aggregated_entity}  Int  ${18}  # 2*4 + 1*10
     Unblock For  30 sec
-    State Should Be As  ${integral_entity}  Int  ${18}  # 2*4 + 1*10
+    State Should Be As  ${aggregated_entity}  Int  ${18}  # 2*4 + 1*10
     Set State  ${entity}  3
-    State Should Be As  ${integral_entity}  Int  ${21}  # 1.5*4 + 1.5*10
+    State Should Be As  ${aggregated_entity}  Int  ${21}  # 1.5*4 + 1.5*10
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${20}  # 0.5*4 + 1.5*10 + 1*3
+    State Should Be As  ${aggregated_entity}  Int  ${20}  # 0.5*4 + 1.5*10 + 1*3
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${16}  # 1*10 + 2*3
+    State Should Be As  ${aggregated_entity}  Int  ${16}  # 1*10 + 2*3
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${9}   # 3*3
+    State Should Be As  ${aggregated_entity}  Int  ${9}   # 3*3
     Unblock For  1 min
-    State Should Be As  ${integral_entity}  Int  ${9}   # 3*3
+    State Should Be As  ${aggregated_entity}  Int  ${9}   # 3*3
 
 Aggregated Value With Base Interval
+    [Setup]  Initialize With History Manager  HistoryAggregatedValueBaseInterval
     Unblock For  20 sec
     Set State  ${entity}  3
     Unblock For  10 sec
-    State Should Be As  ${integral_entity_b}  Int  ${3}   # 1*3
+    State Should Be As  ${aggregated_entity}  Int  ${3}   # 1*3
     Unblock For  10 sec
-    State Should Be As  ${integral_entity_b}  Int  ${6}   # 2*3
+    State Should Be As  ${aggregated_entity}  Int  ${6}   # 2*3
     Unblock For  10 sec
-    State Should Be As  ${integral_entity_b}  Int  ${9}   # 3*3
+    State Should Be As  ${aggregated_entity}  Int  ${9}   # 3*3
     Unblock For  30 sec
-    State Should Be As  ${integral_entity_b}  Int  ${18}  # 6*3
+    State Should Be As  ${aggregated_entity}  Int  ${18}  # 6*3
     Unblock For  1 min
-    State Should Be As  ${integral_entity_b}  Int  ${36}  # 12*3
+    State Should Be As  ${aggregated_entity}  Int  ${36}  # 12*3
     Unblock For  1 min
-    State Should Be As  ${integral_entity_b}  Int  ${54}  # 18*3
+    State Should Be As  ${aggregated_entity}  Int  ${54}  # 18*3
     Unblock For  10 sec
-    State Should Be As  ${integral_entity_b}  Int  ${54}  # 18*3
+    State Should Be As  ${aggregated_entity}  Int  ${54}  # 18*3
     Unblock For  10 sec
-    State Should Be As  ${integral_entity_b}  Int  ${54}  # 18*3
+    State Should Be As  ${aggregated_entity}  Int  ${54}  # 18*3
     Set State  ${entity}  5
     Unblock For  10 sec
-    State Should Be As  ${integral_entity_b}  Int  ${56}  # 17*3 + 1*5
+    State Should Be As  ${aggregated_entity}  Int  ${56}  # 17*3 + 1*5
     Unblock For  10 sec
-    State Should Be As  ${integral_entity_b}  Int  ${58}  # 16*3 + 2*5
+    State Should Be As  ${aggregated_entity}  Int  ${58}  # 16*3 + 2*5
     Unblock For  10 sec
-    State Should Be As  ${integral_entity_b}  Int  ${60}  # 15*3 + 3*5
+    State Should Be As  ${aggregated_entity}  Int  ${60}  # 15*3 + 3*5
     Unblock For  30 sec
-    State Should Be As  ${integral_entity_b}  Int  ${66}  # 12*3 + 6*5
+    State Should Be As  ${aggregated_entity}  Int  ${66}  # 12*3 + 6*5
     Unblock For  1 min
-    State Should Be As  ${integral_entity_b}  Int  ${78}  # 6*3 + 12*5
+    State Should Be As  ${aggregated_entity}  Int  ${78}  # 6*3 + 12*5
     Unblock For  50 s
-    State Should Be As  ${integral_entity_b}  Int  ${88}  # 1*3 + 17*5
+    State Should Be As  ${aggregated_entity}  Int  ${88}  # 1*3 + 17*5
     Unblock For  10 s
-    State Should Be As  ${integral_entity_b}  Int  ${90}  # 18*5
+    State Should Be As  ${aggregated_entity}  Int  ${90}  # 18*5
 
 Mean Value
+    [Setup]  Initialize With History Manager  HistoryMeanValue
     Set State  ${entity}  0
     Unblock For  1 min
     Set State  ${entity}  20
     Unblock For  1 min
     Set State  ${entity}  10
     Unblock For  1 min
-    State Should Be As  ${mean_entity}  Int  ${15}
+    State Should Be As  ${aggregated_entity}  Int  ${15}
 
 Mean Value Irregular Intervals
+    [Setup]  Initialize With History Manager  HistoryMeanValue
     Set State  ${entity}  20
     Unblock For  1 min
     Set State  ${entity}  16
@@ -169,48 +173,50 @@ Mean Value Irregular Intervals
     Unblock For  1 min 30 s
     Set State  ${entity}  0
     # (0.5*20 + 0.5*16 + 0.5*6 + 1.5*2) / 3
-    State Should Be As  ${mean_entity}  Int  ${8}
+    State Should Be As  ${aggregated_entity}  Int  ${8}
 
 Anglemean
+    [Setup]  Initialize With History Manager  HistoryAnglemeanValue
     Set State  ${entity}  30
     Unblock For  1 min
     # 1*30 / 1
-    State Should Be As  ${anglemean_entity}  Int  ${30}
+    State Should Be As  ${aggregated_entity}  Int  ${30}
     Set State  ${entity}  60
     Unblock For  1 min
     # (1*30 + 1*60) / 2
-    State Should Be As  ${anglemean_entity}  Int  ${45}
+    State Should Be As  ${aggregated_entity}  Int  ${45}
     Unblock For  1 min
     # (1*30 + 2*60) / 3
-    State Should Be As  ${anglemean_entity}  Int  ${50}
+    State Should Be As  ${aggregated_entity}  Int  ${50}
     Set State  ${entity}  300
     Unblock For  1 min
     # (1*30 + 2*60 + 1*-60) / 4
-    State Should Be As  ${anglemean_entity}  Int  ${22}
+    State Should Be As  ${aggregated_entity}  Int  ${22}
     Unblock For  1 min
     # (2*60 + 2*-60) / 4
-    State Should Be As  ${anglemean_entity}  Int  ${0}
+    State Should Be As  ${aggregated_entity}  Int  ${0}
     Unblock For  1 min
     # (1*60 + 3*-60) / 4
-    State Should Be As  ${anglemean_entity}  Int  ${330}
+    State Should Be As  ${aggregated_entity}  Int  ${330}
     Unblock For  1 min
     # (4*300) / 4
-    State Should Be As  ${anglemean_entity}  Int  ${300}
+    State Should Be As  ${aggregated_entity}  Int  ${300}
     Set State  ${entity}  180
     Unblock For  1 min
     # (3*300 + 1*180) / 4
-    State Should Be As  ${anglemean_entity}  Int  ${270}
+    State Should Be As  ${aggregated_entity}  Int  ${270}
     Unblock For  1 min
     # (2*300 + 2*180) / 4
-    State Should Be As  ${anglemean_entity}  Int  ${240}
+    State Should Be As  ${aggregated_entity}  Int  ${240}
     Unblock For  1 min
     # (1*300 + 3*180) / 4
-    State Should Be As  ${anglemean_entity}  Int  ${210}
+    State Should Be As  ${aggregated_entity}  Int  ${210}
     Unblock For  1 min
     # (4*180) / 4
-    State Should Be As  ${anglemean_entity}  Int  ${180}
+    State Should Be As  ${aggregated_entity}  Int  ${180}
 
 Min Max Sum Values
+    [Setup]  Initialize With History Manager  HistoryMinmaxValue
     Set State  ${entity}  20
     State Should Be As  ${min_entity}  Int  ${20}
     State Should Be As  ${max_entity}  Int  ${20}
@@ -261,48 +267,69 @@ Min Max Sum Values
     State Should Be As  ${max_entity}  Int  ${0}
     State Should Be As  ${sum_entity}  Int  ${0}
 
+Decaying Sum Value
+    [Setup]  Initialize With History Manager  HistoryDecaySumValue
+    Set State  ${entity}  100
+    State Should Be As  ${aggregated_entity}  float  ${100.0}
+    Unblock For  1 min
+    State Should Be As  ${aggregated_entity}  float  ${50.0}
+    Unblock For  1 min
+    State Should Be As  ${aggregated_entity}  float  ${25.0}
+    Set State  ${entity}  1
+    State Should Be As  ${aggregated_entity}  float  ${26.0}
+    Unblock For  1 min
+    # 100*2^-3 + 1*2^-1 = 12.5 + 0.5
+    State Should Be As  ${aggregated_entity}  float  ${13.0}
+    Unblock For  1 min
+    # 100*2^-4 + 1*2^-2 = 6.25 + 0.25
+    State Should Be As  ${aggregated_entity}  float  ${6.5}
+    Unblock For  6 min
+    # 100*2^-10 + 1*2^-8 = 0.09765625 + 0.00390625
+    State Should Be As  ${aggregated_entity}  float  ${0.1015625}
+
 Binary Input
+    [Setup]  Initialize With Binary History Manager
     Unblock Until  5 min
     Turn On  ${switch_entity}
     Unblock For  2 min
     # 2*1 / 2
-    State Should Be As  ${switch_mean_entity}  percent  ${100}
+    State Should Be As  ${aggregated_entity}  percent  ${100}
     Turn Off  ${switch_entity}
     Unblock For  1 min
     # (2*1 + 1*0) / 3
-    State Should Be As  ${switch_mean_entity}  percent  ${66}
+    State Should Be As  ${aggregated_entity}  percent  ${66}
     Unblock For  1 min
     # (2*1 + 2*0) / 4
-    State Should Be As  ${switch_mean_entity}  percent  ${50}
+    State Should Be As  ${aggregated_entity}  percent  ${50}
     Unblock For  1 min
     # (2*1 + 3*0) / 5
-    State Should Be As  ${switch_mean_entity}  percent  ${40}
+    State Should Be As  ${aggregated_entity}  percent  ${40}
     Unblock For  1 min
     # (1*1 + 4*0) / 5
-    State Should Be As  ${switch_mean_entity}  percent  ${20}
+    State Should Be As  ${aggregated_entity}  percent  ${20}
     Turn On  ${switch_entity}
     Unblock For  1 min
     # (4*0 + 1*1) / 5
-    State Should Be As  ${switch_mean_entity}  percent  ${20}
+    State Should Be As  ${aggregated_entity}  percent  ${20}
     Unblock For  30 s
     Turn Off  ${switch_entity}
     # (3.5*0 + 1.5*1) / 5
-    State Should Be As  ${switch_mean_entity}  percent  ${30}
+    State Should Be As  ${aggregated_entity}  percent  ${30}
     Unblock For  1 min
     # (2.5*0 + 1.5*1 + 1*0) / 5
-    State Should Be As  ${switch_mean_entity}  percent  ${30}
+    State Should Be As  ${aggregated_entity}  percent  ${30}
     Unblock For  1 min
     # (1.5*0 + 1.5*1 + 2*0) / 5
-    State Should Be As  ${switch_mean_entity}  percent  ${30}
+    State Should Be As  ${aggregated_entity}  percent  ${30}
     Unblock For  1 min
     # (0.5*0 + 1.5*1 + 3*0) / 5
-    State Should Be As  ${switch_mean_entity}  percent  ${30}
+    State Should Be As  ${aggregated_entity}  percent  ${30}
     Unblock For  1 min
     # (1*1 + 4*0) / 5
-    State Should Be As  ${switch_mean_entity}  percent  ${20}
+    State Should Be As  ${aggregated_entity}  percent  ${20}
     Unblock For  1 min
     # 5*0 / 5
-    State Should Be As  ${switch_mean_entity}  percent  ${0}
+    State Should Be As  ${aggregated_entity}  percent  ${0}
 
 *** Keywords ***
 
@@ -311,7 +338,8 @@ Get Values
     [Return]  ${result}
 
 Should Be Loaded
-    ${result} =  Call Function  call_on_app  ${name}  is_loaded
+    [Arguments]  ${app}
+    ${result} =  Call Function  call_on_app  ${app}  is_loaded
     Should Be True  ${result}
 
 History Should Be
@@ -331,6 +359,7 @@ Limited History Should Be
     Lists Should Be Equal  ${converted_values}  ${converted_expected_values}
 
 Initialize
+    [Arguments]  @{configs}
     Initialize States
     ...    ${entity}=${0}
     ...    ${enabler}=off
@@ -340,7 +369,16 @@ Initialize
     ${apps} =  Create List  TestApp  history  enabler
     ...                     aggregator  locker  mutex_graph  auto_switch
     ...                     enabled_switch
-    ${app_configs} =  Create List  TestApp  HistoryManager
+    ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}
     Unblock For  ${appdaemon_interval}
-    Wait Until Keyword Succeeds  30 sec  1 sec  Should Be Loaded
+
+Initialize With History Manager
+    [Arguments]  @{configs}
+    Initialize  HistoryManagerBase  @{configs}
+    Wait Until Keyword Succeeds  30 sec  1 sec  Should Be Loaded  ${name}
+
+Initialize With Binary History Manager
+    [Arguments]  @{configs}
+    Initialize  HistoryManagerBinary  @{configs}
+    Wait Until Keyword Succeeds  30 sec  1 sec  Should Be Loaded  ${binary_name}
