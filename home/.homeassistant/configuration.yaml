@@ -33,7 +33,7 @@ lovelace:
 recorder:
   purge_interval: 1
   purge_keep_days: 5
-  db_url: sqlite:///tmp/homeassistant/home-assistant.db
+  db_url: !secret db_location
 
 # Enables support for tracking state changes over time.
 history:
