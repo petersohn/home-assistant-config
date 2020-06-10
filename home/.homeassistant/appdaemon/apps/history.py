@@ -225,8 +225,6 @@ class AggregatorContext:
             diff = (self.now - e.time).total_seconds()
             quotient = fraction ** (diff / interval)
             result = e.value * quotient
-            self.app.log('diff={} value={} q={} --> {}'.format(
-                diff, e.value, quotient, result))
             return result
 
         return lambda: sum(get_value(e) for e in self.history)
