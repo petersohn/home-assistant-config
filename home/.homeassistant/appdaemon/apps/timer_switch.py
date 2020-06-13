@@ -3,21 +3,63 @@ import auto_switch
 import traceback
 
 
-class TimerSwitch(hass.Hass):
-
-    def initialize(self):
+class Trigger:
+    def __init__(self, app, expr, sensor, target_state, callback):
+        self.app = app
+        self.callback = callback
         self.expression = None
         self.saved_state = None
         self.sensor = None
         self.target_state = None
-        if 'expr' in self.args is not None:
+        if expr is not None:
             import expression
             self.expression = expression.ExpressionEvaluator(
-                self, self.args['expr'], self.on_expression_change)
+                self.app, expr, self.on_expression_change)
             self.saved_state = self.expression.get() is True
         else:
-            self.sensor = self.args['sensor']
-            self.target_state = self.args.get('target_state', 'on')
+            self.sensor = sensor
+            self.target_state = target_state
+            self.app.listen_state(self.on_state_change, entity=self.sensor)
+
+        self.mutex = self.app.get_app('locker').get_mutex('Trigger')
+
+    def cleanup(self):
+        if self.expression is not None:
+            self.expression.cleanup()
+
+    def _is_on(self):
+        if self.expression is not None:
+            return self.saved_state
+        else:
+            return self.app.get_state(self.sensor) == self.target_state
+
+    def on_state_change(self, entity, attribute, old, new, kwargs):
+        self.app.log('state changed: {} -> {} target={}'.format(
+            old, new, self.target_state))
+        with self.mutex.lock('on_state_change'):
+            old_on = old == self.target_state
+            new_on = new == self.target_state
+            if old_on != new_on:
+                self.callback(new_on)
+
+    def on_expression_change(self, value):
+        with self.mutex.lock('on_expression_change'):
+            new_on = value is True
+            if new_on != self.saved_state:
+                self.saved_state = new_on
+                self.callback(new_on)
+
+
+class Timer:
+    def __init__(self, app, timer):
+        pass
+
+
+class TimerSwitch(hass.Hass):
+    def initialize(self):
+        self.trigger = Trigger(
+            self, self.args.get('expr'), self.args.get('sensor'),
+            self.args.get('target_state', 'on'), self.on_change)
         self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
         try:
             self.time = float(self.args['time']) * 60
@@ -34,21 +76,13 @@ class TimerSwitch(hass.Hass):
 
         self.timer = None
         self.was_enabled = None
+        self.is_on = False
         self.mutex = self.get_app('locker').get_mutex('TimerSwitch')
 
-        self.listen_state(self.on_state_change, entity=self.sensor)
-
     def terminate(self):
-        if self.expression is not None:
-            self.expression.cleanup()
+        self.trigger.cleanup()
         self.targets.turn_off()
         self.enabler.remove_callback(self.enabler_id)
-
-    def _is_on(self):
-        if self.expression is not None:
-            return self.saved_state
-        else:
-            return self.get_state(self.sensor) == self.target_state
 
     def on_enabled_chaged(self):
         with self.mutex.lock('on_enabled_chaged'):
@@ -57,7 +91,7 @@ class TimerSwitch(hass.Hass):
                 self.was_enabled = enabled
                 self.log('enabled changed to {}'.format(enabled))
                 if enabled:
-                    if not self.edge_trigger and self._is_on():
+                    if not self.edge_trigger and self.is_on:
                         self.__start()
                 else:
                     self.__stop_timer()
@@ -67,29 +101,16 @@ class TimerSwitch(hass.Hass):
         if self.__should_start():
             self.__start()
 
-    def _on_change(self, value):
-        if value:
-            self.__handle_start()
-            if self.edge_trigger:
+    def on_change(self, value):
+        with self.mutex.lock('on_change'):
+            self.log('on_change: {}'.format(value))
+            self.is_on = value
+            if value:
+                self.__handle_start()
+                if self.edge_trigger:
+                    self.__handle_stop()
+            elif not self.edge_trigger:
                 self.__handle_stop()
-        elif not self.edge_trigger:
-            self.__handle_stop()
-
-    def on_state_change(self, entity, attribute, old, new, kwargs):
-        # self.log('state changed: {} -> {} target={}'.format(
-        #     old, new, self.target_state))
-        with self.mutex.lock('on_state_change'):
-            old_on = old == self.target_state
-            new_on = new == self.target_state
-            if old_on != new_on:
-                self._on_change(new_on)
-
-    def on_expression_change(self, value):
-        with self.mutex.lock('on_expression_change'):
-            new_on = value is True
-            if new_on != self.saved_state:
-                self.saved_state = new_on
-                self._on_change(new_on)
 
     def __handle_stop(self):
         if self.timer is None:
