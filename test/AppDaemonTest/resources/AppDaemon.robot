@@ -125,21 +125,26 @@ State Should Not Change
     Unblock Until State Change  ${entity}  @{args}  &{kwargs}
     State Should Be  ${entity}  ${old_state}
 
+State Should Change Now
+    [Arguments]  ${entity}  ${value}
+    Wait Until Keyword Succeeds  5 s  0.01 s
+    ...    State Should Be  ${entity}  ${value}
+
 State Should Change At
     [Arguments]  ${entity}  ${value}  ${time}
     ${deadline} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
+    State Should Not Be  ${entity}  ${value}
     State Should Not Change  ${entity}  deadline=${deadline}
     Unblock For  ${appdaemon_interval}
-    Wait Until Keyword Succeeds  5 s  0.01 s
-    ...    State Should Be  ${entity}  ${value}
+    State Should Change Now  ${entity}  ${value}
 
 State Should Change In
     [Arguments]  ${entity}  ${value}  ${time}
     ${timeout} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
+    State Should Not Be  ${entity}  ${value}
     State Should Not Change  ${entity}  timeout=${timeout}
     Unblock For  ${appdaemon_interval}
-    Wait Until Keyword Succeeds  5 s  0.01 s
-    ...    State Should Be  ${entity}  ${value}
+    State Should Change Now  ${entity}  ${value}
 
 Schedule Call At
     [Arguments]  ${when}  ${function}  @{args}  &{kwargs}
@@ -184,6 +189,11 @@ State Should Be
     [Arguments]  ${entity_id}  ${expected_value}
     ${value} =  Get State  ${entity_id}
     Should Be Equal  ${value}  ${expected_value}
+
+State Should Not Be
+    [Arguments]  ${entity_id}  ${not_expected_value}
+    ${value} =  Get State  ${entity_id}
+    Should Not Be Equal  ${value}  ${not_expected_value}
 
 State Should Be As
     [Arguments]  ${entity_id}  ${type}  ${expected_value}

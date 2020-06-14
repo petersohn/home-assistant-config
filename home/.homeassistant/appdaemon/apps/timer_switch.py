@@ -95,7 +95,6 @@ class TimerSwitch(hass.Hass):
             self, self.args.get('expr'), self.args.get('sensor'),
             self.args.get('target_state', 'on'), self.on_change)
         self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
-        self.edge_trigger = self.args.get('edge_trigger', False)
         enabler = self.args.get('enabler')
         if enabler is not None:
             self.enabler = self.get_app(enabler)
@@ -121,7 +120,7 @@ class TimerSwitch(hass.Hass):
                 self.was_enabled = enabled
                 self.log('enabled changed to {}'.format(enabled))
                 if enabled:
-                    if not self.edge_trigger and self.is_on:
+                    if self.is_on:
                         self.__start()
                 else:
                     self.timer.stop()
@@ -137,9 +136,7 @@ class TimerSwitch(hass.Hass):
             self.is_on = value
             if value:
                 self.__handle_start()
-                if self.edge_trigger:
-                    self.__handle_stop()
-            elif not self.edge_trigger:
+            else:
                 self.__handle_stop()
 
     def __handle_stop(self):
@@ -160,3 +157,74 @@ class TimerSwitch(hass.Hass):
         if self.enabler is None:
             return True
         return self.enabler.is_enabled()
+
+
+class SequenceElement:
+    def __init__(self, timer, targets):
+        self.timer = timer
+        self.targets = targets
+
+
+class TimerSequence(hass.Hass):
+    def initialize(self):
+        self.sequence = [SequenceElement(
+            Timer(self, element['time'], self.on_timeout),
+            auto_switch.MultiSwitcher(self, element['targets']))
+            for element in self.args['sequence']]
+
+        self.trigger = Trigger(
+            self, self.args.get('expr'), self.args.get('sensor'),
+            self.args.get('target_state', 'on'), self.on_change)
+
+        enabler = self.args.get('enabler')
+        if enabler is not None:
+            self.enabler = self.get_app(enabler)
+            self.enabler_id = self.enabler.on_change(self.on_enabled_chaged)
+        else:
+            self.enabler = None
+            self.enabler_id = None
+
+        self.current_index = None
+        self.mutex = self.get_app('locker').get_mutex('TimerSwitch')
+
+    def terminate(self):
+        self.trigger.cleanup()
+        for element in self.sequence:
+            element.targets.turn_off()
+        self.enabler.remove_callback(self.enabler_id)
+
+    def on_enabled_chaged(self):
+        with self.mutex.lock('on_enabled_chaged'):
+            if not self.enabler.is_enabled() \
+                    and self.current_index is not None:
+                element = self.sequence[self.current_index]
+                element.timer.stop()
+                element.targets.turn_off()
+                self.current_index = None
+
+    def on_change(self, value):
+        if not value:
+            return
+
+        with self.mutex.lock('on_change'):
+            if (self.enabler is None or self.enabler.is_enabled()) \
+                    and self.current_index is None:
+                self.current_index = 0
+                self.__start()
+
+    def __start(self):
+        if self.current_index == len(self.sequence):
+            self.current_index = None
+            return
+
+        element = self.sequence[self.current_index]
+        element.targets.turn_on()
+        element.timer.start()
+
+    def on_timeout(self):
+        with self.mutex.lock('on_timeout'):
+            if self.current_index is None:
+                return
+            self.sequence[self.current_index].targets.turn_off()
+            self.current_index += 1
+            self.__start()

@@ -567,7 +567,7 @@ light_outside_switcher_3_5_6:
         - auto_switch_light_outside_6
 
 home_light_switcher:
-    class: TimerSwitch
+    class: TimerSequence
     module: timer_switch
     dependencies:
         - auto_switch_light_gate_reflector
@@ -576,12 +576,12 @@ home_light_switcher:
         - locker
     sensor: device_tracker.homeassistant_owntrackssamsung
     target_state: home
-    edge_trigger: true
-    targets:
-        - auto_switch_light_gate_reflector
-        - auto_switch_light_driveway
-    enabler: sun_enabler_night
-    time: 5
+    sequence:
+        - targets:
+              - auto_switch_light_gate_reflector
+              - auto_switch_light_driveway
+          enabler: sun_enabler_night
+          time: 5
 
 hot_water_pump_enabler:
     module: enabler
@@ -623,14 +623,14 @@ hot_water_pump_timer:
         - auto_switch_hot_water_pump
         - hot_water_pump_timer_enabler
         - locker
-    edge_trigger: true
     expr: >
         v['sensor.time'] + ':00' ==
         v['input_datetime.hot_water_' + args['weekdays'][now().weekday()]]
-    targets:
-        - auto_switch_hot_water_pump
+    sequence:
+        - targets:
+              - auto_switch_hot_water_pump
+          time: 300
     enabler: hot_water_pump_timer_enabler
-    time: 300
     weekdays:
         - monday
         - tuesday
@@ -665,7 +665,6 @@ hot_water_pump_backend_timer:
         v.binary_sensor.cellar_controller_available is not True or
         v.sensor.temperature_hot_water == 'unknown' or
         v.sensor.temperature_hot_water <= 41
-    edge_trigger: false
     targets:
         - auto_switch_hot_water_pump_backend
     enabler: hot_water_backend_enabler
@@ -788,35 +787,21 @@ auto_switch_sprinkler_3:
     switch: input_select.auto_sprinkler3
     reentrant: true
 
-sprinkler_1_timer:
+sprinkler_timer:
     class: TimerSwitch
     module: timer_switch
     dependencies:
         - auto_switch_sprinkler_1
+        - auto_switch_sprinkler_2
         - sprinkler_enabler
         - sprinkler_run_time
         - locker
     expr: v.sensor.time == '21:00'
-    edge_trigger: true
-    targets:
-        - auto_switch_sprinkler_1
+    sequence:
+        - targets:
+              - auto_switch_sprinkler_1
+          time: sensor.sprinkler_run_time
+        - targets:
+              - auto_switch_sprinkler_2
+          time: sensor.sprinkler_run_time
     enabler: sprinkler_enabler
-    time: sensor.sprinkler_run_time
-
-sprinkler_2_timer:
-    class: TimerSwitch
-    module: timer_switch
-    dependencies:
-        - auto_switch_sprinkler_2
-        - sprinkler_enabler
-        - sprinkler_run_time
-        - locker
-    expr: >
-        v.sensor.time ==
-        (strptime('21:00', '%H:%M') + dt(minutes=v.sensor.sprinkler_run_time))
-        .strftime('%H:%M')
-    edge_trigger: true
-    targets:
-        - auto_switch_sprinkler_2
-    enabler: sprinkler_enabler
-    time: sensor.sprinkler_run_time

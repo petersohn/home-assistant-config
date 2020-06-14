@@ -1,3 +1,10 @@
+test_auto_switch2:
+    class: AutoSwitch
+    module: auto_switch
+    target: input_boolean.test_switch2
+    reentrant: true
+    dependencies: locker
+
 test_timer_switch:
     class: TimerSequence
     module: timer_switch
@@ -9,4 +16,7 @@ test_timer_switch:
         - targets:
             - test_auto_switch
           time: 1
+        - targets:
+            - test_auto_switch2
+          time: 2
     enabler: test_enabler
