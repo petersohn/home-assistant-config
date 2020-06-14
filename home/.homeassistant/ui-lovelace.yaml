@@ -126,7 +126,7 @@ views:
         entities:
           - sensor.maximum_temperature_last_day
           - sensor.rain_last_day
-          - sensor.rain_last_5_days
+          - sensor.rain_decaying
           - sensor.sprinkler_run_time
         show_header_toggle: false
   - path: lights
@@ -453,7 +453,7 @@ views:
       - type: glance
         entities:
           - sensor.rain_last_day
-          - sensor.rain_last_5_days
+          - sensor.rain_decaying
           - sensor.maximum_temperature_last_day
       - type: glance
         entities:
