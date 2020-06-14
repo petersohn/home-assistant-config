@@ -794,6 +794,7 @@ input_boolean:
   sprinkler:
     name: "Locsolás"
     icon: mdi:sprinkler-variant
+    initial: true
 
 input_datetime:
   hot_water_monday:
