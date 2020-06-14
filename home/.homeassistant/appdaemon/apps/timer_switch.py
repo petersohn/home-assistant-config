@@ -51,8 +51,42 @@ class Trigger:
 
 
 class Timer:
-    def __init__(self, app, timer):
-        pass
+    def __init__(self, app, time, callback):
+        self.app = app
+        try:
+            self.time = float(time) * 60
+        except ValueError:
+            self.time = time
+        self.callback = callback
+        self.timer = None
+        self.mutex = self.app.get_app('locker').get_mutex('Timer')
+
+    def stop(self):
+        with self.mutex.lock('stop'):
+            if self.timer is not None:
+                self.app.cancel_timer(self.timer)
+                self.timer = None
+
+    def start(self):
+        with self.mutex.lock('start'):
+            if type(self.time) is float:
+                time = self.time
+            else:
+                try:
+                    time = float(self.app.get_state(self.time)) * 60
+                except Exception:
+                    self.app.error(traceback.format_exc())
+                    time = 0
+            self.timer = self.app.run_in(self.on_timeout, time)
+
+    def is_running(self):
+        with self.mutex.lock('is_running'):
+            return self.timer is not None
+
+    def on_timeout(self, kwargs):
+        with self.mutex.lock('on_timeout'):
+            self.timer = None
+        self.callback()
 
 
 class TimerSwitch(hass.Hass):
@@ -61,10 +95,6 @@ class TimerSwitch(hass.Hass):
             self, self.args.get('expr'), self.args.get('sensor'),
             self.args.get('target_state', 'on'), self.on_change)
         self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
-        try:
-            self.time = float(self.args['time']) * 60
-        except ValueError:
-            self.time = self.args['time']
         self.edge_trigger = self.args.get('edge_trigger', False)
         enabler = self.args.get('enabler')
         if enabler is not None:
@@ -74,7 +104,7 @@ class TimerSwitch(hass.Hass):
             self.enabler = None
             self.enabler_id = None
 
-        self.timer = None
+        self.timer = Timer(self, self.args['time'], self.on_timeout)
         self.was_enabled = None
         self.is_on = False
         self.mutex = self.get_app('locker').get_mutex('TimerSwitch')
@@ -94,7 +124,7 @@ class TimerSwitch(hass.Hass):
                     if not self.edge_trigger and self.is_on:
                         self.__start()
                 else:
-                    self.__stop_timer()
+                    self.timer.stop()
                     self.targets.turn_off()
 
     def __handle_start(self):
@@ -113,31 +143,18 @@ class TimerSwitch(hass.Hass):
                 self.__handle_stop()
 
     def __handle_stop(self):
-        if self.timer is None:
-            if type(self.time) is float:
-                time = self.time
-            else:
-                try:
-                    time = float(self.get_state(self.time)) * 60
-                except Exception:
-                    self.error(traceback.format_exc())
-                    time = 0
-            self.timer = self.run_in(self.on_timeout, time)
+        if not self.timer.is_running():
+            self.timer.start()
 
     def __start(self):
-        self.__stop_timer()
+        self.timer.stop()
         self.log('Turn on')
         self.targets.turn_on()
 
-    def on_timeout(self, kwargs):
+    def on_timeout(self):
         with self.mutex.lock('on_timeout'):
             self.log('Turn off')
             self.targets.turn_off()
-
-    def __stop_timer(self):
-        if self.timer is not None:
-            self.cancel_timer(self.timer)
-            self.timer = None
 
     def __should_start(self):
         if self.enabler is None:
