@@ -111,7 +111,8 @@ class TimerSwitch(hass.Hass):
     def terminate(self):
         self.trigger.cleanup()
         self.targets.turn_off()
-        self.enabler.remove_callback(self.enabler_id)
+        if self.enabler is not None:
+            self.enabler.remove_callback(self.enabler_id)
 
     def on_enabled_chaged(self):
         with self.mutex.lock('on_enabled_chaged'):
@@ -191,7 +192,8 @@ class TimerSequence(hass.Hass):
         self.trigger.cleanup()
         for element in self.sequence:
             element.targets.turn_off()
-        self.enabler.remove_callback(self.enabler_id)
+        if self.enabler is not None:
+            self.enabler.remove_callback(self.enabler_id)
 
     def on_enabled_chaged(self):
         with self.mutex.lock('on_enabled_chaged'):
