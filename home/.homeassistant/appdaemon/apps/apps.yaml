@@ -703,7 +703,7 @@ rain_decaying:
     manager: rain_history
     target: sensor.rain_decaying
     interval:
-        days: 5
+        days: 7
     aggregator: decay_sum(0.8, days=1)
     attributes:
         unit_of_measurement: "mm"
