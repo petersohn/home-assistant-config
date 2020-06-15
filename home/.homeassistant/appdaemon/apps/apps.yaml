@@ -576,11 +576,11 @@ home_light_switcher:
         - locker
     sensor: device_tracker.homeassistant_owntrackssamsung
     target_state: home
+    enabler: sun_enabler_night
     sequence:
         - targets:
               - auto_switch_light_gate_reflector
               - auto_switch_light_driveway
-          enabler: sun_enabler_night
           time: 5
 
 hot_water_pump_enabler:
