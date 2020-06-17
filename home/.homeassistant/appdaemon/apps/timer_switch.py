@@ -116,7 +116,7 @@ class TimerSwitch(hass.Hass):
 
     def on_enabled_chaged(self):
         with self.mutex.lock('on_enabled_chaged'):
-            enabled = self.__should_start()
+            enabled = self.enabler.is_enabled()
             if self.was_enabled != enabled:
                 self.was_enabled = enabled
                 self.log('enabled changed to {}'.format(enabled))
@@ -128,7 +128,7 @@ class TimerSwitch(hass.Hass):
                     self.targets.turn_off()
 
     def __handle_start(self):
-        if self.__should_start():
+        if self.enabler is None or self.enabler.is_enabled():
             self.__start()
 
     def on_change(self, value):
@@ -153,11 +153,6 @@ class TimerSwitch(hass.Hass):
         with self.mutex.lock('on_timeout'):
             self.log('Turn off')
             self.targets.turn_off()
-
-    def __should_start(self):
-        if self.enabler is None:
-            return True
-        return self.enabler.is_enabled()
 
 
 class SequenceElement:
