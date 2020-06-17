@@ -804,4 +804,7 @@ sprinkler_timer:
         - targets:
               - auto_switch_sprinkler_2
           time: sensor.sprinkler_run_time
+        - targets:
+              - auto_switch_sprinkler_3
+          time: sensor.sprinkler_run_time
     enabler: sprinkler_enabler
