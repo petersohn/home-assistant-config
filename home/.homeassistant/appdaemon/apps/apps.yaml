@@ -676,7 +676,7 @@ rain_history:
     dependencies: locker
     entity: sensor.rain
     max_interval:
-        days: 7
+        days: 10
 
 rain_last_day:
     module: history
@@ -703,7 +703,7 @@ rain_decaying:
     manager: rain_history
     target: sensor.rain_decaying
     interval:
-        days: 7
+        days: 10
     aggregator: decay_sum(0.8, days=1)
     attributes:
         unit_of_measurement: "mm"
