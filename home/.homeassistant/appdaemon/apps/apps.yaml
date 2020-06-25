@@ -539,7 +539,32 @@ light_outside_switcher_2_4:
         - auto_switch_light_outside_2
         - auto_switch_light_outside_4
 
-light_outside_3_5_6_enabler:
+light_outside_3_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    expr: >
+        v.input_select.lighting_mode == "home" and
+        (e.sun_enabler_night or v.sensor.light_shadow <= 20)
+    dependencies:
+        - sun_enabler_night
+        - locker
+    global_dependencies:
+        - expression
+
+light_outside_switcher_3:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_light_outside_3
+        - light_outside_3_enabler
+        - locker
+    global_dependencies:
+        - auto_switch
+    enabler: light_outside_3_enabler
+    targets:
+        - auto_switch_light_outside_3
+
+light_outside_5_6_enabler:
     module: enabler
     class: ExpressionEnabler
     expr: 'e.sun_enabler_night and v.input_select.lighting_mode == "home"'
@@ -549,20 +574,18 @@ light_outside_3_5_6_enabler:
     global_dependencies:
         - expression
 
-light_outside_switcher_3_5_6:
+light_outside_switcher_5_6:
     class: EnabledSwitch
     module: enabled_switch
     dependencies:
-        - auto_switch_light_outside_3
         - auto_switch_light_outside_5
         - auto_switch_light_outside_6
-        - light_outside_3_5_6_enabler
+        - light_outside_5_6_enabler
         - locker
     global_dependencies:
         - auto_switch
-    enabler: light_outside_3_5_6_enabler
+    enabler: light_outside_5_6_enabler
     targets:
-        - auto_switch_light_outside_3
         - auto_switch_light_outside_5
         - auto_switch_light_outside_6
 
