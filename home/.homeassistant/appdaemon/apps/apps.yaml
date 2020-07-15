@@ -727,7 +727,7 @@ rain_decaying:
     target: sensor.rain_decaying
     interval:
         days: 10
-    aggregator: decay_sum(0.78, days=1)
+    aggregator: decay_sum(0.75, days=1)
     attributes:
         unit_of_measurement: "mm"
         friendly_name: "Eső amortizált"
@@ -766,7 +766,7 @@ sprinkler_run_time:
         - maximum_temperature_last_day
     target: sensor.sprinkler_run_time
     expr: >
-        1.1 * v.sensor.maximum_temperature_last_day - 14.0
+        1.1 * v.sensor.maximum_temperature_last_day - 7.0
         - 5.0 * v.sensor.rain_decaying
     attributes:
         unit_of_measurement: min
