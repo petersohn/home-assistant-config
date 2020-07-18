@@ -286,8 +286,8 @@ motion_sensor_garage_enabler:
         - sun_enabler_night
         - locker
     expr: >
-        e.sun_enabler_night and
-        v.sensor.motion_sensor_driveway_uppest_average <= 0.2
+        e.sun_enabler_night or
+        (v.input_select.lighting_mode == "home" and v.sensor.light_shadow <= 20)
 
 motion_sensor_garage2_history:
     module: history
@@ -309,14 +309,6 @@ motion_sensor_garage2_average:
     attributes:
         friendly_name: "Garázs 2"
         icon: mdi:percent
-
-motion_sensor_garage2_enabler:
-    module: enabler
-    class: ExpressionEnabler
-    dependencies:
-        - locker
-    expr: >
-        v.sensor.motion_sensor_garage2_average <= 0.8
 
 motion_sensor_well_history:
     module: history
@@ -432,12 +424,10 @@ garage2_motion_sensor:
     module: timer_switch
     dependencies:
         - auto_switch_light_garage
-        - motion_sensor_garage2_enabler
         - locker
     sensor: binary_sensor.motion_sensor_garage2
     targets:
         - auto_switch_light_garage
-    enabler: motion_sensor_garage2_enabler
     time: 1
 
 well_motion_sensor:
