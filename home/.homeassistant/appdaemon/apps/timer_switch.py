@@ -11,6 +11,7 @@ class Trigger:
         self.saved_state = None
         self.sensor = None
         self.target_state = None
+        self.mutex = self.app.get_app('locker').get_mutex('Trigger')
         if expr is not None:
             import expression
             self.expression = expression.ExpressionEvaluator(
@@ -21,7 +22,6 @@ class Trigger:
             self.target_state = target_state
             self.app.listen_state(self.on_state_change, entity=self.sensor)
 
-        self.mutex = self.app.get_app('locker').get_mutex('Trigger')
 
     def cleanup(self):
         if self.expression is not None:

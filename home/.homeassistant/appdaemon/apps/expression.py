@@ -1,5 +1,6 @@
 import appdaemon.plugins.hass.hassapi as hass
 import datetime
+import traceback
 
 
 class Evaluator:
@@ -84,7 +85,12 @@ class ExpressionEvaluator:
             self.fire_callback({})
 
     def _get(self):
-        return eval(self.expr, self.evaluators)
+        try:
+            return eval(self.expr, self.evaluators)
+        except:
+            self.app.error(traceback.format_exc())
+            self.app.run_in(lambda _: self.get(), 60)
+            return None
 
     def get(self):
         with self.mutex.lock('get'):

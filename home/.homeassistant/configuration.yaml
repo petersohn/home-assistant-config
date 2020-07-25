@@ -31,8 +31,9 @@ lovelace:
   mode: yaml
 
 recorder:
+  auto_purge: true
   purge_interval: 1
-  purge_keep_days: 5
+  purge_keep_days: 14
   db_url: !secret db_location
 
 # Enables support for tracking state changes over time.
