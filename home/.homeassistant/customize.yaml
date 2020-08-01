@@ -49,47 +49,47 @@ binary_sensor.mosquitto_bridge_available:
 
 binary_sensor.furnace_temperature_available:
   friendly_name: Furnace Temperature
-  icon: mdi:chip
+  device_class: plug
 
 binary_sensor.well_controller_available:
   friendly_name: Well Controller
-  icon: mdi:chip
+  device_class: plug
 
 binary_sensor.main_controller_available:
   friendly_name: Main Controller
-  icon: mdi:chip
+  device_class: plug
 
 binary_sensor.main_controller2_available:
   friendly_name: Main Controller 2
-  icon: mdi:chip
+  device_class: plug
 
 binary_sensor.driveway_available:
   friendly_name: Driveway
-  icon: mdi:chip
+  device_class: plug
 
 binary_sensor.cellar_controller_available:
   friendly_name: Cellar Controller
-  icon: mdi:chip
+  device_class: plug
 
 binary_sensor.dishwasher_sensor_available:
   friendly_name: Dishwasher Sensor
-  icon: mdi:chip
+  device_class: plug
 
 binary_sensor.living_room_temperature_available:
   friendly_name: Living Room Temperature Available
-  icon: mdi:chip
+  device_class: plug
 
 binary_sensor.bedroom_temperature_available:
   friendly_name: Bedroom Temperature Available
-  icon: mdi:chip
+  device_class: plug
 
 binary_sensor.gate_reflector_available:
   friendly_name: Gate Reflector Available
-  icon: mdi:chip
+  device_class: plug
 
 binary_sensor.attic_lower_available:
   friendly_name: Attic Lower Available
-  icon: mdi:chip
+  device_class: plug
 
 sensor.furnace_temperature_free_memory:
   friendly_name: Furnace Temperature
