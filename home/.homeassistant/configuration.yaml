@@ -507,6 +507,16 @@ binary_sensor:
     payload_on: 1
     payload_off: 0
   - platform: mqtt
+    state_topic: home/sensors/window/entrance
+    name: window_entrance
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    state_topic: home/sensors/window/bedroom
+    name: window_bedroom
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
     state_topic: "$SYS/broker/connection/hassbian.homeassistant_gateway/state"
     name: mosquitto_bridge_available
     payload_on: 1

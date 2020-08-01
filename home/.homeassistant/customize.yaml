@@ -482,6 +482,14 @@ binary_sensor.door_main_entrance:
   friendly_name: "Bejárati ajtó"
   device_class: door
 
+binary_sensor.window_entrance:
+  friendly_name: "Ablak étkező"
+  device_class: window
+
+binary_sensor.window_bedroom:
+  friendly_name: "Ablak hálószoba"
+  device_class: window
+
 sensor.light_shadow:
   friendly_name: "Fény árnyékban"
   icon: mdi:weather-sunset
