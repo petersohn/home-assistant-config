@@ -287,7 +287,8 @@ motion_sensor_garage_enabler:
         - locker
     expr: >
         e.sun_enabler_night or
-        (v.input_select.lighting_mode == "home" and v.sensor.light_shadow <= 20)
+        (v.input_select.presence_mode == "home" and 
+        v.sensor.light_shadow != 'unknown' and v.sensor.light_shadow <= 20)
 
 motion_sensor_garage2_history:
     module: history
@@ -507,7 +508,7 @@ light_outside_switcher_1:
 light_outside_2_4_enabler:
     module: enabler
     class: ExpressionEnabler
-    expr: 'e.sun_enabler_night and v.input_select.lighting_mode != "sleep"'
+    expr: 'e.sun_enabler_night and v.input_select.presence_mode != "sleep"'
     dependencies:
         - sun_enabler_night
         - locker
@@ -533,8 +534,10 @@ light_outside_3_enabler:
     module: enabler
     class: ExpressionEnabler
     expr: >
-        v.input_select.lighting_mode == "home" and
-        (e.sun_enabler_night or v.sensor.light_shadow <= 20)
+        v.input_select.presence_mode == "home" and
+        (e.sun_enabler_night or
+        (v.sensor.light_shadow != 'unknown' and
+        v.sensor.light_shadow <= 20))
     dependencies:
         - sun_enabler_night
         - locker
@@ -557,7 +560,7 @@ light_outside_switcher_3:
 light_outside_5_6_enabler:
     module: enabler
     class: ExpressionEnabler
-    expr: 'e.sun_enabler_night and v.input_select.lighting_mode == "home"'
+    expr: 'e.sun_enabler_night and v.input_select.presence_mode == "home"'
     dependencies:
         - sun_enabler_night
         - locker
@@ -600,7 +603,7 @@ hot_water_pump_enabler:
     module: enabler
     class: ValueEnabler
     dependencies: locker
-    entity: input_select.lighting_mode
+    entity: input_select.presence_mode
     value: 'home'
 
 auto_switch_hot_water_pump:
@@ -626,7 +629,7 @@ hot_water_pump_timer_enabler:
     module: enabler
     class: ValueEnabler
     dependencies: locker
-    entity: input_select.lighting_mode
+    entity: input_select.presence_mode
     value: 'sleep'
 
 hot_water_pump_timer:

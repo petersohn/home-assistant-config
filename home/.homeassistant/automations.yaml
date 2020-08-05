@@ -108,11 +108,11 @@
 
 - trigger:
       platform: mqtt
-      topic: home/input_select/lighting_mode/set
+      topic: home/input_select/presence_mode/set
   action:
       - service: input_select.select_option
         data_template:
-            entity_id: input_select.lighting_mode
+            entity_id: input_select.presence_mode
             option: '{{ trigger.payload }}'
 
 - trigger:
@@ -123,7 +123,7 @@
   action:
       - service: input_select.select_option
         data_template:
-            entity_id: input_select.lighting_mode
+            entity_id: input_select.presence_mode
             option: 'away'
 
 - trigger:
@@ -134,7 +134,7 @@
   action:
       - service: input_select.select_option
         data_template:
-            entity_id: input_select.lighting_mode
+            entity_id: input_select.presence_mode
             option: 'home'
 
 - trigger:
@@ -145,7 +145,7 @@
   action:
       - service: input_select.select_option
         data_template:
-            entity_id: input_select.lighting_mode
+            entity_id: input_select.presence_mode
             option: 'home'
 
 - trigger:

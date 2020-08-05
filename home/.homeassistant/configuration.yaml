@@ -791,8 +791,8 @@ input_select:
             - "on"
             - "off"
         initial: "auto"
-    lighting_mode:
-        name: Világítás mód
+    presence_mode:
+        name: Jelenlét mód
         options:
             - "home"
             - "away"

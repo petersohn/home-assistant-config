@@ -55,7 +55,7 @@
         {
             "type": "publish",
             "interface": "button",
-            "topic": "home/input_select/lighting_mode/set",
+            "topic": "home/input_select/presence_mode/set",
             "value": 0,
             "template": "sleep",
             "retain": false

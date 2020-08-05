@@ -5,6 +5,10 @@ views:
     badges: []
     cards:
       - type: entities
+        entities:
+          - input_select.presence_mode
+          - device_tracker.homeassistant_owntrackssamsung
+      - type: entities
         state_color: true
         entities:
           - binary_sensor.door_attic_hatch
@@ -135,9 +139,6 @@ views:
     title: 'Világítás'
     icon: 'mdi:lightbulb'
     cards:
-      - type: entities
-        entities:
-          - input_select.lighting_mode
       - type: horizontal-stack
         cards:
           - type: button
