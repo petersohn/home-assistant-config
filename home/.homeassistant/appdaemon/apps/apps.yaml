@@ -287,7 +287,7 @@ motion_sensor_garage_enabler:
         - locker
     expr: >
         e.sun_enabler_night or
-        (v.input_select.presence_mode == "home" and 
+        (v.input_select.presence_mode == "home" and
         v.sensor.light_shadow != 'unknown' and v.sensor.light_shadow <= 20)
 
 motion_sensor_garage2_history:
@@ -824,3 +824,34 @@ sprinkler_timer:
               - auto_switch_sprinkler_3
           time: sensor.sprinkler_run_time
     enabler: sprinkler_enabler
+
+mosquito_killer_bedroom:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.mosquito_killer_bedroom
+    switch: input_select.mosquito_killer_bedroom
+
+mosquito_killer_bedroom_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    expr: >
+        v.input_select.presence_mode == "sleep" and
+        v.binary_sensor.window_bedroom
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+
+christmas_light_switcher:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - mosquito_killer_bedroom
+        - mosquito_killer_bedroom_enabler
+        - locker
+    global_dependencies:
+        - auto_switch
+    enabler: mosquito_killer_bedroom_enabler
+    targets:
+        - mosquito_killer_bedroom

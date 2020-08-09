@@ -18,6 +18,12 @@ views:
         title: Ajtók
         show_header_toggle: false
       - type: entities
+        state_color: true
+        entities:
+          - switch.mosquito_killer_bedroom
+          - input_select.mosquito_killer_bedroom
+        show_header_toggle: false
+      - type: entities
         entities:
           - sensor.date
           - sensor.time
