@@ -1,6 +1,6 @@
 {
     "debug": true,
-    "name": "main_controller",
+    "name": "main_controller2",
     "availabilityTopic": "home/devices/main_controller2/availability",
     "debugTopic": "home/devices/main_controller2/debug",
     "interfaces": [
@@ -40,6 +40,16 @@
             "type": "input",
             "name": "door",
             "pin": 5
+        },
+        {
+            "type": "input",
+            "name": "window1",
+            "pin": 12
+        },
+        {
+            "type": "input",
+            "name": "window2",
+            "pin": 13
         },
         {
             "type": "analog",
@@ -82,6 +92,18 @@
             "type": "publish",
             "interface": "door",
             "topic": "home/sensors/door/main_entrance",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "window1",
+            "topic": "home/sensors/window/entrance",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "window2",
+            "topic": "home/sensors/window/bedroom",
             "retain": true
         }
     ]
