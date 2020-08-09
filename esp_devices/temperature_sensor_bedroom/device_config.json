@@ -1,5 +1,5 @@
 {
-    "debug": true,
+    "debug": false,
     "name": "bedroom_temperature",
     "availabilityTopic": "home/devices/bedroom_temperature/availability",
     "debugTopic": "home/devices/bedroom_temperature/debug",
@@ -11,6 +11,13 @@
             "pin": 0
         },
         {
+            "type": "output",
+            "name": "relay",
+            "commandTopic": "home/switches/mosquito_killer/bedroom/set",
+            "default": 0,
+            "pin": 3
+        },
+        {
             "type": "dht",
             "name": "upper",
             "interval": 60,
@@ -20,7 +27,7 @@
             "type": "input",
             "name": "button",
             "interval": 60,
-            "pin": 3
+            "pin": 1
         }
     ],
     "actions": [
@@ -59,6 +66,13 @@
             "value": 0,
             "template": "sleep",
             "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "relay",
+            "topic": "home/switches/mosquito_killer/bedroom/state",
+            "template": "%1",
+            "retain": true
         }
     ]
 }
