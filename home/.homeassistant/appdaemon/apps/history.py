@@ -4,7 +4,7 @@ from dateutil import tz
 from urllib import request
 import http.client
 import json
-from collections import namedtuple
+from collections import namedtuple, deque
 import re
 import traceback
 
@@ -40,34 +40,14 @@ class HistoryManager(hass.Hass):
             real_value = 0.0
         return HistoryElement(time, real_value)
 
-    def _get_limited_history(self, interval):
-        limit = self.datetime() - interval
-        result = []
-        previous = None
-        for element in self.history:
-            if element.time >= limit:
-                if not result and element.time != limit and \
-                        previous is not None:
-                    result.append(self.__make_history_element(limit, previous))
-                result.append(element)
-            else:
-                previous = element.value
-        if not result and previous is not None:
-            result.append(self.__make_history_element(limit, previous))
-        return result
-
     def __filter(self):
-        if not self.history:
-            return
-        self.history = self._get_limited_history(self.max_interval)
+        while len(self.history) >= 2 and self.history[1].time < self.datetime():
+            self.history.popleft()
 
-    def get_history(self, interval=None):
+    def get_history(self):
         with self.mutex.lock('get_history'):
             self.__filter()
-            if interval is not None:
-                return self._get_limited_history(interval)
-            else:
-                return self.history
+            return self.history
 
     def load_config(self, *args, **kwargs):
         with self.mutex.lock('load_config'):
@@ -110,7 +90,7 @@ class HistoryManager(hass.Hass):
                             astimezone(tz.tzlocal()).replace(tzinfo=None)
 
                     now = self.datetime()
-                    self.history = list(filter(
+                    self.history = deque(filter(
                         lambda element:
                             element.time <= now and element.value is not None,
                         (self.__make_history_element(
@@ -239,6 +219,145 @@ class AggregatorContext:
             'sum': self.sum,
             'decay_sum': self.decay_sum,
         }
+
+
+class LimitedHistoryAggregatum:
+    def __init__(self, interval):
+        self.interval = interval
+        self.history = deque()
+
+    def add(self, element):
+        self.adding(element)
+        self.elements.append(element)
+        minimum_time = element.time - self.interval
+        while len(self.elements) >= 2 and self.elements[1].time < minimum_time:
+            removed_element = self.elements.popleft()
+            self.removed(removed_element)
+        if self.elements[0].time < minimum_time:
+            old_element = self.elements[0]
+            self.elements[0] = HistoryElement(
+                minimum_time, self.elements[0].value)
+            self.trimmed(old_element)
+
+    def adding(self, element):
+        pass
+
+    def removed(self, element):
+        pass
+
+    def trimmed(self, element):
+        pass
+
+    def get(self):
+        raise NotImplemented
+
+
+class MinmaxAggregatum(LimitedHistoryAggregatum):
+    def __init__(self, interval, function):
+        super(MinmaxAggregatum, self).__init__(interval)
+        self.value = None
+        self.function = function
+
+    def adding(self, element):
+        if self.value is None:
+            if self.history:
+                self.value = self.function(e.value for e in self.history)
+            else:
+                self.value = element.value
+        else:
+            self.value = self.function(self.value, element.value)
+
+    def removed(self, element):
+        if element.value == self.value:
+            self.value = None
+
+    def get(self):
+        if self.value is None:
+            raise ValueError
+        return self.value
+
+def Sum(LimitedHistoryAggregatum):
+    def __init__(self, interval):
+        super(Sum, self).__init__(interval)
+        self.value = 0.0
+
+    def adding(self, element):
+        self.value += element.value
+
+    def removed(self, element):
+        self.value -= element.value
+
+    def get(self):
+        return self.value
+
+
+class IntervalAggragatum(LimitedHistoryAggregatum):
+    def __init__(self, interval):
+        super(IntervalAggragatum, self).__init__(interval)
+
+    def adding(self, element):
+        if self.history:
+            interval = element.time - self.history[-1].time
+            self.add_interval(interval, self.history[-1].value)
+
+    def removed(self, element):
+        self._remove(element)
+
+    def trimmed(self, element):
+        self._remove(element)
+
+    def _remove(self, element):
+        interval = self.history[0].time - element.time
+        self.remove_interval(interval, element.value)
+
+class Mean(IntervalAggragatum):
+    def __init__(self, interval):
+        super(Mean, self).__init__(interval)
+        self.sum = 0.0
+        self.time = 0.0
+
+    def get(self):
+        if self.time == 0.0:
+            raise ValueError
+        return self.sum / self.time
+
+    def add_interval(self, interval, value):
+        seconds = interval.total_seconds()
+        self.sum += value * seconds
+        self.time += seconds
+
+    def remove_interval(self, interval, value):
+        seconds = interval.total_seconds()
+        self.sum -= value * seconds
+        self.time -= seconds
+
+
+class Anglemean(IntervalAggragatum):
+    def __init__(self, interval):
+        super(Mean, self).__init__(interval)
+        self.sum180 = 0.0
+        self.sum360 = 0.0
+        self.varsum180 = 0.0
+        self.varsum360 = 0.0
+        self.time = 0.0
+
+    def get(self):
+        if self.time == 0.0:
+            raise ValueError
+        if self.varsum180 < self.sum180:
+            return self.sum180 / self.time
+        else:
+            return self.sum360 / self.time
+
+    def add_interval(self, interval, value):
+        seconds = interval.total_seconds()
+        self.sum += value * seconds
+        self.time += seconds
+
+    def remove_interval(self, interval, value):
+        seconds = interval.total_seconds()
+        self.sum -= value * seconds
+        self.time -= seconds
 
 
 class Aggregator:
