@@ -4,6 +4,7 @@ from dateutil import tz
 from urllib import request
 import http.client
 import json
+import math
 from collections import namedtuple, deque
 import re
 import traceback
@@ -261,15 +262,17 @@ class MinmaxAggregatum(LimitedHistoryAggregatum):
     def adding(self, element):
         if self.value is None:
             if self.history:
-                self.value = self.function(e.value for e in self.history)
+                self._reevaluate()
             else:
                 self.value = element.value
-        else:
-            self.value = self.function(self.value, element.value)
+        self.value = self.function(self.value, element.value)
 
     def removed(self, element):
-        if element.value == self.value:
-            self.value = None
+        if math.abs(element.value - self.value) < 0.0001:
+            self._reevaluate()
+
+    def _reevaluate(self):
+        self.value = self.function(e.value for e in self.history)
 
     def get(self):
         if self.value is None:
@@ -310,6 +313,13 @@ class IntervalAggragatum(LimitedHistoryAggregatum):
         interval = self.history[0].time - element.time
         self.remove_interval(interval, element.value)
 
+    def add_interval(self, interval, value):
+        raise NotImplemented
+
+    def remove_interval(self, interval, value):
+        raise NotImplemented
+
+
 class Mean(IntervalAggragatum):
     def __init__(self, interval):
         super(Mean, self).__init__(interval)
@@ -337,27 +347,61 @@ class Anglemean(IntervalAggragatum):
         super(Mean, self).__init__(interval)
         self.sum180 = 0.0
         self.sum360 = 0.0
-        self.varsum180 = 0.0
-        self.varsum360 = 0.0
+        self.sum360_2 = 0.0
+        self.sum180_2 = 0.0
         self.time = 0.0
 
     def get(self):
         if self.time == 0.0:
             raise ValueError
+        varsum180 = self.sum180 - (self.sum180_2 ** 2) / self.time
+        varsum360 = self.sum360 - (self.sum360_2 ** 2) / self.time
         if self.varsum180 < self.sum180:
             return self.sum180 / self.time
         else:
             return self.sum360 / self.time
 
     def add_interval(self, interval, value):
+        value360 = value % 360  # this should be < 360 anyway
+        value180 = value - 360 if value > 180 else value
         seconds = interval.total_seconds()
-        self.sum += value * seconds
+        self.sum180 += value180 * seconds
+        self.sum180_2 += (value180 ** 2) * seconds
+        self.sum360 += value360 * seconds
+        self.sum360_2 += (value360 ** 2) * seconds
         self.time += seconds
 
     def remove_interval(self, interval, value):
+        value360 = value % 360  # this should be < 360 anyway
+        value180 = value - 360 if value > 180 else value
         seconds = interval.total_seconds()
-        self.sum -= value * seconds
+        self.sum180 -= value180 * seconds
+        self.sum180_2 -= (value180 ** 2) * seconds
+        self.sum360 -= value360 * seconds
+        self.sum360_2 -= (value360 ** 2) * seconds
         self.time -= seconds
+
+
+def DecaySum:
+    def init(self, interval, fraction):
+        self.interval = interval.total_seconds()
+        self.fraction = fraction
+        self.value = None
+        self.time = None
+
+    def add(self, element):
+        if self.time is None:
+            self.time = element.time
+            self.value = element.value
+            return
+
+        diff = (element.time - self.time).total_seconds()
+        self.value *= fraction ** (diff / self.interval)
+        self.value += element.value
+        self.time = element.time
+
+    def get(self):
+        return self.value
 
 
 class Aggregator:
