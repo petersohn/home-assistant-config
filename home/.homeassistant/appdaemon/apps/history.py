@@ -119,109 +119,6 @@ class HistoryManager(hass.Hass):
                 self.datetime(), self.get_state(self.entity_id)))
 
 
-class AggregatorContext:
-    def __init__(self, history, now, base_interval, app):
-        # app.log('history={} now={}'.format(history, now))
-        self.history = history
-        self.now = now
-        self.base_interval = base_interval
-        self.app = app
-
-    def _get_interval(self, index):
-        if index < 0 or index >= len(self.history):
-            raise IndexError
-        if index == len(self.history) - 1:
-            return self.now - self.history[-1].time
-        else:
-            return self.history[index + 1].time - self.history[index].time
-
-    def _get_normalized(self, index):
-        return self.history[index].value * (
-            self._get_interval(index) / self.base_interval)
-
-    def integral(self):
-        result = 0.0
-        for i in range(len(self.history)):
-            result += self._get_normalized(i)
-        return result
-
-    def mean(self):
-        if not self.history:
-            return 0.0
-        total_time = (self.now - self.history[0].time) / self.base_interval
-        if total_time == 0.0:
-            return 0.0
-        return self.integral() / total_time
-
-    def anglemean(self):
-        if not self.history:
-            return 0.0
-        if self.now == self.history[0].time:
-            return self.history[0].value % 360
-        total_time = (self.now - self.history[0].time) / self.base_interval
-
-        Normalized = namedtuple('Normalized', ['time', 'value360', 'value180'])
-        normalized = [
-            Normalized(
-                self._get_interval(i) / self.base_interval,
-                self.history[i].value % 360,
-                self.history[i].value - 360
-                if self.history[i].value >= 180
-                else self.history[i].value)
-            for i in range(len(self.history))]
-
-        mean360 = sum(x.value360 * x.time for x in normalized) / total_time
-        mean180 = sum(x.value180 * x.time for x in normalized) / total_time
-        variance360 = sum(
-            (x.value360 - mean360) * (x.value360 - mean360) * x.time
-            for x in normalized)
-        variance180 = sum(
-            (x.value180 - mean180) * (x.value180 - mean180) * x.time
-            for x in normalized)
-
-        if variance180 < variance360:
-            if mean180 < 0:
-                mean180 += 360
-            return mean180
-        else:
-            return mean360
-
-    def min(self):
-        if self.history:
-            return min(e.value for e in self.history)
-        return 0
-
-    def max(self):
-        if self.history:
-            return max(e.value for e in self.history)
-        return 0
-
-    def sum(self):
-        return sum(e.value for e in self.history)
-
-    def decay_sum(self, fraction, **kwargs):
-        interval = datetime.timedelta(**kwargs).total_seconds()
-
-        def get_value(e):
-            diff = (self.now - e.time).total_seconds()
-            quotient = fraction ** (diff / interval)
-            result = e.value * quotient
-            return result
-
-        return lambda: sum(get_value(e) for e in self.history)
-
-    def get_functions(self):
-        return {
-            'integral': self.integral,
-            'mean': self.mean,
-            'anglemean': self.anglemean,
-            'min': self.min,
-            'max': self.max,
-            'sum': self.sum,
-            'decay_sum': self.decay_sum,
-        }
-
-
 class LimitedHistoryAggregatum:
     def __init__(self, interval):
         self.interval = interval
@@ -253,7 +150,7 @@ class LimitedHistoryAggregatum:
         raise NotImplemented
 
 
-class MinmaxAggregatum(LimitedHistoryAggregatum):
+class Minmax(LimitedHistoryAggregatum):
     def __init__(self, interval, function):
         super(MinmaxAggregatum, self).__init__(interval)
         self.value = None
@@ -383,7 +280,7 @@ class Anglemean(IntervalAggragatum):
 
 
 def DecaySum:
-    def init(self, interval, fraction):
+    def __init__(self, interval, fraction):
         self.interval = interval.total_seconds()
         self.fraction = fraction
         self.value = None
@@ -404,32 +301,39 @@ def DecaySum:
         return self.value
 
 
+def get_aggregatum(name, kwargs):
+    aggregators = {
+        "min": lambda: Minmax(kwargs['interval'], min),
+        "max": lambda: Minmax(kwargs['interval'], max),
+        "sum": lambda: Sum(kwargs['interval']),
+        "mean": lambda: Mean(kwargs['interval']),
+        "anglemean": lambda: Anglemean(kwargs['interval']),
+        "decay_sum": lambda: DecaySum(kwargs['interval'], kwargs['fraction']),
+    }
+    return aggregators[name]()
+
+
 class Aggregator:
     def __init__(self, app, callback):
         self.mutex = app.get_app('locker').get_mutex('Aggregator')
         self.app = app
-        self.manager = app.get_app(app.args['manager'])
-        self.expr = app.args['aggregator']
         self.base_interval = datetime.timedelta(
             **app.args.get('base_interval', {'minutes': 1}))
-        if 'interval' in app.args:
-            self.interval = datetime.timedelta(**app.args['interval'])
-        else:
-            self.interval = None
+        self.aggregatum = get_aggregatum(app.args['aggregator'], app.args)
         self.callback = callback
         self.timer = None
 
-        self.__start_timer()
+        manager = app.get_app(app.args['manager'])
+        for element in manager.get_history():
+            self.aggregatum.add(element)
+
         app.listen_state(self.on_change, self.manager.entity_id)
         with self.mutex.lock('init'):
+            self.__start_timer()
             self.__set_state()
 
     def __set_state(self):
-        history = self.manager.get_history(self.interval)
-        context = AggregatorContext(
-            history, self.manager.datetime(), self.base_interval, self.app)
-        func = eval(self.expr, {}, context.get_functions())
-        value = func()
+        value = self.aggregatum.get()
         self.callback(value)
 
     def __start_timer(self):
