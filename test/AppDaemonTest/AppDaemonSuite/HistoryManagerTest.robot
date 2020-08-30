@@ -40,17 +40,13 @@ Get History
     ...                ${date2}  ${2}
     ...                ${date3}  ${3}
     ...                ${date4}  ${0}
-    ${first_date} =  Subtract Time From Date  ${date4}  65 s
-    Limited History Should Be  65 s  ${first_date}  ${2}
-    ...                              ${date3}  ${3}
-    ...                              ${date4}  ${0}
 
 Old History Elements Are Removed
     [Setup]  Initialize With History Manager
     Set State  ${entity}  20
-    ${date1} =  Get Date
     Unblock For  20 min
     Set State  ${entity}  13
+    ${date1} =  Get Date
     Unblock For  20 min
     Set State  ${entity}  1
     ${date2} =  Get Date
@@ -60,8 +56,7 @@ Old History Elements Are Removed
     Unblock For  21 min
     Set State  ${entity}  54
     ${date4} =  Get Date
-    ${first_date} =  Subtract Time From Date  ${date4}  1 h
-    History Should Be  ${first_date}  ${13}
+    History Should Be  ${date1}  ${13}
     ...                ${date2}  ${1}
     ...                ${date3}  ${6}
     ...                ${date4}  ${54}
@@ -69,10 +64,15 @@ Old History Elements Are Removed
 Nothing Happens For A Long Time
     [Setup]  Initialize With History Manager
     Set State  ${entity}  42
-    Unblock For  2 min
-    ${now} =  Get Date
-    ${date} =  Subtract Time From Date  ${now}  1 min
-    Limited History Should Be  1 min  ${date}  ${42}
+    ${date1} =  Get Date
+    Unblock For  2 h
+    History Should Be  ${date1}  ${42}
+    Set State  ${entity}  10
+    ${date2} =  Get Date
+    History Should Be  ${date1}  ${42}
+    ...                ${date2}  ${10}
+    Unblock For  61 min
+    History Should Be  ${date2}  ${10}
 
 History Enabler
     [Setup]  Initialize With History Manager  HistoryEnabler
@@ -278,13 +278,10 @@ Decaying Sum Value
     Set State  ${entity}  1
     State Should Be As  ${aggregated_entity}  float  ${26.0}
     Unblock For  1 min
-    # 100*2^-3 + 1*2^-1 = 12.5 + 0.5
     State Should Be As  ${aggregated_entity}  float  ${13.0}
     Unblock For  1 min
-    # 100*2^-4 + 1*2^-2 = 6.25 + 0.25
     State Should Be As  ${aggregated_entity}  float  ${6.5}
     Unblock For  6 min
-    # 100*2^-10 + 1*2^-8 = 0.09765625 + 0.00390625
     State Should Be As  ${aggregated_entity}  float  ${0.1015625}
 
 Binary Input
@@ -346,15 +343,6 @@ History Should Be
     [Arguments]  @{expected_values}
     ${converted_expected_values} =  Convert History Input  ${expected_values}
     ${values} =  Call Function  call_on_app  ${name}  get_history
-    ${converted_values} =  Convert History Output  ${values}
-    Lists Should Be Equal  ${converted_values}  ${converted_expected_values}
-
-Limited History Should Be
-    [Arguments]  ${interval}  @{expected_values}
-    ${converted_expected_values} =  Convert History Input  ${expected_values}
-    ${arg_types} =  Create List  ${None}  ${None}  convert_timedelta
-    ${values} =  Call Function  call_on_app  ${name}  get_history  ${interval}
-    ...          arg_types=${arg_types}
     ${converted_values} =  Convert History Output  ${values}
     Lists Should Be Equal  ${converted_values}  ${converted_expected_values}
 

@@ -6,6 +6,7 @@ decay_sum_value:
         - locker
     manager: test_history_manager
     target: sensor.test_sensor_aggregated
+    aggregator: decay_sum
     interval:
-        minutes: 10
-    aggregator: decay_sum(0.5, minutes=1)
+        minutes: 1
+    fraction: 0.5

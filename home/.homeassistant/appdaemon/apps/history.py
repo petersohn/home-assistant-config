@@ -13,6 +13,19 @@ import traceback
 HistoryElement = namedtuple('HistoryElement', ['time', 'value'])
 
 
+def make_history_element(time, value):
+    try:
+        if value == 'off':
+            real_value = 0.0
+        elif value == 'on':
+            real_value = 1.0
+        else:
+            real_value = float(value)
+    except ValueError:
+        real_value = 0.0
+    return HistoryElement(time, real_value)
+
+
 class HistoryManager(hass.Hass):
     def initialize(self):
         self.max_interval = datetime.timedelta(
@@ -29,20 +42,9 @@ class HistoryManager(hass.Hass):
     def is_loaded(self):
         return self.loaded
 
-    def __make_history_element(self, time, value):
-        try:
-            if value == 'off':
-                real_value = 0.0
-            elif value == 'on':
-                real_value = 1.0
-            else:
-                real_value = float(value)
-        except ValueError:
-            real_value = 0.0
-        return HistoryElement(time, real_value)
-
     def __filter(self):
-        while len(self.history) >= 2 and self.history[1].time < self.datetime():
+        min_time = self.datetime() - self.max_interval
+        while len(self.history) >= 2 and self.history[1].time < min_time:
             self.history.popleft()
 
     def get_history(self):
@@ -94,7 +96,7 @@ class HistoryManager(hass.Hass):
                     self.history = deque(filter(
                         lambda element:
                             element.time <= now and element.value is not None,
-                        (self.__make_history_element(
+                        (make_history_element(
                             get_date(change['last_changed']),
                             change['state'])
                          for changes in loaded_history for change in changes)))
@@ -104,7 +106,9 @@ class HistoryManager(hass.Hass):
                 self.run_in(self.load_config, 2)
                 raise
 
+            self.log('Total loaded history size: {}'.format(len(self.history)))
             self.__filter()
+            self.log('Filtered history size: {}'.format(len(self.history)))
             self.listen_state(
                 self.on_changed, entity=self.entity_id)
             self.loaded = True
@@ -115,7 +119,7 @@ class HistoryManager(hass.Hass):
             if new == old:
                 return
             self.__filter()
-            self.history.append(self.__make_history_element(
+            self.history.append(make_history_element(
                 self.datetime(), self.get_state(self.entity_id)))
 
 
@@ -126,15 +130,15 @@ class LimitedHistoryAggregatum:
 
     def add(self, element):
         self.adding(element)
-        self.elements.append(element)
+        self.history.append(element)
         minimum_time = element.time - self.interval
-        while len(self.elements) >= 2 and self.elements[1].time < minimum_time:
-            removed_element = self.elements.popleft()
+        while len(self.history) >= 2 and self.history[1].time < minimum_time:
+            removed_element = self.history.popleft()
             self.removed(removed_element)
-        if self.elements[0].time < minimum_time:
-            old_element = self.elements[0]
-            self.elements[0] = HistoryElement(
-                minimum_time, self.elements[0].value)
+        if self.history[0].time < minimum_time:
+            old_element = self.history[0]
+            self.history[0] = HistoryElement(
+                minimum_time, self.history[0].value)
             self.trimmed(old_element)
 
     def adding(self, element):
@@ -217,6 +221,23 @@ class IntervalAggragatum(LimitedHistoryAggregatum):
         raise NotImplemented
 
 
+class Integral(IntervalAggragatum):
+    def __init__(self, interval):
+        super(Integral, self).__init__(interval)
+        self.sum = 0.0
+
+    def get(self):
+        return self.sum
+
+    def add_interval(self, interval, value):
+        seconds = interval.total_seconds()
+        self.sum += value * seconds
+
+    def remove_interval(self, interval, value):
+        seconds = interval.total_seconds()
+        self.sum -= value * seconds
+
+
 class Mean(IntervalAggragatum):
     def __init__(self, interval):
         super(Mean, self).__init__(interval)
@@ -279,7 +300,7 @@ class Anglemean(IntervalAggragatum):
         self.time -= seconds
 
 
-def DecaySum:
+class DecaySum:
     def __init__(self, interval, fraction):
         self.interval = interval.total_seconds()
         self.fraction = fraction
@@ -302,13 +323,16 @@ def DecaySum:
 
 
 def get_aggregatum(name, kwargs):
+    def get_interval():
+        return datetime.timedelta(**kwargs['interval'])
     aggregators = {
-        "min": lambda: Minmax(kwargs['interval'], min),
-        "max": lambda: Minmax(kwargs['interval'], max),
-        "sum": lambda: Sum(kwargs['interval']),
-        "mean": lambda: Mean(kwargs['interval']),
-        "anglemean": lambda: Anglemean(kwargs['interval']),
-        "decay_sum": lambda: DecaySum(kwargs['interval'], kwargs['fraction']),
+        "min": lambda: Minmax(get_interval(), min),
+        "max": lambda: Minmax(get_interval(), max),
+        "sum": lambda: Sum(get_interval()),
+        "integral": lambda: Integral(get_interval()),
+        "mean": lambda: Mean(get_interval()),
+        "anglemean": lambda: Anglemean(get_interval()),
+        "decay_sum": lambda: DecaySum(get_interval(), kwargs['fraction']),
     }
     return aggregators[name]()
 
@@ -324,10 +348,17 @@ class Aggregator:
         self.timer = None
 
         manager = app.get_app(app.args['manager'])
-        for element in manager.get_history():
+        history = manager.get_history()
+        for element in history:
+            self.app.log('Init Add: {}'.format(element))
+            self.aggregatum.add(element)
+        if not history:
+            element = make_history_element(
+                self.app.datetime(), self.app.get_state(manager.entity_id))
+            self.app.log('First Add: {}'.format(element))
             self.aggregatum.add(element)
 
-        app.listen_state(self.on_change, self.manager.entity_id)
+        app.listen_state(self.on_change, manager.entity_id)
         with self.mutex.lock('init'):
             self.__start_timer()
             self.__set_state()
@@ -345,6 +376,8 @@ class Aggregator:
 
     def on_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_change'):
+            self.app.log('Add: {}'.format(new))
+            self.aggregatum.add(HistoryElement(self.app.datetime(), new))
             self.app.cancel_timer(self.timer)
             self.timer = None
             self.__set_state()
@@ -352,6 +385,7 @@ class Aggregator:
 
     def on_interval(self, kwargs):
         with self.mutex.lock('on_interval'):
+            self.app.log('Time is up')
             self.__set_state()
 
 
