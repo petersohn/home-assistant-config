@@ -719,8 +719,9 @@ rain_decaying:
     manager: rain_history
     target: sensor.rain_decaying
     interval:
-        days: 10
-    aggregator: decay_sum(0.65, days=1)
+        days: 1
+    fraction: 0.65
+    aggregator: decay_sum
     attributes:
         unit_of_measurement: "mm"
         friendly_name: "Eső amortizált"
