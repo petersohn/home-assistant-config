@@ -168,7 +168,6 @@ class Minmax(LimitedHistoryAggregatum):
         self.function = function
 
     def adding(self, element):
-        self.app.log('Add: {}'.format(element.value))
         if self.value is None:
             if self.history:
                 self._reevaluate()
@@ -177,7 +176,6 @@ class Minmax(LimitedHistoryAggregatum):
         self.value = self.function(self.value, element.value)
 
     def removed(self, element):
-        self.app.log('remove: {}'.format(element.value))
         if abs(element.value - self.value) < 0.0001:
             self._reevaluate()
 
@@ -259,20 +257,17 @@ class Mean(IntervalAggragatum):
         self.time = 0.0
 
     def get(self):
-        self.app.log('sum={}, time={}'.format(self.sum, self.time))
         if self.time == 0.0:
             raise ValueError
         return self.sum / self.time
 
     def add_interval(self, interval, value):
         seconds = interval.total_seconds()
-        self.app.log('Add: t={}, v={}'.format(seconds, value))
         self.sum += value * seconds
         self.time += seconds
 
     def remove_interval(self, interval, value):
         seconds = interval.total_seconds()
-        self.app.log('Remove: t={}, v={}'.format(seconds, value))
         self.sum -= value * seconds
         self.time -= seconds
 
@@ -291,11 +286,6 @@ class Anglemean(IntervalAggragatum):
             raise ValueError
         varsum180 = self.sum180_2 - (self.sum180 ** 2) / self.time
         varsum360 = self.sum360_2 - (self.sum360 ** 2) / self.time
-        self.app.log('sum180={}, sum180_2={}, varsum180={}'.format(
-            self.sum180, self.sum180_2, varsum180))
-        self.app.log('sum360={}, sum360_2={}, varsum360={}'.format(
-            self.sum360, self.sum360_2, varsum360))
-        self.app.log('time={}'.format(self.time))
         if varsum180 < varsum360:
             result = self.sum180 / self.time
             if result < 0:
@@ -308,8 +298,6 @@ class Anglemean(IntervalAggragatum):
         value360 = value % 360  # this should be < 360 anyway
         value180 = value - 360 if value > 180 else value
         seconds = interval.total_seconds()
-        self.app.log('Add: t={}, v180={}, v360={}'.format(
-            seconds, value180, value360))
         self.sum180 += value180 * seconds
         self.sum180_2 += (value180 ** 2) * seconds
         self.sum360 += value360 * seconds
@@ -320,8 +308,6 @@ class Anglemean(IntervalAggragatum):
         value360 = value % 360  # this should be < 360 anyway
         value180 = value - 360 if value > 180 else value
         seconds = interval.total_seconds()
-        self.app.log('Remove: t={}, v180={}, v360={}'.format(
-            seconds, value180, value360))
         self.sum180 -= value180 * seconds
         self.sum180_2 -= (value180 ** 2) * seconds
         self.sum360 -= value360 * seconds
