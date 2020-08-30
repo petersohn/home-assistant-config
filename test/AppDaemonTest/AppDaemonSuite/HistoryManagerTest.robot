@@ -159,7 +159,8 @@ Mean Value
     Unblock For  1 min
     Set State  ${entity}  10
     Unblock For  1 min
-    State Should Be As  ${aggregated_entity}  Int  ${15}
+    # (0*1 + 20*1 + 10*1) / 3
+    State Should Be As  ${aggregated_entity}  Int  ${10}  
 
 Mean Value Irregular Intervals
     [Setup]  Initialize With History Manager  HistoryMeanValue
@@ -179,15 +180,8 @@ Anglemean
     [Setup]  Initialize With History Manager  HistoryAnglemeanValue
     Set State  ${entity}  30
     Unblock For  1 min
-    # 1*30 / 1
-    State Should Be As  ${aggregated_entity}  Int  ${30}
     Set State  ${entity}  60
-    Unblock For  1 min
-    # (1*30 + 1*60) / 2
-    State Should Be As  ${aggregated_entity}  Int  ${45}
-    Unblock For  1 min
-    # (1*30 + 2*60) / 3
-    State Should Be As  ${aggregated_entity}  Int  ${50}
+    Unblock For  2 min
     Set State  ${entity}  300
     Unblock For  1 min
     # (1*30 + 2*60 + 1*-60) / 4
@@ -218,6 +212,7 @@ Anglemean
 Min Max Sum Values
     [Setup]  Initialize With History Manager  HistoryMinmaxValue
     Set State  ${entity}  20
+    Unblock For  5 min
     State Should Be As  ${min_entity}  Int  ${20}
     State Should Be As  ${max_entity}  Int  ${20}
     State Should Be As  ${sum_entity}  Int  ${20}
@@ -289,15 +284,15 @@ Binary Input
     Unblock Until  5 min
     Turn On  ${switch_entity}
     Unblock For  2 min
-    # 2*1 / 2
-    State Should Be As  ${aggregated_entity}  percent  ${100}
+    # 2*1 / 5
+    State Should Be As  ${aggregated_entity}  percent  ${40}
     Turn Off  ${switch_entity}
     Unblock For  1 min
-    # (2*1 + 1*0) / 3
-    State Should Be As  ${aggregated_entity}  percent  ${66}
+    # (2*1 + 1*0) / 5
+    State Should Be As  ${aggregated_entity}  percent  ${40}
     Unblock For  1 min
-    # (2*1 + 2*0) / 4
-    State Should Be As  ${aggregated_entity}  percent  ${50}
+    # (2*1 + 2*0) / 5
+    State Should Be As  ${aggregated_entity}  percent  ${40}
     Unblock For  1 min
     # (2*1 + 3*0) / 5
     State Should Be As  ${aggregated_entity}  percent  ${40}
