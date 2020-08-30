@@ -18,6 +18,12 @@ views:
         title: Ajtók
         show_header_toggle: false
       - type: entities
+        state_color: true
+        entities:
+          - switch.mosquito_killer_bedroom
+          - input_select.mosquito_killer_bedroom
+        show_header_toggle: false
+      - type: entities
         entities:
           - sensor.date
           - sensor.time
@@ -464,6 +470,9 @@ views:
           - sensor.wind_direction
           - sensor.wind_direction_average
         show_header_toggle: false
+      - type: sensor
+        entity: sensor.light_shadow
+        graph: line
       - type: vertical-stack
         cards:
           - type: horizontal-stack

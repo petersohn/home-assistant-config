@@ -312,6 +312,10 @@ switch.hot_water_pump:
   friendly_name: "Meleg víz keringető"
   icon: mdi:shower-head
 
+switch.mosquito_killer_bedroom:
+  friendly_name: "Szúnyogirtó hálószoba"
+  icon: mdi:bee
+
 switch.well:
   friendly_name: "Kút"
   icon: mdi:water-pump

@@ -108,6 +108,15 @@
 
 - trigger:
       platform: mqtt
+      topic: home/input_select/mosquito_killer_bedroom/set
+  action:
+      - service: input_select.select_option
+        data_template:
+            entity_id: input_select.mosquito_killer_bedroom
+            option: '{{ trigger.payload }}'
+
+- trigger:
+      platform: mqtt
       topic: home/input_select/presence_mode/set
   action:
       - service: input_select.select_option

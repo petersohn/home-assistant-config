@@ -677,6 +677,12 @@ switch:
     state_topic: home/switches/lights/outside/6/state
     payload_on: 1
     payload_off: 0
+  - platform: mqtt
+    name: mosquito_killer_bedroom
+    command_topic: home/switches/mosquito_killer/bedroom/set
+    state_topic: home/switches/mosquito_killer/bedroom/state
+    payload_on: 1
+    payload_off: 0
 
 input_select:
     light_driveway:
@@ -786,6 +792,13 @@ input_select:
         initial: "auto"
     hot_water_pump:
         name: Melegvíz
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        initial: "auto"
+    mosquito_killer_bedroom:
+        name: Szúnyogirtó hálószoba
         options:
             - "auto"
             - "on"
