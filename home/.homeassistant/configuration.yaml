@@ -209,6 +209,11 @@ sensor:
     unit_of_measurement: "%"
     name: light_shadow
     value_template: "{{ value | float / 10.24 }}"
+  - platform: mqtt
+    state_topic: home/sensors/light/sunlight
+    unit_of_measurement: "%"
+    name: light_sunlight
+    value_template: "{{ value | float / 10.24 }}"
 
   - platform: mqtt
     state_topic: home/devices/well_controller/availability

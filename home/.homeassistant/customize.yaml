@@ -497,3 +497,7 @@ binary_sensor.window_bedroom:
 sensor.light_shadow:
   friendly_name: "Fény árnyékban"
   icon: mdi:weather-sunset
+
+sensor.light_sunlight:
+  friendly_name: "Fény napfény"
+  icon: mdi:weather-sunny

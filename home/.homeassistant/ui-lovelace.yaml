@@ -473,6 +473,9 @@ views:
       - type: sensor
         entity: sensor.light_shadow
         graph: line
+      - type: sensor
+        entity: sensor.light_sunlight
+        graph: line
       - type: vertical-stack
         cards:
           - type: horizontal-stack
