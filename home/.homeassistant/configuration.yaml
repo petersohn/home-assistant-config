@@ -864,6 +864,8 @@ mqtt_statestream:
   include:
     domains:
       - input_select
+      - sensor
+      - binary_sensor
 
 influxdb:
   host: !secret influxdb_address
