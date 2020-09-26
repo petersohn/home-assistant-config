@@ -501,3 +501,7 @@ sensor.light_shadow:
 sensor.light_sunlight:
   friendly_name: "Fény napfény"
   icon: mdi:weather-sunny
+
+switch.heater:
+  friendly_name: "Fűtés"
+  icon: mdi:radiator

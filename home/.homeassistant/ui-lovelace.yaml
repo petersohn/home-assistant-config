@@ -8,6 +8,9 @@ views:
         entities:
           - input_select.presence_mode
           - device_tracker.homeassistant_owntrackssamsung
+      - type: button
+        entity: switch.heater
+        state_color: true
       - type: entities
         state_color: true
         entities:

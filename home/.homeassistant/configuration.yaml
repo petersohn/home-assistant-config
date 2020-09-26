@@ -688,6 +688,12 @@ switch:
     state_topic: home/switches/mosquito_killer/bedroom/state
     payload_on: 1
     payload_off: 0
+  - platform: mqtt
+    name: heater
+    command_topic: home/switches/heater/main/set
+    state_topic: home/switches/heater/main/status
+    payload_on: 1
+    payload_off: 0
 
 input_select:
     light_driveway:
