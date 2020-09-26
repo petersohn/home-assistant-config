@@ -53,6 +53,19 @@
             "pin": 14
         },
         {
+            "type": "input",
+            "name": "button",
+            "pin": 15
+        },
+        {
+            "type": "output",
+            "name": "light",
+            "commandTopic": "home/switches/lights/bathroom/set",
+            "default": 0,
+            "invert": true,
+            "pin": 16
+        },
+        {
             "type": "mqtt",
             "name": "presence_mode",
             "topic": "home/input_select/presence_mode/state"
@@ -104,6 +117,19 @@
             "value": 0,
             "template": "sleep",
             "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "light",
+            "topic": "home/switches/lights/bathroom/state",
+            "retain": true
+        },
+        {
+            "type": "command",
+            "interface": "button",
+            "target": "light",
+            "command": "toggle",
+            "value": "1"
         },
         {
             "type": "command",
