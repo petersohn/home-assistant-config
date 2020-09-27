@@ -8,9 +8,12 @@ views:
         entities:
           - input_select.presence_mode
           - device_tracker.homeassistant_owntrackssamsung
-      - type: button
-        entity: switch.heater
+      - type: entities
         state_color: true
+        entities:
+          - input_boolean.wood_heating
+          - climate.heater
+        show_header_toggle: false
       - type: entities
         state_color: true
         entities:

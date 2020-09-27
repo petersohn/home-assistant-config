@@ -695,6 +695,24 @@ switch:
     payload_on: 1
     payload_off: 0
 
+climate:
+  - platform: generic_thermostat
+    name: heater
+    heater: switch.heater
+    target_sensor: sensor.temperature_bedroom_upper
+    min_temp: 10
+    max_temp: 25
+    ac_mode: false
+    cold_tolerance: 0.5
+    hot_tolerance: 0.5
+    min_cycle_duration:
+      minutes: 5
+    keep_alive:
+      minutes: 1
+    initial_hvac_mode: "off"
+    away_temp: 12
+    precision: 0.5
+
 input_select:
     light_driveway:
         name: Bejáró világítás
@@ -829,7 +847,9 @@ input_boolean:
   sprinkler:
     name: "Locsolás"
     icon: mdi:sprinkler-variant
-    initial: true
+  wood_heating:
+    name: "Fafűtés"
+    icon: mdi:pine-tree-fire
 
 input_datetime:
   hot_water_monday:

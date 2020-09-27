@@ -179,3 +179,46 @@
       - service: homeassistant.turn_off
         data_template:
             entity_id: switch.light_attic_upstairs
+
+- trigger:
+      platform: state
+      entity_id: input_select.presence_mode
+      to: 'home'
+  condition:
+      condition: state
+      entity_id: input_boolean.wood_heating
+      state: 'on'
+  action:
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.heater
+            hvac_mode: 'off'
+
+- trigger:
+      platform: state
+      entity_id: input_select.presence_mode
+      from: 'home'
+  condition:
+      condition: state
+      entity_id: input_boolean.wood_heating
+      state: 'on'
+  action:
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.heater
+            hvac_mode: 'heat'
+
+- trigger:
+      platform: state
+      entity_id: input_boolean.wood_heating
+      from: 'off'
+      to: 'on'
+  condition:
+      condition: state
+      entity_id: input_select.presence_mode
+      state: 'home'
+  action:
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.heater
+            hvac_mode: 'off'
