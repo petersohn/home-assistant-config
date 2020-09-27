@@ -1,0 +1,213 @@
+{
+    "debug": true,
+    "name": "main_panel",
+    "availabilityTopic": "home/devices/main_panel/availability",
+    "debugTopic": "home/devices/main_panel/debug",
+    "interfaces": [
+        {
+            "type": "output",
+            "name": "heater",
+            "commandTopic": "home/switches/heater/main/set",
+            "invert": true,
+            "default": 0,
+            "pin": 0
+        },
+        {
+            "type": "dht",
+            "name": "dht",
+            "interval": 60,
+            "pin": 2
+        },
+        {
+            "type": "input",
+            "name": "button_home",
+            "pin": 3
+        },
+        {
+            "type": "output",
+            "name": "led_sleep",
+            "default": 0,
+            "pin": 4
+        },
+        {
+            "type": "input",
+            "name": "button_sleep",
+            "pin": 5
+        },
+        {
+            "type": "output",
+            "name": "led_green",
+            "default": 0,
+            "pin": 12
+        },
+        {
+            "type": "output",
+            "name": "led_red",
+            "default": 0,
+            "pin": 13
+        },
+        {
+            "type": "output",
+            "name": "led_home",
+            "default": 0,
+            "pin": 14
+        },
+        {
+            "type": "input",
+            "name": "button",
+            "pin": 15
+        },
+        {
+            "type": "output",
+            "name": "light",
+            "commandTopic": "home/switches/lights/bathroom/set",
+            "default": 0,
+            "invert": true,
+            "pin": 16
+        },
+        {
+            "type": "mqtt",
+            "name": "presence_mode",
+            "topic": "home/input_select/presence_mode/state"
+        },
+        {
+            "type": "mqtt",
+            "name": "hot_water_temperature",
+            "topic": "home/sensor/temperature_hot_water/state"
+        },
+        {
+            "type": "mqtt",
+            "name": "cellar_controller_available",
+            "topic": "home/binary_sensor/cellar_controller_available/state"
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/temperature/corridor",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "dht",
+            "topic": "home/sensors/humidity/corridor",
+            "template": "%2",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "heater",
+            "topic": "home/switches/heater/main/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "button_home",
+            "topic": "home/input_select/presence_mode/set",
+            "value": 0,
+            "template": "home",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "button_sleep",
+            "topic": "home/input_select/presence_mode/set",
+            "value": 0,
+            "template": "sleep",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "light",
+            "topic": "home/switches/lights/bathroom/state",
+            "retain": true
+        },
+        {
+            "type": "command",
+            "interface": "button",
+            "target": "light",
+            "command": "toggle",
+            "value": "1"
+        },
+        {
+            "type": "command",
+            "interface": "presence_mode",
+            "target": "led_home",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": "s=",
+                    "ops": [{"type": "value"}, "home"]
+                },
+                "then": "1",
+                "else": "0"
+            }
+        },
+        {
+            "type": "command",
+            "interface": "presence_mode",
+            "target": "led_sleep",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": "s=",
+                    "ops": [{"type": "value"}, "sleep"]
+                },
+                "then": "1",
+                "else": "0"
+            }
+        },
+        {
+            "type": "command",
+            "interface": "hot_water_temperature",
+            "target": "led_red",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": "s!=",
+                    "ops": [{
+                        "type": "value",
+                        "interface": "cellar_controller_available"
+                    }, "on"]
+                },
+                "then": "blink 500 500",
+                "else": {
+                    "type": "if",
+                    "cond": {
+                        "type": "<",
+                        "ops": [{"type": "value"}, "40"]
+                    },
+                    "then": "1",
+                    "else": "0"
+                }
+            }
+        },
+        {
+            "type": "command",
+            "interface": "hot_water_temperature",
+            "target": "led_green",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": "s!=",
+                    "ops": [{
+                        "type": "value",
+                        "interface": "cellar_controller_available"
+                    }, "on"]
+                },
+                "then": "blink 500 500",
+                "else": {
+                    "type": "if",
+                    "cond": {
+                        "type": ">=",
+                        "ops": [{"type": "value"}, "40"]
+                    },
+                    "then": "1",
+                    "else": "0"
+                }
+            }
+        }
+    ]
+}

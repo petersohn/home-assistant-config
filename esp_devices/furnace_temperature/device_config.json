@@ -39,6 +39,14 @@
             "default": false,
             "invert": true,
             "pin": 4
+        },
+        {
+            "type": "output",
+            "name": "heater",
+            "commandTopic": "home/switches/heater/main/set",
+            "default": false,
+            "invert": true,
+            "pin": 12
         }
     ],
     "actions": [
@@ -87,6 +95,12 @@
             "type": "publish",
             "interface": "hot_water_pump",
             "topic": "home/switches/hot_water_pump/status",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "heater",
+            "topic": "home/switches/heater/main/status",
             "retain": true
         },
         {
