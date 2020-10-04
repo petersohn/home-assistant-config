@@ -902,6 +902,17 @@ influxdb:
   password: !secret influxdb_password
   database: !secret influxdb_database
 
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_api_key
+    allowed_chat_ids:
+      - !secret telegram_chat_id
+
+notify:
+  - name: telegram_alert
+    platform: telegram
+    chat_id: !secret telegram_chat_id
+
 system_health:
 
 automation: !include automations.yaml
