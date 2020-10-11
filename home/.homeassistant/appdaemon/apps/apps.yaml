@@ -407,6 +407,19 @@ driveway_lower_motion_sensor:
     enabler: motion_sensor_driveway_lower_enabler
     time: 2
 
+garage_driveway_motion_sensor:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_driveway
+        - sun_enabler_night
+        - locker
+    sensor: binary_sensor.motion_sensor_garage
+    targets:
+        - auto_switch_light_driveway
+    enabler: sun_enabler_night
+    time: 2
+
 garage_motion_sensor:
     class: TimerSwitch
     module: timer_switch
