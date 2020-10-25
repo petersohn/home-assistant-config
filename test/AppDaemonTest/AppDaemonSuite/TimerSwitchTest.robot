@@ -82,8 +82,8 @@ Start When Motion At Initialization Expr
     [Setup]  Initialize  00:00:00  TimerSwitchExpr  on
     Start When Motion At Initialization
 
-Edge Trigger
-    [Setup]  Initialize  00:00:00  TimerSwitchEdgeTrigger
+Timer Sequence
+    [Setup]  Initialize  00:00:00  TimerSequence
     Set Enabled State  ${enabler}  disable
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector}  on
@@ -115,8 +115,8 @@ Edge Trigger
     State Should Change At  ${switch}  on   5 min 30 sec
     State Should Change At  ${switch}  off  6 min 30 sec
 
-Multi Sequence
-    [Setup]  Initialize  00:00:00  TimerSwitchMultiSequence
+Multi Timer Sequence
+    [Setup]  Initialize  00:00:00  TimerSequenceMultiSequence
 
     Schedule Call At  20 sec
     ...    set_sensor_state  ${motion_detector}  on
@@ -283,7 +283,7 @@ Start When Motion At Initialization
     ...    set_sensor_state  ${motion_detector}  off
 
     State Should Be  ${switch}  on
-    State Should Change At  ${switch}  off  1 min 30 sec
+    State Should Change At  ${switch}  off  1 min 30 sec 30 sec
 
 Initialize
     [Arguments]  ${start_time}  ${config}  ${sensor_state}=off
