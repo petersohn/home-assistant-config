@@ -121,7 +121,7 @@ class TimerSwitch(hass.Hass):
             self._set_enabled()
 
     def _set_enabled(self):
-        enabled = self.enabler.is_enabled()
+        enabled = self.enabler is None or self.enabler.is_enabled()
         if self.was_enabled != enabled:
             self.was_enabled = enabled
             self.log('enabled changed to {}'.format(enabled))
