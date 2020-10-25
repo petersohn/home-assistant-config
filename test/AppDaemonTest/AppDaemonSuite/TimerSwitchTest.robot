@@ -283,7 +283,7 @@ Start When Motion At Initialization
     ...    set_sensor_state  ${motion_detector}  off
 
     State Should Be  ${switch}  on
-    State Should Change At  ${switch}  off  1 min 30 sec 30 sec
+    State Should Change At  ${switch}  off  1 min 30 sec
 
 Initialize
     [Arguments]  ${start_time}  ${config}  ${sensor_state}=off

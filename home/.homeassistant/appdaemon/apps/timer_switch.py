@@ -103,11 +103,12 @@ class TimerSwitch(hass.Hass):
             self.enabler = None
             self.enabler_id = None
 
-        self.timer = Timer(self, self.args['time'], self.on_timeout)
-        self.was_enabled = None
-        self.is_on = self.trigger.is_on()
         self.mutex = self.get_app('locker').get_mutex('TimerSwitch')
-        self._set_enabled()
+        with self.mutex.lock('initialize'):
+            self.timer = Timer(self, self.args['time'], self.on_timeout)
+            self.was_enabled = None
+            self.is_on = self.trigger.is_on()
+            self.run_in(lambda _: self.on_enabled_changed(), 0)
 
     def terminate(self):
         self.trigger.cleanup()
