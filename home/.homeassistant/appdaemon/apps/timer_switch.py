@@ -27,7 +27,7 @@ class Trigger:
         if self.expression is not None:
             self.expression.cleanup()
 
-    def _is_on(self):
+    def is_on(self):
         if self.expression is not None:
             return self.saved_state
         else:
@@ -98,15 +98,17 @@ class TimerSwitch(hass.Hass):
         enabler = self.args.get('enabler')
         if enabler is not None:
             self.enabler = self.get_app(enabler)
-            self.enabler_id = self.enabler.on_change(self.on_enabled_chaged)
+            self.enabler_id = self.enabler.on_change(self.on_enabled_changed)
         else:
             self.enabler = None
             self.enabler_id = None
 
         self.timer = Timer(self, self.args['time'], self.on_timeout)
         self.was_enabled = None
-        self.is_on = False
+        self.is_on = self.trigger.is_on()
         self.mutex = self.get_app('locker').get_mutex('TimerSwitch')
+        self.log('kfoasttz 1')
+        self.run_in(lambda _: self.on_enabled_changed, 1)
 
     def terminate(self):
         self.trigger.cleanup()
@@ -114,8 +116,9 @@ class TimerSwitch(hass.Hass):
         if self.enabler is not None:
             self.enabler.remove_callback(self.enabler_id)
 
-    def on_enabled_chaged(self):
-        with self.mutex.lock('on_enabled_chaged'):
+    def on_enabled_changed(self):
+        self.log('kfoasttz 2')
+        with self.mutex.lock('on_enabled_changed'):
             enabled = self.enabler.is_enabled()
             if self.was_enabled != enabled:
                 self.was_enabled = enabled
@@ -175,7 +178,7 @@ class TimerSequence(hass.Hass):
         enabler = self.args.get('enabler')
         if enabler is not None:
             self.enabler = self.get_app(enabler)
-            self.enabler_id = self.enabler.on_change(self.on_enabled_chaged)
+            self.enabler_id = self.enabler.on_change(self.on_enabled_changed)
         else:
             self.enabler = None
             self.enabler_id = None
@@ -190,8 +193,8 @@ class TimerSequence(hass.Hass):
         if self.enabler is not None:
             self.enabler.remove_callback(self.enabler_id)
 
-    def on_enabled_chaged(self):
-        with self.mutex.lock('on_enabled_chaged'):
+    def on_enabled_changed(self):
+        with self.mutex.lock('on_enabled_changed'):
             if not self.enabler.is_enabled() \
                     and self.current_index is not None:
                 element = self.sequence[self.current_index]
