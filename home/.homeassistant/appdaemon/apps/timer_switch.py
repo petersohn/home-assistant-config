@@ -107,12 +107,10 @@ class TimerSwitch(hass.Hass):
         self.was_enabled = None
         self.is_on = self.trigger.is_on()
         self.mutex = self.get_app('locker').get_mutex('TimerSwitch')
-        self.log('kfoasttz 1')
         self._set_enabled()
 
     def terminate(self):
         self.trigger.cleanup()
-        self.log('zong')
         self.targets.turn_off()
         if self.enabler is not None:
             self.enabler.remove_callback(self.enabler_id)
@@ -122,7 +120,6 @@ class TimerSwitch(hass.Hass):
             self._set_enabled()
 
     def _set_enabled(self):
-        self.log('kfoasttz 2')
         enabled = self.enabler.is_enabled()
         if self.was_enabled != enabled:
             self.was_enabled = enabled
@@ -132,7 +129,6 @@ class TimerSwitch(hass.Hass):
                     self.__start()
             else:
                 self.timer.stop()
-                self.log('zing')
                 self.targets.turn_off()
 
     def __handle_start(self):
