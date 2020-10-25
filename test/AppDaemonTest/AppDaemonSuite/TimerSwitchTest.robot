@@ -74,6 +74,14 @@ Stop At Disabling And Restart At Enabling While In Motion Expr
     [Setup]  Initialize  00:00:00  TimerSwitchExpr
     Stop At Disabling And Restart At Enabling While In Motion
 
+Start When Motion At Initialization Normal
+    [Setup]  Initialize  00:00:00  TimerSwitchNormal  on
+    Start When Motion At Initialization
+
+Start When Motion At Initialization Expr
+    [Setup]  Initialize  00:00:00  TimerSwitchExpr  on
+    Start When Motion At Initialization
+
 Edge Trigger
     [Setup]  Initialize  00:00:00  TimerSwitchEdgeTrigger
     Set Enabled State  ${enabler}  disable
@@ -269,6 +277,13 @@ Stop At Disabling And Restart At Enabling While In Motion
     State Should Change At  ${switch}  off  30 sec
     State Should Change At  ${switch}  on   1 min
     State Should Change At  ${switch}  off  2 min 30 sec
+
+Start When Motion At Initialization
+    Schedule Call At  30 sec
+    ...    set_sensor_state  ${motion_detector}  off
+
+    State Should Be  ${switch}  on
+    State Should Change At  ${switch}  off  1 min 30 sec
 
 Initialize
     [Arguments]  ${start_time}  ${config}  ${sensor_state}=off

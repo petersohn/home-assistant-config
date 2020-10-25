@@ -43,6 +43,8 @@ class AutoSwitch(hass.Hass):
         with self.mutex.lock('auto_turn_on'):
             self.log('turn on')
             if self.reentrant:
+                if self.state is None:
+                    self.state = 0
                 self.__update(self.state + 1)
             else:
                 self.__update(1)
