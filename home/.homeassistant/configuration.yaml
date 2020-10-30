@@ -710,7 +710,7 @@ climate:
     keep_alive:
       seconds: 15
     initial_hvac_mode: "off"
-    away_temp: 12
+    away_temp: 10
     precision: 0.5
 
 input_select:
