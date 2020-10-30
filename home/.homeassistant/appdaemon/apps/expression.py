@@ -16,7 +16,7 @@ class Evaluator:
 
 
 class ExpressionEvaluator:
-    def __init__(self, app, expr, callback):
+    def __init__(self, app, expr, callback, extra_evaluators={}):
         self.mutex = app.get_app('locker').get_mutex('ExpressionEvaluator')
 
         self.app = app
@@ -25,6 +25,7 @@ class ExpressionEvaluator:
         self.entities = set()
         self.enablers = {}
         self.evaluators = self._create_evaluators()
+        self.evaluators.update(extra_evaluators)
         self.timer = None
 
     def cleanup(self):
@@ -45,7 +46,7 @@ class ExpressionEvaluator:
 
     def _get_now(self):
         now_ts = int(self.app.get_now_ts())
-        if self.timer is None:
+        if self.callback is not None and self.timer is None:
             self.timer = self.app.run_every(
                 self.fire_callback,
                 datetime.datetime.fromtimestamp(now_ts + 1), 1)
@@ -55,7 +56,7 @@ class ExpressionEvaluator:
         if '.' not in entity:
             return Evaluator(self._get_value, entity + '.')
 
-        if entity not in self.entities:
+        if self.callback is not None and entity not in self.entities:
             self.app.listen_state(self._on_entity_change, entity=entity)
             self.entities.add(entity)
         value = self.app.get_state(entity)
@@ -70,7 +71,7 @@ class ExpressionEvaluator:
 
     def _get_enabled(self, enabler):
         enabler_app = self.app.get_app(enabler)
-        if enabler not in self.enablers:
+        if self.callback is not None and enabler not in self.enablers:
             id = enabler_app.on_change(lambda: self._on_enabler_change())
             self.enablers[enabler] = id
         value = enabler_app.is_enabled()
@@ -98,6 +99,9 @@ class ExpressionEvaluator:
 
     def fire_callback(self, kwargs):
         with self.mutex.lock('fire_callback'):
+            if self.callback is None:
+                self.error('No callback')
+                return
             value = self._get()
             self.callback(value)
 
