@@ -190,6 +190,11 @@ State Should Be
     ${value} =  Get State  ${entity_id}
     Should Be Equal  ${value}  ${expected_value}
 
+Attribute Should Be
+    [Arguments]  ${entity_id}  ${attribute}  ${expected_value}
+    ${value} =  Get State  ${entity_id}  attribute=${attribute}
+    Should Be Equal  ${value}  ${expected_value}
+
 State Should Not Be
     [Arguments]  ${entity_id}  ${not_expected_value}
     ${value} =  Get State  ${entity_id}
@@ -201,8 +206,8 @@ State Should Be As
     Should Be Equal  ${value}  ${expected_value}
 
 Set State
-    [Arguments]  ${entity_id}  ${value}
-    Call Function  set_sensor_state  ${entity_id}  ${value}
+    [Arguments]  ${entity_id}  ${value}  &{attributes}
+    Call Function  set_sensor_state  ${entity_id}  ${value}  ${attributes}
     Wait Until State Is Stable
 
 Select Option

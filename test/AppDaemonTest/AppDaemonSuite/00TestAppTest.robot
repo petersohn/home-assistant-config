@@ -65,6 +65,13 @@ Set State
     Wait Until State Becomes  ${test_sensor}  ${new_sensor_value}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
+Set Attribute
+    Set State  ${test_sensor}  foobar  a=attr1  b=attr2
+    Wait Until State Becomes  ${test_sensor}  foobar
+    State Should Be  ${test_sensor}  foobar
+    Attribute Should Be  ${test_sensor}  a  attr1
+    Attribute Should Be  ${test_sensor}  b  attr2
+
 Select Option
     Select Option  ${test_selector}  two
     Wait Until State Becomes  ${test_selector}  two

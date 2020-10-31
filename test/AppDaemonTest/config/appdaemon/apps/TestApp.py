@@ -212,10 +212,10 @@ class TestApp(hass.Hass):
             pending_state.listener = self.listen_state(
                 self.__state_set, entity)
 
-    def set_sensor_state(self, entity, state):
+    def set_sensor_state(self, entity, state, attributes=None):
         state = str(state)
         self.__block_for_state_change(entity, state)
-        self.set_state(entity, state=state)
+        self.set_state(entity, state=state, attributes=attributes)
 
     def select_option(self, entity, state):
         self.log('asd')
