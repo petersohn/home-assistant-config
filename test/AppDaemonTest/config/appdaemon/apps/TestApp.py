@@ -215,7 +215,10 @@ class TestApp(hass.Hass):
     def set_sensor_state(self, entity, state, attributes=None):
         state = str(state)
         self.__block_for_state_change(entity, state)
-        self.set_state(entity, state=state, attributes=attributes)
+        if not attributes:
+            self.set_state(entity, state=state)
+        else:
+            self.set_state(entity, state=state, attributes=attributes)
 
     def select_option(self, entity, state):
         self.log('asd')
