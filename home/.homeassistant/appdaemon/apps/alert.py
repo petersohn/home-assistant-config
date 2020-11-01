@@ -64,10 +64,7 @@ class AlertAggregator(hass.Hass):
             self._turn_on()
             return
 
-        a = [source.get_trigger_value() for source in self.sources]
-        self.log('on_change: {}'.format(a))
-
-        if not any(a):
+        if not any(source.get_trigger_value() for source in self.sources):
             self.log('Resetting alert')
             self._turn_off()
             return

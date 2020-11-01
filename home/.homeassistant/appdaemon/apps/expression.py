@@ -100,15 +100,10 @@ class ExpressionEvaluator:
 
     def fire_callback(self, kwargs):
         if self.callback is None:
-            self.app.log('No callback')
             return
-        self.app.log('begin')
         with self.mutex.lock('fire_callback'):
-            self.app.log('got lock')
             value = self._get()
-            self.app.log('callback')
             self.callback(value)
-            self.app.log('end')
 
 
 class Expression(hass.Hass):
