@@ -16,7 +16,7 @@ class Evaluator:
 
 
 class ExpressionEvaluator:
-    def __init__(self, app, expr, callback, extra_evaluators={}):
+    def __init__(self, app, expr, callback, extra_values={}):
         self.mutex = app.get_app('locker').get_mutex('ExpressionEvaluator')
 
         self.app = app
@@ -25,8 +25,9 @@ class ExpressionEvaluator:
         self.entities = set()
         self.enablers = {}
         self.evaluators = self._create_evaluators()
-        self.evaluators.update(extra_evaluators)
+        self.evaluators.update(extra_values)
         self.timer = None
+        self.get()
 
     def cleanup(self):
         for enabler, id in self.enablers.items():
@@ -81,7 +82,7 @@ class ExpressionEvaluator:
         self.app.run_in(self.fire_callback, 0)
 
     def _on_entity_change(self, entity, attribute, old, new, kwargs):
-        # self.app.log('state change({}): {} -> {}'.format(entity, old, new))
+        self.app.log('state change({}): {} -> {}'.format(entity, old, new))
         if new != old:
             self.fire_callback({})
 
@@ -98,12 +99,16 @@ class ExpressionEvaluator:
             return self._get()
 
     def fire_callback(self, kwargs):
+        if self.callback is None:
+            self.app.log('No callback')
+            return
+        self.app.log('begin')
         with self.mutex.lock('fire_callback'):
-            if self.callback is None:
-                self.error('No callback')
-                return
+            self.app.log('got lock')
             value = self._get()
+            self.app.log('callback')
             self.callback(value)
+            self.app.log('end')
 
 
 class Expression(hass.Hass):

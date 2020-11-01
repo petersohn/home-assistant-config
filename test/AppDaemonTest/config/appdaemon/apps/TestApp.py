@@ -200,8 +200,8 @@ class TestApp(hass.Hass):
     def __block_for_state_change(self, entity, state):
         old_state = self.get_state(entity)
         self.log(
-            'state change initiated: old='
-            + str(old_state) + ' state=' + str(state))
+            'state change initiated for {}: old={} target={}'.format(
+                entity, old_state, state))
         if str(old_state) == str(state):
             return
         Blocker.set_state_blocker.block()
