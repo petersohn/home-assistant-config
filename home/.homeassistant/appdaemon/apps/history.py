@@ -119,7 +119,7 @@ class HistoryManager(hass.Hass):
                 return
             self.__filter()
             self.history.append(make_history_element(
-                self.datetime(), self.get_state(self.entity_id)))
+                self.datetime(), new))
 
 
 class Aggregatum:
