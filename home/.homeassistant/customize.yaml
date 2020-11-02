@@ -505,3 +505,6 @@ sensor.light_sunlight:
 switch.heater:
   friendly_name: "Fűtés"
   icon: mdi:radiator
+
+binary_sensor.availability_alert:
+  icon: mdi:flash-alert
