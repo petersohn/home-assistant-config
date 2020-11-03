@@ -913,6 +913,27 @@ notify:
     platform: telegram
     chat_id: !secret telegram_chat_id
 
+alert:
+  availability:
+    name: Availability
+    message: |
+      Néhány ESP nem működik.
+
+      ```
+      {{state_attr('binary_sensor.availability_alert', 'text')}}
+      ```
+    entity_id: binary_sensor.availability_alert
+    state: 'on'
+    repeat:
+      - 5
+    can_acknowledge: true
+    skip_first: true
+    notifiers:
+      - telegram_alert
+    data:
+      inline_keyboard:
+        - 'OK:/acknowledge_alert availability'
+
 system_health:
 
 automation: !include automations.yaml

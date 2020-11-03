@@ -222,3 +222,13 @@
         data:
             entity_id: climate.heater
             hvac_mode: 'off'
+
+- trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: '/acknowledge_alert'
+  action:
+      service: alert.turn_off
+      data:
+          entity_id: alert.{{ trigger.event_data.args }}

@@ -875,7 +875,11 @@ availability_alerts:
     class: AlertAggregator
     target: binary_sensor.availability_alert
     trigger_expr: not v[name]
-    text_expr: name + 'nem működik'
+    text_expr: name[14:-10]
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
     sources:
         - binary_sensor.furnace_temperature_available
         - binary_sensor.well_controller_available
