@@ -9,14 +9,21 @@ jobs:
         steps:
             - checkout
             - run: git submodule update --init --recursive
-            - run: |
-                ./test/AppDaemonTest/run-test --loglevel=trace \
-                    --removekeywords WUKS -t 'Start Time'
-            - run: |
-                ./test/AppDaemonTest/run-test --loglevel=trace \
-                    --xunit=robot.xml --removekeywords WUKS
             - run:
+                name: Initialize test environment before parallel run
                 command: |
+                    ./test/AppDaemonTest/run-test --loglevel=trace \
+                        --removekeywords WUKS -t 'Start Time'
+            - run:
+                name: run tests
+                command: |
+                    ./test/AppDaemonTest/run-test --loglevel=trace \
+                        --xunit=robot.xml --removekeywords WUKS
+            - run:
+                name: Clean up unneeded files
+                command: |
+                    find test/AppDaemonTest/output -depth -name pabot_results \
+                        -type d -exec rm -r '{}' ';'
                     find test/AppDaemonTest/output -depth -name __pycache__ \
                         -type d -exec rm -r '{}' ';'
                 when: always
