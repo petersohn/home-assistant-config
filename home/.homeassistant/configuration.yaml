@@ -720,119 +720,102 @@ input_select:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_well:
         name: Kút világítás
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_gate_reflector:
         name: Kapu reflektor
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_garage:
         name: Garázs világítás
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_christmas_front:
         name: Karácsonyi világítás eresz alatt
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_christmas_tree:
         name: Karácsonyi világítás fenyőfa
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_outside_1:
         name: Körvilágítás 1
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_outside_2:
         name: Körvilágítás 2
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_outside_3:
         name: Körvilágítás 3
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_outside_4:
         name: Körvilágítás 4
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_outside_5:
         name: Körvilágítás 5
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     light_outside_6:
         name: Körvilágítás 6
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     auto_sprinkler1:
         name: Auto locsoló 1
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     auto_sprinkler2:
         name: Auto locsoló 2
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     auto_sprinkler3:
         name: Auto locsoló 3
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     hot_water_pump:
         name: Melegvíz
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     mosquito_killer_bedroom:
         name: Szúnyogirtó hálószoba
         options:
             - "auto"
             - "on"
             - "off"
-        initial: "auto"
     presence_mode:
         name: Jelenlét mód
         options:
