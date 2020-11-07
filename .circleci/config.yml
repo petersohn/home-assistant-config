@@ -11,10 +11,15 @@ jobs:
             - run: git submodule update --init --recursive
             - run: |
                 ./test/AppDaemonTest/run-test --loglevel=trace \
-                    --xunit=robot.xml --removekeywords WUKS
+                    --removekeywords WUKS -t 'Start Time'
             - run: |
-                find test/AppDaemonTest/output -depth -name __pycache__ \
-                    -type d -exec rm -r '{}' ';'
+                ./test/AppDaemonTest/run-test --loglevel=trace \
+                    --xunit=robot.xml --removekeywords WUKS
+            - run:
+                command: |
+                    find test/AppDaemonTest/output -depth -name __pycache__ \
+                        -type d -exec rm -r '{}' ';'
+                when: always
             - store_artifacts:
                 path: test/AppDaemonTest/output
             - store_test_results:
