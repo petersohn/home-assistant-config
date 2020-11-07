@@ -76,6 +76,7 @@ class AutoSwitch(hass.Hass):
 
     def update(self, kwargs):
         with self.mutex.lock('update'):
+            self.log('Timeout')
             self.__update(self.state)
 
     def __set_intended_state(self, state):
@@ -109,6 +110,7 @@ class AutoSwitch(hass.Hass):
                 else:
                     self.select_option(entity_id=self.switch, option=value)
             elif value == self.intended_state:
+                self.log('State stabilized to {}'.format(new))
                 self.intended_state = None
                 self.__stop_timer()
 
