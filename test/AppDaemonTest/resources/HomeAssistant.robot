@@ -21,7 +21,7 @@ Start Home Assistant
     Set Suite Variable  ${home_assistant_port}  ${index + 18000}  children=true
     Set Suite Variable  ${home_assistant_host}  127.0.0.1:${home_assistant_port}
     ...                 children=true
-    ${hass_path} =    Set Variable  ${base_output_directory}/hass/${index}
+    ${hass_path} =    Set Variable  ${base_output_directory}/${index}/hass
     Remove Directory    ${hass_path}  recursive=${True}
     Create Home Assistant Configuration  ${hass_path}  ${home_assistant_port}
     Copy File           ${hass_config_path}//auth

@@ -12,8 +12,10 @@ Resource  resources/AppDaemon.robot
 
 Setup Output Directory
     [Arguments]  ${suffix}=${Empty}
+    ${index} =  Get Variable Value  ${PABOTQUEUEINDEX}  0
     ${OUTPUT_DIRECTORY} =  Get Output Directory
-    ...    ${base_output_directory}  ${SUITE_NAME}  ${TEST_NAME}  ${suffix}
+    ...    ${base_output_directory}/${index}/appdaemon
+    ...    ${SUITE_NAME}  ${TEST_NAME}  ${suffix}
     Set Test Variable  ${OUTPUT_DIRECTORY}
     Create Directory   ${OUTPUT_DIRECTORY}
 
