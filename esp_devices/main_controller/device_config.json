@@ -28,19 +28,6 @@
         },
         {
             "type": "input",
-            "name": "light_switch_attic_upstairs",
-            "pin": 4
-        },
-        {
-            "type": "output",
-            "name": "light_attic_downstairs",
-            "commandTopic": "home/switches/lights/attic/downstairs/set",
-            "invert": true,
-            "default": 0,
-            "pin": 5
-        },
-        {
-            "type": "input",
             "name": "light_switch_attic_downstairs",
             "pin": 13
         },
@@ -73,12 +60,6 @@
         },
         {
             "type": "publish",
-            "interface": "light_attic_downstairs",
-            "topic": "home/switches/lights/attic/downstairs/state",
-            "retain": true
-        },
-        {
-            "type": "publish",
             "interface": "light_christmas",
             "topic": "home/switches/lights/christmas/front/state",
             "retain": true
@@ -87,13 +68,6 @@
             "type": "command",
             "interface": "light_switch_attic_upstairs",
             "target": "light_attic_upstairs",
-            "command": "toggle",
-            "value": "0"
-        },
-        {
-            "type": "command",
-            "interface": "light_switch_attic_downstairs",
-            "target": "light_attic_downstairs",
             "command": "toggle",
             "value": "0"
         },
