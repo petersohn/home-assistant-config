@@ -1,5 +1,5 @@
 {
-    "debug": true,
+    "debug": false,
     "name": "attic_lower",
     "availabilityTopic": "home/devices/attic_lower/availability",
     "debugTopic": "home/devices/attic_lower/debug",
@@ -16,6 +16,14 @@
             "invert": true,
             "default": 0,
             "pin": 0
+        },
+        {
+            "type": "output",
+            "name": "light_attic_downstairs",
+            "commandTopic": "home/switches/lights/attic/downstairs/set",
+            "invert": true,
+            "default": 0,
+            "pin": 1
         },
         {
             "type": "output",
@@ -37,6 +45,12 @@
             "type": "publish",
             "interface": "light6",
             "topic": "home/switches/lights/outside/6/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light_attic_downstairs",
+            "topic": "home/switches/lights/attic/downstairs/state",
             "retain": true
         },
         {
