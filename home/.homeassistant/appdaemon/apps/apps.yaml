@@ -857,7 +857,7 @@ mosquito_killer_bedroom_enabler:
     global_dependencies:
         - expression
 
-christmas_light_switcher:
+mosquito_killer_switcher:
     class: EnabledSwitch
     module: enabled_switch
     dependencies:
