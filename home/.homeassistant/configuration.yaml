@@ -913,9 +913,6 @@ alert:
     skip_first: true
     notifiers:
       - telegram_alert
-    data:
-      inline_keyboard:
-        - 'OK:/acknowledge_alert availability'
 
 system_health:
 
