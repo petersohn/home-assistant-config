@@ -129,6 +129,10 @@
       entity_id: device_tracker.homeassistant_owntrackssamsung
       zone: zone.home
       event: leave
+  condition:
+    condition: state
+    entity_id: input_select.presence_mode
+    state: 'home'
   action:
       - service: input_select.select_option
         data_template:
@@ -151,6 +155,10 @@
       entity_id: device_tracker.homeassistant_owntrackssamsung
       zone: zone.home
       event: enter
+  condition:
+    condition: state
+    entity_id: input_select.presence_mode
+    state: 'away'
   action:
       - service: input_select.select_option
         data_template:
