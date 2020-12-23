@@ -908,7 +908,8 @@ alert:
     entity_id: binary_sensor.availability_alert
     state: 'on'
     repeat:
-      - 5
+      - 2
+      - 10
     can_acknowledge: true
     skip_first: true
     notifiers:
