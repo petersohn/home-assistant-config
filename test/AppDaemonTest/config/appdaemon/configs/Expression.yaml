@@ -11,7 +11,7 @@ expression_now:
     class: Expression
     dependencies:
         - locker
-    expr: 'strftime(now(), "%Y-%m-%d %H:%M:%S")'
+    expr: 'now().strftime("%Y-%m-%d %H:%M:%S")'
     target: sensor.now
 
 expression_args:

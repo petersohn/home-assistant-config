@@ -39,7 +39,6 @@ class ExpressionEvaluator:
             'v': Evaluator(self._get_value),
             'now': self._get_now,
             'strptime': datetime.datetime.strptime,
-            'strftime': datetime.datetime.strftime,
             'dt': datetime.timedelta,
             't': datetime.datetime,
             'args': self.app.args,

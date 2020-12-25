@@ -28,8 +28,8 @@
         },
         {
             "type": "input",
-            "name": "light_switch_attic_downstairs",
-            "pin": 13
+            "name": "light_switch_attic_upstairs",
+            "pin": 4
         },
         {
             "type": "output",
