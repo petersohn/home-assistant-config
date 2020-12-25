@@ -521,7 +521,8 @@ light_outside_switcher_1:
 light_outside_2_4_5_6_enabler:
     module: enabler
     class: ExpressionEnabler
-    expr: 'e.sun_enabler_night and v.input_select.presence_mode != "sleep"'
+    expr: >
+        e.sun_enabler_night and v.input_select.presence_mode != "sleep"
     dependencies:
         - sun_enabler_night
         - locker
