@@ -834,36 +834,39 @@ sprinkler_timer:
           time: sensor.sprinkler_run_time
     enabler: sprinkler_enabler
 
-mosquito_killer_bedroom:
+socket_bedroom_1:
     module: auto_switch
     class: AutoSwitch
     dependencies: locker
-    target: switch.mosquito_killer_bedroom
-    switch: input_select.mosquito_killer_bedroom
+    target: switch.socket_bedroom_1
+    switch: input_select.socket_bedroom_1
 
-mosquito_killer_bedroom_enabler:
+socket_bedroom_1_enabler:
     module: enabler
     class: ExpressionEnabler
     expr: >
+        (v.input_select.socket_bedroom_1_mode == "karácsonyfa" and
+        v.input_select.presence_mode == "home") or
+        (v.input_select.socket_bedroom_1_mode == "szúnyogirtó" and
         v.input_select.presence_mode == "sleep" and
-        v.binary_sensor.window_bedroom
+        v.binary_sensor.window_bedroom)
     dependencies:
         - locker
     global_dependencies:
         - expression
 
-mosquito_killer_switcher:
+socket_bedroom_1_switcher:
     class: EnabledSwitch
     module: enabled_switch
     dependencies:
-        - mosquito_killer_bedroom
-        - mosquito_killer_bedroom_enabler
+        - socket_bedroom_1
+        - socket_bedroom_1_enabler
         - locker
     global_dependencies:
         - auto_switch
-    enabler: mosquito_killer_bedroom_enabler
+    enabler: socket_bedroom_1_enabler
     targets:
-        - mosquito_killer_bedroom
+        - socket_bedroom_1
 
 availability_alerts:
     module: alert

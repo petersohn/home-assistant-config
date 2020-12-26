@@ -26,8 +26,9 @@ views:
       - type: entities
         state_color: true
         entities:
-          - switch.mosquito_killer_bedroom
-          - input_select.mosquito_killer_bedroom
+          - switch.socket_bedroom_1
+          - input_select.socket_bedroom_1
+          - input_select.socket_bedroom_1_mode
         show_header_toggle: false
       - type: entities
         entities:

@@ -312,9 +312,9 @@ switch.hot_water_pump:
   friendly_name: "Meleg víz keringető"
   icon: mdi:shower-head
 
-switch.mosquito_killer_bedroom:
-  friendly_name: "Szúnyogirtó hálószoba"
-  icon: mdi:bee
+switch.socket_bedroom_1:
+  friendly_name: "Hálószoba konnektor 1"
+  icon: mdi:power-socket-eu
 
 switch.well:
   friendly_name: "Kút"
@@ -324,42 +324,24 @@ switch.auto_sprinkler1:
   friendly_name: "Auto locsoló 1"
   icon: mdi:sprinkler
 
-input_select.auto_sprinkler1:
-  icon: mdi:sprinkler
-
 switch.auto_sprinkler2:
   friendly_name: "Auto locsoló 2"
-  icon: mdi:sprinkler
-
-input_select.auto_sprinkler2:
   icon: mdi:sprinkler
 
 switch.auto_sprinkler3:
   friendly_name: "Auto locsoló 3"
   icon: mdi:sprinkler
 
-input_select.auto_sprinkler3:
-  icon: mdi:sprinkler
-
 switch.auto_sprinkler4:
   friendly_name: "Auto locsoló 4"
-  icon: mdi:sprinkler
-
-input_select.auto_sprinkler4:
   icon: mdi:sprinkler
 
 switch.light_driveway:
   friendly_name: "Bejáró"
   icon: mdi:outdoor-lamp
 
-input_select.light_driveway:
-  icon: mdi:outdoor-lamp
-
 switch.light_well:
   friendly_name: "Kút"
-  icon: mdi:spotlight
-
-input_select.light_well:
   icon: mdi:spotlight
 
 switch.light_attic_upstairs:
@@ -378,70 +360,40 @@ switch.light_garage:
   friendly_name: "Garázs"
   icon: mdi:lightbulb
 
-input_select.light_garage:
-  icon: mdi:lightbulb
-
 switch.light_christmas_front:
   friendly_name: "Karácsonyi világítás eresz alatt"
-  icon: mdi:string-lights
-
-input_select.light_christmas_front:
   icon: mdi:string-lights
 
 switch.light_christmas_tree:
   friendly_name: "Karácsonyi világítás fenyőfa"
   icon: mdi:pine-tree
 
-input_select.light_christmas_tree:
-  icon: mdi:pine-tree
-
 switch.light_gate_reflector:
   friendly_name: "Kapu reflektor"
-  icon: mdi:spotlight
-
-input_select.light_gate_reflector:
   icon: mdi:spotlight
 
 switch.light_outside_1:
   friendly_name: "Körvilágítás 1"
   icon: mdi:coach-lamp
 
-input_select.light_outside_1:
-  icon: mdi:coach-lamp
-
 switch.light_outside_2:
   friendly_name: "Körvilágítás 2"
-  icon: mdi:coach-lamp
-
-input_select.light_outside_2:
   icon: mdi:coach-lamp
 
 switch.light_outside_3:
   friendly_name: "Körvilágítás 3"
   icon: mdi:coach-lamp
 
-input_select.light_outside_3:
-  icon: mdi:coach-lamp
-
 switch.light_outside_4:
   friendly_name: "Körvilágítás 4"
-  icon: mdi:coach-lamp
-
-input_select.light_outside_4:
   icon: mdi:coach-lamp
 
 switch.light_outside_5:
   friendly_name: "Körvilágítás 5"
   icon: mdi:coach-lamp
 
-input_select.light_outside_5:
-  icon: mdi:coach-lamp
-
 switch.light_outside_6:
   friendly_name: "Körvilágítás 6"
-  icon: mdi:coach-lamp
-
-input_select.light_outside_6:
   icon: mdi:coach-lamp
 
 group.temperature:
