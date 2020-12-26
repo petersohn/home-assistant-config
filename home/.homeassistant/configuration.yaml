@@ -684,8 +684,8 @@ switch:
     payload_off: 0
   - platform: mqtt
     name: socket_bedroom_1
-    command_topic: home/switches/mosquito_killer/bedroom/set
-    state_topic: home/switches/mosquito_killer/bedroom/state
+    command_topic: home/switches/socket_bedroom_1/bedroom/set
+    state_topic: home/switches/socket_bedroom_1/bedroom/state
     payload_on: 1
     payload_off: 0
   - platform: mqtt
