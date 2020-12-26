@@ -129,6 +129,10 @@
       entity_id: device_tracker.homeassistant_owntrackssamsung
       zone: zone.home
       event: leave
+  condition:
+    condition: state
+    entity_id: input_select.presence_mode
+    state: 'home'
   action:
       - service: input_select.select_option
         data_template:
@@ -151,6 +155,10 @@
       entity_id: device_tracker.homeassistant_owntrackssamsung
       zone: zone.home
       event: enter
+  condition:
+    condition: state
+    entity_id: input_select.presence_mode
+    state: 'away'
   action:
       - service: input_select.select_option
         data_template:
@@ -222,13 +230,3 @@
         data:
             entity_id: climate.heater
             hvac_mode: 'off'
-
-- trigger:
-      platform: event
-      event_type: telegram_command
-      event_data:
-        command: '/acknowledge_alert'
-  action:
-      service: alert.turn_off
-      data:
-          entity_id: alert.{{ trigger.event_data.args }}

@@ -518,41 +518,61 @@ light_outside_switcher_1:
     targets:
         - auto_switch_light_outside_1
 
-light_outside_2_4_enabler:
+lights_should_be_on:
     module: enabler
     class: ExpressionEnabler
-    expr: 'e.sun_enabler_night and v.input_select.presence_mode != "sleep"'
+    expr: >
+        v.input_select.presence_mode == "home" or (
+        v.input_select.presence_mode == "away" and
+        int(v.sensor.time[0:2]) > 12)
     dependencies:
         - sun_enabler_night
         - locker
     global_dependencies:
         - expression
 
-light_outside_switcher_2_4:
+light_outside_2_4_5_6_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    expr: >
+        e.sun_enabler_night and e.lights_should_be_on
+    dependencies:
+        - sun_enabler_night
+        - lights_should_be_on
+        - locker
+    global_dependencies:
+        - expression
+
+light_outside_switcher_2_4_5_6:
     class: EnabledSwitch
     module: enabled_switch
     dependencies:
         - auto_switch_light_outside_2
         - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+        - auto_switch_light_outside_6
         - locker
-        - light_outside_2_4_enabler
+        - light_outside_2_4_5_6_enabler
     global_dependencies:
         - auto_switch
-    enabler: light_outside_2_4_enabler
+    enabler: light_outside_2_4_5_6_enabler
     targets:
         - auto_switch_light_outside_2
         - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+        - auto_switch_light_outside_6
 
 light_outside_3_enabler:
     module: enabler
     class: ExpressionEnabler
     expr: >
-        v.input_select.presence_mode == "home" and
+        e.lights_should_be_on and
         (e.sun_enabler_night or
         (v.sensor.light_shadow != 'unknown' and
         v.sensor.light_shadow <= 20))
     dependencies:
         - sun_enabler_night
+        - lights_should_be_on
         - locker
     global_dependencies:
         - expression
@@ -569,31 +589,6 @@ light_outside_switcher_3:
     enabler: light_outside_3_enabler
     targets:
         - auto_switch_light_outside_3
-
-light_outside_5_6_enabler:
-    module: enabler
-    class: ExpressionEnabler
-    expr: 'e.sun_enabler_night and v.input_select.presence_mode == "home"'
-    dependencies:
-        - sun_enabler_night
-        - locker
-    global_dependencies:
-        - expression
-
-light_outside_switcher_5_6:
-    class: EnabledSwitch
-    module: enabled_switch
-    dependencies:
-        - auto_switch_light_outside_5
-        - auto_switch_light_outside_6
-        - light_outside_5_6_enabler
-        - locker
-    global_dependencies:
-        - auto_switch
-    enabler: light_outside_5_6_enabler
-    targets:
-        - auto_switch_light_outside_5
-        - auto_switch_light_outside_6
 
 home_light_switcher:
     class: TimerSequence
@@ -857,7 +852,7 @@ mosquito_killer_bedroom_enabler:
     global_dependencies:
         - expression
 
-christmas_light_switcher:
+mosquito_killer_switcher:
     class: EnabledSwitch
     module: enabled_switch
     dependencies:
