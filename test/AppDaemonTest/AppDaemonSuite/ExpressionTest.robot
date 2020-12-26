@@ -3,7 +3,6 @@
 Resource       resources/AppDaemon.robot
 Resource       resources/Config.robot
 Resource       resources/DateTime.robot
-Test Setup     Initialize  00:00:00
 Test Teardown  Cleanup AppDaemon
 
 
@@ -12,13 +11,12 @@ Test Teardown  Cleanup AppDaemon
 ${input_sensor1} =  sensor.test_input1
 ${input_sensor2} =  sensor.test_input2
 ${output_sensor} =  sensor.test_output
-${now_sensor} =     sensor.now
-${args_sensor} =    sensor.args
 
 
 *** Test Cases ***
 
 Sensors
+    [Setup]  Initialize  00:00:00  ExpressionAdd
     [Template]  Test Sensors
     ${0}   ${0}   ${0}
     ${0}   ${13}  ${13}
@@ -26,17 +24,19 @@ Sensors
     ${-7}  ${5}   ${-2}
 
 Get Now
+    [Setup]  Initialize  00:00:00  ExpressionNow
     Unblock Until  00:01:00
-    ${result} =  Get State  ${now_sensor}
+    ${result} =  Get State  ${output_sensor}
     Date Should Equal Time  ${result}  ${default_start_date}  00:01:00
     Unblock Until  00:01:30
-    ${result} =  Get State  ${now_sensor}
+    ${result} =  Get State  ${output_sensor}
     Date Should Equal Time  ${result}  ${default_start_date}  00:01:30
     Unblock Until  01:12:20
-    ${result} =  Get State  ${now_sensor}
+    ${result} =  Get State  ${output_sensor}
     Date Should Equal Time  ${result}  ${default_start_date}  01:12:20
 
 Args
+    [Setup]  Initialize  00:00:00  ExpressionArgs
     [Template]  Test Args
     ${0}  c  firstbaz
     ${1}  a  secondfoo
@@ -44,35 +44,28 @@ Args
 
 *** Keywords ***
 
-Check Expected States
-    [Arguments]  ${type}  &{expected_states}
-    FOR  ${name}  IN  @{expected_states.keys()}
-       State Should Be As  ${name}  ${type}  ${expected_states['${name}']}
-    END
-
 Test States
-    [Arguments]  ${sensor1}  ${sensor2}  ${type}  &{expected_states}
+    [Arguments]  ${sensor1}  ${sensor2}  ${type}  ${expected_result}
     Set State  ${input_sensor1}  ${sensor1}
     Set State  ${input_sensor2}  ${sensor2}
-    Check Expected States  ${type}  &{expected_states}
+    State Should Be As  ${output_sensor}  ${type}  ${expected_result}
 
 Test Sensors
     [Arguments]  ${sensor1}  ${sensor2}  ${expected_result}
-    Test States  ${sensor1}  ${sensor2}  Int  ${output_sensor}=${expected_result}
+    Test States  ${sensor1}  ${sensor2}  Int  ${expected_result}
 
 Test Args
     [Arguments]  ${sensor1}  ${sensor2}  ${expected_result}
-    Test States  ${sensor1}  ${sensor2}  str  ${args_sensor}=${expected_result}
+    Test States  ${sensor1}  ${sensor2}  str  ${expected_result}
 
 Initialize
-    [Arguments]  ${start_time}  ${start_date}=${default_start_date}
-    ...          ${suffix}=${Empty}
+    [Arguments]  ${start_time}  @{configs}
     Clean States
     Initialize States
     ...    ${input_sensor1}=0
     ...    ${input_sensor2}=0
     ${apps} =  Create List  TestApp  locker  mutex_graph  expression
-    ${app_configs} =  Create List  TestApp  Expression
+    ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
-    ...                   start_date=${start_date}  suffix=${suffix}
+    ...                   start_date=${default_start_date}
     Unblock For  ${appdaemon_interval}

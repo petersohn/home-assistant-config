@@ -1,0 +1,7 @@
+expression_now:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: 'now().strftime("%Y-%m-%d %H:%M:%S")'
+    target: sensor.test_output
