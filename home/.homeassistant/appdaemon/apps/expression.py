@@ -23,6 +23,7 @@ class ExpressionEvaluator:
         self.expr = expr
         self.callback = callback
         self.entities = set()
+        self.attributes = set()
         self.enablers = {}
         self.evaluators = self._create_evaluators()
         self.evaluators.update(extra_values)
@@ -35,6 +36,7 @@ class ExpressionEvaluator:
 
     def _create_evaluators(self):
         return {
+            'a': Evaluator(self._get_attribute_base),
             'e': Evaluator(self._get_enabled),
             'v': Evaluator(self._get_value),
             'now': self._get_now,
@@ -51,6 +53,27 @@ class ExpressionEvaluator:
                 self.fire_callback,
                 datetime.datetime.fromtimestamp(now_ts + 1), 1)
         return datetime.datetime.fromtimestamp(now_ts)
+
+    def _get_attribute_base(self, entity):
+        if '.' not in entity:
+            return Evaluator(self._get_attribute_base, entity + '.')
+        return Evaluator(self._get_attribute_callback(entity))
+
+    def _get_attribute_callback(self, entity):
+        return lambda attribute: self._get_attribute(entity, attribute)
+
+    def _get_attribute(self, entity, attribute):
+        key = (entity, attribute)
+        if self.callback is not None and key not in self.attributes:
+            self.app.listen_state(
+                self._on_entity_change, entity=entity, attribute=attribute)
+            self.attributes.add(key)
+
+        value = self.app.get_state(entity, attribute=attribute)
+        try:
+            return float(value)
+        except ValueError:
+            return value
 
     def _get_value(self, entity):
         if '.' not in entity:

@@ -18,10 +18,20 @@ ${output_sensor} =  sensor.test_output
 Sensors
     [Setup]  Initialize  00:00:00  ExpressionAdd
     [Template]  Test Sensors
-    ${0}   ${0}   ${0}
-    ${0}   ${13}  ${13}
-    ${63}  ${-8}  ${55}
-    ${-7}  ${5}   ${-2}
+    ${0}   ${0}   Int  ${0}
+    ${0}   ${13}  Int  ${13}
+    ${63}  ${-8}  Int  ${55}
+    ${-7}  ${5}   Int  ${-2}
+    foo    bar    str  foobar
+
+Attributes
+    [Setup]  Initialize  00:00:00  ExpressionAttribute
+    [Template]  Test Attributes
+    ${0}   ${0}   Int  ${0}
+    ${0}   ${13}  Int  ${13}
+    ${63}  ${-8}  Int  ${55}
+    ${-7}  ${5}   Int  ${-2}
+    foo    bar    str  foobar
 
 Get Now
     [Setup]  Initialize  00:00:00  ExpressionNow
@@ -51,12 +61,17 @@ Test States
     State Should Be As  ${output_sensor}  ${type}  ${expected_result}
 
 Test Sensors
-    [Arguments]  ${sensor1}  ${sensor2}  ${expected_result}
-    Test States  ${sensor1}  ${sensor2}  Int  ${expected_result}
+    [Arguments]  ${sensor1}  ${sensor2}  ${type}  ${expected_result}
+    Test States  ${sensor1}  ${sensor2}  ${type}  ${expected_result}
 
 Test Args
     [Arguments]  ${sensor1}  ${sensor2}  ${expected_result}
     Test States  ${sensor1}  ${sensor2}  str  ${expected_result}
+
+Test Attributes
+    [Arguments]  ${attr1}  ${attr2}  ${type}  ${expected_result}
+    Set State  ${input_sensor_1}  ${0}  attr1=${attr1}  attr2=${attr2}
+    State Should Be As  ${output_sensor}  ${type}  ${expected_result}
 
 Initialize
     [Arguments]  ${start_time}  @{configs}
