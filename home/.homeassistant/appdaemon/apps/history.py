@@ -94,7 +94,7 @@ class HistoryManager(HistoryManagerBase):
             self.__filter()
             return self.history
 
-    def load_config(self, *args, **kwargs):
+    def load_config_inner(self, *args, **kwargs):
         self.log('Loading history...')
         now = datetime.datetime.now()
         begin_timestamp = (
