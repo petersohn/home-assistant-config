@@ -25,6 +25,28 @@ def make_history_element(time, value):
     return HistoryElement(time, real_value)
 
 
+def get_date(s):
+    s = re.sub(r'([-+][0-9]{2}):([0-9]{2})$', '', s)
+    try:
+        time = datetime.datetime.strptime(
+            s, '%Y-%m-%dT%H:%M:%S.%f')
+    except ValueError:
+        time = datetime.datetime.strptime(
+            s, '%Y-%m-%dT%H:%M:%S')
+    return time.replace(tzinfo=tz.tzutc()). \
+        astimezone(tz.tzlocal()).replace(tzinfo=None)
+
+
+def api_request(path, config):
+    with request.urlopen(request.Request(
+            '{}/{}'.format(config['ha_url'], path),
+            headers={'Authorization': 'Bearer ' + config['token']})) \
+            as result:
+        if result.status >= 300:
+            raise http.client.HTTPException(result.reason)
+        return json.loads(result.read().decode())
+
+
 class HistoryManager(hass.Hass):
     def initialize(self):
         self.max_interval = datetime.timedelta(
@@ -60,45 +82,21 @@ class HistoryManager(hass.Hass):
                     now - self.max_interval).strftime(
                         '%Y-%m-%dT%H:%M:%S')
                 end_timestamp = now.strftime('%Y-%m-%dT%H:%M:%S')
-                url = '{}/api/history/period/{}?filter_entity_id={}&end_time={}' \
+                path = 'api/history/period/{}?filter_entity_id={}&end_time={}' \
                     .format(
-                        self.hass_config['ha_url'],
                         begin_timestamp,
                         self.entity_id,
                         end_timestamp)
-                self.log('Calling API: ' + url)
-
-                with request.urlopen(request.Request(
-                        url,
-                        headers={
-                            'Authorization':
-                                'Bearer ' + self.hass_config['token'],
-                        })) \
-                        as result:
-                    if result.status >= 300:
-                        raise http.client.HTTPException(result.reason)
-                    x = result.read().decode()
-                    loaded_history = json.loads(x)
-
-                    def get_date(s):
-                        s = re.sub(r'([-+][0-9]{2}):([0-9]{2})$', '', s)
-                        try:
-                            time = datetime.datetime.strptime(
-                                s, '%Y-%m-%dT%H:%M:%S.%f')
-                        except ValueError:
-                            time = datetime.datetime.strptime(
-                                s, '%Y-%m-%dT%H:%M:%S')
-                        return time.replace(tzinfo=tz.tzutc()). \
-                            astimezone(tz.tzlocal()).replace(tzinfo=None)
-
-                    now = self.datetime()
-                    self.history = deque(filter(
-                        lambda element:
-                            element.time <= now and element.value is not None,
-                        (make_history_element(
-                            get_date(change['last_changed']),
-                            change['state'])
-                         for changes in loaded_history for change in changes)))
+                self.log('Calling API: ' + path)
+                loaded_history = api_request(path, self.hass_config)
+                now = self.datetime()
+                self.history = deque(filter(
+                    lambda element:
+                        element.time <= now and element.value is not None,
+                    (make_history_element(
+                        get_date(change['last_changed']),
+                        change['state'])
+                     for changes in loaded_history for change in changes)))
             except:
                 self.error('Failed to load history.', level='WARNING')
                 self.error(traceback.format_exc(), level='WARNING')
