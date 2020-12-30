@@ -1,0 +1,5 @@
+test_change_tracker:
+    class: ChangeTracker
+    module: history
+    entity: sensor.test_sensor
+    dependencies: locker

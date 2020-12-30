@@ -74,6 +74,7 @@ class HistoryManagerBase(hass.Hass):
                 self.error(traceback.format_exc(), level='WARNING')
                 self.run_in(self.load_config, 2)
                 raise
+            self.loaded = True
 
 
 class HistoryManager(HistoryManagerBase):
@@ -121,7 +122,6 @@ class HistoryManager(HistoryManagerBase):
         self.log('Filtered history size: {}'.format(len(self.history)))
         self.listen_state(
             self.on_changed, entity=self.entity_id)
-        self.loaded = True
         self.log('History loaded.')
 
     def on_changed(self, entity, attribute, old, new, kwargs):
@@ -132,6 +132,39 @@ class HistoryManager(HistoryManagerBase):
             self.history.append(make_history_element(
                 self.datetime(), new))
 
+
+class ChangeTracker(HistoryManagerBase):
+    def initialize(self):
+        self.entity_id = self.args['entity']
+        self.changed = None
+        self.updated = None
+        super(ChangeTracker, self).initialize()
+
+    def load_config_inner(self):
+        self.log('Loading last change...')
+        result = self.api_request('states/{}'.format(self.entity_id))
+        self.changed = get_date(result['last_changed'])
+        self.updated = get_date(result['last_updated'])
+        self.listen_state(
+            self.on_changed, entity=self.entity_id, attribute='all')
+        self.log('Last change loaded.')
+
+    def last_changed(self):
+        with self.mutex.lock('last_changed'):
+            return self.changed
+
+    def last_updated(self):
+        with self.mutex.lock('last_updated'):
+            return self.updated
+
+    def on_changed(self, entity, attribute, old, new, kwargs):
+        with self.mutex.lock('on_changed'):
+            now = self.datetime()
+            self.updated = now
+            if old['state'] != new['state']:
+                self.changed = now
+
+
 class Aggregatum:
     def __init__(self, app):
         self.app = app
@@ -141,6 +174,7 @@ class Aggregatum:
 
     def get(self):
         raise NotImplementedError
+
 
 class LimitedHistoryAggregatum(Aggregatum):
     def __init__(self, app, interval):

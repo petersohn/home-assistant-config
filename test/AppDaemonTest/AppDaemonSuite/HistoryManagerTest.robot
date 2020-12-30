@@ -12,6 +12,7 @@ Test Teardown  Cleanup AppDaemon
 
 ${name} =    test_history_manager
 ${binary_name} =    test_history_manager_switch
+${change_tracker_name} =  test_change_tracker
 ${entity} =  sensor.test_sensor
 ${aggregated_entity} =  sensor.test_sensor_aggregated
 ${sum_entity} =  sensor.test_sensor_sum
@@ -280,7 +281,7 @@ Decaying Sum Value
     State Should Be As  ${aggregated_entity}  float  ${0.1015625}
 
 Binary Input
-    [Setup]  Initialize With Binary History Manager
+    [Setup]  Initialize  ${binary_name}  HistoryManagerBinary
     Unblock Until  5 min
     Turn On  ${switch_entity}
     Unblock For  2 min
@@ -323,6 +324,22 @@ Binary Input
     # 5*0 / 5
     State Should Be As  ${aggregated_entity}  percent  ${0}
 
+Change Tracker
+    [Setup]  Initialize  ${change_tracker_name}  ChangeTracker
+    Unblock Until  00:01:00
+    Set State  ${entity}  a
+    Check Date Updates  00:01:00  00:01:00
+    Unblock Until  00:02:00
+    Set State  ${entity}  b  foo=bar
+    Check Date Updates  00:02:00  00:02:00
+    Unblock Until  00:03:00
+    Set State  ${entity}  b  foo=baz
+    Check Date Updates  00:02:00  00:03:00
+    Unblock Until  00:04:00
+    Set State  ${entity}  b  foo=baz
+    Check Date Updates  00:02:00  00:03:00
+
+
 *** Keywords ***
 
 Get Values
@@ -341,8 +358,23 @@ History Should Be
     ${converted_values} =  Convert History Output  ${values}
     Lists Should Be Equal  ${converted_values}  ${converted_expected_values}
 
+Dates Should Match
+    [Arguments]  ${actual}  ${expected}
+    ${expected_date} =  Add Time To Date  ${default_start_date}  ${expected}
+    ${actual_date} =  Convert Date  ${actual}
+    Should Be Equal  ${actual_date}  ${expected_date}
+
+Check Date Updates
+    [Arguments]  ${expected_changed}  ${expected_updated}
+    ${actual_changed} =  Call Function  call_on_app  ${change_tracker_name}
+    ...    last_changed
+    Dates Should Match  ${actual_changed}  ${expected_changed}
+    ${actual_updated} =  Call Function  call_on_app  ${change_tracker_name}
+    ...    last_updated
+    Dates Should Match  ${actual_updated}  ${expected_updated}
+
 Initialize
-    [Arguments]  @{configs}
+    [Arguments]  ${app_name}  @{configs}
     Initialize States
     ...    ${entity}=${0}
     ...    ${enabler}=off
@@ -354,14 +386,9 @@ Initialize
     ...                     enabled_switch
     ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}
+    Wait Until Keyword Succeeds  30 sec  1 sec  Should Be Loaded  ${app_name}
     Unblock For  ${appdaemon_interval}
 
 Initialize With History Manager
     [Arguments]  @{configs}
-    Initialize  HistoryManagerBase  @{configs}
-    Wait Until Keyword Succeeds  30 sec  1 sec  Should Be Loaded  ${name}
-
-Initialize With Binary History Manager
-    [Arguments]  @{configs}
-    Initialize  HistoryManagerBinary  @{configs}
-    Wait Until Keyword Succeeds  30 sec  1 sec  Should Be Loaded  ${binary_name}
+    Initialize  ${name}  HistoryManagerBase  @{configs}
