@@ -50,7 +50,7 @@ class HistoryManagerBase(hass.Hass):
         return self.loaded
 
     def api_request(self, path):
-        url = '{}/{}'.format(self.hass_config['ha_url'], path)
+        url = '{}/api/{}'.format(self.hass_config['ha_url'], path)
         self.log('Calling API: ' + url)
         with request.urlopen(request.Request(
                 url,
@@ -101,7 +101,7 @@ class HistoryManager(HistoryManagerBase):
             now - self.max_interval).strftime(
                 '%Y-%m-%dT%H:%M:%S')
         end_timestamp = now.strftime('%Y-%m-%dT%H:%M:%S')
-        path = 'api/history/period/{}?filter_entity_id={}&end_time={}' \
+        path = 'history/period/{}?filter_entity_id={}&end_time={}' \
             .format(
                 begin_timestamp,
                 self.entity_id,
