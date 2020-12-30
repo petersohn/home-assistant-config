@@ -37,31 +37,52 @@ def get_date(s):
         astimezone(tz.tzlocal()).replace(tzinfo=None)
 
 
-def api_request(path, config):
-    with request.urlopen(request.Request(
-            '{}/{}'.format(config['ha_url'], path),
-            headers={'Authorization': 'Bearer ' + config['token']})) \
-            as result:
-        if result.status >= 300:
-            raise http.client.HTTPException(result.reason)
-        return json.loads(result.read().decode())
-
-
-class HistoryManager(hass.Hass):
+class HistoryManagerBase(hass.Hass):
     def initialize(self):
-        self.max_interval = datetime.timedelta(
-            **self.args.get('max_interval', {'days': 1}))
-        self.entity_id = self.args['entity']
         self.hass_config = [
             config for config in self.config['plugins'].values()
             if config['type'] == 'hass'][0]
-        self.history = []
         self.loaded = False
-        self.mutex = self.get_app('locker').get_mutex('HistoryManager')
+        self.mutex = self.get_app('locker').get_mutex('HistoryManagerBase')
         self.load_config()
 
     def is_loaded(self):
         return self.loaded
+
+    def api_request(self, path):
+        url = '{}/{}'.format(self.hass_config['ha_url'], path)
+        self.log('Calling API: ' + url)
+        with request.urlopen(request.Request(
+                url,
+                headers={'Authorization':
+                         'Bearer ' + self.hass_config['token']})) \
+                as result:
+            if result.status >= 300:
+                raise http.client.HTTPException(result.reason)
+            return json.loads(result.read().decode())
+
+    def load_config_inner(self):
+        raise NotImplementedError()
+
+    def load_config(self, *args, **kwargs):
+        with self.mutex.lock('load_config'):
+            self.log('Loading history...')
+            try:
+                self.load_config_inner()
+            except:
+                self.error('Failed to load.', level='WARNING')
+                self.error(traceback.format_exc(), level='WARNING')
+                self.run_in(self.load_config, 2)
+                raise
+
+
+class HistoryManager(HistoryManagerBase):
+    def initialize(self):
+        self.max_interval = datetime.timedelta(
+            **self.args.get('max_interval', {'days': 1}))
+        self.entity_id = self.args['entity']
+        self.history = []
+        super(HistoryManager, self).initialize()
 
     def __filter(self):
         min_time = self.datetime() - self.max_interval
@@ -74,42 +95,34 @@ class HistoryManager(hass.Hass):
             return self.history
 
     def load_config(self, *args, **kwargs):
-        with self.mutex.lock('load_config'):
-            self.log('Loading history...')
-            try:
-                now = datetime.datetime.now()
-                begin_timestamp = (
-                    now - self.max_interval).strftime(
-                        '%Y-%m-%dT%H:%M:%S')
-                end_timestamp = now.strftime('%Y-%m-%dT%H:%M:%S')
-                path = 'api/history/period/{}?filter_entity_id={}&end_time={}' \
-                    .format(
-                        begin_timestamp,
-                        self.entity_id,
-                        end_timestamp)
-                self.log('Calling API: ' + path)
-                loaded_history = api_request(path, self.hass_config)
-                now = self.datetime()
-                self.history = deque(filter(
-                    lambda element:
-                        element.time <= now and element.value is not None,
-                    (make_history_element(
-                        get_date(change['last_changed']),
-                        change['state'])
-                     for changes in loaded_history for change in changes)))
-            except:
-                self.error('Failed to load history.', level='WARNING')
-                self.error(traceback.format_exc(), level='WARNING')
-                self.run_in(self.load_config, 2)
-                raise
-
-            self.log('Total loaded history size: {}'.format(len(self.history)))
-            self.__filter()
-            self.log('Filtered history size: {}'.format(len(self.history)))
-            self.listen_state(
-                self.on_changed, entity=self.entity_id)
-            self.loaded = True
-            self.log('History loaded.')
+        self.log('Loading history...')
+        now = datetime.datetime.now()
+        begin_timestamp = (
+            now - self.max_interval).strftime(
+                '%Y-%m-%dT%H:%M:%S')
+        end_timestamp = now.strftime('%Y-%m-%dT%H:%M:%S')
+        path = 'api/history/period/{}?filter_entity_id={}&end_time={}' \
+            .format(
+                begin_timestamp,
+                self.entity_id,
+                end_timestamp)
+        self.log('Calling API: ' + path)
+        loaded_history = self.api_request(path)
+        now = self.datetime()
+        self.history = deque(filter(
+            lambda element:
+                element.time <= now and element.value is not None,
+            (make_history_element(
+                get_date(change['last_changed']),
+                change['state'])
+             for changes in loaded_history for change in changes)))
+        self.log('Total loaded history size: {}'.format(len(self.history)))
+        self.__filter()
+        self.log('Filtered history size: {}'.format(len(self.history)))
+        self.listen_state(
+            self.on_changed, entity=self.entity_id)
+        self.loaded = True
+        self.log('History loaded.')
 
     def on_changed(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_changed'):
@@ -119,16 +132,15 @@ class HistoryManager(hass.Hass):
             self.history.append(make_history_element(
                 self.datetime(), new))
 
-
 class Aggregatum:
     def __init__(self, app):
         self.app = app
 
     def add(self, element):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get(self):
-        raise NotImplemented
+        raise NotImplementedError
 
 class LimitedHistoryAggregatum(Aggregatum):
     def __init__(self, app, interval):
@@ -224,10 +236,10 @@ class IntervalAggragatum(LimitedHistoryAggregatum):
         self.remove_interval(interval, element.value)
 
     def add_interval(self, interval, value):
-        raise NotImplemented
+        raise NotImplementedError
 
     def remove_interval(self, interval, value):
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class Integral(IntervalAggragatum):
