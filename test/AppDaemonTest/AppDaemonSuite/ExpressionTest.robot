@@ -37,13 +37,13 @@ Get Now
     [Setup]  Initialize  00:00:00  ExpressionNow
     Unblock Until  00:01:00
     ${result} =  Get State  ${output_sensor}
-    Date Should Equal Time  ${result}  ${default_start_date}  00:01:00
+    Times Should Match  ${result}  00:01:00
     Unblock Until  00:01:30
     ${result} =  Get State  ${output_sensor}
-    Date Should Equal Time  ${result}  ${default_start_date}  00:01:30
+    Times Should Match  ${result}  00:01:30
     Unblock Until  01:12:20
     ${result} =  Get State  ${output_sensor}
-    Date Should Equal Time  ${result}  ${default_start_date}  01:12:20
+    Times Should Match  ${result}  01:12:20
 
 Args
     [Setup]  Initialize  00:00:00  ExpressionArgs

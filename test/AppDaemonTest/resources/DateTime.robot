@@ -5,8 +5,9 @@ Library  DateTime
 
 *** Keywords ***
 
-Date Should Equal Time
-    [Arguments]  ${date1}  ${base}  ${time}
-    ${timestamp1} =  Convert Date  ${date1}
-    ${timestamp2} =  Add Time To Date  ${base}  ${time}
-    Should Be Equal  ${timestamp1}  ${timestamp2}
+Times Should Match
+    [Arguments]  ${actual}  ${expected}
+    ${expected_date} =  Add Time To Date  ${default_start_date}  ${expected}
+    ${actual_date} =  Convert Date  ${actual}
+    Should Be Equal  ${actual_date}  ${expected_date}
+

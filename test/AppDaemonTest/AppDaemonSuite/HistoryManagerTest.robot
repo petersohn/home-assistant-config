@@ -4,6 +4,7 @@ Library        libraries/TypeUtil.py
 Library        libraries/HistoryUtil.py
 Library        Collections
 Resource       resources/Config.robot
+Resource       resources/DateTime.robot
 Resource       resources/Enabler.robot
 Test Teardown  Cleanup AppDaemon
 
@@ -358,20 +359,14 @@ History Should Be
     ${converted_values} =  Convert History Output  ${values}
     Lists Should Be Equal  ${converted_values}  ${converted_expected_values}
 
-Dates Should Match
-    [Arguments]  ${actual}  ${expected}
-    ${expected_date} =  Add Time To Date  ${default_start_date}  ${expected}
-    ${actual_date} =  Convert Date  ${actual}
-    Should Be Equal  ${actual_date}  ${expected_date}
-
 Check Date Updates
     [Arguments]  ${expected_changed}  ${expected_updated}
     ${actual_changed} =  Call Function  call_on_app  ${change_tracker_name}
     ...    last_changed
-    Dates Should Match  ${actual_changed}  ${expected_changed}
+    Times Should Match  ${actual_changed}  ${expected_changed}
     ${actual_updated} =  Call Function  call_on_app  ${change_tracker_name}
     ...    last_updated
-    Dates Should Match  ${actual_updated}  ${expected_updated}
+    Times Should Match  ${actual_updated}  ${expected_updated}
 
 Initialize
     [Arguments]  ${app_name}  @{configs}
