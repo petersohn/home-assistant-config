@@ -42,9 +42,24 @@ class HistoryManagerBase(hass.Hass):
         self.hass_config = [
             config for config in self.config['plugins'].values()
             if config['type'] == 'hass'][0]
+        self.changed_callbacks = {}
+        self.callback_id = 0
         self.loaded = False
         self.mutex = self.get_app('locker').get_mutex('HistoryManagerBase')
         self.load_config()
+
+    def add_changed_callback(self, callback):
+        id = self.callback_id
+        self.callback_id += 1
+        self.changed_callbacks[id] = callback
+        return id
+
+    def remove_changed_callback(self, id):
+        del self.changed_callbacks[id]
+
+    def changed(self):
+        for callback in self.changed_callbacks.values():
+            callback()
 
     def is_loaded(self):
         return self.loaded
@@ -131,38 +146,40 @@ class HistoryManager(HistoryManagerBase):
             self.__filter()
             self.history.append(make_history_element(
                 self.datetime(), new))
+            self.changed()
 
 
 class ChangeTracker(HistoryManagerBase):
     def initialize(self):
         self.entity_id = self.args['entity']
-        self.changed = None
-        self.updated = None
+        self.changed_time = None
+        self.updated_time = None
         super(ChangeTracker, self).initialize()
 
     def load_config_inner(self):
         self.log('Loading last change...')
         result = self.api_request('states/{}'.format(self.entity_id))
-        self.changed = get_date(result['last_changed'])
-        self.updated = get_date(result['last_updated'])
+        self.changed_time = get_date(result['last_changed'])
+        self.updated_time = get_date(result['last_updated'])
         self.listen_state(
             self.on_changed, entity=self.entity_id, attribute='all')
         self.log('Last change loaded.')
 
     def last_changed(self):
         with self.mutex.lock('last_changed'):
-            return self.changed
+            return self.changed_time
 
     def last_updated(self):
         with self.mutex.lock('last_updated'):
-            return self.updated
+            return self.updated_time
 
     def on_changed(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_changed'):
             now = self.datetime()
-            self.updated = now
+            self.updated_time = now
             if old['state'] != new['state']:
-                self.changed = now
+                self.changed_time = now
+            self.changed()
 
 
 class Aggregatum:

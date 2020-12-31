@@ -28,6 +28,7 @@ class ExpressionEvaluator:
         self.evaluators = self._create_evaluators()
         self.evaluators.update(extra_values)
         self.timer = None
+        self.apps = []
         self.get()
 
     def cleanup(self):
@@ -44,6 +45,7 @@ class ExpressionEvaluator:
             'dt': datetime.timedelta,
             't': datetime.datetime,
             'args': self.app.args,
+            'app': Evaluator(self.app._get_app),
         }
 
     def _get_now(self):

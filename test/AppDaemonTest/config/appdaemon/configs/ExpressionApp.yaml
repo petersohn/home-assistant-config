@@ -1,0 +1,13 @@
+changes:
+    class: ChangeTracker
+    module: history
+    entity: sensor.test_input1
+    dependencies: locker
+
+expression_app:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: 'app.changes.last_changed().strftime("%H:%M:%S")'
+    target: sensor.test_output

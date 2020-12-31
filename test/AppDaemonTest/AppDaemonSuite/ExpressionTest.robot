@@ -52,6 +52,17 @@ Args
     ${1}  a  secondfoo
     ${2}  b  thirdbar
 
+
+App
+    [Setup]  Initialize  00:00:00  ExpressionApp
+    Unblock Until  00:01:00
+    Set State  ${input_sensor1}  1
+    State Should Be As  ${output_sensor}  str  00:01:00
+    Unblock Until  00:01:30
+    Set State  ${input_sensor1}  2
+    State Should Be As  ${output_sensor}  str  00:01:30
+
+
 *** Keywords ***
 
 Test States
