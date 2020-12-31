@@ -22,7 +22,6 @@ class Trigger:
             self.target_state = target_state
             self.app.listen_state(self.on_state_change, entity=self.sensor)
 
-
     def cleanup(self):
         if self.expression is not None:
             self.expression.cleanup()
@@ -98,7 +97,7 @@ class TimerSwitch(hass.Hass):
         enabler = self.args.get('enabler')
         if enabler is not None:
             self.enabler = self.get_app(enabler)
-            self.enabler_id = self.enabler.on_change(self.on_enabled_changed)
+            self.enabler_id = self.enabler.add_callback(self.on_enabled_changed)
         else:
             self.enabler = None
             self.enabler_id = None
@@ -180,7 +179,7 @@ class TimerSequence(hass.Hass):
         enabler = self.args.get('enabler')
         if enabler is not None:
             self.enabler = self.get_app(enabler)
-            self.enabler_id = self.enabler.on_change(self.on_enabled_changed)
+            self.enabler_id = self.enabler.add_callback(self.on_enabled_changed)
         else:
             self.enabler = None
             self.enabler_id = None

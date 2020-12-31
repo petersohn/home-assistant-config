@@ -24,28 +24,28 @@ class ExpressionEvaluator:
         self.callback = callback
         self.entities = set()
         self.attributes = set()
-        self.enablers = {}
+        self.app_callbacks = {}
         self.evaluators = self._create_evaluators()
         self.evaluators.update(extra_values)
         self.timer = None
-        self.apps = []
         self.get()
 
     def cleanup(self):
-        for enabler, id in self.enablers.items():
-            self.app.get_app(enabler).remove_callback(id)
+        for app, id in self.app_callbacks.items():
+            self.app.get_app(app).remove_callback(id)
 
     def _create_evaluators(self):
         return {
             'a': Evaluator(self._get_attribute_base),
             'e': Evaluator(self._get_enabled),
+            'c': Evaluator(self._get_last_changed),
+            'u': Evaluator(self._get_last_updated),
             'v': Evaluator(self._get_value),
             'now': self._get_now,
             'strptime': datetime.datetime.strptime,
             'dt': datetime.timedelta,
             't': datetime.datetime,
             'args': self.app.args,
-            'app': Evaluator(self.app._get_app),
         }
 
     def _get_now(self):
@@ -96,9 +96,9 @@ class ExpressionEvaluator:
 
     def _get_enabled(self, enabler):
         enabler_app = self.app.get_app(enabler)
-        if self.callback is not None and enabler not in self.enablers:
-            id = enabler_app.on_change(lambda: self._on_enabler_change())
-            self.enablers[enabler] = id
+        if self.callback is not None and enabler not in self.app_callbacks:
+            id = enabler_app.add_callback(lambda: self._on_enabler_change())
+            self.app_callbacks[enabler] = id
         value = enabler_app.is_enabled()
         return value
 
