@@ -53,14 +53,16 @@ Args
     ${2}  b  thirdbar
 
 
-App
-    [Setup]  Initialize  00:00:00  ExpressionApp
+Changes
+    [Setup]  Initialize  00:00:00  ExpressionChange
     Unblock Until  00:01:00
-    Set State  ${input_sensor1}  1
-    State Should Be As  ${output_sensor}  str  00:01:00
+    Set State  ${input_sensor1}  1  foo=bar
+    Unblock For  ${appdaemon_interval}
+    State Should Be As  ${output_sensor}  str  00:01:00 00:01:00
     Unblock Until  00:01:30
-    Set State  ${input_sensor1}  2
-    State Should Be As  ${output_sensor}  str  00:01:30
+    Set State  ${input_sensor1}  1  foo=baz
+    Unblock For  ${appdaemon_interval}
+    State Should Be As  ${output_sensor}  str  00:01:00 00:01:30
 
 
 *** Keywords ***
@@ -90,7 +92,7 @@ Initialize
     Initialize States
     ...    ${input_sensor1}=0
     ...    ${input_sensor2}=0
-    ${apps} =  Create List  TestApp  locker  mutex_graph  expression
+    ${apps} =  Create List  TestApp  locker  mutex_graph  expression  history
     ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     ...                   start_date=${default_start_date}

@@ -31,8 +31,8 @@ class ExpressionEvaluator:
         self.get()
 
     def cleanup(self):
-        for app, id in self.app_callbacks.items():
-            self.app.get_app(app).remove_callback(id)
+        for name, id in self.app_callbacks.items():
+            self.app.get_app(name).remove_callback(id)
 
     def _create_evaluators(self):
         return {
@@ -94,15 +94,24 @@ class ExpressionEvaluator:
         except ValueError:
             return value
 
-    def _get_enabled(self, enabler):
-        enabler_app = self.app.get_app(enabler)
-        if self.callback is not None and enabler not in self.app_callbacks:
-            id = enabler_app.add_callback(lambda: self._on_enabler_change())
-            self.app_callbacks[enabler] = id
-        value = enabler_app.is_enabled()
-        return value
+    def _get_app(self, name):
+        app = self.app.get_app(name)
+        if self.callback is not None and name not in self.app_callbacks:
+            id = app.add_callback(lambda: self._on_app_change())
+            self.app_callbacks[name] = id
+        return app
 
-    def _on_enabler_change(self):
+    def _get_enabled(self, name):
+        return self._get_app(name).is_enabled()
+
+    def _get_last_changed(self, name):
+        return self._get_app(name).last_changed()
+
+    def _get_last_updated(self, name):
+        return self._get_app(name).last_updated()
+
+    def _on_app_change(self):
+        self.app.log('on_app_change')
         self.app.run_in(self.fire_callback, 0)
 
     def _on_entity_change(self, entity, attribute, old, new, kwargs):
@@ -126,6 +135,7 @@ class ExpressionEvaluator:
         if self.callback is None:
             return
         with self.mutex.lock('fire_callback'):
+            self.app.log('fire_callback')
             value = self._get()
             self.callback(value)
 
@@ -142,4 +152,5 @@ class Expression(hass.Hass):
         self.evaluator.cleanup()
 
     def _set(self, value):
+        self.log('set={}'.format(value))
         self.set_state(self.target, state=value, attributes=self.attributes)

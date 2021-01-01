@@ -48,16 +48,19 @@ class HistoryManagerBase(hass.Hass):
         self.mutex = self.get_app('locker').get_mutex('HistoryManagerBase')
         self.load_config()
 
-    def add_changed_callback(self, callback):
-        id = self.callback_id
-        self.callback_id += 1
-        self.changed_callbacks[id] = callback
-        return id
+    def add_callback(self, callback):
+        with self.mutex.lock('add_callback'):
+            id = self.callback_id
+            self.callback_id += 1
+            self.changed_callbacks[id] = callback
+            return id
 
-    def remove_changed_callback(self, id):
-        del self.changed_callbacks[id]
+    def remove_callback(self, id):
+        with self.mutex.lock('add_callback'):
+            del self.changed_callbacks[id]
 
     def changed(self):
+        self.log('callbacks={}'.format(len(self.changed_callbacks)))
         for callback in self.changed_callbacks.values():
             callback()
 
@@ -175,6 +178,7 @@ class ChangeTracker(HistoryManagerBase):
 
     def on_changed(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_changed'):
+            self.log('changed')
             now = self.datetime()
             self.updated_time = now
             if old['state'] != new['state']:

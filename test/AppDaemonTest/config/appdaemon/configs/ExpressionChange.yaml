@@ -9,5 +9,8 @@ expression_app:
     class: Expression
     dependencies:
         - locker
-    expr: 'app.changes.last_changed().strftime("%H:%M:%S")'
+        - changes
+    expr: >
+        '{} {}'.format(c.changes.strftime('%H:%M:%S'),
+        u.changes.strftime('%H:%M:%S'))
     target: sensor.test_output
