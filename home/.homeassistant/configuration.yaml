@@ -326,6 +326,11 @@ sensor:
     value_template: '{{ value_json.uptime }}'
     unit_of_measurement: "ms"
 
+  - platform: mqtt
+    state_topic: owntracks/homeassistant/owntrackssamsung
+    name: owntrackssamsung_last_updated
+    value_template: '{{ value_json.created_at }}'
+
 
   - platform: command_line
     command: "df /tmp | tail -n 1 | awk '{print $4}'"
