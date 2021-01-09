@@ -152,5 +152,7 @@ class Expression(hass.Hass):
         self.evaluator.cleanup()
 
     def _set(self, value):
+        if type(value) is bool:
+            value = 'on' if value else 'off'
         self.log('set={}'.format(value))
         self.set_state(self.target, state=value, attributes=self.attributes)
