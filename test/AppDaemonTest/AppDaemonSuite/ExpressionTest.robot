@@ -24,6 +24,18 @@ Sensors
     ${-7}  ${5}   Int  ${-2}
     foo    bar    str  foobar
 
+Binary Sensors
+    [Setup]  Initialize  00:00:00  ExpressionBinary
+    [Template]  Test Sensors
+    ${0}   ${1}   str  off
+    ${1}   ${0}   str  on
+    ${0}   ${0}   str  off
+    ${5}   ${10}  str  off
+    ${10}  ${5}   str  on
+    foo    bar    str  on
+    bar    foo    str  off
+    bar    bar    str  off
+
 Attributes
     [Setup]  Initialize  00:00:00  ExpressionAttribute
     [Template]  Test Attributes
