@@ -1,0 +1,4 @@
+appdaemon<4.0.0
+robotframework
+python-dateutil
+astral==1.7.1

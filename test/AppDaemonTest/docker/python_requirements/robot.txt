@@ -1,0 +1,8 @@
+robotframework
+robotframework-pabot
+webtest
+jsonpointer
+jsonpatch
+sqlalchemy
+virtualenv
+pyyaml
