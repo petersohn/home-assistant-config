@@ -8,7 +8,7 @@ class EnabledSwitch(hass.Hass):
         self.mutex = self.get_app('locker').get_mutex('EnabledSwitch')
         self.enabler = self.get_app(self.args['enabler'])
         self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
-        self.enabler_id = self.enabler.on_change(self.set_state)
+        self.enabler_id = self.enabler.add_callback(self.set_state)
         if self.enabler.is_enabled():
             self.run_in(lambda _: self.targets.turn_on(), 0)
 

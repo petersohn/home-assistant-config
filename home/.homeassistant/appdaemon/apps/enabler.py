@@ -23,8 +23,8 @@ class Enabler(hass.Hass):
         for callback in callbacks:
             callback()
 
-    def on_change(self, func):
-        with self.callbacks_mutex.lock('on_change'):
+    def add_callback(self, func):
+        with self.callbacks_mutex.lock('add_callback'):
             id = self.callback_id
             self.callbacks[id] = func
             self.callback_id += 1
@@ -136,7 +136,7 @@ class MultiEnabler(Enabler):
         self._init_enabler(self.__get())
         self.ids = []
         for enabler in self.enablers:
-            self.ids.append(enabler.on_change(lambda: self._on_change()))
+            self.ids.append(enabler.add_callback(lambda: self._on_change()))
 
     def terminate(self):
         for enabler, id in zip(self.enablers, self.ids):

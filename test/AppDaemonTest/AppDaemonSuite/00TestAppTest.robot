@@ -1,6 +1,7 @@
 *** Settings ***
 
 Resource       resources/Config.robot
+Resource       resources/DateTime.robot
 Library        DateTime
 Library        libraries/DateTimeUtil.py
 Test Setup     Initialize
@@ -351,11 +352,8 @@ Initialize With External Test App
 
 Current Time Should Be
     [Arguments]  ${time}
-    ${date} =  Add Time To Date  ${default_start_date}  ${time}
-    ${time_value} =  Convert Date  ${date}
     ${current_time} =  Call Function  get_current_time
-    ${current_time_value} =  Convert Date  ${current_time}
-    Should Be Equal  ${current_time_value}  ${time_value}
+    Times Should Match  ${current_time}  ${time}
 
 Test Turn On Or Off
     [Arguments]  ${state}

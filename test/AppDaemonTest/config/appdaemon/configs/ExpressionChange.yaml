@@ -1,0 +1,16 @@
+changes:
+    class: ChangeTracker
+    module: history
+    entity: sensor.test_input1
+    dependencies: locker
+
+expression_app:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+        - changes
+    expr: >
+        '{} {}'.format(c.changes.strftime('%H:%M:%S'),
+        u.changes.strftime('%H:%M:%S'))
+    target: sensor.test_output

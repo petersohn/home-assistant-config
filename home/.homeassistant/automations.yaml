@@ -125,10 +125,10 @@
             option: '{{ trigger.payload }}'
 
 - trigger:
-      platform: zone
+      platform: state
       entity_id: device_tracker.homeassistant_owntrackssamsung
-      zone: zone.home
-      event: leave
+      to: 'not_home'
+      for: '00:05:00'
   condition:
     condition: state
     entity_id: input_select.presence_mode

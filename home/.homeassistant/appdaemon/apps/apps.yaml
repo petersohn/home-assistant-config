@@ -890,3 +890,39 @@ availability_alerts:
         - binary_sensor.dishwasher_sensor_available
         - binary_sensor.gate_reflector_available
         - binary_sensor.attic_lower_available
+
+tracker_changes:
+    class: ChangeTracker
+    module: history
+    entity: device_tracker.homeassistant_owntrackssamsung
+    dependencies: locker
+
+tracker_updates:
+    class: ChangeTracker
+    module: history
+    entity: sensor.owntrackssamsung_last_updated
+    dependencies: locker
+
+tracker_last_updated:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+        - tracker_changes
+    expr: >
+        int((now() - c.tracker_updates).total_seconds()) // 60
+    target: sensor.tracker_last_updated
+    attributes:
+        unit_of_measurement: min
+
+tracker_last_changed:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+        - tracker_changes
+    expr: >
+        int((now() - c.tracker_changes).total_seconds()) // 60
+    target: sensor.tracker_last_changed
+    attributes:
+        unit_of_measurement: min

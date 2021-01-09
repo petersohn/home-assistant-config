@@ -37,13 +37,13 @@ Get Now
     [Setup]  Initialize  00:00:00  ExpressionNow
     Unblock Until  00:01:00
     ${result} =  Get State  ${output_sensor}
-    Date Should Equal Time  ${result}  ${default_start_date}  00:01:00
+    Times Should Match  ${result}  00:01:00
     Unblock Until  00:01:30
     ${result} =  Get State  ${output_sensor}
-    Date Should Equal Time  ${result}  ${default_start_date}  00:01:30
+    Times Should Match  ${result}  00:01:30
     Unblock Until  01:12:20
     ${result} =  Get State  ${output_sensor}
-    Date Should Equal Time  ${result}  ${default_start_date}  01:12:20
+    Times Should Match  ${result}  01:12:20
 
 Args
     [Setup]  Initialize  00:00:00  ExpressionArgs
@@ -51,6 +51,19 @@ Args
     ${0}  c  firstbaz
     ${1}  a  secondfoo
     ${2}  b  thirdbar
+
+
+Changes
+    [Setup]  Initialize  00:00:00  ExpressionChange
+    Unblock Until  00:01:00
+    Set State  ${input_sensor1}  1  foo=bar
+    Unblock For  ${appdaemon_interval}
+    State Should Be As  ${output_sensor}  str  00:01:00 00:01:00
+    Unblock Until  00:01:30
+    Set State  ${input_sensor1}  1  foo=baz
+    Unblock For  ${appdaemon_interval}
+    State Should Be As  ${output_sensor}  str  00:01:00 00:01:30
+
 
 *** Keywords ***
 
@@ -79,7 +92,7 @@ Initialize
     Initialize States
     ...    ${input_sensor1}=0
     ...    ${input_sensor2}=0
-    ${apps} =  Create List  TestApp  locker  mutex_graph  expression
+    ${apps} =  Create List  TestApp  locker  mutex_graph  expression  history
     ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     ...                   start_date=${default_start_date}
