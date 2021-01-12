@@ -943,6 +943,19 @@ alert:
     skip_first: true
     notifiers:
       - telegram_alert
+  tracker_update:
+    name: Pozíció jelzés hiányzik
+    message: >
+      Pozíció nincs frissítve
+      {{states('sensor.tracker_last_updated')}}
+      perce.
+    entity_id: binary_sensor.tracker_not_updated
+    state: 'on'
+    repeat:
+      - 60
+    can_acknowledge: true
+    notifiers:
+      - telegram_alert
 
 system_health:
 

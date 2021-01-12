@@ -926,3 +926,12 @@ tracker_last_changed:
     target: sensor.tracker_last_changed
     attributes:
         unit_of_measurement: min
+
+tracker_not_updated:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+        - tracker_last_updated
+    expr: v.sensor.tracker_last_updated >= 120
+    target: binary_sensor.tracker_not_updated

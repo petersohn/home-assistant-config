@@ -8,9 +8,7 @@ views:
         entities:
           - input_select.presence_mode
           - device_tracker.homeassistant_owntrackssamsung
-          - sensor.tracker_last_updated
-          - sensor.tracker_last_changed
-          - sensor.owntrackssamsung_last_updated
+          - alert.tracker_update
       - type: entities
         state_color: true
         entities:
