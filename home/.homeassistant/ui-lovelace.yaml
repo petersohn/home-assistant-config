@@ -548,6 +548,32 @@ views:
               - type: sensor
                 entity: sensor.humidity_kitchen
                 graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_cellar
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_cellar
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_attic
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_attic
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_furnace_room
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_furnace_room
+                graph: line
     icon: 'mdi:weather-pouring'
   - path: state
     title: state
