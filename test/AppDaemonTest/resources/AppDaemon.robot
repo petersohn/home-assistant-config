@@ -4,6 +4,7 @@ Library    HttpLibrary.HTTP
 Library    Process
 Library    DateTime
 Library    libraries/TypeUtil.py
+Resource   resources/DateTime.robot
 Resource   resources/ErrorHandling.robot
 Resource   resources/Http.robot
 Variables  libraries/Directories.py
@@ -103,12 +104,6 @@ Unblock Until Date Time
     Call Function  unblock_until_date_time  ${when}
     Wait Until Blocked  ${real_timeout}
 
-Calculate Time
-    [Arguments]  ${function}  ${delay}
-    ${target} =  Call Function  ${function}  result_type=str
-    ${result} =  Add Time To Date  ${target}  ${delay}
-    [Return]  ${result}
-
 Unblock Until Sunrise
     [Arguments]  ${delay}=${0}  ${real_timeout}=30s
     ${target} =  Calculate Time  sunrise  ${delay}
@@ -119,11 +114,23 @@ Unblock Until Sunset
     ${target} =  Calculate Time  sunset  ${delay}
     Unblock Until Date Time  ${target}  ${real_timeout}
 
-State Should Not Change
-    [Arguments]  ${entity}  @{args}  &{kwargs}
+State Should Not Change Until
+    [Arguments]  ${entity}  ${time}
     ${old_state} =  Get State  ${entity}
-    Unblock Until State Change  ${entity}  @{args}  &{kwargs}
+    Unblock Until State Change  ${entity}  deadline=${time}
     State Should Be  ${entity}  ${old_state}
+    Current Time Should Be  ${time}
+
+State Should Not Change For
+    [Arguments]  ${entity}  ${time}
+    ${old_state} =  Get State  ${entity}
+    ${before_time} =  Call Function  get_current_time
+    Unblock Until State Change  ${entity}  timeout=${time}
+    ${after_time} =  Call Function  get_current_time
+    State Should Be  ${entity}  ${old_state}
+    ${time_difference} =  Subtract Date From Date  ${after_time}  ${before_time}
+    ${expected_difference} =  Convert Time  ${time}
+    Should Be Equal  ${time_difference}  ${expected_difference}
 
 State Should Change Now
     [Arguments]  ${entity}  ${value}
@@ -134,7 +141,7 @@ State Should Change At
     [Arguments]  ${entity}  ${value}  ${time}
     ${deadline} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
     State Should Not Be  ${entity}  ${value}
-    State Should Not Change  ${entity}  deadline=${deadline}
+    State Should Not Change Until  ${entity}  ${deadline}
     Unblock For  ${appdaemon_interval}
     State Should Change Now  ${entity}  ${value}
 
@@ -142,7 +149,7 @@ State Should Change In
     [Arguments]  ${entity}  ${value}  ${time}
     ${timeout} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
     State Should Not Be  ${entity}  ${value}
-    State Should Not Change  ${entity}  timeout=${timeout}
+    State Should Not Change For  ${entity}  ${timeout}
     Unblock For  ${appdaemon_interval}
     State Should Change Now  ${entity}  ${value}
 

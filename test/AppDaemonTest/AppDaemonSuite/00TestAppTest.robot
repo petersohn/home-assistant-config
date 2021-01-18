@@ -3,7 +3,6 @@
 Resource       resources/Config.robot
 Resource       resources/DateTime.robot
 Library        DateTime
-Library        libraries/DateTimeUtil.py
 Test Setup     Initialize
 Test Teardown  Cleanup AppDaemon
 
@@ -193,16 +192,16 @@ Unblock Until State Change With Old State
     Unblock Until State Change  ${test_sensor}  old=${intermediate_sensor_value}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
-State Should Not Change With Timeout
+State Should Not Change For Some Time
     Schedule Call In  30 sec
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    State Should Not Change  ${test_sensor}  timeout=20 sec
+    State Should Not Change For  ${test_sensor}  20 sec
     Current Time Should Be  01:00:20
 
-State Should Not Change With Deadline
+State Should Not Change Until Some Time
     Schedule Call In  30 sec
     ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-    State Should Not Change  ${test_sensor}  deadline=01:00:20
+    State Should Not Change Until  ${test_sensor}  01:00:20
     Current Time Should Be  01:00:20
 
 State Should Change In Some Time
@@ -349,11 +348,6 @@ Initialize With External Test App
     ${apps} =  Create List  TestApp  locker  mutex_graph  TestOtherApp
     ${app_configs} =  Create List  TestApp  TestOtherApp
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
-
-Current Time Should Be
-    [Arguments]  ${time}
-    ${current_time} =  Call Function  get_current_time
-    Times Should Match  ${current_time}  ${time}
 
 Test Turn On Or Off
     [Arguments]  ${state}

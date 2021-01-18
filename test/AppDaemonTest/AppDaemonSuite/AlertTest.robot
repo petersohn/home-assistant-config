@@ -52,14 +52,14 @@ Turn Alert On And Off
     ...    binary_sensor.error2 is bad
     ...    binary_sensor.error3 is bad
 
-    State Should Not Change  ${alert_sensor}  deadline=4 min
+    State Should Not Change Until  ${alert_sensor}  4 min
     Wait Until Keyword Succeeds  10s  0.01s
     ...    Alarm Text Should Be
     ...        binary_sensor.error1 is bad
     ...        binary_sensor.error2 is bad
     State Should Be  ${alert_sensor}  on
 
-    State Should Not Change  ${alert_sensor}  deadline=5 min
+    State Should Not Change Until  ${alert_sensor}  5 min
     Wait Until Keyword Succeeds  10s  0.01s
     ...    Alarm Text Should Be
     ...        binary_sensor.error2 is bad
@@ -84,7 +84,7 @@ Alert On At The Beginning
     Schedule Call At  2 min
     ...    set_sensor_state  ${sensor3}  off
 
-    State Should Not Change  ${alert_sensor}  deadline=1 min
+    State Should Not Change Until  ${alert_sensor}  1 min
     Wait Until Keyword Succeeds  10s  0.01s
     ...    Alarm Text Should Be
     ...        binary_sensor.error3 is bad
@@ -118,7 +118,7 @@ State Should Cycle At
     [Arguments]  ${entity}  ${time}
     ${deadline} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
     State Should Be  ${entity}  on
-    State Should Not Change  ${entity}  deadline=${deadline}
+    State Should Not Change Until  ${entity}  ${deadline}
     Unblock For  ${appdaemon_interval}
     ${date} =  Get Date
     Wait For History
