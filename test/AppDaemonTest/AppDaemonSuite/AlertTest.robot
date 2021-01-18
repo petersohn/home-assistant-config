@@ -18,7 +18,7 @@ ${sensor3} =        binary_sensor.error3
 *** Test Cases ***
 
 Turn Alert On And Off
-    [Setup]  Initialize
+    [Setup]  Initialize  AlertAggregator
     ...    ${sensor1}=off
     ...    ${sensor2}=off
     ...    ${sensor3}=off
@@ -68,7 +68,7 @@ Turn Alert On And Off
     State Should Change At  ${alert_sensor}  off  6 min
 
 Alert On At The Beginning
-    [Setup]  Initialize
+    [Setup]  Initialize  AlertAggregator
     ...    ${sensor1}=off
     ...    ${sensor2}=on
     ...    ${sensor3}=on
@@ -91,6 +91,85 @@ Alert On At The Beginning
     State Should Be  ${alert_sensor}  on
 
     State Should Change At  ${alert_sensor}  off  2 min
+
+Timeout
+    [Setup]  Initialize  AlertAggregatorTimeout
+    ...    ${sensor1}=off
+    ...    ${sensor2}=off
+    ...    ${sensor3}=off
+
+    State Should Be  ${alert_sensor}  off
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${sensor1}  on
+    Schedule Call At  2 min
+    ...    set_sensor_state  ${sensor1}  off
+
+    Schedule Call At  2 min 30 sec
+    ...    set_sensor_state  ${sensor1}  on
+    Schedule Call At  3 min
+    ...    set_sensor_state  ${sensor2}  on
+    Schedule Call At  5 min
+    ...    set_sensor_state  ${sensor1}  off
+    Schedule Call At  5 min 20 sec
+    ...    set_sensor_state  ${sensor2}  off
+
+    Schedule Call At  6 min
+    ...    set_sensor_state  ${sensor3}  on
+    Schedule Call At  8 min
+    ...    set_sensor_state  ${sensor1}  on
+    Schedule Call At  8 min 30 sec
+    ...    set_sensor_state  ${sensor1}  off
+    Schedule Call At  9 min 30 sec
+    ...    set_sensor_state  ${sensor1}  on
+    Schedule Call At  11 min
+    ...    set_sensor_state  ${sensor3}  off
+    Schedule Call At  11 min 30 sec
+    ...    set_sensor_state  ${sensor2}  on
+    Schedule Call At  12 min
+    ...    set_sensor_state  ${sensor1}  off
+    Schedule Call At  13 min
+    ...    set_sensor_state  ${sensor2}  off
+
+    State Should Change At  ${alert_sensor}  on  1 min 20 sec
+    Wait Until Keyword Succeeds  10s  0.01s
+    ...    Alarm Text Should Be
+    ...        binary_sensor.error1 is bad
+    State Should Change At  ${alert_sensor}  off  2 min
+
+    State Should Change At  ${alert_sensor}  on  3 min 30 sec
+    Wait Until Keyword Succeeds  10s  0.01s
+    ...    Alarm Text Should Be
+    ...        binary_sensor.error1 is bad
+    State Should Cycle At  ${alert_sensor}  4 min
+    Wait Until Keyword Succeeds  10s  0.01s
+    ...    Alarm Text Should Be
+    ...        binary_sensor.error1 is bad
+    ...        binary_sensor.error2 is bad
+    State Should Not Change Until  ${alert_sensor}  5 min
+    Wait Until Keyword Succeeds  10s  0.01s
+    ...    Alarm Text Should Be
+    ...        binary_sensor.error2 is bad
+    State Should Change At  ${alert_sensor}  off   5 min 20 sec
+
+    State Should Change At  ${alert_sensor}  on  7 min
+    Wait Until Keyword Succeeds  10s  0.01s
+    ...    Alarm Text Should Be
+    ...        binary_sensor.error3 is bad
+    State Should Cycle At  ${alert_sensor}  10 min 30 sec
+    Wait Until Keyword Succeeds  10s  0.01s
+    ...    Alarm Text Should Be
+    ...        binary_sensor.error1 is bad
+    ...        binary_sensor.error3 is bad
+    State Should Not Change Until  ${alert_sensor}  11 min
+    Wait Until Keyword Succeeds  10s  0.01s
+    ...    Alarm Text Should Be
+    ...        binary_sensor.error1 is bad
+    State Should Change At  ${alert_sensor}  off   12 min
+    State Should Change At  ${alert_sensor}  on  12 min 30 sec
+    Wait Until Keyword Succeeds  10s  0.01s
+    ...    Alarm Text Should Be
+    ...        binary_sensor.error2 is bad
+    State Should Change At  ${alert_sensor}  off   13 min
 
 
 *** Keywords ***
@@ -127,12 +206,12 @@ State Should Cycle At
     State Should Be  ${entity}  on
 
 Initialize
-    [Arguments]  &{states}
+    [Arguments]  @{configs}  &{states}
     Clean States
     Initialize States
     ...    ${alert_sensor}=off
     ...    &{states}
     ${apps} =  Create List  TestApp  locker  mutex_graph  expression  history  alert
-    ${app_configs} =  Create List  TestApp  AlertAggregator
+    ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  00:00:00
     Unblock For  ${appdaemon_interval}

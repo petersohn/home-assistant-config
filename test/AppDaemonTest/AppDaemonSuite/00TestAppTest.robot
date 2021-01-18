@@ -1,7 +1,6 @@
 *** Settings ***
 
 Resource       resources/Config.robot
-Resource       resources/DateTime.robot
 Library        DateTime
 Test Setup     Initialize
 Test Teardown  Cleanup AppDaemon
