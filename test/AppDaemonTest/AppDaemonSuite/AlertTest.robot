@@ -53,15 +53,13 @@ Turn Alert On And Off
     ...    binary_sensor.error3 is bad
 
     State Should Not Change Until  ${alert_sensor}  4 min
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
+    Wait For Alarm Text
     ...        binary_sensor.error1 is bad
     ...        binary_sensor.error2 is bad
     State Should Be  ${alert_sensor}  on
 
     State Should Not Change Until  ${alert_sensor}  5 min
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
+    Wait For Alarm Text
     ...        binary_sensor.error2 is bad
     State Should Be  ${alert_sensor}  on
 
@@ -74,10 +72,9 @@ Alert On At The Beginning
     ...    ${sensor3}=on
 
     State Should Be  ${alert_sensor}  on
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
-    ...        binary_sensor.error2 is bad
-    ...        binary_sensor.error3 is bad
+    Wait For Alarm Text
+    ...    binary_sensor.error2 is bad
+    ...    binary_sensor.error3 is bad
 
     Schedule Call At  1 min
     ...    set_sensor_state  ${sensor2}  off
@@ -85,9 +82,8 @@ Alert On At The Beginning
     ...    set_sensor_state  ${sensor3}  off
 
     State Should Not Change Until  ${alert_sensor}  1 min
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
-    ...        binary_sensor.error3 is bad
+    Wait For Alarm Text
+    ...    binary_sensor.error3 is bad
     State Should Be  ${alert_sensor}  on
 
     State Should Change At  ${alert_sensor}  off  2 min
@@ -131,43 +127,35 @@ Timeout
     ...    set_sensor_state  ${sensor2}  off
 
     State Should Change At  ${alert_sensor}  on  1 min 20 sec
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
-    ...        binary_sensor.error1 is bad
+    Wait For Alarm Text
+    ...    binary_sensor.error1 is bad
     State Should Change At  ${alert_sensor}  off  2 min
 
     State Should Change At  ${alert_sensor}  on  3 min 30 sec
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
-    ...        binary_sensor.error1 is bad
+    Wait For Alarm Text
+    ...    binary_sensor.error1 is bad
     State Should Cycle At  ${alert_sensor}  4 min
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
-    ...        binary_sensor.error1 is bad
-    ...        binary_sensor.error2 is bad
+    Wait For Alarm Text
+    ...    binary_sensor.error1 is bad
+    ...    binary_sensor.error2 is bad
     State Should Not Change Until  ${alert_sensor}  5 min
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
-    ...        binary_sensor.error2 is bad
+    Wait For Alarm Text
+    ...    binary_sensor.error2 is bad
     State Should Change At  ${alert_sensor}  off   5 min 20 sec
 
     State Should Change At  ${alert_sensor}  on  7 min
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
+    Wait For Alarm Text
     ...        binary_sensor.error3 is bad
     State Should Cycle At  ${alert_sensor}  10 min 30 sec
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
-    ...        binary_sensor.error1 is bad
-    ...        binary_sensor.error3 is bad
+    Wait For Alarm Text
+    ...    binary_sensor.error1 is bad
+    ...    binary_sensor.error3 is bad
     State Should Not Change Until  ${alert_sensor}  11 min
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
-    ...        binary_sensor.error1 is bad
+    Wait For Alarm Text
+    ...    binary_sensor.error1 is bad
     State Should Change At  ${alert_sensor}  off   12 min
     State Should Change At  ${alert_sensor}  on  12 min 30 sec
-    Wait Until Keyword Succeeds  10s  0.01s
-    ...    Alarm Text Should Be
+    Wait For Alarm Text
     ...        binary_sensor.error2 is bad
     State Should Change At  ${alert_sensor}  off   13 min
 
@@ -192,6 +180,11 @@ Alarm Text Should Be
     [Arguments]  @{lines}
     ${expected_text} =  Catenate  SEPARATOR=\n  @{lines}
     Attribute Should Be  ${alert_sensor}  text  ${expected_text}
+
+Wait For Alarm Text
+    [Arguments]  @{lines}
+    Wait Until Keyword Succeeds  10s  0.01s
+    ...    Alarm Text Should Be  @{lines}
 
 State Should Cycle At
     [Arguments]  ${entity}  ${time}
