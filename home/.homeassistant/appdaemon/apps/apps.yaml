@@ -874,6 +874,8 @@ availability_alerts:
     target: binary_sensor.availability_alert
     trigger_expr: not v[name]
     text_expr: name[14:-10]
+    timeout:
+        minutes: 5
     dependencies:
         - locker
     global_dependencies:

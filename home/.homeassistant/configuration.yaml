@@ -937,10 +937,9 @@ alert:
     entity_id: binary_sensor.availability_alert
     state: 'on'
     repeat:
-      - 2
       - 10
+      - 60
     can_acknowledge: true
-    skip_first: true
     notifiers:
       - telegram_alert
   tracker_update:
