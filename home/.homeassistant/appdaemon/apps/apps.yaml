@@ -937,3 +937,15 @@ tracker_not_updated:
         - tracker_last_updated
     expr: v.sensor.tracker_last_updated >= 120
     target: binary_sensor.tracker_not_updated
+
+furnace_overheat_warning:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+        v.sensor.temperature_furnace_wood > 90
+    target: binary_sensor.furnace_overheat
+    attributes:
+        unit_of_measurement: min
+

@@ -955,6 +955,19 @@ alert:
     can_acknowledge: true
     notifiers:
       - telegram_alert
+  furnace_overheat:
+    name: Kazán túlmelegedés
+    message: >
+      Kazán túlmelegedés: {{states('sensor.temperature_furnace_wood')}} °C
+    entity_id: binary_sensor.furnace_overheat
+    state: 'on'
+    skip_first: true
+    repeat:
+      - 1
+      - 5
+    can_acknowledge: true
+    notifiers:
+      - telegram_alert
 
 system_health:
 
