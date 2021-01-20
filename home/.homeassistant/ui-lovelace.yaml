@@ -458,6 +458,17 @@ views:
               max: 1.0
         title: Mozgásérzékelők
         show_header_toggle: false
+  - path: alerts
+    title: Riasztások
+    icon: 'mdi:alert'
+    badges: []
+    cards:
+      - type: entities
+        entities:
+            alert.availability
+            alert.freeze
+            alert.tracker_update
+            alert.furnace_overheat
   - path: weather
     title: Időjárás
     badges: []

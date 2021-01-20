@@ -949,3 +949,22 @@ furnace_overheat_warning:
     attributes:
         unit_of_measurement: min
 
+freeze_alerts:
+    module: alert
+    class: AlertAggregator
+    target: binary_sensor.freeze_alert
+    trigger_expr: 'v[name] < 1.0'
+    text_expr: name[19:]
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+    sources:
+        - sensor.temperature_furnace_room
+        - sensor.temperature_cellar
+        - sensor.temperature_bedroom_upper
+        - sensor.temperature_bedroom_lower
+        - sensor.temperature_living_room_upper
+        - sensor.temperature_living_room_lower
+        - sensor.temperature_kitchen
+

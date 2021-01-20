@@ -941,6 +941,21 @@ alert:
       - 60
     can_acknowledge: true
     notifiers:
+  freeze:
+    name: Fagyás
+    message: |
+      Fagyás.
+
+      ```
+      {{state_attr('binary_sensor.freeze_alert', 'text')}}
+      ```
+    entity_id: binary_sensor.freeze_alert
+    state: 'on'
+    repeat:
+      - 30
+      - 60
+    can_acknowledge: true
+    notifiers:
       - telegram_alert
   tracker_update:
     name: Pozíció jelzés hiányzik
