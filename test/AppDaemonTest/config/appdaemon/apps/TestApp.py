@@ -20,10 +20,17 @@ class TestApp(hass.Hass):
             return 'PendingState(' + str(self.state) + ')'
 
     def initialize(self):
+        self.log('Register endpoint')
         self.register_endpoint(self.api_callback, 'TestApp')
         self.__block_listeners = {}
         self.__block_timers = []
         self.__pending_states = {}
+        self.register_endpoint(my_callback, "test_endpoint")
+
+    def my_callback(self, data):
+        self.log(data)
+        response = {"message": "Hello World"}
+        return response, 200
 
     def __call(self, data):
         args = data.get('args', [])
@@ -159,7 +166,7 @@ class TestApp(hass.Hass):
         Blocker.main_blocker.unblock()
 
     def get_current_time(self):
-        return self.datetime().timestamp()
+        return self.get_now_ts()
 
     def schedule_call_at(self, when, data):
         self.run_once(self.__call, DateTimeUtil.to_time(when), **data)
@@ -180,7 +187,7 @@ class TestApp(hass.Hass):
         return getattr(self.get_app(app), function)(*args, **kwargs)
 
     def get_date(self):
-        return self.datetime()
+        return self.get_now()
 
     def __state_set(self, entity, attribute, old, new, kwargs):
         self.log(

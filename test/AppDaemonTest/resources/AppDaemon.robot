@@ -25,8 +25,7 @@ Start AppDaemon
     ${app_daemon_process} =  Start Process   ./appdaemon
     ...    --config      ${OUTPUT_DIRECTORY}
     ...    --starttime   ${start_datetime}
-    ...    --tick        0
-    ...    --interval    ${appdaemon_interval}
+    ...    --timewarp    0.1  # This cannot be 0 or 1
 #     ...    --debug       DEBUG
     ...    stdout=${OUTPUT_DIRECTORY}/appdaemon.stdout
     ...    stderr=${OUTPUT_DIRECTORY}/appdaemon.stderr

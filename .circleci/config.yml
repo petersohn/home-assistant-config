@@ -1,6 +1,9 @@
 version: 2
 jobs:
     test-appdaemon:
+        branches:
+            only:
+                - master
         environment:
             - HASS_PATH: /homeassistant
             - APPDAEMON_PATH: /appdaemon

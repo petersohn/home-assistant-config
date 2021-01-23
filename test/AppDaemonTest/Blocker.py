@@ -13,7 +13,7 @@ class Blocker:
 
     def unblock(self):
         async def _unblock():
-            utils.log(daemon.logger, "INFO", "Unblock", self.name)
+            # utils.log(daemon.logger, "INFO", "Unblock", self.name)
             self.__blocker.set()
 
         asyncio.run_coroutine_threadsafe(_unblock(), daemon.loop)
@@ -21,7 +21,7 @@ class Blocker:
     def block(self):
         async def _block():
             global _main_loop_blocker
-            utils.log(daemon.logger, "INFO", "Block", self.name)
+            # utils.log(daemon.logger, "INFO", "Block", self.name)
             self.__blocker.clear()
 
         asyncio.run_coroutine_threadsafe(_block(), daemon.loop)
