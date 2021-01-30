@@ -25,7 +25,7 @@ class TestApp(hass.Hass):
         self.__block_listeners = {}
         self.__block_timers = []
         self.__pending_states = {}
-        self.register_endpoint(my_callback, "test_endpoint")
+        # self.register_endpoint(my_callback, "test_endpoint")
 
     def my_callback(self, data):
         self.log(data)

@@ -18,3 +18,5 @@ appdaemon:
 
 http:
     url: !secret api_url
+
+api:

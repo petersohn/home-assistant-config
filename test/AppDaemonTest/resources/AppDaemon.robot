@@ -21,6 +21,7 @@ Start AppDaemon
     [Arguments]  ${start_time}  ${start_date}=${default_start_date}
     Set Test Variable  ${app_daemon_host}  127.0.0.1:${app_daemon_api_port}
     ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}
+    ${start_datetime} =  Subtract Time From Date  ${start_datetime}  1 sec
     ...    exclude_millis=true
     ${app_daemon_process} =  Start Process   ./appdaemon
     ...    --config      ${OUTPUT_DIRECTORY}
