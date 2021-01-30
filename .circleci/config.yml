@@ -34,9 +34,9 @@ jobs:
 workflows:
     version: 2
     test:
-        filters:
-            branches:
-                only:
-                    - master
         jobs:
-            - test-appdaemon
+            - test-appdaemon:
+                filters:
+                    branches:
+                        only:
+                            - master
