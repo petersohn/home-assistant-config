@@ -119,6 +119,7 @@ class TestApp(hass.Hass):
         return DateTime.convert_time(time, result_format='timedelta')
 
     def __block(self, kwargs):
+        self.log('__block')
         Blocker.main_blocker.block()
         for listener in self.__block_listeners.values():
             self.cancel_listen_state(listener)
