@@ -647,6 +647,8 @@ hot_water_pump_timer:
         - auto_switch_hot_water_pump
         - hot_water_pump_timer_enabler
         - locker
+    global_dependencies:
+        - expression
     expr: >
         v['sensor.time'] + ':00' ==
         v['input_datetime.hot_water_' + args['weekdays'][now().weekday()]]

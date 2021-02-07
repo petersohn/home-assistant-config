@@ -135,7 +135,6 @@ class ExpressionEvaluator:
         if self.callback is None:
             return
         with self.mutex.lock('fire_callback'):
-            self.app.log('fire_callback')
             value = self._get()
             self.callback(value)
 
@@ -154,5 +153,4 @@ class Expression(hass.Hass):
     def _set(self, value):
         if type(value) is bool:
             value = 'on' if value else 'off'
-        self.log('set={}'.format(value))
         self.set_state(self.target, state=value, attributes=self.attributes)
