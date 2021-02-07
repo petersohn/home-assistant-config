@@ -288,7 +288,7 @@ motion_sensor_garage_enabler:
     expr: >
         e.sun_enabler_night or
         (v.input_select.presence_mode == "home" and
-        v.sensor.light_shadow != 'unknown' and v.sensor.light_shadow <= 20)
+        v.sensor.light_sunlight != 'unknown' and v.sensor.light_sunlight <= 50)
 
 motion_sensor_garage2_history:
     module: history
@@ -568,8 +568,8 @@ light_outside_3_enabler:
     expr: >
         e.lights_should_be_on and
         (e.sun_enabler_night or
-        (v.sensor.light_shadow != 'unknown' and
-        v.sensor.light_shadow <= 20))
+        (v.sensor.light_sunlight != 'unknown' and
+        v.sensor.light_sunlight <= 50))
     dependencies:
         - sun_enabler_night
         - lights_should_be_on
