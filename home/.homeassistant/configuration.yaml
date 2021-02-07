@@ -249,10 +249,12 @@ binary_sensor:
     state_topic: home/devices/main_controller/availability
     json_attributes_topic: home/devices/main_controller/availability
     json_attributes_template: >
-        {
-            "free_memory": {{ value_json.freeMemory }},
-            "uptime": {{ value_json.uptime }}
-        }
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     name: main_controller_available
     value_template: '{{ value_json.available }}'
@@ -262,10 +264,12 @@ binary_sensor:
     state_topic: home/devices/main_controller2/availability
     json_attributes_topic: home/devices/main_controller2/availability
     json_attributes_template: >
-        {
-            "free_memory": {{ value_json.freeMemory }},
-            "uptime": {{ value_json.uptime }}
-        }
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     name: main_controller2_available
     value_template: '{{ value_json.available }}'
@@ -275,10 +279,12 @@ binary_sensor:
     state_topic: home/devices/furnaceTemperature/availability
     json_attributes_topic: home/devices/furnaceTemperature/availability
     json_attributes_template: >
-        {
-            "free_memory": {{ value_json.freeMemory }},
-            "uptime": {{ value_json.uptime }}
-        }
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     name: furnace_temperature_available
     value_template: '{{ value_json.available }}'
@@ -288,10 +294,12 @@ binary_sensor:
     state_topic: home/devices/driveway/availability
     json_attributes_topic: home/devices/driveway/availability
     json_attributes_template: >
-        {
-            "free_memory": {{ value_json.freeMemory }},
-            "uptime": {{ value_json.uptime }}
-        }
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     name: driveway_available
     value_template: '{{ value_json.available }}'
@@ -301,10 +309,12 @@ binary_sensor:
     state_topic: home/devices/cellar_controller/availability
     json_attributes_topic: home/devices/cellar_controller/availability
     json_attributes_template: >
-        {
-            "free_memory": {{ value_json.freeMemory }},
-            "uptime": {{ value_json.uptime }}
-        }
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     name: cellar_controller_available
     value_template: '{{ value_json.available }}'
@@ -314,10 +324,12 @@ binary_sensor:
     state_topic: home/devices/living_room_temperature/availability
     json_attributes_topic: home/devices/living_room_temperature/availability
     json_attributes_template: >
-        {
-            "free_memory": {{ value_json.freeMemory }},
-            "uptime": {{ value_json.uptime }}
-        }
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     name: living_room_temperature_available
     value_template: '{{ value_json.available }}'
@@ -327,10 +339,12 @@ binary_sensor:
     state_topic: home/devices/bedroom_temperature/availability
     json_attributes_topic: home/devices/bedroom_temperature/availability
     json_attributes_template: >
-        {
-            "free_memory": {{ value_json.freeMemory }},
-            "uptime": {{ value_json.uptime }}
-        }
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     name: bedroom_temperature_available
     value_template: '{{ value_json.available }}'
@@ -340,10 +354,12 @@ binary_sensor:
     state_topic: home/devices/dishwasher_sensor/availability
     json_attributes_topic: home/devices/dishwasher_sensor/availability
     json_attributes_template: >
-        {
-            "free_memory": {{ value_json.freeMemory }},
-            "uptime": {{ value_json.uptime }}
-        }
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     name: dishwasher_sensor_available
     value_template: '{{ value_json.available }}'
@@ -353,10 +369,12 @@ binary_sensor:
     state_topic: home/devices/gate_reflector/availability
     json_attributes_topic: home/devices/gate_reflector/availability
     json_attributes_template: >
-        {
-            "free_memory": {{ value_json.freeMemory }},
-            "uptime": {{ value_json.uptime }}
-        }
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     name: gate_reflector_available
     value_template: '{{ value_json.available }}'
@@ -366,10 +384,12 @@ binary_sensor:
     state_topic: home/devices/attic_lower/availability
     json_attributes_topic: home/devices/attic_lower/availability
     json_attributes_template: >
-        {
-            "free_memory": {{ value_json.freeMemory }},
-            "uptime": {{ value_json.uptime }}
-        }
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     name: attic_lower_available
     value_template: '{{ value_json.available }}'
