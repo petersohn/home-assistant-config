@@ -216,117 +216,6 @@ sensor:
     value_template: "{{ value | float / 10.24 }}"
 
   - platform: mqtt
-    state_topic: home/devices/well_controller/availability
-    name: well_controller_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/well_controller/availability
-    name: well_controller_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/main_controller/availability
-    name: main_controller_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/main_controller/availability
-    name: main_controller_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/main_controller2/availability
-    name: main_controller2_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/main_controller2/availability
-    name: main_controller2_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/furnaceTemperature/availability
-    name: furnace_temperature_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/furnaceTemperature/availability
-    name: furnace_temperature_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/driveway/availability
-    name: driveway_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/driveway/availability
-    name: driveway_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/cellar_controller/availability
-    name: cellar_controller_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/cellar_controller/availability
-    name: cellar_controller_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/living_room_temperature/availability
-    name: living_room_temperature_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/living_room_temperature/availability
-    name: living_room_temperature_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/bedroom_temperature/availability
-    name: bedroom_temperature_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/bedroom_temperature/availability
-    name: bedroom_temperature_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/dishwasher_sensor/availability
-    name: dishwasher_sensor_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/dishwasher_sensor/availability
-    name: dishwasher_sensor_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/gate_reflector/availability
-    name: gate_reflector_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/gate_reflector/availability
-    name: gate_reflector_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-  - platform: mqtt
-    state_topic: home/devices/attic_lower/availability
-    name: attic_lower_free_memory
-    value_template: '{{ value_json.freeMemory }}'
-    unit_of_measurement: "b"
-  - platform: mqtt
-    state_topic: home/devices/attic_lower/availability
-    name: attic_lower_uptime
-    value_template: '{{ value_json.uptime }}'
-    unit_of_measurement: "ms"
-
-  - platform: mqtt
     state_topic: owntracks/homeassistant/owntrackssamsung
     name: owntrackssamsung_last_updated
     value_template: '{{ value_json.created_at }}'
@@ -344,135 +233,146 @@ sensor:
 binary_sensor:
   - platform: mqtt
     state_topic: home/devices/well_controller/availability
+    json_attributes_topic: home/devices/well_controller/availability
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
     name: well_controller_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/main_controller/availability
+    json_attributes_topic: home/devices/main_controller/availability
+    json_attributes_template: >
+        {
+            "free_memory": {{ value_json.freeMemory }},
+            "uptime": {{ value_json.uptime }}
+        }
+    name: well_controller_available
     name: main_controller_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/main_controller2/availability
+    json_attributes_topic: home/devices/main_controller2/availability
+    json_attributes_template: >
+        {
+            "free_memory": {{ value_json.freeMemory }},
+            "uptime": {{ value_json.uptime }}
+        }
+    name: well_controller_available
     name: main_controller2_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/furnaceTemperature/availability
+    json_attributes_topic: home/devices/furnaceTemperature/availability
+    json_attributes_template: >
+        {
+            "free_memory": {{ value_json.freeMemory }},
+            "uptime": {{ value_json.uptime }}
+        }
+    name: well_controller_available
     name: furnace_temperature_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/driveway/availability
+    json_attributes_topic: home/devices/driveway/availability
+    json_attributes_template: >
+        {
+            "free_memory": {{ value_json.freeMemory }},
+            "uptime": {{ value_json.uptime }}
+        }
+    name: well_controller_available
     name: driveway_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/cellar_controller/availability
+    json_attributes_topic: home/devices/cellar_controller/availability
+    json_attributes_template: >
+        {
+            "free_memory": {{ value_json.freeMemory }},
+            "uptime": {{ value_json.uptime }}
+        }
+    name: well_controller_available
     name: cellar_controller_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/living_room_temperature/availability
+    json_attributes_topic: home/devices/living_room_temperature/availability
+    json_attributes_template: >
+        {
+            "free_memory": {{ value_json.freeMemory }},
+            "uptime": {{ value_json.uptime }}
+        }
+    name: well_controller_available
     name: living_room_temperature_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/bedroom_temperature/availability
+    json_attributes_topic: home/devices/bedroom_temperature/availability
+    json_attributes_template: >
+        {
+            "free_memory": {{ value_json.freeMemory }},
+            "uptime": {{ value_json.uptime }}
+        }
+    name: well_controller_available
     name: bedroom_temperature_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/dishwasher_sensor/availability
+    json_attributes_topic: home/devices/dishwasher_sensor/availability
+    json_attributes_template: >
+        {
+            "free_memory": {{ value_json.freeMemory }},
+            "uptime": {{ value_json.uptime }}
+        }
+    name: well_controller_available
     name: dishwasher_sensor_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/gate_reflector/availability
+    json_attributes_topic: home/devices/gate_reflector/availability
+    json_attributes_template: >
+        {
+            "free_memory": {{ value_json.freeMemory }},
+            "uptime": {{ value_json.uptime }}
+        }
+    name: well_controller_available
     name: gate_reflector_available
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
   - platform: mqtt
     state_topic: home/devices/attic_lower/availability
+    json_attributes_topic: home/devices/attic_lower/availability
+    json_attributes_template: >
+        {
+            "free_memory": {{ value_json.freeMemory }},
+            "uptime": {{ value_json.uptime }}
+        }
+    name: well_controller_available
     name: attic_lower_available
     value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-
-  - platform: mqtt
-    state_topic: home/devices/well_controller/availability
-    name: well_controller_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/main_controller/availability
-    name: main_controller_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/main_controller2/availability
-    name: main_controller2_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/furnaceTemperature/availability
-    name: furnace_temperature_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/driveway/availability
-    name: driveway_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/cellar_controller/availability
-    name: cellar_controller_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/living_room_temperature/availability
-    name: living_room_temperature_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/bedroom_temperature/availability
-    name: bedroom_temperature_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/dishwasher_sensor/availability
-    name: dishwasher_sensor_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/gate_reflector/availability
-    name: gate_reflector_restarted
-    value_template: '{{ value_json.restarted }}'
-    payload_on: true
-    payload_off: false
-  - platform: mqtt
-    state_topic: home/devices/attic_lower/availability
-    name: attic_lower_restarted
-    value_template: '{{ value_json.restarted }}'
     payload_on: true
     payload_off: false
 

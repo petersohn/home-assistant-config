@@ -621,36 +621,6 @@ views:
         show_header_toggle: false
       - type: entities
         entities:
-          - sensor.furnace_temperature_free_memory
-          - sensor.well_controller_free_memory
-          - sensor.main_controller_free_memory
-          - sensor.main_controller2_free_memory
-          - sensor.driveway_free_memory
-          - sensor.cellar_controller_free_memory
-          - sensor.living_room_temperature_free_memory
-          - sensor.bedroom_temperature_free_memory
-          - sensor.dishwasher_sensor_free_memory
-          - sensor.gate_reflector_free_memory
-          - sensor.attic_lower_free_memory
-        title: device_memory
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - sensor.furnace_temperature_uptime
-          - sensor.well_controller_uptime
-          - sensor.main_controller_uptime
-          - sensor.main_controller2_uptime
-          - sensor.driveway_uptime
-          - sensor.cellar_controller_uptime
-          - sensor.living_room_temperature_uptime
-          - sensor.bedroom_temperature_uptime
-          - sensor.dishwasher_sensor_uptime
-          - sensor.gate_reflector_uptime
-          - sensor.attic_lower_uptime
-        title: device_uptime
-        show_header_toggle: false
-      - type: entities
-        entities:
           - sensor.tmp_free_space
           - sensor.var_log_free_space
         title: local_device
