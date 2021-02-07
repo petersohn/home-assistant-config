@@ -465,10 +465,10 @@ views:
     cards:
       - type: entities
         entities:
-            alert.availability
-            alert.freeze
-            alert.tracker_update
-            alert.furnace_overheat
+          - alert.availability
+          - alert.freeze
+          - alert.tracker_update
+          - alert.furnace_overheat
   - path: weather
     title: Időjárás
     badges: []
