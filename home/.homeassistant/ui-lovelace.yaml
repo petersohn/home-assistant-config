@@ -12,21 +12,6 @@ views:
       - type: entities
         state_color: true
         entities:
-          - input_boolean.wood_heating
-          - climate.heater
-        show_header_toggle: false
-      - type: entities
-        state_color: true
-        entities:
-          - binary_sensor.door_attic_hatch
-          - binary_sensor.door_main_entrance
-          - binary_sensor.window_entrance
-          - binary_sensor.window_bedroom
-        title: Ajtók
-        show_header_toggle: false
-      - type: entities
-        state_color: true
-        entities:
           - switch.socket_bedroom_1
           - input_select.socket_bedroom_1
           - input_select.socket_bedroom_1_mode
@@ -36,36 +21,73 @@ views:
           - sensor.date
           - sensor.time
         title: Idő
-      - type: entities
-        entities:
-          - sensor.temperature_furnace_gas
-          - sensor.temperature_furnace_wood
-          - sensor.temperature_furnace_wood_in
-          - sensor.temperature_hot_water
-          - switch.heating_pump
-          - sensor.water_usage_dishwasher
-          - sensor.temperature_dishwasher
-          - sensor.water_usage
-          - alert.furnace_overheat
-        title: Gépészet
-        show_header_toggle: false
-      - type: entities
-        entities:
-          - input_boolean.hot_water_pump
-          - switch.hot_water_pump
-          - input_select.hot_water_pump
-          - input_datetime.hot_water_monday
-          - input_datetime.hot_water_tuesday
-          - input_datetime.hot_water_wednesday
-          - input_datetime.hot_water_thursday
-          - input_datetime.hot_water_friday
-          - input_datetime.hot_water_saturday
-          - input_datetime.hot_water_sunday
-          - sensor.temperature_hot_water
-        state_color: true
-        title: Melegvíz bekapcsolás
-        show_header_toggle: false
     icon: 'mdi:home'
+  - path: temperature-inside
+    title: 'Benti hőmérséklet'
+    icon: 'mdi:home-thermometer'
+    cards:
+      - type: entities
+        state_color: true
+        entities:
+          - input_boolean.wood_heating
+          - climate.heater
+        show_header_toggle: false
+        title: Fűtés
+      - type: entities
+        state_color: true
+        entities:
+          - binary_sensor.door_attic_hatch
+          - binary_sensor.door_main_entrance
+          - binary_sensor.window_entrance
+          - binary_sensor.window_bedroom
+        title: Ajtók
+        show_header_toggle: false
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_bedroom_upper
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_bedroom_upper
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_bedroom_lower
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_bedroom_lower
+                graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_living_room_upper
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_living_room_upper
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_living_room_lower
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_living_room_lower
+                graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_kitchen
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_kitchen
+                graph: line
   - path: garden
     title: 'Kert'
     icon: 'mdi:tree'
@@ -458,6 +480,39 @@ views:
               max: 1.0
         title: Mozgásérzékelők
         show_header_toggle: false
+  - path: utilities
+    title: Gépészet
+    icon: 'mdi:engine'
+    badges: []
+    cards:
+      - type: entities
+        entities:
+          - sensor.temperature_furnace_gas
+          - sensor.temperature_furnace_wood
+          - sensor.temperature_furnace_wood_in
+          - sensor.temperature_hot_water
+          - switch.heating_pump
+          - sensor.water_usage_dishwasher
+          - sensor.temperature_dishwasher
+          - sensor.water_usage
+          - alert.furnace_overheat
+        title: Gépészet
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - input_boolean.hot_water_pump
+          - input_select.hot_water_pump
+          - input_datetime.hot_water_monday
+          - input_datetime.hot_water_tuesday
+          - input_datetime.hot_water_wednesday
+          - input_datetime.hot_water_thursday
+          - input_datetime.hot_water_friday
+          - input_datetime.hot_water_saturday
+          - input_datetime.hot_water_sunday
+          - sensor.temperature_hot_water
+        state_color: true
+        title: Melegvíz bekapcsolás
+        show_header_toggle: false
   - path: alerts
     title: Riasztások
     icon: 'mdi:alert'
@@ -469,6 +524,7 @@ views:
           - alert.freeze
           - alert.tracker_update
           - alert.furnace_overheat
+        title: Riasztások
   - path: weather
     title: Időjárás
     badges: []
@@ -491,9 +547,6 @@ views:
           - sensor.wind_direction_average
         show_header_toggle: false
       - type: sensor
-        entity: sensor.light_shadow
-        graph: line
-      - type: sensor
         entity: sensor.light_sunlight
         graph: line
       - type: vertical-stack
@@ -513,52 +566,6 @@ views:
                 graph: line
               - type: sensor
                 entity: sensor.humidity_outside2
-                graph: line
-      - type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_bedroom_upper
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_bedroom_upper
-                graph: line
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_bedroom_lower
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_bedroom_lower
-                graph: line
-      - type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_living_room_upper
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_living_room_upper
-                graph: line
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_living_room_lower
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_living_room_lower
-                graph: line
-      - type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_kitchen
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_kitchen
                 graph: line
       - type: vertical-stack
         cards:
