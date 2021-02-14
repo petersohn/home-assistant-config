@@ -284,11 +284,11 @@ motion_sensor_garage_enabler:
     class: ExpressionEnabler
     dependencies:
         - sun_enabler_night
+        - is_dark
         - locker
     expr: >
         e.sun_enabler_night or
-        (v.input_select.presence_mode == "home" and
-        v.sensor.light_sunlight != 'unknown' and v.sensor.light_sunlight <= 50)
+        (v.input_select.presence_mode == "home" and e.is_dark)
 
 motion_sensor_garage2_history:
     module: history
@@ -562,17 +562,30 @@ light_outside_switcher_2_4_5_6:
         - auto_switch_light_outside_5
         - auto_switch_light_outside_6
 
+
+is_dark:
+    module: enabler
+    class: ExpressionEnabler
+    delay:
+        minutes: 5
+    expr: >
+        v.sensor.light_sunlight != 'unknown' and
+        v.sensor.light_sunlight <= 50
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+
 light_outside_3_enabler:
     module: enabler
     class: ExpressionEnabler
     expr: >
         e.lights_should_be_on and
-        (e.sun_enabler_night or
-        (v.sensor.light_sunlight != 'unknown' and
-        v.sensor.light_sunlight <= 50))
+        (e.sun_enabler_night or e.is_dark)
     dependencies:
         - sun_enabler_night
         - lights_should_be_on
+        - is_dark
         - locker
     global_dependencies:
         - expression
