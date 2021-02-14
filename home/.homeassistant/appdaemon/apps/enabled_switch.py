@@ -18,6 +18,7 @@ class EnabledSwitch(hass.Hass):
 
     def set_state(self):
         with self.mutex.lock('set_state'):
+            self.log('zung')
             if self.enabler.is_enabled():
                 self.targets.turn_on()
             else:

@@ -108,6 +108,35 @@ Multi Enabler
     ${False}  script_enabler_default=enable   script_enabler_true=enable   script_enabler_false=disable
     ${True}   script_enabler_default=enable   script_enabler_true=enable   script_enabler_false=enable
 
+Delayed Enabler
+    ${configs} =  Create List  ScriptEnablerDelayed
+    ${modules} =  Create List  enabled_switch  auto_switch
+    Initialize Base  00:00:00
+    ...      configs=${configs}
+    ...      modules=${modules}
+    Schedule Call At  40 sec
+    ...    call_on_app  test_enabler  enable
+    Schedule Call At  3 min
+    ...    call_on_app  test_enabler  disable
+    Schedule Call At  5 min 30 sec
+    ...    call_on_app  test_enabler  enable
+    Schedule Call At  6 min
+    ...    call_on_app  test_enabler  disable
+    Schedule Call At  8 min
+    ...    call_on_app  test_enabler  enable
+    Schedule Call At  10 min
+    ...    call_on_app  test_enabler  disable
+    Schedule Call At  10 min 30 sec
+    ...    call_on_app  test_enabler  enable
+    Schedule Call At  12 min
+    ...    call_on_app  test_enabler  disable
+
+    State Should Change At  input_boolean.test_switch  on    1 min 40 sec
+    State Should Change At  input_boolean.test_switch  off   4 min
+    State Should Change At  input_boolean.test_switch  on    9 min
+    State Should Change At  input_boolean.test_switch  off   13 min
+
+
 *** Keywords ***
 
 Set Value And Check State
@@ -119,7 +148,12 @@ Test Date Enabler
     [Teardown]  Cleanup AppDaemon
     [Arguments]  ${start_date}  ${enabler}  ${expected_state}
     ${configs} =  Create List  DateEnabler
-    Initialize Base  10:00:00  ${configs}  ${start_date}  ${enabler}-${start_date}
+    ${modules} =  Create List
+    Initialize Base  10:00:00
+    ...    configs=${configs}
+    ...    modules=${modules}
+    ...    start_date=${start_date}
+    ...    suffix=${enabler}-${start_date}
     Enabled State Should Be  ${enabler}  ${expected_state}
 
 Test Multi Enabler
@@ -132,17 +166,18 @@ Test Multi Enabler
 
 Initialize With Config
     [Arguments]  ${start_time}  @{configs}
-    Initialize Base  ${start_time}  configs=${configs}
+    ${modules} =  Create List
+    Initialize Base  ${start_time}  configs=${configs}  modules=${modules}
 
 Initialize Base
-    [Arguments]  ${start_time}  ${configs}=${Empty}
+    [Arguments]  ${start_time}  ${configs}=${Empty}  ${modules}=${Empty}
     ...          ${start_date}=${default_start_date}
     ...          ${suffix}=${Empty}
     Clean States
     Initialize States
     ...    ${input_binary}=off
     ...    ${input_sensor}=0
-    ${apps} =  Create List  TestApp  locker  mutex_graph  enabler
+    ${apps} =  Create List  TestApp  locker  mutex_graph  enabler  @{modules}
     ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     ...                   start_date=${start_date}  suffix=${suffix}

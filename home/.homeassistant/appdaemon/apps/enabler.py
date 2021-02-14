@@ -5,33 +5,74 @@ import datetime
 class Enabler(hass.Hass):
     def _init_enabler(self, state):
         self.callbacks = {}
+        self.delay = None
+        if 'delay' in self.args:
+            self.delay = datetime.timedelta(**self.args['delay'])
         self.callback_id = 0
         self.state = state
+        self.change_state = None
+        self.change_timer = None
         self.state_mutex = self.get_app('locker').get_mutex('Enabler.State')
         self.callbacks_mutex = self.get_app('locker').get_mutex(
             'Enabler.Callbacks')
         self.log('Init: {}'.format(self.state))
 
-    # This must not be called from within a callback!
-    def _change(self, state):
-        with self.callbacks_mutex.lock('_change'):
-            callbacks = list(self.callbacks.values())
-        with self.state_mutex.lock('_change'):
-            if self.state != state:
-                self.log('state change {} -> {}'.format(self.state, state))
-                self.state = state
+    def get_callbacks(self):
+        with self.callbacks_mutex.lock('do_change'):
+            return list(self.callbacks.values())
+
+    def call_callbacks(self, callbacks):
         for callback in callbacks:
             callback()
+
+    # This must not be called from within a callback!
+    def change(self, state):
+        if self.delay is None:
+            callbacks = self.get_callbacks()
+            with self.state_mutex.lock('change'):
+                self._do_change(state)
+            self.call_callbacks(callbacks)
+            return
+
+        with self.state_mutex.lock('change'):
+            self.log('change={} delay={}'.format(state, self.delay))
+            if self.change_state is not None:
+                assert self.change_timer is not None
+                if self.change_state == state:
+                    self.log('no change'.format(state))
+                    return
+                self.cancel_timer(self.change_timer)
+            self.change_state = state
+            self.log('zing')
+            self.change_timer = self.run_in(
+                self.on_timeout, self.delay.total_seconds())
+
+    def _do_change(self, state):
+        if self.state != state:
+            self.log('state change {} -> {}'.format(self.state, state))
+            self.state = state
+
+    def on_timeout(self, kwargs):
+        self.log('zong')
+        callbacks = self.get_callbacks()
+        with self.state_mutex.lock('on_timeout'):
+            self.log('timeout state={} callbacks={}'.format(self.change_state, len(callbacks)))
+            self._do_change(self.change_state)
+            self.change_state = None
+            self.change_timer = None
+        self.call_callbacks(callbacks)
 
     def add_callback(self, func):
         with self.callbacks_mutex.lock('add_callback'):
             id = self.callback_id
             self.callbacks[id] = func
             self.callback_id += 1
+            self.log('add_callback={}'.format(id))
             return id
 
     def remove_callback(self, id):
         with self.callbacks_mutex.lock('remove_callback'):
+            self.log('remove_callback={}'.format(id))
             del self.callbacks[id]
 
     def is_enabled(self):
@@ -45,10 +86,10 @@ class ScriptEnabler(Enabler):
         self._init_enabler(self.args.get('initial', True))
 
     def enable(self):
-        self._change(True)
+        self.change(True)
 
     def disable(self):
-        self._change(False)
+        self.change(False)
 
 
 class EntityEnabler(Enabler):
@@ -60,7 +101,7 @@ class EntityEnabler(Enabler):
 
     def _on_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('_on_change'):
-            self._change(self._get())
+            self.change(self._get())
 
     def _get(self):
         return False
@@ -103,7 +144,7 @@ class DateEnabler(Enabler):
         self.end = datetime.datetime.strptime(self.args['end'], '%m-%d').date()
         self._init_enabler(self._get())
         self.run_daily(
-            lambda _: self._change(self._get()), datetime.time(0, 0, 1))
+            lambda _: self.change(self._get()), datetime.time(0, 0, 1))
 
     def _get(self):
         now = self.date()
@@ -125,7 +166,7 @@ class HistoryEnabler(Enabler):
 
     def set_value(self, value):
         enabled = is_between(value, self.min, self.max)
-        self._change(enabled)
+        self.change(enabled)
 
 
 class MultiEnabler(Enabler):
@@ -147,7 +188,7 @@ class MultiEnabler(Enabler):
 
     def get(self, kwargs):
         with self.mutex.lock('get'):
-            self._change(self.__get())
+            self.change(self.__get())
 
     def __get(self):
         return all([enabler.is_enabled() for enabler in self.enablers])
@@ -157,7 +198,7 @@ class ExpressionEnabler(Enabler):
     def initialize(self):
         import expression
         self.evaluator = expression.ExpressionEvaluator(
-            self, self.args['expr'], self._change)
+            self, self.args['expr'], self.change)
         self._init_enabler(self.evaluator.get())
 
     def terminate(self):
