@@ -950,7 +950,7 @@ tracker_not_updated:
     dependencies:
         - locker
         - tracker_last_updated
-    expr: v.sensor.tracker_last_updated >= 120
+    expr: v.sensor.tracker_last_updated >= 180
     target: binary_sensor.tracker_not_updated
 
 furnace_overheat_warning:

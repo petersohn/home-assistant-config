@@ -32,7 +32,6 @@ lovelace:
 
 recorder:
   auto_purge: true
-  purge_interval: 1
   purge_keep_days: 14
   db_url: !secret db_location
 
@@ -45,8 +44,6 @@ history:
 # View all events in a logbook
 logbook:
   exclude:
-    entities:
-      - sensor.yr_symbol
     domains:
       - group
 
@@ -54,35 +51,26 @@ logbook:
 sun:
 
 mqtt:
-  broker: 127.0.0.1
-  port: 1883
+  broker: !secret mqtt_address
+  port: !secret mqtt_port
   client_id: home-assistant-1
   username: !secret mosquitto_username
   password: !secret mosquitto_password
 
 sensor:
-  - platform: nut
-    username: !secret nut_username
-    password: !secret nut_password
-    resources:
-      - ups.load
-      - input.voltage
-      - battery.voltage
-      - battery.charge
+  # - platform: nut
+  #   username: !secret nut_username
+  #   password: !secret nut_password
+  #   resources:
+  #     - ups.load
+  #     - input.voltage
+  #     - battery.voltage
+  #     - battery.charge
   - platform: time_date
     display_options:
       - 'date'
       - 'time'
       - 'date_time'
-  - platform: yr
-    monitored_conditions:
-      - temperature
-      - symbol
-      - precipitation
-      - windSpeed
-      - windDirection
-      - humidity
-      - cloudiness
   - platform: moon
   - platform: mqtt
     state_topic: home/sensors/temperature/outside
@@ -255,7 +243,6 @@ binary_sensor:
             'restarted': value_json.restarted,
         } %}
         {{ temp | to_json }}
-    name: well_controller_available
     name: main_controller_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -270,7 +257,6 @@ binary_sensor:
             'restarted': value_json.restarted,
         } %}
         {{ temp | to_json }}
-    name: well_controller_available
     name: main_controller2_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -285,7 +271,6 @@ binary_sensor:
             'restarted': value_json.restarted,
         } %}
         {{ temp | to_json }}
-    name: well_controller_available
     name: furnace_temperature_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -300,7 +285,6 @@ binary_sensor:
             'restarted': value_json.restarted,
         } %}
         {{ temp | to_json }}
-    name: well_controller_available
     name: driveway_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -315,7 +299,6 @@ binary_sensor:
             'restarted': value_json.restarted,
         } %}
         {{ temp | to_json }}
-    name: well_controller_available
     name: cellar_controller_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -330,7 +313,6 @@ binary_sensor:
             'restarted': value_json.restarted,
         } %}
         {{ temp | to_json }}
-    name: well_controller_available
     name: living_room_temperature_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -345,7 +327,6 @@ binary_sensor:
             'restarted': value_json.restarted,
         } %}
         {{ temp | to_json }}
-    name: well_controller_available
     name: bedroom_temperature_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -360,7 +341,6 @@ binary_sensor:
             'restarted': value_json.restarted,
         } %}
         {{ temp | to_json }}
-    name: well_controller_available
     name: dishwasher_sensor_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -375,7 +355,6 @@ binary_sensor:
             'restarted': value_json.restarted,
         } %}
         {{ temp | to_json }}
-    name: well_controller_available
     name: gate_reflector_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -390,7 +369,6 @@ binary_sensor:
             'restarted': value_json.restarted,
         } %}
         {{ temp | to_json }}
-    name: well_controller_available
     name: attic_lower_available
     value_template: '{{ value_json.available }}'
     payload_on: true
@@ -464,7 +442,7 @@ binary_sensor:
     host: !secret gateway_address
     name: gateway_available
   - platform: command_line
-    command: 'timeout 2 netcat localhost 8888 </dev/null && echo ON || echo OFF'
+    command: 'timeout 2 nc localhost 8888 </dev/null && echo ON || echo OFF'
     name: ssh_tunnel_available
 
   - platform: tod
