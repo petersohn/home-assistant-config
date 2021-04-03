@@ -611,7 +611,7 @@ home_light_switcher:
         - auto_switch_light_driveway
         - sun_enabler_night
         - locker
-    sensor: device_tracker.homeassistant_owntrackssamsung
+    sensor: person.peti
     target_state: home
     enabler: sun_enabler_night
     sequence:
@@ -911,13 +911,7 @@ availability_alerts:
 tracker_changes:
     class: ChangeTracker
     module: history
-    entity: device_tracker.homeassistant_owntrackssamsung
-    dependencies: locker
-
-tracker_updates:
-    class: ChangeTracker
-    module: history
-    entity: sensor.owntrackssamsung_last_updated
+    entity: person.peti
     dependencies: locker
 
 tracker_last_updated:
@@ -927,7 +921,7 @@ tracker_last_updated:
         - locker
         - tracker_changes
     expr: >
-        int((now() - c.tracker_updates).total_seconds()) // 60
+        int((now() - u.tracker_changes).total_seconds()) // 60
     target: sensor.tracker_last_updated
     attributes:
         unit_of_measurement: min

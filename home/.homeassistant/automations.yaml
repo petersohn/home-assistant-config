@@ -126,7 +126,7 @@
 
 - trigger:
       platform: state
-      entity_id: device_tracker.homeassistant_owntrackssamsung
+      entity_id: person.peti
       to: 'not_home'
       for: '00:05:00'
   condition:
@@ -152,7 +152,7 @@
 
 - trigger:
       platform: zone
-      entity_id: device_tracker.homeassistant_owntrackssamsung
+      entity_id: person.peti
       zone: zone.home
       event: enter
   condition:

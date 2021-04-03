@@ -30,6 +30,15 @@ updater:
 lovelace:
   mode: yaml
 
+mobile_app:
+
+zone:
+  - name: Home
+    latitude: !secret latitude
+    longitude: !secret longitude
+    radius: 150
+    icon: mdi:home
+
 recorder:
   auto_purge: true
   purge_keep_days: 14
@@ -202,12 +211,6 @@ sensor:
     unit_of_measurement: "%"
     name: light_sunlight
     value_template: "{{ value | float / 10.24 }}"
-
-  - platform: mqtt
-    state_topic: owntracks/homeassistant/owntrackssamsung
-    name: owntrackssamsung_last_updated
-    value_template: '{{ value_json.created_at }}'
-
 
   - platform: command_line
     command: "df /tmp | tail -n 1 | awk '{print $4}'"
@@ -791,10 +794,6 @@ input_datetime:
     has_date: false
     has_time: true
 
-owntracks:
-  region_mapping:
-    home: Home
-
 mqtt_statestream:
   base_topic: home
   include:
@@ -804,10 +803,8 @@ mqtt_statestream:
       - binary_sensor
 
 influxdb:
-  host: !secret influxdb_address
+  host: localhost
   port: 8086
-  ssl: true
-  verify_ssl: true
   username: !secret influxdb_username
   password: !secret influxdb_password
   database: !secret influxdb_database
@@ -855,19 +852,19 @@ alert:
     can_acknowledge: true
     notifiers:
       - telegram_alert
-  tracker_update:
-    name: Pozíció jelzés hiányzik
-    message: >
-      Pozíció nincs frissítve
-      {{states('sensor.tracker_last_updated')}}
-      perce.
-    entity_id: binary_sensor.tracker_not_updated
-    state: 'on'
-    repeat:
-      - 60
-    can_acknowledge: true
-    notifiers:
-      - telegram_alert
+  # tracker_update:
+  #   name: Pozíció jelzés hiányzik
+  #   message: >
+  #     Pozíció nincs frissítve
+  #     {{states('sensor.tracker_last_updated')}}
+  #     perce.
+  #   entity_id: binary_sensor.tracker_not_updated
+  #   state: 'on'
+  #   repeat:
+  #     - 60
+  #   can_acknowledge: true
+  #   notifiers:
+  #     - telegram_alert
   furnace_overheat:
     name: Kazán túlmelegedés
     message: >
