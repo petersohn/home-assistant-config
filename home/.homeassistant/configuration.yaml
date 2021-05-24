@@ -213,13 +213,12 @@ sensor:
     value_template: "{{ value | float / 10.24 }}"
 
   - platform: command_line
-    command: "df /tmp | tail -n 1 | awk '{print $4}'"
-    unit_of_measurement: Kb
-    name: tmp_free_space
-  - platform: command_line
-    command: "df /var/log | tail -n 1 | awk '{print $4}'"
-    unit_of_measurement: Kb
-    name: var_log_free_space
+    name: cpu_temperature
+    command: "cat /sys/class/thermal/thermal_zone0/temp"
+    # If errors occur, make sure configuration file is encoded as UTF-8
+    unit_of_measurement: "°C"
+    value_template: "{{ value | multiply(0.001) }}"
+    scan_interval: 10
 
 binary_sensor:
   - platform: mqtt

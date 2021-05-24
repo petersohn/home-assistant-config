@@ -634,8 +634,7 @@ views:
         show_header_toggle: false
       - type: entities
         entities:
-          - sensor.tmp_free_space
-          - sensor.var_log_free_space
+          - sensor.cpu_temperature
         title: local_device
         show_header_toggle: false
       - type: entities
