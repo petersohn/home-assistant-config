@@ -726,11 +726,11 @@ rain_last_day:
     manager: rain_history
     target: sensor.rain_last_day
     interval:
-        days: 1
+        hours: 12
     aggregator: sum
     attributes:
         unit_of_measurement: "mm"
-        friendly_name: "Eső 1 nap"
+        friendly_name: "Eső 12 óra"
         icon: mdi:weather-rainy
 
 rain_decaying:
