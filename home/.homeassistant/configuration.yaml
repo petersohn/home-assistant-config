@@ -835,6 +835,25 @@ alert:
       - 60
     can_acknowledge: true
     notifiers:
+      - telegram_alert
+  window_open:
+    name: Ablak nyitva
+    message: |
+      Valami nyitva maradt.
+
+      ```
+      {{state_attr('binary_sensor.window_alert', 'text')}}
+      ```
+    entity_id: binary_sensor.window_alert
+    state: 'on'
+    repeat:
+      - 1
+      - 5
+      - 10
+      - 30
+    can_acknowledge: true
+    notifiers:
+      - telegram_alert
   freeze:
     name: Fagyás
     message: |

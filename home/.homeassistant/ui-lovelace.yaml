@@ -46,6 +46,7 @@ views:
           - binary_sensor.door_main_entrance
           - binary_sensor.window_entrance
           - binary_sensor.window_bedroom
+          - alert.window_open
         title: Ajtók
         show_header_toggle: false
       - type: vertical-stack
@@ -530,6 +531,7 @@ views:
           - alert.freeze
           - alert.tracker_update
           - alert.furnace_overheat
+          - alert.window_open
         title: Riasztások
   - path: weather
     title: Időjárás

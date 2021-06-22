@@ -908,6 +908,22 @@ availability_alerts:
         - binary_sensor.gate_reflector_available
         - binary_sensor.attic_lower_available
 
+window_alerts:
+    module: alert
+    class: AlertAggregator
+    target: binary_sensor.window_alert
+    trigger_expr: v[name] and v.person.peti != 'home'
+    text_expr: name[14:]
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+    sources:
+        - binary_sensor.window_bedroom
+        - binary_sensor.window_entrance
+        - binary_sensor.door_main_entrance
+        - binary_sensor.door_attic_hatch
+
 tracker_changes:
     class: ChangeTracker
     module: history
