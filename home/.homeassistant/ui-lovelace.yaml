@@ -49,6 +49,10 @@ views:
           - alert.window_open
         title: Ajtók
         show_header_toggle: false
+      - type: entities
+        entities:
+          - cover.dining_room
+        title: Redőny
       - type: vertical-stack
         cards:
           - type: horizontal-stack

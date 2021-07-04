@@ -220,6 +220,20 @@ sensor:
     value_template: "{{ value | multiply(0.001) }}"
     scan_interval: 10
 
+cover:
+  - platform: mqtt
+    command_topic: "home/blind/dining_room/set"
+    set_position_topic: "home/blind/dining_room/set"
+    device_class: blind
+    name: dining_room
+    state_topic: "home/blind/dining_room/state"
+    state_opening: OPENING
+    state_closing: CLOSING
+    state_stopped: IDLE
+    position_topic: "home/blind/dining_room/position"
+    position_open: 100
+    position_closed: 0
+
 binary_sensor:
   - platform: mqtt
     state_topic: home/devices/well_controller/availability

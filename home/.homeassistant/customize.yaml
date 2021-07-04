@@ -458,3 +458,6 @@ switch.heater:
 
 binary_sensor.availability_alert:
   icon: mdi:flash-alert
+
+cover.dining_room:
+  friendly_name: Étkező
