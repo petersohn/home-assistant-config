@@ -1,4 +1,5 @@
-- trigger:
+- alias: bejáró világítás MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_driveway/set
   action:
@@ -7,7 +8,8 @@
             entity_id: input_select.light_driveway
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: garázs világítás MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_garage/set
   action:
@@ -16,7 +18,8 @@
             entity_id: input_select.light_garage
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: kapu világítás MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_gate_reflector/set
   action:
@@ -25,7 +28,8 @@
             entity_id: input_select.light_gate_reflector
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: karácsonyi világítás eresz alatt MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_christmas_front/set
   action:
@@ -34,7 +38,8 @@
             entity_id: input_select.light_christmas_front
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: karácsonyi világítás fenyőfa MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_christmas_tree/set
   action:
@@ -43,7 +48,8 @@
             entity_id: input_select.light_christmas_tree
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: körvilágítás 1 MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_outside_1/set
   action:
@@ -52,7 +58,8 @@
             entity_id: input_select.light_outside_1
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: körvilágítás 2 MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_outside_2/set
   action:
@@ -61,7 +68,8 @@
             entity_id: input_select.light_outside_2
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: körvilágítás 3 MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_outside_3/set
   action:
@@ -70,7 +78,8 @@
             entity_id: input_select.light_outside_3
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: körvilágítás 4 MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_outside_4/set
   action:
@@ -79,7 +88,8 @@
             entity_id: input_select.light_outside_4
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: körvilágítás 5 MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_outside_5/set
   action:
@@ -88,7 +98,8 @@
             entity_id: input_select.light_outside_5
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: körvilágítás 6 MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/light_outside_6/set
   action:
@@ -97,7 +108,8 @@
             entity_id: input_select.light_outside_6
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: melegvíz keringető MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/hot_water_pump/set
   action:
@@ -106,7 +118,8 @@
             entity_id: input_select.hot_water_pump
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: szúnyogirtó MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/mosquito_killer_bedroom/set
   action:
@@ -115,7 +128,8 @@
             entity_id: input_select.mosquito_killer_bedroom
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: jelenlét mód MQTT
+  trigger:
       platform: mqtt
       topic: home/input_select/presence_mode/set
   action:
@@ -124,7 +138,8 @@
             entity_id: input_select.presence_mode
             option: '{{ trigger.payload }}'
 
-- trigger:
+- alias: elmenés
+  trigger:
       platform: state
       entity_id: person.peti
       to: 'not_home'
@@ -139,7 +154,8 @@
             entity_id: input_select.presence_mode
             option: 'away'
 
-- trigger:
+- alias: bejárati ajtó nyitás
+  trigger:
       platform: state
       entity_id: binary_sensor.door_main_entrance
       from: 'off'
@@ -150,7 +166,8 @@
             entity_id: input_select.presence_mode
             option: 'home'
 
-- trigger:
+- alias: hazajövés
+  trigger:
       platform: zone
       entity_id: person.peti
       zone: zone.home
@@ -165,7 +182,8 @@
             entity_id: input_select.presence_mode
             option: 'home'
 
-- trigger:
+- alias: padlásfeljáró nyitás
+  trigger:
       platform: state
       entity_id: binary_sensor.door_attic_hatch
       from: 'off'
@@ -175,7 +193,8 @@
         data_template:
             entity_id: switch.light_attic_downstairs
 
-- trigger:
+- alias: padlásfeljáró zárás
+  trigger:
       platform: state
       entity_id: binary_sensor.door_attic_hatch
       from: 'on'
@@ -188,7 +207,8 @@
         data_template:
             entity_id: switch.light_attic_upstairs
 
-- trigger:
+- alias: gázfűtés ki jelenlét váltásnál
+  trigger:
       platform: state
       entity_id: input_select.presence_mode
       to: 'home'
@@ -202,7 +222,8 @@
             entity_id: climate.heater
             hvac_mode: 'off'
 
-- trigger:
+- alias: gázfűtés be
+  trigger:
       platform: state
       entity_id: input_select.presence_mode
       from: 'home'
@@ -216,7 +237,8 @@
             entity_id: climate.heater
             hvac_mode: 'heat'
 
-- trigger:
+- alias: gázfűtés ki fafűtés váltásnál
+  trigger:
       platform: state
       entity_id: input_boolean.wood_heating
       from: 'off'
@@ -231,7 +253,8 @@
             entity_id: climate.heater
             hvac_mode: 'off'
 
-- trigger:
+- alias: alvás RFID
+  trigger:
       platform: event
       event_type: tag_scanned
       event_data:
