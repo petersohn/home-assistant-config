@@ -907,12 +907,13 @@ availability_alerts:
         - binary_sensor.dishwasher_sensor_available
         - binary_sensor.gate_reflector_available
         - binary_sensor.attic_lower_available
+        - binary_sensor.dining_room_window_available
 
 window_alerts:
     module: alert
     class: AlertAggregator
     target: binary_sensor.window_alert
-    trigger_expr: v[name] and v.person.peti != 'home'
+    trigger_expr: v[name] and v.input_select.presence_mode == 'away'
     text_expr: name[14:]
     dependencies:
         - locker
@@ -921,7 +922,6 @@ window_alerts:
     sources:
         - binary_sensor.window_bedroom
         - binary_sensor.window_entrance
-        - binary_sensor.door_main_entrance
         - binary_sensor.door_attic_hatch
 
 tracker_changes:

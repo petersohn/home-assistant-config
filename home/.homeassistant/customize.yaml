@@ -91,6 +91,10 @@ binary_sensor.attic_lower_available:
   friendly_name: Attic Lower Available
   device_class: plug
 
+binary_sensor.dining_room_window_available:
+  friendly_name: Dining Room Window Available
+  device_class: plug
+
 sensor.furnace_temperature_free_memory:
   friendly_name: Furnace Temperature
   icon: mdi:memory

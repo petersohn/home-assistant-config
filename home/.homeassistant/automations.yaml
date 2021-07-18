@@ -128,7 +128,7 @@
       platform: state
       entity_id: person.peti
       to: 'not_home'
-      for: '00:05:00'
+      for: '00:01:00'
   condition:
     condition: state
     entity_id: input_select.presence_mode

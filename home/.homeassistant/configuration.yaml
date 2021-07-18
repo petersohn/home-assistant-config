@@ -389,6 +389,20 @@ binary_sensor:
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/dining_room_window/availability
+    json_attributes_topic: home/devices/dining_room_window/availability
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: dining_room_window_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
 
   - platform: mqtt
     state_topic: home/sensors/motion/gate_reflector
