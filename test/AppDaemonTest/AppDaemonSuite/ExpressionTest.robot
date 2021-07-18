@@ -53,7 +53,7 @@ Get Now
     Unblock Until  00:01:30
     ${result} =  Get State  ${output_sensor}
     Times Should Match  ${result}  00:01:30
-    Unblock Until  01:12:20
+    Unblock Until  01:12:20  real_timeout=2 min
     ${result} =  Get State  ${output_sensor}
     Times Should Match  ${result}  01:12:20
 
