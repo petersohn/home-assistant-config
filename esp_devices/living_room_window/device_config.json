@@ -1,0 +1,46 @@
+{
+    "debug": true,
+    "name": "living_room_window",
+    "availabilityTopic": "home/devices/living_room_window/availability",
+    "debugTopic": "home/devices/living_room_window/debug",
+    "interfaces": [
+        {
+            "type": "cover",
+            "name": "blind",
+            "commandTopic": "home/blind/living_room/set",
+            "upPin": 14,
+            "downPin": 16,
+            "upMovementPin": 3,
+            "downMovementPin": 4,
+            "invertInput": false,
+            "invertOutput": false
+        },
+        {
+            "type": "input",
+            "name": "window",
+            "pin": 13
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "blind",
+            "topic": "home/blind/living_room/state",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "blind",
+            "topic": "home/blind/living_room/position",
+            "template": "%2",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "window",
+            "topic": "home/sensors/window/living_room",
+            "retain": true
+        }
+    ]
+}

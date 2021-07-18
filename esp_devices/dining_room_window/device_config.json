@@ -1,0 +1,71 @@
+{
+    "debug": true,
+    "name": "dining_room_window",
+    "availabilityTopic": "home/devices/dining_room_window/availability",
+    "debugTopic": "home/devices/dining_room_window/debug",
+    "interfaces": [
+        {
+            "type": "cover",
+            "name": "blind",
+            "commandTopic": "home/blind/dining_room/set",
+            "upPin": 14,
+            "downPin": 16,
+            "upMovementPin": 3,
+            "downMovementPin": 4,
+            "invertInput": false,
+            "invertOutput": false
+        },
+        {
+            "type": "input",
+            "name": "up_switch",
+            "pin": 0
+        },
+        {
+            "type": "input",
+            "name": "down_switch",
+            "pin": 2
+        },
+        {
+            "type": "input",
+            "name": "stop_switch",
+            "pin": 5
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "blind",
+            "topic": "home/blind/dining_room/state",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "blind",
+            "topic": "home/blind/dining_room/position",
+            "template": "%2",
+            "retain": true
+        },
+        {
+            "type": "command",
+            "interface": "up_switch",
+            "target": "blind",
+            "command": "OPEN",
+            "value": "0"
+        },
+        {
+            "type": "command",
+            "interface": "down_switch",
+            "target": "blind",
+            "command": "CLOSE",
+            "value": "0"
+        },
+        {
+            "type": "command",
+            "interface": "stop_switch",
+            "target": "blind",
+            "command": "STOP",
+            "value": "0"
+        }
+    ]
+}

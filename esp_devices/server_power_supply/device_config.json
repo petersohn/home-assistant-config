@@ -1,0 +1,21 @@
+{
+    "debug": true,
+    "name": "serverPowerSupply",
+    "availabilityTopic": "home/serverPowerSupply/availability",
+    "debugTopic": "home/serverPowerSupply/debug",
+    "interfaces": [
+        {
+            "type": "powerSupply",
+            "name": "power",
+            "commandTopic": "home/power/server/set",
+            "powerSwitchPin": 2,
+            "resetSwitchPin": 0,
+            "powerCheckPin": 3,
+            "checkTime": 60000,
+            "initialState": "on"
+        }
+    ],
+    "actions": [
+    ]
+}
+
