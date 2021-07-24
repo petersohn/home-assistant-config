@@ -7,14 +7,9 @@ views:
       - type: entities
         entities:
           - input_select.presence_mode
-          - alert.tracker_update
           - sensor.tracker_last_updated
           - person.peti
           - sensor.peti_battery_level
-          - sensor.peti_battery_state
-          - sensor.peti_app_importance
-          - binary_sensor.peti_app_inactive
-          - sensor.peti_last_update_trigger
       - type: entities
         state_color: true
         entities:
