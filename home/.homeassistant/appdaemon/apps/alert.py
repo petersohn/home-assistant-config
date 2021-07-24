@@ -13,7 +13,11 @@ class AlertAggregator(hass.Hass):
             self.text_expr = expression.ExpressionEvaluator(
                 app, text_expr, None, extra_values)
             self.value = self._calculate_trigger_value()
+            self.text_value = self.text_expr.get()
             self.timer = None
+
+        def _on_text_changed(self, value):
+            self.text_value = value
 
         def _on_change(self, value):
             if value:
@@ -58,7 +62,7 @@ class AlertAggregator(hass.Hass):
             return val
 
         def get_text_value(self):
-            return self.text_expr.get()
+            return self.text_value
 
     def initialize(self):
         self.target = self.args['target']
@@ -76,6 +80,8 @@ class AlertAggregator(hass.Hass):
             self.log('Alert is initially on')
             self._turn_on()
 
+        self.mutex = self.get_app('locker').get_mutex('AlertAggregator')
+
     def terminate(self):
         for source in self.sources:
             source.cleanup()
@@ -91,16 +97,17 @@ class AlertAggregator(hass.Hass):
                 if source.get_trigger_value())})
 
     def on_change(self, entity, value):
-        if value:
-            self.log('Alert turned on for {}'.format(entity))
-            self._turn_off()
+        with self.mutex.lock('on_change'):
+            if value:
+                self.log('Alert turned on for {}'.format(entity))
+                self._turn_off()
+                self._turn_on()
+                return
+
+            if not any(source.get_trigger_value() for source in self.sources):
+                self.log('Resetting alert')
+                self._turn_off()
+                return
+
+            self.log('Setting alert')
             self._turn_on()
-            return
-
-        if not any(source.get_trigger_value() for source in self.sources):
-            self.log('Resetting alert')
-            self._turn_off()
-            return
-
-        self.log('Setting alert')
-        self._turn_on()
