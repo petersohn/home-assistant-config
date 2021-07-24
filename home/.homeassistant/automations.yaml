@@ -168,10 +168,13 @@
 
 - alias: hazajövés
   trigger:
-      platform: zone
+    - platform: zone
       entity_id: person.peti
       zone: zone.home
       event: enter
+    - platform: state
+      entity_id: !secret wifi_sensor_name
+      to: !secret wifi_sensor_value
   condition:
     condition: state
     entity_id: input_select.presence_mode
