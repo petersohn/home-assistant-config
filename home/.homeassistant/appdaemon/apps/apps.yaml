@@ -526,7 +526,6 @@ lights_should_be_on:
         v.input_select.presence_mode == "away" and
         int(v.sensor.time[0:2]) > 12)
     dependencies:
-        - sun_enabler_night
         - locker
     global_dependencies:
         - expression

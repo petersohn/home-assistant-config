@@ -77,8 +77,7 @@ class Enabler(hass.Hass):
 
     def is_enabled(self):
         with self.state_mutex.lock('is_enabled'):
-            assert self.state is not None
-            return self.state
+            return self.state is True
 
 
 class ScriptEnabler(Enabler):
