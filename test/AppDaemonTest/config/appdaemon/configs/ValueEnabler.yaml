@@ -15,7 +15,7 @@ value_enabler_off:
 value_enabler_multiple:
     module: enabler
     class: ValueEnabler
-    entity: sensor.test_input
+    entity: sensor.test_input_txt
     values:
         - foo
         - bar
@@ -24,7 +24,7 @@ value_enabler_multiple:
 range_enabler:
     module: enabler
     class: RangeEnabler
-    entity: sensor.test_input
+    entity: sensor.test_input_num
     min: 10
     max: 20
     dependencies: locker
@@ -32,13 +32,13 @@ range_enabler:
 range_enabler_only_min:
     module: enabler
     class: RangeEnabler
-    entity: sensor.test_input
+    entity: sensor.test_input_num
     min: 15
     dependencies: locker
 
 range_enabler_only_max:
     module: enabler
     class: RangeEnabler
-    entity: sensor.test_input
+    entity: sensor.test_input_num
     max: 15
     dependencies: locker

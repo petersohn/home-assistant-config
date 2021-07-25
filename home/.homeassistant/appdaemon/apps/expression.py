@@ -72,6 +72,8 @@ class ExpressionEvaluator:
             self.attributes.add(key)
 
         value = self.app.get_state(entity, attribute=attribute)
+        if value is None:
+            return ''
         try:
             return float(value)
         except ValueError:
@@ -85,6 +87,8 @@ class ExpressionEvaluator:
             self.app.listen_state(self._on_entity_change, entity=entity)
             self.entities.add(entity)
         value = self.app.get_state(entity)
+        if value is None:
+            return ''
         if value == 'on':
             return True
         if value == 'off':

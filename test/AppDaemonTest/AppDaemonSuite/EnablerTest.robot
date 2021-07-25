@@ -9,7 +9,8 @@ Test Teardown  Cleanup AppDaemon
 *** Variables ***
 
 ${input_binary} =  binary_sensor.test_input
-${input_sensor} =  sensor.test_input
+${input_sensor_txt} =  sensor.test_input_txt
+${input_sensor_num} =  sensor.test_input_num
 
 
 *** Test Cases ***
@@ -43,31 +44,31 @@ Entity Based Enablers
     ${input_binary}  on       value_enabler_on        ${True}
     ${input_binary}  off      value_enabler_off       ${True}
     ${input_binary}  on       value_enabler_off       ${False}
-    ${input_sensor}  foo      value_enabler_multiple  ${True}
-    ${input_sensor}  bar      value_enabler_multiple  ${True}
-    ${input_sensor}  foobar   value_enabler_multiple  ${False}
-    ${input_sensor}  ${0}     value_enabler_multiple  ${False}
-    ${input_sensor}  ${100}   value_enabler_multiple  ${False}
-    ${input_sensor}  ${-100}  range_enabler           ${False}
-    ${input_sensor}  ${0}     range_enabler           ${False}
-    ${input_sensor}  ${9}     range_enabler           ${False}
-    ${input_sensor}  ${10}    range_enabler           ${True}
-    ${input_sensor}  ${15}    range_enabler           ${True}
-    ${input_sensor}  ${20}    range_enabler           ${True}
-    ${input_sensor}  ${21}    range_enabler           ${False}
-    ${input_sensor}  ${100}   range_enabler           ${False}
-    ${input_sensor}  ${-100}  range_enabler_only_min  ${False}
-    ${input_sensor}  ${0}     range_enabler_only_min  ${False}
-    ${input_sensor}  ${14}    range_enabler_only_min  ${False}
-    ${input_sensor}  ${15}    range_enabler_only_min  ${True}
-    ${input_sensor}  ${16}    range_enabler_only_min  ${True}
-    ${input_sensor}  ${100}   range_enabler_only_min  ${True}
-    ${input_sensor}  ${-100}  range_enabler_only_max  ${True}
-    ${input_sensor}  ${0}     range_enabler_only_max  ${True}
-    ${input_sensor}  ${14}    range_enabler_only_max  ${True}
-    ${input_sensor}  ${15}    range_enabler_only_max  ${True}
-    ${input_sensor}  ${16}    range_enabler_only_max  ${False}
-    ${input_sensor}  ${100}   range_enabler_only_max  ${False}
+    ${input_sensor_txt}  foo      value_enabler_multiple  ${True}
+    ${input_sensor_txt}  bar      value_enabler_multiple  ${True}
+    ${input_sensor_txt}  foobar   value_enabler_multiple  ${False}
+    ${input_sensor_txt}  ${0}     value_enabler_multiple  ${False}
+    ${input_sensor_txt}  ${100}   value_enabler_multiple  ${False}
+    ${input_sensor_num}  ${-100}  range_enabler           ${False}
+    ${input_sensor_num}  ${0}     range_enabler           ${False}
+    ${input_sensor_num}  ${9}     range_enabler           ${False}
+    ${input_sensor_num}  ${10}    range_enabler           ${True}
+    ${input_sensor_num}  ${15}    range_enabler           ${True}
+    ${input_sensor_num}  ${20}    range_enabler           ${True}
+    ${input_sensor_num}  ${21}    range_enabler           ${False}
+    ${input_sensor_num}  ${100}   range_enabler           ${False}
+    ${input_sensor_num}  ${-100}  range_enabler_only_min  ${False}
+    ${input_sensor_num}  ${0}     range_enabler_only_min  ${False}
+    ${input_sensor_num}  ${14}    range_enabler_only_min  ${False}
+    ${input_sensor_num}  ${15}    range_enabler_only_min  ${True}
+    ${input_sensor_num}  ${16}    range_enabler_only_min  ${True}
+    ${input_sensor_num}  ${100}   range_enabler_only_min  ${True}
+    ${input_sensor_num}  ${-100}  range_enabler_only_max  ${True}
+    ${input_sensor_num}  ${0}     range_enabler_only_max  ${True}
+    ${input_sensor_num}  ${14}    range_enabler_only_max  ${True}
+    ${input_sensor_num}  ${15}    range_enabler_only_max  ${True}
+    ${input_sensor_num}  ${16}    range_enabler_only_max  ${False}
+    ${input_sensor_num}  ${100}   range_enabler_only_max  ${False}
 
 Date Enabler
     [Setup]  NONE
@@ -176,7 +177,8 @@ Initialize Base
     Clean States
     Initialize States
     ...    ${input_binary}=off
-    ...    ${input_sensor}=0
+    ...    ${input_sensor_num}=0
+    ...    ${input_sensor_txt}=${Empty}
     ${apps} =  Create List  TestApp  locker  mutex_graph  enabler  @{modules}
     ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}

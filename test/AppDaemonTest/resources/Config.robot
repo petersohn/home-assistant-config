@@ -34,6 +34,8 @@ Cleanup AppDaemon
     Append And Check Mutex Graph
     Stop AppDaemon
     Wait For AppDaemon To Stop
+    File Should Be Empty  ${OUTPUT_DIRECTORY}/appdaemon.stderr
+    File Should Be Empty  ${OUTPUT_DIRECTORY}/error.log
 
 Initialize Home Assistant
     Start Home Assistant

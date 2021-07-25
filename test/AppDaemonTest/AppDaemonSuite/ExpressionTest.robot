@@ -15,29 +15,52 @@ ${output_sensor} =  sensor.test_output
 
 *** Test Cases ***
 
-Sensors
+Numeric Sensors
     [Setup]  Initialize  00:00:00  ExpressionAdd
+    ...  ${input_sensor1}=0
+    ...  ${input_sensor2}=0
     [Template]  Test Sensors
     ${0}   ${0}   Int  ${0}
     ${0}   ${13}  Int  ${13}
     ${63}  ${-8}  Int  ${55}
     ${-7}  ${5}   Int  ${-2}
-    foo    bar    str  foobar
 
-Binary Sensors
+Alphanumeric Sensors
+    [Setup]  Initialize  00:00:00  ExpressionAdd
+    ...  ${input_sensor1}=${Empty}
+    ...  ${input_sensor2}=${Empty}
+    [Template]  Test Sensors
+    foo       bar       str  foobar
+    ${Empty}  foo       str  foo
+    bar       ${Empty}  str  bar
+    ${empty}  ${empty}  str  ${Empty}
+
+Numeric Binary Sensors
     [Setup]  Initialize  00:00:00  ExpressionBinary
+    ...  ${input_sensor1}=0
+    ...  ${input_sensor2}=0
     [Template]  Test Sensors
     ${0}   ${1}   str  off
     ${1}   ${0}   str  on
     ${0}   ${0}   str  off
     ${5}   ${10}  str  off
     ${10}  ${5}   str  on
-    foo    bar    str  on
-    bar    foo    str  off
-    bar    bar    str  off
+
+Alphanumeric Binary Sensors
+    [Setup]  Initialize  00:00:00  ExpressionBinary
+    ...  ${input_sensor1}=${Empty}
+    ...  ${input_sensor2}=${Empty}
+    [Template]  Test Sensors
+    foo    bar          str  on
+    bar    foo          str  off
+    bar    bar          str  off
+    ${Empty}  foo       str  off
+    bar       ${Empty}  str  on
+    ${empty}  ${empty}  str  off
 
 Attributes
     [Setup]  Initialize  00:00:00  ExpressionAttribute
+    ...  ${input_sensor1}=${Empty}
     [Template]  Test Attributes
     ${0}   ${0}   Int  ${0}
     ${0}   ${13}  Int  ${13}
@@ -59,6 +82,8 @@ Get Now
 
 Args
     [Setup]  Initialize  00:00:00  ExpressionArgs
+    ...  ${input_sensor1}=0
+    ...  ${input_sensor2}=a
     [Template]  Test Args
     ${0}  c  firstbaz
     ${1}  a  secondfoo
@@ -67,6 +92,7 @@ Args
 
 Changes
     [Setup]  Initialize  00:00:00  ExpressionChange
+    ...  ${input_sensor1}=0
     Unblock Until  00:01:00
     Set State  ${input_sensor1}  1  foo=bar
     Unblock For  ${appdaemon_interval}
@@ -99,11 +125,9 @@ Test Attributes
     State Should Be As  ${output_sensor}  ${type}  ${expected_result}
 
 Initialize
-    [Arguments]  ${start_time}  @{configs}
+    [Arguments]  ${start_time}  @{configs}  &{initial_values}
     Clean States
-    Initialize States
-    ...    ${input_sensor1}=0
-    ...    ${input_sensor2}=0
+    Initialize States  &{initial_values}
     ${apps} =  Create List  TestApp  locker  mutex_graph  expression  history
     ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}

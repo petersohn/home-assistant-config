@@ -32,7 +32,8 @@ Enablers
     ...    enablers_and=${True}  enablers_nand=${False}
     ...    enablers_and_not=${False}  enablers_or=${True}
 
-Sensors
+Numeric Sensors
+    [Setup]  Initialize  00:00:00  initial_value=0
     [Template]  Test Sensors
     ${-1}  ${-1}
     ...    value_less=${False}  value_equal=${True}
@@ -67,6 +68,8 @@ Sensors
     ${10}  ${10}
     ...    value_less=${False}  value_equal=${True}
 
+Alphanumeric Sensors
+    [Template]  Test Sensors
     a  a
     ...    value_less=${False}  value_equal=${True}
     a  b
@@ -139,13 +142,13 @@ Test Enabler And Binary Sensor
 
 Initialize
     [Arguments]  ${start_time}  ${start_date}=${default_start_date}
-    ...          ${suffix}=${Empty}
+    ...          ${suffix}=${Empty}  ${initial_value}=${Empty}
     Clean States
     Initialize States
     ...    ${input_binary1}=off
     ...    ${input_binary2}=off
-    ...    ${input_sensor1}=0
-    ...    ${input_sensor2}=0
+    ...    ${input_sensor1}=${initial_value}
+    ...    ${input_sensor2}=${initial_value}
     ${apps} =  Create List  TestApp  locker  mutex_graph  expression  enabler
     ${app_configs} =  Create List  TestApp  ExpressionEnabler
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
