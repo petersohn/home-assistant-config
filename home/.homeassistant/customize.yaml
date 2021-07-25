@@ -76,23 +76,23 @@ binary_sensor.dishwasher_sensor_available:
   device_class: plug
 
 binary_sensor.living_room_temperature_available:
-  friendly_name: Living Room Temperature Available
+  friendly_name: Living Room Temperature
   device_class: plug
 
 binary_sensor.bedroom_temperature_available:
-  friendly_name: Bedroom Temperature Available
+  friendly_name: Bedroom Temperature
   device_class: plug
 
 binary_sensor.gate_reflector_available:
-  friendly_name: Gate Reflector Available
+  friendly_name: Gate Reflector
   device_class: plug
 
 binary_sensor.attic_lower_available:
-  friendly_name: Attic Lower Available
+  friendly_name: Attic Lower
   device_class: plug
 
 binary_sensor.dining_room_window_available:
-  friendly_name: Dining Room Window Available
+  friendly_name: Dining Room Window
   device_class: plug
 
 sensor.furnace_temperature_free_memory:

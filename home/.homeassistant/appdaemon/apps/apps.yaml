@@ -887,7 +887,7 @@ availability_alerts:
     class: AlertAggregator
     target: binary_sensor.availability_alert
     trigger_expr: not v[name]
-    text_expr: name[14:-10]
+    text_expr: a[name].friendly_name
     timeout:
         minutes: 5
     dependencies:
@@ -913,7 +913,7 @@ window_alerts:
     class: AlertAggregator
     target: binary_sensor.window_alert
     trigger_expr: v[name] and v.input_select.presence_mode == 'away'
-    text_expr: name[14:]
+    text_expr: a[name].friendly_name
     dependencies:
         - locker
     global_dependencies:
