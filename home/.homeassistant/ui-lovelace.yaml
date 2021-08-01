@@ -94,6 +94,75 @@ views:
               - type: sensor
                 entity: sensor.humidity_kitchen
                 graph: line
+  - path: weather
+    title: Időjárás
+    badges: []
+    cards:
+      - type: glance
+        entities:
+          - sun.sun
+          - sensor.moon
+          - binary_sensor.night
+        show_header_toggle: false
+      - type: glance
+        entities:
+          - sensor.rain_last_day
+          - sensor.rain_decaying
+          - sensor.maximum_temperature_last_day
+      - type: glance
+        entities:
+          - sensor.wind_strength
+          - sensor.wind_direction
+          - sensor.wind_direction_average
+        show_header_toggle: false
+      - type: sensor
+        entity: sensor.light_sunlight
+        graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_outside
+                graph: line
+              # - type: sensor
+              #   entity: sensor.humidity_outside
+              #   graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_outside2
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_outside2
+                graph: line
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_cellar
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_cellar
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_attic
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_attic
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_furnace_room
+                graph: line
+              - type: sensor
+                entity: sensor.humidity_furnace_room
+                graph: line
+    icon: 'mdi:weather-pouring'
   - path: garden
     title: 'Kert'
     icon: 'mdi:tree'
@@ -532,75 +601,6 @@ views:
           - alert.furnace_overheat
           - alert.window_open
         title: Riasztások
-  - path: weather
-    title: Időjárás
-    badges: []
-    cards:
-      - type: glance
-        entities:
-          - sun.sun
-          - sensor.moon
-          - binary_sensor.night
-        show_header_toggle: false
-      - type: glance
-        entities:
-          - sensor.rain_last_day
-          - sensor.rain_decaying
-          - sensor.maximum_temperature_last_day
-      - type: glance
-        entities:
-          - sensor.wind_strength
-          - sensor.wind_direction
-          - sensor.wind_direction_average
-        show_header_toggle: false
-      - type: sensor
-        entity: sensor.light_sunlight
-        graph: line
-      - type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_outside
-                graph: line
-              # - type: sensor
-              #   entity: sensor.humidity_outside
-              #   graph: line
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_outside2
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_outside2
-                graph: line
-      - type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_cellar
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_cellar
-                graph: line
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_attic
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_attic
-                graph: line
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_furnace_room
-                graph: line
-              - type: sensor
-                entity: sensor.humidity_furnace_room
-                graph: line
-    icon: 'mdi:weather-pouring'
   - path: state
     title: state
     badges: []
