@@ -13,7 +13,8 @@
             "upMovementPin": 3,
             "downMovementPin": 4,
             "invertInput": false,
-            "invertOutput": false
+            "invertOutput": true,
+            "closedPosition": 25
         },
         {
             "type": "input",
