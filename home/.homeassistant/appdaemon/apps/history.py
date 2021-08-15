@@ -14,7 +14,7 @@ HistoryElement = namedtuple('HistoryElement', ['time', 'value'])
 
 def make_history_element(time, value):
     try:
-        if value == 'off':
+        if value is None or value == 'off':
             real_value = 0.0
         elif value == 'on':
             real_value = 1.0
