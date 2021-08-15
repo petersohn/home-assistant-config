@@ -233,7 +233,8 @@ cover:
     state_topic: "home/blind/dining_room/state"
     state_opening: OPENING
     state_closing: CLOSING
-    state_stopped: IDLE
+    state_open: OPEN
+    state_closed: CLOSED
     position_topic: "home/blind/dining_room/position"
     position_open: 100
     position_closed: 0
