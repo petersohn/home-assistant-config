@@ -271,3 +271,23 @@
         data:
             entity_id: input_select.presence_mode
             option: sleep
+
+- alias: ebédlő redőny nyitás
+  trigger:
+      platform: state
+      entity_id: sensor.dining_room_window_blind_state
+      to: 'open'
+  action:
+      - service: cover.open_cover
+        data:
+            entity_id: cover.dining_room
+
+- alias: ebédlő redőny zárás
+  trigger:
+      platform: state
+      entity_id: sensor.dining_room_window_blind_state
+      to: 'closed'
+  action:
+      - service: cover.close_cover
+        data:
+            entity_id: cover.dining_room

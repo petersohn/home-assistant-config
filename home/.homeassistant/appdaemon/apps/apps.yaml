@@ -992,3 +992,14 @@ freeze_alerts:
         - sensor.temperature_living_room_lower
         - sensor.temperature_kitchen
 
+dining_room_window_blind_state:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+        'open' if v.input_select.presence_mode == 'home' or (
+        v.input_select.presence_mode == 'sleep' and v.binary_sensor.window_entrance)
+        else 'closed'
+    target: sensor.dining_room_window_blind_state
+
