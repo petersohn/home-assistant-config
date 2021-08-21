@@ -47,6 +47,20 @@
             "default": false,
             "invert": true,
             "pin": 12
+        },
+        {
+            "type": "status",
+            "name": "status"
+        },
+        {
+            "type": "mqtt",
+            "name": "room_temperature1",
+            "topic": "home/sensors/temperature/bedroom/upper"
+        },
+        {
+            "type": "mqtt",
+            "name": "room_temperature2",
+            "topic": "home/sensors/temperature/living_room/upper"
         }
     ],
     "actions": [
@@ -144,6 +158,41 @@
                 "then": "1",
                 "else": "0"
             }
+        },
+        {
+            "type": "command",
+            "interface": "room_temperature1",
+            "target": "heater",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": ">",
+                    "ops": [{"type": "value"}, 25]
+                },
+                "then": "0",
+                "else": ""
+            }
+        },
+        {
+            "type": "command",
+            "interface": "room_temperature2",
+            "target": "heater",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": ">",
+                    "ops": [{"type": "value"}, 25]
+                },
+                "then": "0",
+                "else": ""
+            }
+        },
+        {
+            "type": "command",
+            "interface": "status",
+            "target": "heater",
+            "value": "0",
+            "command": "0"
         }
     ]
 }
