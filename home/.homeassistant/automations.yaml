@@ -277,6 +277,7 @@
       platform: state
       entity_id: sensor.dining_room_window_blind_state
       to: 'open'
+      for: '00:01:00'
   action:
       - service: cover.open_cover
         data:
@@ -287,6 +288,7 @@
       platform: state
       entity_id: sensor.dining_room_window_blind_state
       to: 'closed'
+      for: '00:01:00'
   action:
       - service: cover.close_cover
         data:
