@@ -4,12 +4,13 @@ import traceback
 
 
 class Trigger:
-    def __init__(self, app, expr, sensor, target_state, callback):
+    def __init__(self, app, expr, sensor, source_state, target_state, callback):
         self.app = app
         self.callback = callback
         self.expression = None
         self.saved_state = None
         self.sensor = None
+        self.source_state = None
         self.target_state = None
         self.mutex = self.app.get_app('locker').get_mutex('Trigger')
         if expr is not None:
@@ -19,7 +20,10 @@ class Trigger:
             self.saved_state = self.expression.get() is True
         else:
             self.sensor = sensor
+            self.source_state = source_state
             self.target_state = target_state
+            self.saved_state = self.source_state is None and \
+                self.app.get_state(self.sensor) == self.target_state
             self.app.listen_state(self.on_state_change, entity=self.sensor)
 
     def cleanup(self):
@@ -27,26 +31,23 @@ class Trigger:
             self.expression.cleanup()
 
     def is_on(self):
-        if self.expression is not None:
-            return self.saved_state
-        else:
-            return self.app.get_state(self.sensor) == self.target_state
+        return self.saved_state
+
+    def _on_change(self, new_on):
+        if new_on != self.saved_state:
+            self.saved_state = new_on
+            self.callback(new_on)
 
     def on_state_change(self, entity, attribute, old, new, kwargs):
-        self.app.log('state changed: {} -> {} target={}'.format(
-            old, new, self.target_state))
+        self.app.log('state changed: {} -> {} target={} -> {}'.format(
+            old, new, self.source_state, self.target_state))
         with self.mutex.lock('on_state_change'):
-            old_on = old == self.target_state
-            new_on = new == self.target_state
-            if old_on != new_on:
-                self.callback(new_on)
+            self._on_change(new == self.target_state and (
+                self.source_state is None or old == self.source_state))
 
     def on_expression_change(self, value):
         with self.mutex.lock('on_expression_change'):
-            new_on = value is True
-            if new_on != self.saved_state:
-                self.saved_state = new_on
-                self.callback(new_on)
+            self._on_change(value is True)
 
 
 class Timer:
@@ -91,8 +92,12 @@ class Timer:
 class TimerSwitch(hass.Hass):
     def initialize(self):
         self.trigger = Trigger(
-            self, self.args.get('expr'), self.args.get('sensor'),
-            self.args.get('target_state', 'on'), self.on_change)
+            app=self,
+            expr=self.args.get('expr'),
+            sensor=self.args.get('sensor'),
+            source_state=None,
+            target_state=self.args.get('target_state', 'on'),
+            callback=self.on_change)
         self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
         enabler = self.args.get('enabler')
         if enabler is not None:
@@ -173,8 +178,12 @@ class TimerSequence(hass.Hass):
             for element in self.args['sequence']]
 
         self.trigger = Trigger(
-            self, self.args.get('expr'), self.args.get('sensor'),
-            self.args.get('target_state', 'on'), self.on_change)
+            app=self,
+            expr=self.args.get('expr'),
+            sensor=self.args.get('sensor'),
+            source_state=self.args.get('source_state'),
+            target_state=self.args.get('target_state', 'on'),
+            callback=self.on_change)
 
         enabler = self.args.get('enabler')
         if enabler is not None:

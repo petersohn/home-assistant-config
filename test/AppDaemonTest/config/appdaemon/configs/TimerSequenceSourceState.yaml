@@ -1,0 +1,14 @@
+test_timer_switch:
+    class: TimerSequence
+    module: timer_switch
+    dependencies:
+        - test_auto_switch
+        - locker
+    sensor: sensor.test_sensor
+    source_state: foo
+    target_state: bar
+    sequence:
+        - targets:
+            - test_auto_switch
+          time: 1
+    enabler: test_enabler

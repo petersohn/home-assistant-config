@@ -10,6 +10,7 @@ Test Teardown  Cleanup AppDaemon
 *** Variables ***
 
 ${motion_detector} =   binary_sensor.motion_detector
+${sensor} =            sensor.test_sensor
 ${switch} =            input_boolean.test_switch
 ${switch2} =           input_boolean.test_switch2
 ${enabler} =           test_enabler
@@ -191,6 +192,54 @@ Indirect Time
     State Should Change At  ${switch}  on   9 min
     State Should Change At  ${switch}  off  10 min 10 sec
 
+Source State
+    [Setup]  Initialize  00:00:00  TimerSequenceSourceState
+    Set Enabled State  ${enabler}  enable
+    Schedule Call At  20 sec
+    ...    set_sensor_state  ${sensor}  foobar
+    Schedule Call At  1 min
+    ...    set_sensor_state  ${sensor}  bar
+    Schedule Call At  2 min
+    ...    set_sensor_state  ${sensor}  foo
+    Schedule Call At  2 min 30 sec
+    ...    set_sensor_state  ${sensor}  bar
+    Schedule Call At  5 min
+    ...    set_sensor_state  ${sensor}  foo
+    Schedule Call At  6 min
+    ...    set_sensor_state  ${sensor}  bar
+    Schedule Call At  8 min
+    ...    set_sensor_state  ${sensor}  foo
+    Schedule Call At  8 min 10 sec
+    ...    call_on_app  ${enabler}  disable
+    Schedule Call At  8 min 20 sec
+    ...    set_sensor_state  ${sensor}  foo
+    Schedule Call At  8 min 30 sec
+    ...    set_sensor_state  ${sensor}  bar
+    Schedule Call At  8 min 50 sec
+    ...    set_sensor_state  ${sensor}  foo
+    Schedule Call At  9 min
+    ...    call_on_app  ${enabler}  enable
+    Schedule Call At  10 min
+    ...    set_sensor_state  ${sensor}  bar
+    Schedule Call At  12 min
+    ...    set_sensor_state  ${sensor}  foo
+    Schedule Call At  13 min
+    ...    set_sensor_state  ${sensor}  ${Empty}
+    Schedule Call At  14 min
+    ...    set_sensor_state  ${sensor}  bar
+    Schedule Call At  15 min
+    ...    set_sensor_state  ${sensor}  foo
+    Schedule Call At  17 min
+    ...    set_sensor_state  ${sensor}  bar
+
+    State Should Change At  ${switch}  on   2 min 30 sec
+    State Should Change At  ${switch}  off  3 min 30 sec
+    State Should Change At  ${switch}  on   6 min
+    State Should Change At  ${switch}  off  7 min
+    State Should Change At  ${switch}  on   10 min
+    State Should Change At  ${switch}  off  11 min
+    State Should Change At  ${switch}  on   17 min
+    State Should Change At  ${switch}  off  18 min
 
 *** Keywords ***
 
@@ -290,6 +339,7 @@ Initialize
     Clean States
     Initialize States
     ...    ${motion_detector}=${sensor_state}
+    ...    ${sensor}=${Empty}
     ...    ${switch}=off
     ${apps} =  Create List  TestApp  locker  mutex_graph  timer_switch
     ...                     auto_switch  enabler  expression
