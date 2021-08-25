@@ -610,7 +610,8 @@ home_light_switcher:
         - auto_switch_light_driveway
         - sun_enabler_night
         - locker
-    sensor: person.peti
+    sensor: input_select.presence_mode
+    source_state: away
     target_state: home
     enabler: sun_enabler_night
     sequence:
@@ -783,7 +784,7 @@ sprinkler_run_time:
     target: sensor.sprinkler_run_time
     expr: >
         1.0 * v.sensor.maximum_temperature_last_day - 7.0
-        - 5.0 * v.sensor.rain_decaying
+        - 6.0 * v.sensor.rain_decaying
     attributes:
         unit_of_measurement: min
         friendly_name: "Locsolás idő"
