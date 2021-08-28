@@ -1,0 +1,24 @@
+{
+    "debug": true,
+    "name": "balcony_controller",
+    "availabilityTopic": "home/devices/balcony_controller/availability",
+    "debugTopic": "home/devices/balcony_controller/debug",
+    "interfaces": [
+        {
+            "type": "output",
+            "name": "relay",
+            "commandTopic": "home/switches/balcony_sprinkler/set",
+            "default": false,
+            "invert": true,
+            "pin": 0
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "relay",
+            "topic": "home/switches/balcony_sprinkler/state",
+            "retain": true
+        }
+    ]
+}
