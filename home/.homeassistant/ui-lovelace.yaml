@@ -233,12 +233,30 @@ views:
                 option: 'auto'
             double_tap_action:
               action: more-info
+          - type: button
+            entity: switch.balcony_sprinkler
+            state_color: true
+            tap_action:
+              action: call-service
+              service: script.auto_switch_manual
+              service_data:
+                auto_switch: input_select.balcony_sprinkler
+                target: switch.balcony_sprinkler
+            hold_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: input_select.balcony_sprinkler
+                option: 'auto'
+            double_tap_action:
+              action: more-info
       - type: entities
         state_color: true
         entities:
           - input_select.auto_sprinkler1
           - input_select.auto_sprinkler2
           - input_select.auto_sprinkler3
+          - input_select.balcony_sprinkler
         show_header_toggle: false
       - type: entities
         entities:
@@ -630,6 +648,7 @@ views:
           - binary_sensor.gate_reflector_available
           - binary_sensor.attic_lower_available
           - binary_sensor.dining_room_window_available
+          - binary_sensor.balcony_controller_available
           - alert.availability
         title: device_availability
         state_color: true

@@ -408,6 +408,20 @@ binary_sensor:
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
+  - platform: mqtt
+    state_topic: home/devices/balcony_controller/availability
+    json_attributes_topic: home/devices/balcony_controller/availability
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: balcony_controller_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
 
   - platform: mqtt
     state_topic: home/sensors/motion/gate_reflector
@@ -516,6 +530,12 @@ switch:
     name: auto_sprinkler4
     command_topic: home/switches/auto_sprinkler4/set
     state_topic: home/switches/auto_sprinkler4/state
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    name: balcony_sprinkler
+    command_topic: home/switches/balcony_sprinkler/set
+    state_topic: home/switches/balcony_sprinkler/state
     payload_on: 1
     payload_off: 0
   - platform: mqtt
@@ -752,6 +772,13 @@ input_select:
         icon: mdi:sprinkler
     auto_sprinkler3:
         name: Auto locsoló 3
+        options:
+            - "auto"
+            - "on"
+            - "off"
+        icon: mdi:sprinkler
+    balcony_sprinkler:
+        name: Terasz locsoló
         options:
             - "auto"
             - "on"

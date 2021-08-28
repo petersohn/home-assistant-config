@@ -840,6 +840,14 @@ auto_switch_sprinkler_3:
     switch: input_select.auto_sprinkler3
     reentrant: true
 
+auto_switch_balcony_sprinkler:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.balcony_sprinkler
+    switch: input_select.balcony_sprinkler
+    reentrant: true
+
 sprinkler_timer:
     class: TimerSequence
     module: timer_switch
@@ -859,6 +867,9 @@ sprinkler_timer:
           time: sensor.sprinkler_run_time_2
         - targets:
               - auto_switch_sprinkler_3
+          time: sensor.sprinkler_run_time
+        - targets:
+              - auto_switch_balcony_sprinkler
           time: sensor.sprinkler_run_time
     enabler: sprinkler_enabler
 

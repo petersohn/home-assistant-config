@@ -95,6 +95,10 @@ binary_sensor.dining_room_window_available:
   friendly_name: Dining Room Window
   device_class: plug
 
+binary_sensor.balcony_controller_available:
+  friendly_name: Balcony Controller
+  device_class: plug
+
 sensor.furnace_temperature_free_memory:
   friendly_name: Furnace Temperature
   icon: mdi:memory
@@ -336,6 +340,10 @@ switch.auto_sprinkler3:
 
 switch.auto_sprinkler4:
   friendly_name: "Auto locsoló 4"
+  icon: mdi:sprinkler
+
+switch.balcony_sprinkler:
+  friendly_name: "Terasz locsoló"
   icon: mdi:sprinkler
 
 switch.light_driveway:
