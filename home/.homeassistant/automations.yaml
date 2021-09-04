@@ -277,7 +277,7 @@
       platform: state
       entity_id: sensor.dining_room_window_blind_state
       to: 'open'
-      for: '00:00:30'
+      for: '00:00:10'
   action:
       - service: cover.open_cover
         data:
@@ -288,8 +288,42 @@
       platform: state
       entity_id: sensor.dining_room_window_blind_state
       to: 'closed'
-      for: '00:00:30'
+      for: '00:00:10'
   action:
       - service: cover.close_cover
         data:
             entity_id: cover.dining_room
+
+- alias: nappali redőny nyitás
+  trigger:
+      platform: state
+      entity_id: sensor.living_room_window_blind_state
+      to: 'open'
+      for: '00:00:10'
+  action:
+      - service: cover.open_cover
+        data:
+            entity_id: cover.living_room
+
+- alias: nappali redőny zárás
+  trigger:
+      platform: state
+      entity_id: sensor.living_room_window_blind_state
+      to: 'closed'
+      for: '00:00:10'
+  action:
+      - service: cover.close_cover
+        data:
+            entity_id: cover.living_room
+
+- alias: nappali redőny résre nyitás
+  trigger:
+      platform: state
+      entity_id: sensor.living_room_window_blind_state
+      to: 'half'
+      for: '00:00:10'
+  action:
+      - service: cover.set_cover_position
+        data:
+            entity_id: cover.living_room
+            position: 45

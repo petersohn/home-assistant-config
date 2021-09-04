@@ -575,7 +575,7 @@ is_dark:
     global_dependencies:
         - expression
 
-light_outside_3_enabler:
+is_night_of_dark:
     module: enabler
     class: ExpressionEnabler
     expr: >
@@ -594,11 +594,11 @@ light_outside_switcher_3:
     module: enabled_switch
     dependencies:
         - auto_switch_light_outside_3
-        - light_outside_3_enabler
+        - is_night_of_dark
         - locker
     global_dependencies:
         - auto_switch
-    enabler: light_outside_3_enabler
+    enabler: is_night_of_dark
     targets:
         - auto_switch_light_outside_3
 
@@ -1031,3 +1031,17 @@ dining_room_window_blind_state:
         else 'closed'
     target: sensor.dining_room_window_blind_state
 
+living_room_window_blind_state:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+        'open' if v.input_select.presence_mode == 'home' and (
+        not e.is_night_of_dark or v.binary_sensor.window_living_room)
+        else 'half' if (v.input_select.presence_mode == 'away' and
+        not e.is_night_of_dark) or (
+        v.input_select.presence_mode == 'sleep' and
+        v.binary_sensor.window_living_room)
+        else 'closed'
+    target: sensor.living_room_window_blind_state
