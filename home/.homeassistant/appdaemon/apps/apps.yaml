@@ -932,6 +932,8 @@ availability_alerts:
         - binary_sensor.gate_reflector_available
         - binary_sensor.attic_lower_available
         - binary_sensor.dining_room_window_available
+        - binary_sensor.living_room_window_available
+        - binary_sensor.balcony_controller_available
 
 window_alerts:
     module: alert
@@ -945,6 +947,7 @@ window_alerts:
         - expression
     sources:
         - binary_sensor.window_bedroom
+        - binary_sensor.window_living_room
         - binary_sensor.window_entrance
         - binary_sensor.door_attic_hatch
 

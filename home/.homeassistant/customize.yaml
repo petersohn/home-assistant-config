@@ -95,6 +95,10 @@ binary_sensor.dining_room_window_available:
   friendly_name: Dining Room Window
   device_class: plug
 
+binary_sensor.living_room_window_available:
+  friendly_name: Living Room Window
+  device_class: plug
+
 binary_sensor.balcony_controller_available:
   friendly_name: Balcony Controller
   device_class: plug
@@ -456,6 +460,10 @@ binary_sensor.window_bedroom:
   friendly_name: "Ablak hálószoba"
   device_class: window
 
+binary_sensor.window_living_room:
+  friendly_name: "Ablak nappali"
+  device_class: window
+
 sensor.light_shadow:
   friendly_name: "Fény árnyékban"
   icon: mdi:weather-sunset
@@ -473,3 +481,6 @@ binary_sensor.availability_alert:
 
 cover.dining_room:
   friendly_name: Étkező
+
+cover.living_room:
+  friendly_name: Nappali

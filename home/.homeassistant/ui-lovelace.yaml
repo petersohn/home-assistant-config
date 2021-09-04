@@ -41,12 +41,14 @@ views:
           - binary_sensor.door_main_entrance
           - binary_sensor.window_entrance
           - binary_sensor.window_bedroom
+          - binary_sensor.window_living_room
           - alert.window_open
         title: Ajtók
         show_header_toggle: false
       - type: entities
         entities:
           - cover.dining_room
+          - cover.living_room
         title: Redőny
       - type: vertical-stack
         cards:
@@ -648,6 +650,7 @@ views:
           - binary_sensor.gate_reflector_available
           - binary_sensor.attic_lower_available
           - binary_sensor.dining_room_window_available
+          - binary_sensor.living_room_window_available
           - binary_sensor.balcony_controller_available
           - alert.availability
         title: device_availability

@@ -238,6 +238,19 @@ cover:
     position_topic: "home/blind/dining_room/position"
     position_open: 100
     position_closed: 0
+  - platform: mqtt
+    command_topic: "home/blind/living_room/set"
+    set_position_topic: "home/blind/living_room/set"
+    device_class: blind
+    name: living_room
+    state_topic: "home/blind/living_room/state"
+    state_opening: OPENING
+    state_closing: CLOSING
+    state_open: OPEN
+    state_closed: CLOSED
+    position_topic: "home/blind/living_room/position"
+    position_open: 100
+    position_closed: 0
 
 binary_sensor:
   - platform: mqtt
@@ -409,6 +422,20 @@ binary_sensor:
     payload_on: true
     payload_off: false
   - platform: mqtt
+    state_topic: home/devices/living_room_window/availability
+    json_attributes_topic: home/devices/living_room_window/availability
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: living_room_window_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
+  - platform: mqtt
     state_topic: home/devices/balcony_controller/availability
     json_attributes_topic: home/devices/balcony_controller/availability
     json_attributes_template: >
@@ -471,6 +498,11 @@ binary_sensor:
   - platform: mqtt
     state_topic: home/sensors/window/bedroom
     name: window_bedroom
+    payload_on: 1
+    payload_off: 0
+  - platform: mqtt
+    state_topic: home/sensors/window/living_room
+    name: window_living_room
     payload_on: 1
     payload_off: 0
   - platform: mqtt
