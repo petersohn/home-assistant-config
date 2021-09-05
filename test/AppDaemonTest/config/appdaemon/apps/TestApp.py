@@ -146,16 +146,21 @@ class TestApp(hass.Hass):
         # TODO: Use oneshot when home-assistant/appdaemon#299 is pulled
         self.__block_listeners[entity] = \
             self.listen_state(self.__block_on_state, entity, **kwargs)
+
         if timeout is not None:
             converted_timeout = self.__convert_time(timeout)
             if converted_timeout == 0:
                 return
             self.unblock_for(converted_timeout)
+            return
+
         if deadline is not None:
             converted_deadline = self.__convert_time(deadline)
             if DateTimeUtil.to_time(converted_deadline) == self.time():
                 return
             self.unblock_until(deadline)
+            return
+
         Blocker.main_blocker.unblock()
 
     def get_current_time(self):
