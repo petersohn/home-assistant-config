@@ -13,7 +13,23 @@
             "upMovementPin": 3,
             "downMovementPin": 4,
             "invertInput": false,
-            "invertOutput": false
+            "invertOutput": true,
+            "closedPosition": 25
+        },
+        {
+            "type": "input",
+            "name": "up_switch",
+            "pin": 0
+        },
+        {
+            "type": "input",
+            "name": "down_switch",
+            "pin": 2
+        },
+        {
+            "type": "input",
+            "name": "stop_switch",
+            "pin": 5
         },
         {
             "type": "input",
@@ -41,6 +57,27 @@
             "interface": "window",
             "topic": "home/sensors/window/living_room",
             "retain": true
+        },
+        {
+            "type": "command",
+            "interface": "up_switch",
+            "target": "blind",
+            "command": "OPEN",
+            "value": "0"
+        },
+        {
+            "type": "command",
+            "interface": "down_switch",
+            "target": "blind",
+            "command": "CLOSE",
+            "value": "0"
+        },
+        {
+            "type": "command",
+            "interface": "stop_switch",
+            "target": "blind",
+            "command": "STOP",
+            "value": "0"
         }
     ]
 }
