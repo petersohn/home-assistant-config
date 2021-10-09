@@ -10,7 +10,13 @@
             "commandTopic": "home/switches/balcony_sprinkler/set",
             "default": false,
             "invert": true,
-            "pin": 0
+            "pin": 3
+        },
+        {
+            "type": "hm3301",
+            "name": "hm3301",
+            "sda": 0,
+            "scl": 2
         }
     ],
     "actions": [
@@ -19,6 +25,13 @@
             "interface": "relay",
             "topic": "home/switches/balcony_sprinkler/state",
             "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "hm3301",
+            "topic": "home/sensors/air_quality/outside",
+            "retain": true,
+            "template": "{\"pm1\":%1,\"pm2_5\":%2,\"pm10\":%3}"
         }
     ]
 }
