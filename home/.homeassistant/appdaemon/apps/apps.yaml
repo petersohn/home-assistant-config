@@ -803,6 +803,19 @@ sprinkler_run_time_2:
         friendly_name: "Locsolás idő 2"
         icon: mdi:timer
 
+sprinkler_run_time_3:
+    class: Expression
+    module: expression
+    dependencies:
+        - locker
+        - sprinkler_run_time
+    target: sensor.sprinkler_run_time_3
+    expr: v.sensor.sprinkler_run_time * 0.5
+    attributes:
+        unit_of_measurement: min
+        friendly_name: "Locsolás idő 3"
+        icon: mdi:timer
+
 sprinkler_enabler:
     module: enabler
     class: ExpressionEnabler
@@ -870,7 +883,7 @@ sprinkler_timer:
           time: sensor.sprinkler_run_time
         - targets:
               - auto_switch_balcony_sprinkler
-          time: sensor.sprinkler_run_time
+          time: sensor.sprinkler_run_time_3
     enabler: sprinkler_enabler
 
 socket_bedroom_1:
