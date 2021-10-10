@@ -484,3 +484,15 @@ cover.dining_room:
 
 cover.living_room:
   friendly_name: Nappali
+
+sensor.pm1_outside:
+  friendly_name: "PM1 kint"
+  icon: mdi:smog
+
+sensor.pm2_5_outside:
+  friendly_name: "PM2.5 kint"
+  icon: mdi:smog
+
+sensor.pm10_outside:
+  friendly_name: "PM10 kint"
+  icon: mdi:smog

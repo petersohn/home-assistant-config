@@ -215,6 +215,21 @@ sensor:
     unit_of_measurement: "%"
     name: light_sunlight
     value_template: "{{ value | float / 10.24 }}"
+  - platform: mqtt
+    state_topic: home/sensors/air_quality/outside
+    unit_of_measurement: "ppm"
+    name: pm1_outside
+    value_template: '{{ value_json.pm1 }}'
+  - platform: mqtt
+    state_topic: home/sensors/air_quality/outside
+    unit_of_measurement: "ppm"
+    name: pm2_5_outside
+    value_template: '{{ value_json.pm2_5 }}'
+  - platform: mqtt
+    state_topic: home/sensors/air_quality/outside
+    unit_of_measurement: "ppm"
+    name: pm10_outside
+    value_template: '{{ value_json.pm10 }}'
 
   - platform: command_line
     name: cpu_temperature
@@ -510,6 +525,7 @@ binary_sensor:
     name: mosquitto_bridge_available
     payload_on: 1
     payload_off: 0
+
   - platform: ping
     host: !secret router_address
     name: network_available

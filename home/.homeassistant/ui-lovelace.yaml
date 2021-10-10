@@ -164,6 +164,17 @@ views:
               - type: sensor
                 entity: sensor.humidity_furnace_room
                 graph: line
+      - type: horizontal-stack
+        cards:
+          - type: sensor
+            entity: sensor.pm1_outside
+            graph: line
+          - type: sensor
+            entity: sensor.pm2_5_outside
+            graph: line
+          - type: sensor
+            entity: sensor.pm10_outside
+            graph: line
     icon: 'mdi:weather-pouring'
   - path: garden
     title: 'Kert'
