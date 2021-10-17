@@ -861,45 +861,12 @@ input_select:
         icon: mdi:home
 
 input_boolean:
-  hot_water_pump:
-    name: "Meleg víz keringető"
-    icon: mdi:shower-head
   sprinkler:
     name: "Locsolás"
     icon: mdi:sprinkler-variant
   wood_heating:
     name: "Fafűtés"
     icon: mdi:pine-tree-fire
-
-input_datetime:
-  hot_water_monday:
-    name: Hétfő
-    has_date: false
-    has_time: true
-  hot_water_tuesday:
-    name: Kedd
-    has_date: false
-    has_time: true
-  hot_water_wednesday:
-    name: Szerda
-    has_date: false
-    has_time: true
-  hot_water_thursday:
-    name: Csütörtök
-    has_date: false
-    has_time: true
-  hot_water_friday:
-    name: Péntek
-    has_date: false
-    has_time: true
-  hot_water_saturday:
-    name: Szombat
-    has_date: false
-    has_time: true
-  hot_water_sunday:
-    name: Vasárnap
-    has_date: false
-    has_time: true
 
 mqtt_statestream:
   base_topic: home

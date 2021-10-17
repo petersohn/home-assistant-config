@@ -596,28 +596,18 @@ views:
           - sensor.temperature_furnace_gas
           - sensor.temperature_furnace_wood
           - sensor.temperature_furnace_wood_in
-          - sensor.temperature_hot_water
           - switch.heating_pump
-          - sensor.water_usage_dishwasher
           - sensor.temperature_dishwasher
-          - sensor.water_usage
           - alert.furnace_overheat
-        title: Gépészet
+        title: Fűtés
         show_header_toggle: false
       - type: entities
         entities:
-          - input_boolean.hot_water_pump
-          - input_select.hot_water_pump
-          - input_datetime.hot_water_monday
-          - input_datetime.hot_water_tuesday
-          - input_datetime.hot_water_wednesday
-          - input_datetime.hot_water_thursday
-          - input_datetime.hot_water_friday
-          - input_datetime.hot_water_saturday
-          - input_datetime.hot_water_sunday
           - sensor.temperature_hot_water
-        state_color: true
-        title: Melegvíz bekapcsolás
+          - input_select.hot_water_pump
+          - switch.hot_water_pump
+          - sensor.temperature_dishwasher
+        title: Gépészet
         show_header_toggle: false
   - path: alerts
     title: Riasztások

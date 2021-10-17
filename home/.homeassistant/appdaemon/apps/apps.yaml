@@ -631,83 +631,24 @@ auto_switch_hot_water_pump:
     module: auto_switch
     class: AutoSwitch
     dependencies: locker
-    target: input_boolean.hot_water_pump
+    target: switch.hot_water_pump
     switch: input_select.hot_water_pump
     reentrant: true
-
-hot_water_pump_switch:
-    class: EnabledSwitch
-    module: enabled_switch
-    dependencies:
-        - hot_water_pump_enabler
-        - auto_switch_hot_water_pump
-        - locker
-    enabler: hot_water_pump_enabler
-    targets:
-        - auto_switch_hot_water_pump
-
-hot_water_pump_timer_enabler:
-    module: enabler
-    class: ValueEnabler
-    dependencies: locker
-    entity: input_select.presence_mode
-    value: 'sleep'
-
-hot_water_pump_timer:
-    class: TimerSequence
-    module: timer_switch
-    dependencies:
-        - auto_switch_hot_water_pump
-        - hot_water_pump_timer_enabler
-        - locker
-    global_dependencies:
-        - expression
-    expr: >
-        v['sensor.time'] + ':00' ==
-        v['input_datetime.hot_water_' + args['weekdays'][now().weekday()]]
-    sequence:
-        - targets:
-              - auto_switch_hot_water_pump
-          time: 300
-    enabler: hot_water_pump_timer_enabler
-    weekdays:
-        - monday
-        - tuesday
-        - wednesday
-        - thursday
-        - friday
-        - saturday
-        - sunday
-
-auto_switch_hot_water_pump_backend:
-    module: auto_switch
-    class: AutoSwitch
-    dependencies: locker
-    target: switch.hot_water_pump
-    reentrant: true
-
-hot_water_backend_enabler:
-    module: enabler
-    class: ValueEnabler
-    dependencies: locker
-    entity: input_boolean.hot_water_pump
-    value: 'on'
 
 hot_water_pump_backend_timer:
     class: TimerSwitch
     module: timer_switch
     dependencies:
-        - auto_switch_hot_water_pump_backend
-        - hot_water_backend_enabler
+        - auto_switch_hot_water_pump
         - locker
     expr: >
         v.binary_sensor.cellar_controller_available is not True or
         v.sensor.temperature_hot_water == 'unknown' or
         v.sensor.temperature_hot_water <= 41
     targets:
-        - auto_switch_hot_water_pump_backend
-    enabler: hot_water_backend_enabler
-    time: 2
+        - auto_switch_hot_water_pump
+    enabler: hot_water_pump_enabler
+    time: 1
 
 rain_history:
     module: history
