@@ -719,6 +719,20 @@ climate:
     away_temp: 10
     precision: 0.5
 
+template:
+  - binary_sensor:
+    - name: presence_home
+      state: >
+        {{ is_state('input_select.presence_mode', 'home') }}
+  - binary_sensor:
+    - name: presence_sleep
+      state: >
+        {{ is_state('input_select.presence_mode', 'sleep') }}
+  - binary_sensor:
+    - name: presence_away
+      state: >
+        {{ is_state('input_select.presence_mode', 'away') }}
+
 input_select:
     light_driveway:
         name: Bejáró világítás
