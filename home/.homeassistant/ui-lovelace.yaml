@@ -37,29 +37,25 @@ views:
                 entity_id: input_select.presence_mode
                 option: 'away'
         title: Jelenlét
-      - type: horizontal-stack
+      - type: vertical-stack
         cards:
-          - type: sensor
-            entity: sensor.temperature_outside
-            graph: line
-          - type: sensor
-            entity: sensor.temperature_living_room_upper
-            graph: line
-          - type: sensor
-            entity: sensor.temperature_bedroom_upper
-            graph: line
-        title: Hőmérséklet
-      - type: entities
-        state_color: true
-        entities:
-          - binary_sensor.door_attic_hatch
-          - binary_sensor.door_main_entrance
-          - binary_sensor.window_entrance
-          - binary_sensor.window_bedroom
-          - binary_sensor.window_living_room
-          - alert.window_open
-        title: Ajtók
-        show_header_toggle: false
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_living_room_upper
+                graph: line
+              - type: sensor
+                entity: sensor.temperature_bedroom_upper
+                graph: line
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                entity: sensor.temperature_outside
+                graph: line
+              - type: sensor
+                entity: sensor.pm10_outside
+                graph: line
+        title: Időjárás
       - type: entities
         entities:
           - cover.dining_room
@@ -72,6 +68,17 @@ views:
           - climate.heater
         show_header_toggle: false
         title: Fűtés
+      - type: entities
+        state_color: true
+        entities:
+          - binary_sensor.door_attic_hatch
+          - binary_sensor.door_main_entrance
+          - binary_sensor.window_entrance
+          - binary_sensor.window_bedroom
+          - binary_sensor.window_living_room
+          - alert.window_open
+        title: Ajtók
+        show_header_toggle: false
 
     icon: 'mdi:home'
   - path: temperature-inside
