@@ -700,6 +700,12 @@ switch:
     state_topic: home/switches/heater/main/status
     payload_on: 1
     payload_off: 0
+  - platform: mqtt
+    name: desktop_player
+    command_topic: home/switches/desktop_player/set
+    state_topic: home/switches/desktop_player/state
+    payload_on: 1
+    payload_off: 0
 
 climate:
   - platform: generic_thermostat

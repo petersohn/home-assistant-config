@@ -56,6 +56,8 @@ views:
                 entity: sensor.pm10_outside
                 graph: line
         title: Időjárás
+      - type: button
+        entity: switch.desktop_player
       - type: entities
         entities:
           - cover.dining_room

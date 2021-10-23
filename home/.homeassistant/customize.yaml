@@ -496,3 +496,7 @@ sensor.pm2_5_outside:
 sensor.pm10_outside:
   friendly_name: "PM10 kint"
   icon: mdi:smog
+
+switch.desktop_player:
+  friently_name: Zene lejátszás
+  icon: mdi:play-circle
