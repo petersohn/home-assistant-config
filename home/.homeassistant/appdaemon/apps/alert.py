@@ -23,7 +23,7 @@ class AlertAggregator(hass.Hass):
             if value:
                 if self.app.timeout is not None:
                     if self.value:
-                        self.error('Value is already set: {}'.format(
+                        self.app.error('Value is already set: {}'.format(
                             self.entity))
                         return
 
@@ -32,7 +32,7 @@ class AlertAggregator(hass.Hass):
                             lambda kwargs: self._handle_change(value),
                             self.app.timeout.total_seconds())
                     else:
-                        self.error('Timer is already set: {}'.format(
+                        self.app.error('Timer is already set: {}'.format(
                             self.entity))
                     return
             else:
