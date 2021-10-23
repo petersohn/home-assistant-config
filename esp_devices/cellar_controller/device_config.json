@@ -1,5 +1,5 @@
 {
-    "debug": false,
+    "debug": true,
     "name": "cellar_controller",
     "availabilityTopic": "home/devices/cellar_controller/availability",
     "debugTopic": "home/devices/cellar_controller/debug",
@@ -7,7 +7,7 @@
         {
             "type": "input",
             "name": "light_switch_cellar",
-            "pin": 0
+            "pin": 15
         },
         {
             "type": "output",
@@ -57,13 +57,12 @@
             "pin": 14
         },
         {
-            "type": "counter",
-            "name": "water",
-            "pin": 1,
-            "interval": 10,
-            "multiplier": 0.0225,
-            "bounceTime": 2,
-            "pulse": 0
+            "type": "output",
+            "name": "sprinkler",
+            "commandTopic": "home/switches/auto_sprinkler_cellar/set",
+            "invert": true,
+            "default": 0,
+            "pin": 0
         }
     ],
     "actions": [
@@ -108,7 +107,7 @@
             "interface": "light_switch_cellar",
             "target": "light_cellar",
             "command": "toggle",
-            "value": "0"
+            "value": "1"
         },
         {
             "type": "publish",
@@ -126,9 +125,9 @@
         },
         {
             "type": "publish",
-            "interface": "water",
-            "topic": "home/sensors/water/main",
-            "retain": false
+            "interface": "sprinkler",
+            "topic": "home/switches/auto_sprinkler_cellar/state",
+            "retain": true
         },
         {
             "type": "publish",
