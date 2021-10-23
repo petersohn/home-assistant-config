@@ -17,11 +17,11 @@ class AlertAggregator(hass.Hass):
             self.timer = None
 
         def on_text_changed(self, value):
-            with self.mutex.lock('on_text_changed'):
+            with self.app.mutex.lock('on_text_changed'):
                 self.text_value = value
 
         def on_change(self, value):
-            with self.mutex.lock('on_change'):
+            with self.app.mutex.lock('on_change'):
                 if value:
                     if self.app.timeout is not None:
                         if self.value:
