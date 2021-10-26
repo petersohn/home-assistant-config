@@ -633,7 +633,7 @@ auto_switch_hot_water_pump:
     dependencies: locker
     target: switch.hot_water_pump
     switch: input_select.hot_water_pump
-    reentrant: true
+    reentrant: false
 
 hot_water_pump_backend_timer:
     class: TimerSwitch
@@ -776,7 +776,7 @@ auto_switch_sprinkler_1:
     dependencies: locker
     target: switch.auto_sprinkler1
     switch: input_select.auto_sprinkler1
-    reentrant: true
+    reentrant: false
 
 auto_switch_sprinkler_2:
     module: auto_switch
@@ -784,7 +784,7 @@ auto_switch_sprinkler_2:
     dependencies: locker
     target: switch.auto_sprinkler2
     switch: input_select.auto_sprinkler2
-    reentrant: true
+    reentrant: false
 
 auto_switch_sprinkler_3:
     module: auto_switch
@@ -792,7 +792,7 @@ auto_switch_sprinkler_3:
     dependencies: locker
     target: switch.auto_sprinkler3
     switch: input_select.auto_sprinkler3
-    reentrant: true
+    reentrant: false
 
 auto_switch_balcony_sprinkler:
     module: auto_switch
@@ -800,7 +800,7 @@ auto_switch_balcony_sprinkler:
     dependencies: locker
     target: switch.balcony_sprinkler
     switch: input_select.balcony_sprinkler
-    reentrant: true
+    reentrant: false
 
 sprinkler_timer:
     class: TimerSequence
@@ -808,6 +808,8 @@ sprinkler_timer:
     dependencies:
         - auto_switch_sprinkler_1
         - auto_switch_sprinkler_2
+        - auto_switch_sprinkler_3
+        - auto_switch_balcony_sprinkler
         - sprinkler_enabler
         - sprinkler_run_time
         - locker
