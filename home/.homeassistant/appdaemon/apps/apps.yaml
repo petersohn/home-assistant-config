@@ -640,6 +640,7 @@ hot_water_pump_backend_timer:
     module: timer_switch
     dependencies:
         - auto_switch_hot_water_pump
+        - hot_water_pump_enabler
         - locker
     expr: >
         v.binary_sensor.cellar_controller_available is not True or
