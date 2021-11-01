@@ -89,86 +89,107 @@ sensor:
     state_topic: home/sensors/temperature/outside
     unit_of_measurement: "°C"
     name: temperature_outside
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/humidity/outside
     unit_of_measurement: "%"
     name: humidity_outside
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/temperature/outside2
     unit_of_measurement: "°C"
     name: temperature_outside2
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/humidity/outside2
     unit_of_measurement: "%"
     name: humidity_outside2
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/temperature/furnace_room
     unit_of_measurement: "°C"
     name: temperature_furnace_room
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/humidity/furnace_room
     unit_of_measurement: "%"
     name: humidity_furnace_room
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/temperature/cellar
     unit_of_measurement: "°C"
     name: temperature_cellar
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/humidity/cellar
     unit_of_measurement: "%"
     name: humidity_cellar
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/temperature/attic
     unit_of_measurement: "°C"
     name: temperature_attic
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/humidity/attic
     unit_of_measurement: "%"
     name: humidity_attic
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/temperature/living_room/lower
     unit_of_measurement: "°C"
     name: temperature_living_room_lower
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/humidity/living_room/lower
     unit_of_measurement: "%"
     name: humidity_living_room_lower
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/temperature/living_room/upper
     unit_of_measurement: "°C"
     name: temperature_living_room_upper
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/humidity/living_room/upper
     unit_of_measurement: "%"
     name: humidity_living_room_upper
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/temperature/bedroom/lower
     unit_of_measurement: "°C"
     name: temperature_bedroom_lower
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/humidity/bedroom/lower
     unit_of_measurement: "%"
     name: humidity_bedroom_lower
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/temperature/bedroom/upper
     unit_of_measurement: "°C"
     name: temperature_bedroom_upper
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/humidity/bedroom/upper
     unit_of_measurement: "%"
     name: humidity_bedroom_upper
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/temperature/kitchen
     unit_of_measurement: "°C"
     name: temperature_kitchen
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/humidity/kitchen
     unit_of_measurement: "%"
     name: humidity_kitchen
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/temperature/dishwasher
     unit_of_measurement: "°C"
     name: temperature_dishwasher
+    expire_after: 30
   - platform: mqtt
     state_topic: home/sensors/water/dishwasher
     unit_of_measurement: "l"
@@ -181,26 +202,32 @@ sensor:
     state_topic: home/sensors/temperature/furnace/gas
     unit_of_measurement: "°C"
     name: temperature_furnace_gas
+    expire_after: 30
   - platform: mqtt
     state_topic: home/sensors/temperature/furnace/wood
     unit_of_measurement: "°C"
     name: temperature_furnace_wood
+    expire_after: 30
   - platform: mqtt
     state_topic: home/sensors/temperature/furnace/wood_in
     unit_of_measurement: "°C"
     name: temperature_furnace_wood_in
+    expire_after: 30
   - platform: mqtt
     state_topic: home/sensors/temperature/hot_water
     unit_of_measurement: "°C"
     name: temperature_hot_water
+    expire_after: 30
   - platform: mqtt
     state_topic: home/sensors/wind/direction
     unit_of_measurement: "°"
     name: wind_direction
+    expire_after: 30
   - platform: mqtt
     state_topic: home/sensors/wind/strength
     unit_of_measurement: "km/h"
     name: wind_strength
+    expire_after: 30
   - platform: mqtt
     state_topic: home/sensors/rain
     unit_of_measurement: "mm"
@@ -210,26 +237,31 @@ sensor:
     unit_of_measurement: "%"
     name: light_shadow
     value_template: "{{ value | float / 10.24 }}"
+    expire_after: 60
   - platform: mqtt
     state_topic: home/sensors/light/sunlight
     unit_of_measurement: "%"
     name: light_sunlight
     value_template: "{{ value | float / 10.24 }}"
+    expire_after: 60
   - platform: mqtt
     state_topic: home/sensors/air_quality/outside
     unit_of_measurement: "ppm"
     name: pm1_outside
     value_template: '{{ value_json.pm1 }}'
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/air_quality/outside
     unit_of_measurement: "ppm"
     name: pm2_5_outside
     value_template: '{{ value_json.pm2_5 }}'
+    expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/air_quality/outside
     unit_of_measurement: "ppm"
     name: pm10_outside
     value_template: '{{ value_json.pm10 }}'
+    expire_after: 120
 
   - platform: command_line
     name: cpu_temperature

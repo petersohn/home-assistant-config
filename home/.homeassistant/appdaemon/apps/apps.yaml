@@ -569,6 +569,7 @@ is_dark:
         minutes: 5
     expr: >
         v.sensor.light_sunlight != 'unknown' and
+        v.sensor.light_sunlight != 'unavailable' and
         v.sensor.light_sunlight <= 50
     dependencies:
         - locker
@@ -645,6 +646,7 @@ hot_water_pump_backend_timer:
     expr: >
         v.binary_sensor.cellar_controller_available is not True or
         v.sensor.temperature_hot_water == 'unknown' or
+        v.sensor.temperature_hot_water == 'unavailable' or
         v.sensor.temperature_hot_water <= 41
     targets:
         - auto_switch_hot_water_pump
@@ -962,7 +964,10 @@ freeze_alerts:
     module: alert
     class: AlertAggregator
     target: binary_sensor.freeze_alert
-    trigger_expr: 'v[name] < 1.0'
+    trigger_expr: >
+      v[name] != 'unknown' and
+      v[name] != 'unavailable' and
+      v[name] < 1.0
     text_expr: name[19:]
     dependencies:
         - locker
