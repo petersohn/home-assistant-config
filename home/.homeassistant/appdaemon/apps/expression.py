@@ -32,7 +32,10 @@ class ExpressionEvaluator:
 
     def cleanup(self):
         for name, id in self.app_callbacks.items():
-            self.app.get_app(name).remove_callback(id)
+            try:
+                self.app.get_app(name).remove_callback(id)
+            except:
+                self.app.error(traceback.format_exc())
 
     def _create_evaluators(self):
         return {

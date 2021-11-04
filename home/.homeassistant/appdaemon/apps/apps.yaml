@@ -576,7 +576,7 @@ is_dark:
     global_dependencies:
         - expression
 
-is_night_of_dark:
+is_night_or_dark:
     module: enabler
     class: ExpressionEnabler
     expr: >
@@ -595,11 +595,11 @@ light_outside_switcher_3:
     module: enabled_switch
     dependencies:
         - auto_switch_light_outside_3
-        - is_night_of_dark
+        - is_night_or_dark
         - locker
     global_dependencies:
         - auto_switch
-    enabler: is_night_of_dark
+    enabler: is_night_or_dark
     targets:
         - auto_switch_light_outside_3
 
@@ -675,6 +675,22 @@ rain_last_day:
     attributes:
         unit_of_measurement: "mm"
         friendly_name: "Eső 12 óra"
+        icon: mdi:weather-rainy
+
+rain_last_hour:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - rain_history
+        - locker
+    manager: rain_history
+    target: sensor.rain_last_hour
+    interval:
+        hours: 1
+    aggregator: sum
+    attributes:
+        unit_of_measurement: "mm"
+        friendly_name: "Eső 1 óra"
         icon: mdi:weather-rainy
 
 rain_decaying:
@@ -998,11 +1014,12 @@ living_room_window_blind_state:
     class: Expression
     dependencies:
         - locker
+        - e.is_night_or_dark
     expr: >
         'open' if v.input_select.presence_mode == 'home' and (
-        not e.is_night_of_dark or v.binary_sensor.window_living_room)
+        not e.is_night_or_dark or v.binary_sensor.window_living_room)
         else 'half' if (v.input_select.presence_mode == 'away' and
-        not e.is_night_of_dark) or (
+        not e.is_night_or_dark) or (
         v.input_select.presence_mode == 'sleep' and
         v.binary_sensor.window_living_room)
         else 'closed'
