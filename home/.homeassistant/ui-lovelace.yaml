@@ -291,6 +291,23 @@ views:
             double_tap_action:
               action: more-info
           - type: button
+            entity: switch.auto_sprinkler_cellar
+            state_color: true
+            tap_action:
+              action: call-service
+              service: script.auto_switch_manual
+              service_data:
+                auto_switch: input_select.auto_sprinkler_cellar
+                target: switch.auto_sprinkler_cellar
+            hold_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: input_select.auto_sprinkler_cellar
+                option: 'auto'
+            double_tap_action:
+              action: more-info
+          - type: button
             entity: switch.balcony_sprinkler
             state_color: true
             tap_action:
@@ -313,6 +330,7 @@ views:
           - input_select.auto_sprinkler1
           - input_select.auto_sprinkler2
           - input_select.auto_sprinkler3
+          - input_select.auto_sprinkler_cellar
           - input_select.balcony_sprinkler
         show_header_toggle: false
       - type: entities
