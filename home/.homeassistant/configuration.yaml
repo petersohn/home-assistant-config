@@ -749,7 +749,7 @@ climate:
   - platform: generic_thermostat
     name: heater
     heater: switch.heater
-    target_sensor: sensor.temperature_bedroom_upper
+    target_sensor: sensor.heater_target
     min_temp: 10
     max_temp: 25
     ac_mode: false
