@@ -813,6 +813,14 @@ auto_switch_sprinkler_3:
     switch: input_select.auto_sprinkler3
     reentrant: false
 
+auto_switch_sprinkler_cellar:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.auto_sprinkler_cellar
+    switch: input_select.auto_sprinkler_cellar
+    reentrant: false
+
 auto_switch_balcony_sprinkler:
     module: auto_switch
     class: AutoSwitch
