@@ -44,6 +44,7 @@ class ExpressionEvaluator:
             'c': Evaluator(self._get_last_changed),
             'u': Evaluator(self._get_last_updated),
             'v': Evaluator(self._get_value),
+            'ok': Evaluator(self._get_ok),
             'now': self._get_now,
             'strptime': datetime.datetime.strptime,
             'dt': datetime.timedelta,
@@ -100,6 +101,16 @@ class ExpressionEvaluator:
             return float(value)
         except ValueError:
             return value
+
+    def _get_ok(self, entity):
+        if '.' not in entity:
+            return Evaluator(self._get_ok, entity + '.')
+
+        if self.callback is not None and entity not in self.entities:
+            self.app.listen_state(self._on_entity_change, entity=entity)
+            self.entities.add(entity)
+        value = self.app.get_state(entity)
+        return value != 'unknown' and value != 'unavailable'
 
     def _get_app(self, name):
         app = self.app.get_app(name)

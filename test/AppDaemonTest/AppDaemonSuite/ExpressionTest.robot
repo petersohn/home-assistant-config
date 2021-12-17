@@ -68,6 +68,16 @@ Attributes
     ${-7}  ${5}   Int  ${-2}
     foo    bar    str  foobar
 
+Ok
+    [Setup]  Initialize  00:00:00  ExpressionOk
+    ...  ${input_sensor1}=unknown
+    [Template]  Test Sensors
+    unknown       ${0}   str  off
+    ${0}          ${0}   str  on
+    unavailable   ${0}   str  off
+    foo           ${0}   str  on
+    ${-1}          ${0}   str  on
+
 Get Now
     [Setup]  Initialize  00:00:00  ExpressionNow
     Unblock Until  00:01:00
