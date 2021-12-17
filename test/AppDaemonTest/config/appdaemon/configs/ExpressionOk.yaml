@@ -1,0 +1,7 @@
+expression_add:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: 'ok.sensor.test_input1'
+    target: sensor.test_output
