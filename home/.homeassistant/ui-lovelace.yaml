@@ -237,11 +237,18 @@ views:
         state_color: true
         double_tap_action:
           action: more-info
-      - type: button
-        entity: input_boolean.sprinkler
-        state_color: true
-        double_tap_action:
-          action: more-info
+      - type: horizontal-stack
+        cards:
+          - type: button
+            entity: input_boolean.sprinkler
+            state_color: true
+            double_tap_action:
+              action: more-info
+          - type: button
+            entity: input_boolean.start_sprinkler_cellar
+            state_color: true
+          - type: entity
+            entity: input_number.sprinkler_cellar_day
       - type: sensor
         entity: sensor.temperature_outside
         graph: line

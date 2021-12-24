@@ -932,6 +932,16 @@ input_boolean:
   wood_heating:
     name: "Fafűtés"
     icon: mdi:pine-tree-fire
+  start_sprinkler_cellar:
+    name: "Pince locsolás start"
+    icon: mdi:sprinkler
+
+input_number:
+  sprinkler_cellar_day:
+    name: "Pince locsolás napja"
+    min: 0
+    max: 28
+    icon: mdi:calendar
 
 mqtt_statestream:
   base_topic: home

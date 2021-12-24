@@ -327,3 +327,13 @@
         data:
             entity_id: cover.living_room
             position: 45
+
+- alias: pince locsolás manuális ki
+  trigger:
+      platform: state
+      entity_id: switch.auto_sprinkler_cellar
+      to: 'off'
+  action:
+      - service: input_boolean.turn_off
+        data:
+            entity_id: input_boolean.start_sprinkler_cellar

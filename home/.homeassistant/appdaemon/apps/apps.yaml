@@ -1043,3 +1043,20 @@ heater_target:
         if ok.sensor.temperature_bedroom_upper
         else v.sensor.temperature_living_room_upper
     target: sensor.heater_target
+
+cellar_sprinkler_switcher:
+    class: TimerSequence
+    module: timer_switch
+    dependencies:
+        - auto_switch_sprinkler_cellar
+        - locker
+    sensor: input_boolean.start_sprinkler_cellar
+    expr: >
+      v.input_boolean.start_sprinkler_cellar or (
+      int(v.sensor.date[-2:]) == int(v.input_number.sprinkler_cellar_day) and
+      v.sensor.time == '12:00')
+    target_state: 'on'
+    sequence:
+        - targets:
+              - auto_switch_sprinkler_cellar
+          time: 15
