@@ -893,8 +893,10 @@ availability_alerts:
     class: AlertAggregator
     target: binary_sensor.availability_alert
     trigger_expr: >
-      not v[name] and v.input_select.presence_mode != 'sleep'
-    text_expr: a[name].friendly_name
+      v.input_select.presence_mode != 'sleep' and
+      not v['input_boolean.' + name + '_maintenance'] and
+      not v['binary_sensor.' + name + '_available']
+    text_expr: a['binary_sensor.' + name + '_available'].friendly_name
     timeout:
         minutes: 5
     dependencies:
@@ -902,20 +904,20 @@ availability_alerts:
     global_dependencies:
         - expression
     sources:
-        - binary_sensor.furnace_temperature_available
-        - binary_sensor.well_controller_available
-        - binary_sensor.main_controller_available
-        - binary_sensor.main_controller2_available
-        - binary_sensor.driveway_available
-        - binary_sensor.cellar_controller_available
-        - binary_sensor.living_room_temperature_available
-        - binary_sensor.bedroom_temperature_available
-        - binary_sensor.dishwasher_sensor_available
-        - binary_sensor.gate_reflector_available
-        - binary_sensor.attic_lower_available
-        - binary_sensor.dining_room_window_available
-        - binary_sensor.living_room_window_available
-        - binary_sensor.balcony_controller_available
+        - furnace_temperature
+        - well_controller
+        - main_controller
+        - main_controller2
+        - driveway
+        - cellar_controller
+        - living_room_temperature
+        - bedroom_temperature
+        - dishwasher_sensor
+        - gate_reflector
+        - attic_lower
+        - dining_room_window
+        - living_room_window
+        - balcony_controller
 
 window_alerts:
     module: alert
