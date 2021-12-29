@@ -892,7 +892,8 @@ availability_alerts:
     module: alert
     class: AlertAggregator
     target: binary_sensor.availability_alert
-    trigger_expr: not v[name]
+    trigger_expr: >
+      not v[name] and v.input_select.presence_mode != 'sleep'
     text_expr: a[name].friendly_name
     timeout:
         minutes: 5
