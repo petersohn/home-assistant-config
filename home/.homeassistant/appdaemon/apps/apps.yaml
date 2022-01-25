@@ -1037,13 +1037,9 @@ heater_target:
     dependencies:
         - locker
     expr: >
-        (v.sensor.temperature_bedroom_upper
-        + v.sensor.temperature_living_room_upper) / 2.0
-        if ok.sensor.temperature_bedroom_upper and
-        ok.sensor.temperature_living_room_upper
+        v.sensor.temperature_living_room_upper
+        if ok.sensor.temperature_living_room_upper
         else v.sensor.temperature_bedroom_upper
-        if ok.sensor.temperature_bedroom_upper
-        else v.sensor.temperature_living_room_upper
     target: sensor.heater_target
 
 cellar_sprinkler_switcher:
