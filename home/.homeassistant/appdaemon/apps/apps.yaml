@@ -30,9 +30,9 @@ heating_pump:
     sensor_out: sensor.temperature_furnace_wood
     sensor_in: sensor.temperature_furnace_wood_in
     target: switch.heating_pump
-    target_difference: 6
+    target_difference: 7
     tolerance: 1
-    maximum_out: 80
+    maximum_out: 60
     minimum_out: 30
 
 auto_switch_light_driveway:
