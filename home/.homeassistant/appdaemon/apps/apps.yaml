@@ -1015,17 +1015,32 @@ dining_room_window_blind_state:
         else 'closed'
     target: sensor.dining_room_window_blind_state
 
+is_dark_enough_to_close_blind:
+    module: enabler
+    class: ExpressionEnabler
+    delay:
+        minutes: 5
+    expr: >
+        e.sun_enabler_night or (
+        ok.sensor.light_sunlight and
+        v.sensor.light_sunlight <= 40)
+    dependencies:
+        - sun_enabler_night
+        - locker
+    global_dependencies:
+        - expression
+
 living_room_window_blind_state:
     module: expression
     class: Expression
     dependencies:
         - locker
-        - e.is_night_or_dark
+        - e.is_dark_enough_to_close_blind
     expr: >
         'open' if v.input_select.presence_mode == 'home' and (
-        not e.is_night_or_dark or v.binary_sensor.window_living_room)
+        not e.is_dark_enough_to_close_blind or v.binary_sensor.window_living_room)
         else 'half' if (v.input_select.presence_mode == 'away' and
-        not e.is_night_or_dark) or (
+        not e.is_dark_enough_to_close_blind) or (
         v.input_select.presence_mode == 'sleep' and
         v.binary_sensor.window_living_room)
         else 'closed'
