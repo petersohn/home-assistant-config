@@ -724,35 +724,40 @@ views:
       - type: entities
         entities:
           - binary_sensor.furnace_temperature_available
-          - input_boolean.furnace_temperature_maintenance
           - binary_sensor.well_controller_available
-          - input_boolean.well_controller_maintenance
           - binary_sensor.main_controller_available
-          - input_boolean.main_controller_maintenance
           - binary_sensor.main_controller2_available
-          - input_boolean.main_controller2_maintenance
           - binary_sensor.driveway_available
-          - input_boolean.driveway_maintenance
           - binary_sensor.cellar_controller_available
-          - input_boolean.cellar_controller_maintenance
           - binary_sensor.living_room_temperature_available
-          - input_boolean.living_room_temperature_maintenance
           - binary_sensor.bedroom_temperature_available
-          - input_boolean.bedroom_temperature_maintenance
           - binary_sensor.dishwasher_sensor_available
-          - input_boolean.dishwasher_sensor_maintenance
           - binary_sensor.gate_reflector_available
-          - input_boolean.gate_reflector_maintenance
           - binary_sensor.attic_lower_available
-          - input_boolean.attic_lower_maintenance
           - binary_sensor.dining_room_window_available
-          - input_boolean.dining_room_window_maintenance
           - binary_sensor.living_room_window_available
-          - input_boolean.living_room_window_maintenance
           - binary_sensor.balcony_controller_available
-          - input_boolean.balcony_controller_maintenance
           - alert.availability
-        title: device_availability
+        title: device availability
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - input_boolean.furnace_temperature_maintenance
+          - input_boolean.well_controller_maintenance
+          - input_boolean.main_controller_maintenance
+          - input_boolean.main_controller2_maintenance
+          - input_boolean.driveway_maintenance
+          - input_boolean.cellar_controller_maintenance
+          - input_boolean.living_room_temperature_maintenance
+          - input_boolean.bedroom_temperature_maintenance
+          - input_boolean.dishwasher_sensor_maintenance
+          - input_boolean.gate_reflector_maintenance
+          - input_boolean.attic_lower_maintenance
+          - input_boolean.dining_room_window_maintenance
+          - input_boolean.living_room_window_maintenance
+          - input_boolean.balcony_controller_maintenance
+        title: device maintenance
         state_color: true
         show_header_toggle: false
       - type: entities
