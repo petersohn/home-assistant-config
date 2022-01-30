@@ -723,40 +723,40 @@ views:
         show_header_toggle: false
       - type: entities
         entities:
+          - binary_sensor.attic_lower_available
+          - binary_sensor.balcony_controller_available
+          - binary_sensor.bedroom_temperature_available
+          - binary_sensor.dining_room_window_available
+          - binary_sensor.cellar_controller_available
+          - binary_sensor.dishwasher_sensor_available
+          - binary_sensor.driveway_available
           - binary_sensor.furnace_temperature_available
-          - binary_sensor.well_controller_available
+          - binary_sensor.gate_reflector_available
+          - binary_sensor.living_room_temperature_available
+          - binary_sensor.living_room_window_available
           - binary_sensor.main_controller_available
           - binary_sensor.main_controller2_available
-          - binary_sensor.driveway_available
-          - binary_sensor.cellar_controller_available
-          - binary_sensor.living_room_temperature_available
-          - binary_sensor.bedroom_temperature_available
-          - binary_sensor.dishwasher_sensor_available
-          - binary_sensor.gate_reflector_available
-          - binary_sensor.attic_lower_available
-          - binary_sensor.dining_room_window_available
-          - binary_sensor.living_room_window_available
-          - binary_sensor.balcony_controller_available
+          - binary_sensor.well_controller_available
           - alert.availability
         title: device availability
         state_color: true
         show_header_toggle: false
       - type: entities
         entities:
+          - input_boolean.attic_lower_maintenance
+          - input_boolean.balcony_controller_maintenance
+          - input_boolean.bedroom_temperature_maintenance
+          - input_boolean.dining_room_window_maintenance
+          - input_boolean.cellar_controller_maintenance
+          - input_boolean.dishwasher_sensor_maintenance
+          - input_boolean.driveway_maintenance
           - input_boolean.furnace_temperature_maintenance
-          - input_boolean.well_controller_maintenance
+          - input_boolean.gate_reflector_maintenance
+          - input_boolean.living_room_temperature_maintenance
+          - input_boolean.living_room_window_maintenance
           - input_boolean.main_controller_maintenance
           - input_boolean.main_controller2_maintenance
-          - input_boolean.driveway_maintenance
-          - input_boolean.cellar_controller_maintenance
-          - input_boolean.living_room_temperature_maintenance
-          - input_boolean.bedroom_temperature_maintenance
-          - input_boolean.dishwasher_sensor_maintenance
-          - input_boolean.gate_reflector_maintenance
-          - input_boolean.attic_lower_maintenance
-          - input_boolean.dining_room_window_maintenance
-          - input_boolean.living_room_window_maintenance
-          - input_boolean.balcony_controller_maintenance
+          - input_boolean.well_controller_maintenance
         title: device maintenance
         state_color: true
         show_header_toggle: false
