@@ -246,19 +246,19 @@ sensor:
     expire_after: 60
   - platform: mqtt
     state_topic: home/sensors/air_quality/outside
-    unit_of_measurement: "ppm"
+    unit_of_measurement: "μg/m³"
     name: pm1_outside
     value_template: '{{ value_json.pm1 }}'
     expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/air_quality/outside
-    unit_of_measurement: "ppm"
+    unit_of_measurement: "μg/m³"
     name: pm2_5_outside
     value_template: '{{ value_json.pm2_5 }}'
     expire_after: 120
   - platform: mqtt
     state_topic: home/sensors/air_quality/outside
-    unit_of_measurement: "ppm"
+    unit_of_measurement: "μg/m³"
     name: pm10_outside
     value_template: '{{ value_json.pm10 }}'
     expire_after: 120
