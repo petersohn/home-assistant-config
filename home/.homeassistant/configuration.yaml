@@ -71,14 +71,6 @@ mqtt:
   password: !secret mosquitto_password
 
 sensor:
-  # - platform: nut
-  #   username: !secret nut_username
-  #   password: !secret nut_password
-  #   resources:
-  #     - ups.load
-  #     - input.voltage
-  #     - battery.voltage
-  #     - battery.charge
   - platform: time_date
     display_options:
       - 'date'
@@ -935,6 +927,9 @@ input_boolean:
   start_sprinkler_cellar:
     name: "Pince locsolás start"
     icon: mdi:sprinkler
+  test_alert:
+    name: "Teszt riasztás"
+    icon: mdi:alert
 
   furnace_temperature_maintenance:
     name: Furnace Temperature
@@ -1086,6 +1081,17 @@ alert:
     repeat:
       - 1
       - 5
+    can_acknowledge: true
+    notifiers:
+      - telegram_alert
+  test:
+    name: Teszt riasztás
+    message: >
+      Teszt riaszás
+    entity_id: input_boolean.test_alert
+    state: 'on'
+    repeat:
+      - 1
     can_acknowledge: true
     notifiers:
       - telegram_alert

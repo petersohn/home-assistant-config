@@ -706,6 +706,10 @@ views:
           - alert.furnace_overheat
           - alert.window_open
         title: Riasztások
+      - type: entities
+        entities:
+          - input_boolean.test_alert
+          - alert.test
   - path: state
     title: state
     badges: []
