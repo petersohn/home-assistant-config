@@ -700,7 +700,7 @@ rain_decaying:
     target: sensor.rain_decaying
     interval:
         days: 1
-    fraction: 0.65
+    fraction: 0.62
     aggregator: decay_sum
     attributes:
         unit_of_measurement: "mm"
@@ -741,7 +741,7 @@ sprinkler_run_time:
     target: sensor.sprinkler_run_time
     expr: >
         1.2 * v.sensor.maximum_temperature_last_day - 15.0
-        - 6.0 * v.sensor.rain_decaying
+        - 5.0 * v.sensor.rain_decaying
     attributes:
         unit_of_measurement: min
         friendly_name: "Locsolás idő"
