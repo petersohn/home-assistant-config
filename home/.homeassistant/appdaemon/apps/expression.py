@@ -113,7 +113,6 @@ class ExpressionEvaluator:
         return value != 'unknown' and value != 'unavailable'
 
     def _get_app(self, name):
-        self.app.log('get_app({})'.format(name))
         app = self.app.get_app(name)
         if self.callback is not None and name not in self.app_callbacks:
             id = app.add_callback(lambda: self._on_app_change())
