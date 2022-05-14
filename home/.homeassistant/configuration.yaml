@@ -1084,6 +1084,19 @@ alert:
     can_acknowledge: true
     notifiers:
       - telegram_alert
+  no_hot_water:
+    name: Nincs melegvíz
+    message: Nincs melegvíz
+    entity_id: binary_sensor.no_hot_water
+    state: 'on'
+    skip_first: true
+    repeat:
+      - 5
+      - 5
+      - 30
+    can_acknowledge: true
+    notifiers:
+      - telegram_alert
   test:
     name: Teszt riasztás
     message: >

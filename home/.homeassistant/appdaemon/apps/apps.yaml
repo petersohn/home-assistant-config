@@ -650,6 +650,16 @@ hot_water_pump_backend_timer:
     enabler: hot_water_pump_enabler
     time: 1
 
+no_hot_water:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+        v.input_select.presence_mode == "home" and
+        v.sensor.temperature_hot_water < 40
+    target: binary_sensor.no_hot_water
+
 rain_history:
     module: history
     class: HistoryManager

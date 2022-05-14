@@ -684,6 +684,7 @@ views:
           - input_select.hot_water_pump
           - switch.hot_water_pump
           - sensor.temperature_dishwasher
+          - alert.no_hot_water
         title: Meleg víz
         show_header_toggle: false
       - type: entities
@@ -705,6 +706,7 @@ views:
           - alert.tracker_update
           - alert.furnace_overheat
           - alert.window_open
+          - alert.no_hot_water
         title: Riasztások
       - type: entities
         entities:

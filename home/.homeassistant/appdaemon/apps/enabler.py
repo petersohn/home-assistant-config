@@ -43,7 +43,6 @@ class Enabler(hass.Hass):
                     return
                 self.cancel_timer(self.change_timer)
             self.change_state = state
-            self.log('zing')
             self.change_timer = self.run_in(
                 self.on_timeout, self.delay.total_seconds())
 
@@ -53,7 +52,6 @@ class Enabler(hass.Hass):
             self.state = state
 
     def on_timeout(self, kwargs):
-        self.log('zong')
         callbacks = self.get_callbacks()
         with self.state_mutex.lock('on_timeout'):
             self.log('timeout state={} callbacks={}'.format(self.change_state, len(callbacks)))
