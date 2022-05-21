@@ -336,3 +336,32 @@
       - service: input_boolean.turn_off
         data:
             entity_id: input_boolean.start_sprinkler_cellar
+
+- alias: terasz locsolás kihagyása
+  trigger:
+      platform: state
+      entity_id: input_boolean.skip_balcony_watering
+      to: 'on'
+  action:
+      - service: input_select.select_option
+        data:
+            entity_id: input_select.balcony_sprinkler
+            option: 'off'
+
+- alias: terasz locsolás folytatás
+  trigger:
+    platform: state
+    entity_id: sensor.time
+    to: '00:00'
+  condition:
+    condition: state
+    entity_id: input_boolean.skip_balcony_watering
+    state: 'on'
+  action:
+    - service: input_select.select_option
+      data:
+          entity_id: input_select.balcony_sprinkler
+          option: 'auto'
+    - service: input_boolean.turn_off
+      data:
+          entity_id: input_boolean.skip_balcony_watering

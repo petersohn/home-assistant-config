@@ -930,6 +930,9 @@ input_boolean:
   test_alert:
     name: "Teszt riasztás"
     icon: mdi:alert
+  skip_balcony_watering:
+    name: Terasz locsolás kihagyása
+    icon: mdi:water-off
 
   furnace_temperature_maintenance:
     name: Furnace Temperature

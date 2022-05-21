@@ -249,6 +249,18 @@ views:
             state_color: true
           - type: entity
             entity: input_number.sprinkler_cellar_day
+          - type: button
+            entity: input_boolean.skip_balcony_watering
+            state_color: true
+            tap_action:
+              action: call-service
+              service: input_boolean.turn_on
+              service_data:
+                entity_id: input_boolean.skip_balcony_watering
+            hold_action:
+              action: more-info
+            double_tap_action:
+              action: more-info
       - type: sensor
         entity: sensor.temperature_outside
         graph: line
