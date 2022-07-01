@@ -24,13 +24,6 @@ http:
       - 127.0.0.1
       - ::1
 
-# Checks for available updates
-# Note: This component will send some information about your system to
-# the developers to assist with development of Home Assistant.
-# For more information, please see:
-# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
-updater:
-
 lovelace:
   mode: yaml
 
@@ -754,6 +747,11 @@ climate:
     initial_hvac_mode: "off"
     away_temp: 10
     precision: 0.5
+
+media_player:
+  - platform: clementine
+    name: desktop
+    host: !secret desktop_address
 
 template:
   - binary_sensor:

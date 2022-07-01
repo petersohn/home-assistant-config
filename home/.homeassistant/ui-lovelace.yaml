@@ -66,6 +66,8 @@ views:
         title: Időjárás
       - type: button
         entity: switch.desktop_player
+      # - type: media-control
+      #   entity: media_player.desktop
       - type: entities
         entities:
           - cover.dining_room
