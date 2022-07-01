@@ -366,6 +366,7 @@ views:
           - sensor.rain_last_day
           - sensor.rain_decaying
           - sensor.sprinkler_run_time
+          - sensor.sprinkler_run_time_2
         show_header_toggle: false
   - path: lights
     title: 'Világítás'
