@@ -1,5 +1,5 @@
 {
-    "debug": false,
+    "debug": true,
     "name": "well_controller",
     "availabilityTopic": "home/devices/well_controller/availability",
     "debugTopic": "home/devices/well_controller/debug",
@@ -8,6 +8,13 @@
             "type": "input",
             "name": "button",
             "pin": 15
+        },
+        {
+            "type": "dht",
+            "name": "dht",
+            "dhtType": "dht22",
+            "interval": 30,
+            "pin": 14
         },
         {
             "type": "output",
@@ -23,7 +30,7 @@
             "commandTopic": "home/switches/auto_sprinkler1/set",
             "default": false,
             "invert": true,
-            "pin": 1
+            "pin": 2
         },
         {
             "type": "output",
@@ -69,12 +76,6 @@
             "type": "input",
             "name": "motion_sensor",
             "pin": 13
-        },
-        {
-            "type": "dht",
-            "name": "dht",
-            "interval": 60,
-            "pin": 2
         }
     ],
     "actions": [
