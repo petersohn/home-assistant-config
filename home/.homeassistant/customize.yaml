@@ -491,7 +491,7 @@ cover.living_room:
 
 sensor.pm1_outside:
   friendly_name: "PM1 kint"
-  icon: mdi:smog
+  device_class: pm1
 
 sensor.pm2_5_outside:
   friendly_name: "PM2.5 kint"
@@ -499,7 +499,7 @@ sensor.pm2_5_outside:
 
 sensor.pm10_outside:
   friendly_name: "PM10 kint"
-  icon: mdi:smog
+  device_class: pm10
 
 switch.desktop_player:
   friently_name: Zene lejátszás

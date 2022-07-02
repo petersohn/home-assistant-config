@@ -69,10 +69,12 @@ class AutoSwitch(hass.Hass):
 
         if state == 0:
             self.__set_intended_state('off')
-            self.turn_off(self.target)
+            if self.get_state(self.target) != 'off':
+                self.turn_off(self.target)
         else:
             self.__set_intended_state('on')
-            self.turn_on(self.target)
+            if self.get_state(self.target) != 'on':
+                self.turn_on(self.target)
 
     def update(self, kwargs):
         with self.mutex.lock('update'):

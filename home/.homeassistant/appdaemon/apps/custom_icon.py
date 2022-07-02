@@ -12,8 +12,6 @@ class CustomIcon(hass.Hass):
             self.listen_state(self.on_changed, entity=entity)
 
     def on_changed(self, entity, attribute, old, new, kwargs):
-        if old == new:
-            return
         with self.mutex.lock('on_changed'):
             state = self.get_state(entity=entity, attribute='all')
             icon = self.on_icon if state['state'] == 'on' else self.off_icon

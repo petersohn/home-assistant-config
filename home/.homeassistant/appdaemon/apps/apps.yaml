@@ -1084,3 +1084,36 @@ cellar_sprinkler_switcher:
         - targets:
               - auto_switch_sprinkler_cellar
           time: 15
+
+pump_icon:
+    class: CustomIcon
+    module: custom_icon
+    dependencies:
+        - locker
+    off_icon: mdi:water-pump-off
+    on_icon: mdi:water-pump
+    entities:
+      - switch.well
+
+lightbulb_icon:
+    class: CustomIcon
+    module: custom_icon
+    dependencies:
+        - locker
+    off_icon: mdi:lightbulb-off
+    on_icon: mdi:lightbulb
+    entities:
+      - switch.light_attic_upstairs
+      - switch.light_attic_downstairs
+      - switch.light_cellar
+      - switch.light_garage
+
+string_lights_icon:
+    class: CustomIcon
+    module: custom_icon
+    dependencies:
+        - locker
+    off_icon: mdi:string-lights-off
+    on_icon: mdi:string-lights
+    entities:
+      - switch.light_christmas_front
