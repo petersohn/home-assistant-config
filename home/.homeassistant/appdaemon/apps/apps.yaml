@@ -1117,3 +1117,13 @@ string_lights_icon:
     on_icon: mdi:string-lights
     entities:
       - switch.light_christmas_front
+
+play_icon:
+    class: CustomIcon
+    module: custom_icon
+    dependencies:
+        - locker
+    off_icon: mdi:stop-circle
+    on_icon: mdi:play-circle
+    entities:
+      - switch.desktop_player

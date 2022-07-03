@@ -502,5 +502,5 @@ sensor.pm10_outside:
   device_class: pm10
 
 switch.desktop_player:
-  friently_name: Zene lejátszás
+  friendly_name: Zene lejátszás
   icon: mdi:play-circle
