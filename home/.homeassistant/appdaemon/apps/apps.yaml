@@ -765,23 +765,10 @@ sprinkler_run_time_2:
         - sprinkler_run_time
     target: sensor.sprinkler_run_time_2
     expr: >
-        1.0 * v.sensor.maximum_temperature_last_day
+        1.2 * v.sensor.maximum_temperature_last_day - 15.0
     attributes:
         unit_of_measurement: min
         friendly_name: "Locsolás idő 2"
-        icon: mdi:timer
-
-sprinkler_run_time_3:
-    class: Expression
-    module: expression
-    dependencies:
-        - locker
-        - sprinkler_run_time
-    target: sensor.sprinkler_run_time_3
-    expr: v.sensor.sprinkler_run_time * 0.5
-    attributes:
-        unit_of_measurement: min
-        friendly_name: "Locsolás idő 3"
         icon: mdi:timer
 
 sprinkler_enabler:
@@ -847,6 +834,7 @@ sprinkler_timer:
         - auto_switch_balcony_sprinkler
         - sprinkler_enabler
         - sprinkler_run_time
+        - sprinkler_run_time_2
         - locker
     expr: v.sensor.time == '21:00'
     sequence:
@@ -855,13 +843,13 @@ sprinkler_timer:
           time: sensor.sprinkler_run_time
         - targets:
               - auto_switch_sprinkler_2
-          time: sensor.sprinkler_run_time_2
+          time: sensor.sprinkler_run_time
         - targets:
               - auto_switch_sprinkler_3
           time: sensor.sprinkler_run_time
         - targets:
               - auto_switch_balcony_sprinkler
-          time: sensor.sprinkler_run_time_3
+          time: sensor.sprinkler_run_time_2
     enabler: sprinkler_enabler
 
 socket_bedroom_1:
