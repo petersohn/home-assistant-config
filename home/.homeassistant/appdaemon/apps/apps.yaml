@@ -657,6 +657,7 @@ no_hot_water:
         - locker
     expr: >
         v.input_select.presence_mode == "home" and
+        ok.sensor.temperature_hot_water and
         v.sensor.temperature_hot_water < 40
     target: binary_sensor.no_hot_water
 
@@ -1054,6 +1055,8 @@ heater_target:
         v.sensor.temperature_living_room_upper
         if ok.sensor.temperature_living_room_upper
         else v.sensor.temperature_bedroom_upper
+        if ok.sensor.temperature_bedroom_upper
+        else sensor.temperature_kitchen
     target: sensor.heater_target
 
 cellar_sprinkler_switcher:
