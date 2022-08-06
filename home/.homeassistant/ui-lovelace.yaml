@@ -91,6 +91,8 @@ views:
           - alert.window_open
         title: Ajtók
         show_header_toggle: false
+      - type: picture-entity
+        entity: camera.camera_pi
 
     icon: 'mdi:home'
   - path: temperature-inside

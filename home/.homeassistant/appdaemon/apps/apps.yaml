@@ -765,7 +765,7 @@ sprinkler_run_time_2:
         - sprinkler_run_time
     target: sensor.sprinkler_run_time_2
     expr: >
-        1.1 * v.sensor.maximum_temperature_last_day - 15.0
+        0.9 * v.sensor.maximum_temperature_last_day - 14.0
     attributes:
         unit_of_measurement: min
         friendly_name: "Locsolás idő 2"
