@@ -223,6 +223,14 @@
         data:
             entity_id: climate.heater
             hvac_mode: 'off'
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.daikinap17616
+            hvac_mode: 'off'
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.daikinap75428
+            hvac_mode: 'off'
 
 - alias: gázfűtés be
   trigger:
@@ -237,6 +245,14 @@
       - service: climate.set_hvac_mode
         data:
             entity_id: climate.heater
+            hvac_mode: 'heat'
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.daikinap17616
+            hvac_mode: 'heat'
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.daikinap75428
             hvac_mode: 'heat'
 
 - alias: gázfűtés ki fafűtés váltásnál
@@ -253,6 +269,14 @@
       - service: climate.set_hvac_mode
         data:
             entity_id: climate.heater
+            hvac_mode: 'off'
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.daikinap17616
+            hvac_mode: 'off'
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.daikinap75428
             hvac_mode: 'off'
 
 - alias: alvás RFID
