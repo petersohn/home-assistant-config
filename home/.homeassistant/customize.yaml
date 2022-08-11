@@ -512,13 +512,13 @@ climate.daikinap17616:
   friendly_name: Klíma hálószoba
 
 sensor.daikinap17616_inside_temperature:
-  firendly_name: "Hálószoba hőmérséklet 2"
+  friendly_name: "Hálószoba hőmérséklet 2"
 
 sensor.daikinap17616_outside_temperature:
-  firendly_name: "Kinti hőmérséklet ház mögött"
+  friendly_name: "Kinti hőmérséklet ház mögött"
 
 sensor.daikinap75428_inside_temperature:
-  firendly_name: "Nappali hőmérséklet 2"
+  friendly_name: "Nappali hőmérséklet 2"
 
 sensor.daikinap75428_outside_temperature:
-  firendly_name: "Kinti hőmérséklet ház előtt"
+  friendly_name: "Kinti hőmérséklet ház előtt"
