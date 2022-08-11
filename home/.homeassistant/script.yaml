@@ -25,3 +25,41 @@ auto_switch_manual:
                   {% else %}
                       on
                   {% endif %}
+
+heating_on:
+  sequence:
+      - service: climate.set_temperature
+        data:
+            entity_id: climate.daikinap17616
+            temperature: 17
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.daikinap17616
+            hvac_mode: 'heat'
+      - service: climate.set_temperature
+        data:
+            entity_id: climate.daikinap75428
+            temperature: 17
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.daikinap75428
+            hvac_mode: 'heat'
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.heater
+            hvac_mode: 'heat'
+
+heating_off:
+  sequence:
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.heater
+            hvac_mode: 'off'
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.daikinap17616
+            hvac_mode: 'off'
+      - service: climate.set_hvac_mode
+        data:
+            entity_id: climate.daikinap75428
+            hvac_mode: 'off'
