@@ -921,7 +921,7 @@ input_boolean:
     icon: mdi:sprinkler-variant
   wood_heating:
     name: "Fafűtés"
-    icon: mdi:pine-tree-fire
+    icon: mdi:fireplace
   start_sprinkler_cellar:
     name: "Pince locsolás start"
     icon: mdi:sprinkler
