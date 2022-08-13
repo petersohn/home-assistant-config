@@ -18,6 +18,8 @@ frontend:
 # Enables configuration UI
 config:
 
+homeassistant_alerts:
+
 http:
     use_x_forwarded_for: true
     trusted_proxies:
