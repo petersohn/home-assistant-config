@@ -30,19 +30,19 @@ heating_on:
   sequence:
       - service: climate.set_temperature
         data:
-            entity_id: climate.daikinap17616
+            entity_id: climate.daikin_bedroom
             temperature: 17
       - service: climate.set_hvac_mode
         data:
-            entity_id: climate.daikinap17616
+            entity_id: climate.daikin_bedroom
             hvac_mode: 'heat'
       - service: climate.set_temperature
         data:
-            entity_id: climate.daikinap75428
+            entity_id: climate.daikin_living_room
             temperature: 17
       - service: climate.set_hvac_mode
         data:
-            entity_id: climate.daikinap75428
+            entity_id: climate.daikin_living_room
             hvac_mode: 'heat'
       - service: climate.set_hvac_mode
         data:
@@ -57,9 +57,9 @@ heating_off:
             hvac_mode: 'off'
       - service: climate.set_hvac_mode
         data:
-            entity_id: climate.daikinap17616
+            entity_id: climate.daikin_bedroom
             hvac_mode: 'off'
       - service: climate.set_hvac_mode
         data:
-            entity_id: climate.daikinap75428
+            entity_id: climate.daikin_living_room
             hvac_mode: 'off'

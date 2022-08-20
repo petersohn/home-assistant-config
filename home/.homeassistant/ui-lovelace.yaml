@@ -78,8 +78,8 @@ views:
         entities:
           - input_boolean.wood_heating
           - climate.heater
-          - climate.daikinap75428
-          - climate.daikinap17616
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
         show_header_toggle: false
         title: Fűtés
       - type: entities
@@ -104,8 +104,8 @@ views:
         entities:
           - input_boolean.wood_heating
           - climate.heater
-          - climate.daikinap75428
-          - climate.daikinap17616
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
         show_header_toggle: false
         title: Fűtés
       - type: vertical-stack
@@ -113,7 +113,7 @@ views:
           - type: horizontal-stack
             cards:
               - type: sensor
-                entity: sensor.daikinap17616_inside_temperature
+                entity: sensor.daikin_bedroom_inside_temperature
                 graph: line
               - type: sensor
                 entity: sensor.temperature_bedroom_upper
@@ -134,7 +134,7 @@ views:
           - type: horizontal-stack
             cards:
               - type: sensor
-                entity: sensor.daikinap75428_inside_temperature
+                entity: sensor.daikin_living_room_inside_temperature
                 graph: line
               - type: sensor
                 entity: sensor.temperature_living_room_upper
@@ -192,10 +192,10 @@ views:
                 entity: sensor.temperature_outside
                 graph: line
               - type: sensor
-                entity: sensor.daikinap17616_outside_temperature
+                entity: sensor.daikin_bedroom_outside_temperature
                 graph: line
               - type: sensor
-                entity: sensor.daikinap75428_outside_temperature
+                entity: sensor.daikin_living_room_outside_temperature
                 graph: line
               # - type: sensor
               #   entity: sensor.humidity_outside
