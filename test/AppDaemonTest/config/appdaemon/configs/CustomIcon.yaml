@@ -1,0 +1,6 @@
+custom_icon:
+  off_icon: mdi:lightbulb-off
+  on_icon: mdi:lightbulb
+  entities:
+    - binary_sensor.test_inpupt
+    - input_boolean.test_switch
