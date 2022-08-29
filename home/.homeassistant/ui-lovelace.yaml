@@ -78,6 +78,8 @@ views:
         entities:
           - input_boolean.wood_heating
           - climate.heater
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
         show_header_toggle: false
         title: Fűtés
       - type: entities
@@ -91,8 +93,6 @@ views:
           - alert.window_open
         title: Ajtók
         show_header_toggle: false
-      - type: picture-entity
-        entity: camera.camera_pi
 
     icon: 'mdi:home'
   - path: temperature-inside
@@ -104,12 +104,17 @@ views:
         entities:
           - input_boolean.wood_heating
           - climate.heater
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
         show_header_toggle: false
         title: Fűtés
       - type: vertical-stack
         cards:
           - type: horizontal-stack
             cards:
+              - type: sensor
+                entity: sensor.daikin_bedroom_inside_temperature
+                graph: line
               - type: sensor
                 entity: sensor.temperature_bedroom_upper
                 graph: line
@@ -128,6 +133,9 @@ views:
         cards:
           - type: horizontal-stack
             cards:
+              - type: sensor
+                entity: sensor.daikin_living_room_inside_temperature
+                graph: line
               - type: sensor
                 entity: sensor.temperature_living_room_upper
                 graph: line
@@ -182,6 +190,12 @@ views:
             cards:
               - type: sensor
                 entity: sensor.temperature_outside
+                graph: line
+              - type: sensor
+                entity: sensor.daikin_bedroom_outside_temperature
+                graph: line
+              - type: sensor
+                entity: sensor.daikin_living_room_outside_temperature
                 graph: line
               # - type: sensor
               #   entity: sensor.humidity_outside

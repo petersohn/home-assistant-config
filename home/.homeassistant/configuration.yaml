@@ -18,6 +18,8 @@ frontend:
 # Enables configuration UI
 config:
 
+homeassistant_alerts:
+
 http:
     use_x_forwarded_for: true
     trusted_proxies:
@@ -921,7 +923,7 @@ input_boolean:
     icon: mdi:sprinkler-variant
   wood_heating:
     name: "Fafűtés"
-    icon: mdi:pine-tree-fire
+    icon: mdi:fireplace
   start_sprinkler_cellar:
     name: "Pince locsolás start"
     icon: mdi:sprinkler

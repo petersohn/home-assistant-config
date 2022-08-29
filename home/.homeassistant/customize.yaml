@@ -504,3 +504,21 @@ sensor.pm10_outside:
 switch.desktop_player:
   friendly_name: Zene lejátszás
   icon: mdi:play-circle
+
+climate.daikin_living_room:
+  friendly_name: Klíma nappali
+
+climate.daikin_bedroom:
+  friendly_name: Klíma hálószoba
+
+sensor.daikin_bedroom_inside_temperature:
+  friendly_name: "Hálószoba hőmérséklet 2"
+
+sensor.daikin_bedroom_outside_temperature:
+  friendly_name: "Kinti hőmérséklet ház mögött"
+
+sensor.daikin_living_room_inside_temperature:
+  friendly_name: "Nappali hőmérséklet 2"
+
+sensor.daikin_living_room_outside_temperature:
+  friendly_name: "Kinti hőmérséklet ház előtt"
