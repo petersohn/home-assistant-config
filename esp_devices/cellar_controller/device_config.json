@@ -1,6 +1,7 @@
 {
-    "debug": true,
+    "debug": false,
     "name": "cellar_controller",
+    "resetPin": 12,
     "availabilityTopic": "home/devices/cellar_controller/availability",
     "debugTopic": "home/devices/cellar_controller/debug",
     "interfaces": [
@@ -15,7 +16,7 @@
             "commandTopic": "home/switches/lights/cellar/set",
             "invert": true,
             "default": 0,
-            "pin": 5
+            "pin": 2
         },
         {
             "type": "input",
@@ -38,12 +39,12 @@
         {
             "type": "dht",
             "name": "temperature_cellar",
-            "pin": 2
+            "pin": 5
         },
         {
             "type": "input",
             "name": "motion_sensor_driveway_upper",
-            "pin": 12
+            "pin": 1
         },
         {
             "type": "input",
