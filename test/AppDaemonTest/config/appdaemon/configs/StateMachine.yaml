@@ -22,7 +22,8 @@ test_state_machine:
           args:
             entity_id: input_text.test_text_1
             value: simple value
-    states:
-      init:
-        enter_action: simple
-    triggers:
+  states:
+    init:
+      enter_action: simple
+  triggers: {}
+  default_state: init

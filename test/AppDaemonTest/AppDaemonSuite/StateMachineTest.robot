@@ -21,9 +21,9 @@ Init
 Initialize
     Clean States
     Initialize States
-    ...   ${input_field}  ${0}
+    ...   ${input_field}=${0}
     ${apps} =  Create List  TestApp  locker  mutex_graph  state_machine
     ...                     expression
-    ${app_configs} =  Create List  TestApp  TimerSwitchBase  ${config}
+    ${app_configs} =  Create List  TestApp  StateMachine
     Initialize AppDaemon  ${apps}  ${app_configs}  00:00:00
     Unblock For  ${appdaemon_interval}

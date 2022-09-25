@@ -3,6 +3,7 @@ import appdaemon.plugins.hass.hassapi as hass
 from expression import ExpressionEvaluator
 
 import copy
+from pprint import pformat
 
 
 class Action:
@@ -30,10 +31,10 @@ class State:
         self.switch = data.get('switch')
         enter_action = data.get('enter_action')
         self.enter_action = actions[enter_action] \
-            if enter_action if not None else None
+            if enter_action is not None else None
         exit_action = data.get('exit_action')
         self.exit_action = actions[exit_action] \
-            if exit_action if not None else None
+            if exit_action is not None else None
         self.is_active = False
 
         if self.switch:
@@ -42,6 +43,7 @@ class State:
         else:
             self.listen_handle = None
 
+        locker = self.app.get_app('locker')
         self.state_mutex = locker.get_mutex('State.State')
         self.callback_mutex = locker.get_mutex('State.Callback')
 
@@ -89,7 +91,7 @@ class State:
             self.app.turn_off(self.switch)
 
 
-def Trigger:
+class Trigger:
     def __init__(self, app, name, data, callback):
         self.app = app
         self.name = name
@@ -142,7 +144,7 @@ def Trigger:
                 self._deactivate()
 
 
-def TimeTrigger(Trigger):
+class TimeTrigger(Trigger):
     def __init__(self, app, name, data):
         super(TimeTrigger, self).__init__(app, name, data)
         self.interval = datetime.timedelta(**data['interval'])
@@ -162,7 +164,7 @@ def TimeTrigger(Trigger):
         self.timer = None
 
 
-def ExpressionTrigger(Trigger):
+class ExpressionTrigger(Trigger):
     def __init__(self, app, name, data):
         super(TimeTrigger, self).__init__(app, name, data)
         condtition = ExpressionEvaluator(
@@ -215,14 +217,14 @@ class StateMachine(hass.Hass):
         self.run_in(lambda _: self.init_state(), 0)
 
     def terminate(self):
-        for trigger in self.triggers:
+        for trigger in self.triggers.values():
             trigger.cleanup()
-        for state in self.states:
+        for state in self.states.values():
             state.cleanup()
 
     def init_state(self):
         with self.mutex.lock('init_state'):
-            if current_state != None:
+            if self.current_state != None:
                 self.log('Already initialized')
                 return
 
@@ -232,8 +234,8 @@ class StateMachine(hass.Hass):
                     beginning_state = name
                     break
             for state in self.states.values():
-                if state != beginning_state_
-                state.turn_off()
+                if state != beginning_state:
+                    state.turn_off()
             self._change_state(beginning_state)
 
     def reset_state(self):
