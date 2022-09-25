@@ -9,25 +9,18 @@ class Action:
     def __init__(self, app, name, data):
         self.app = app
         self.name = name
-        self.service = data['service']
 
-        args = data.get('args', {})
-        entities = data.get(entities)
-
-        if entities is not None:
-            def get_args(entity):
-                result = copy.copy(args)
-                result['entity_id'] = entity
-                return result
-
-            self.calls = [get_args(entity) for entity in entities]
+        services = data['service']
+        if type(services) is list:
+            self.calls = [
+                (service['service'], service['args']) for service in services]
         else:
-            self.calls = [args]
+            self.calls = [(services['service'], services['args'])]
 
     def execute(self):
         self.app.log('Execute action: {}'.format(self.name))
-        for call in self.calls:
-            self.app.call_service(self.service, **call)
+        for service, args in self.calls:
+            self.app.call_service(service, **args)
 
 
 class State:

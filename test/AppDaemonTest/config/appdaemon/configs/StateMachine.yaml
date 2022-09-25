@@ -1,0 +1,28 @@
+test_state_machine:
+  module: state_machine
+  class: StateMachine
+  dependencies:
+    - locker
+  global_dependencies:
+    - expression
+  actions:
+    simple:
+      service:
+        service: input_text/set_value
+        args:
+          entity_id: input_text.test_text_1
+          value: simple value
+    multi_service:
+      service:
+        - service: input_text/set_value
+          args:
+            entity_id: input_text.test_text_1
+            value: simple value
+        - service: input_select/select_option
+          args:
+            entity_id: input_text.test_text_1
+            value: simple value
+    states:
+      init:
+        enter_action: simple
+    triggers:

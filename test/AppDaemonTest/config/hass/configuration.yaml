@@ -32,6 +32,10 @@ input_select:
             - "on"
             - "off"
 
+input_text:
+  test_text_1:
+  test_text_2:
+
 history:
 
 recorder:
