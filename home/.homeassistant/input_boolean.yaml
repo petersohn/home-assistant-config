@@ -1,0 +1,58 @@
+sprinkler:
+  name: "Locsolás"
+  icon: mdi:sprinkler-variant
+wood_heating:
+  name: "Fafűtés"
+  icon: mdi:fireplace
+start_sprinkler_cellar:
+  name: "Pince locsolás start"
+  icon: mdi:sprinkler
+test_alert:
+  name: "Teszt riasztás"
+  icon: mdi:alert
+skip_balcony_watering:
+  name: Terasz locsolás kihagyása
+  icon: mdi:water-off
+
+furnace_temperature_maintenance:
+  name: Furnace Temperature
+  icon: mdi:wrench
+well_controller_maintenance:
+  name: Well Controller
+  icon: mdi:wrench
+main_controller_maintenance:
+  name: Main Controller
+  icon: mdi:wrench
+main_controller2_maintenance:
+  name: Main Controller 2
+  icon: mdi:wrench
+driveway_maintenance:
+  name: Driveway
+  icon: mdi:wrench
+cellar_controller_maintenance:
+  name: Cellar Controller
+  icon: mdi:wrench
+living_room_temperature_maintenance:
+  name: Living Room Temperature
+  icon: mdi:wrench
+bedroom_temperature_maintenance:
+  name: Bedroom Temperature
+  icon: mdi:wrench
+dishwasher_sensor_maintenance:
+  name: Dishwasher Sensor
+  icon: mdi:wrench
+gate_reflector_maintenance:
+  name: Gate Reflector
+  icon: mdi:wrench
+attic_lower_maintenance:
+  name: Attic Lower
+  icon: mdi:wrench
+dining_room_window_maintenance:
+  name: Dining Room Window
+  icon: mdi:wrench
+living_room_window_maintenance:
+  name: Living Room Window
+  icon: mdi:wrench
+balcony_controller_maintenance:
+  name: Balcony Controller
+  icon: mdi:wrench

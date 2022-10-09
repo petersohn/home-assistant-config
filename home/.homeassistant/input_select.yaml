@@ -1,0 +1,147 @@
+light_driveway:
+    name: Bejáró világítás
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:outdoor-lamp
+light_well:
+    name: Kút világítás
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:spotlight
+light_gate_reflector:
+    name: Kapu reflektor
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:spotlight
+light_garage:
+    name: Garázs világítás
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:lightbulb
+light_christmas_front:
+    name: Karácsonyi világítás eresz alatt
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:string-lights
+light_christmas_tree:
+    name: Karácsonyi világítás fenyőfa
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:pine-tree
+light_outside_1:
+    name: Körvilágítás 1
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:coach-lamp
+light_outside_2:
+    name: Körvilágítás 2
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:coach-lamp
+light_outside_3:
+    name: Körvilágítás 3
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:coach-lamp
+light_outside_4:
+    name: Körvilágítás 4
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:coach-lamp
+light_outside_5:
+    name: Körvilágítás 5
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:coach-lamp
+light_outside_6:
+    name: Körvilágítás 6
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:coach-lamp
+auto_sprinkler1:
+    name: Auto locsoló 1
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:sprinkler
+auto_sprinkler2:
+    name: Auto locsoló 2
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:sprinkler
+auto_sprinkler3:
+    name: Auto locsoló 3
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:sprinkler
+auto_sprinkler_cellar:
+    name: Auto locsoló pince
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:sprinkler
+balcony_sprinkler:
+    name: Terasz locsoló
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:sprinkler
+hot_water_pump:
+    name: Melegvíz
+    options:
+        - "auto"
+        - "on"
+        - "off"
+socket_bedroom_1:
+    name: Hálószoba konnektor 1
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:power-socket-eu
+socket_bedroom_1_mode:
+    name: Hálószoba konnektor 1 mód
+    options:
+        - "off"
+        - "karácsonyfa"
+        - "szúnyogirtó"
+    icon: mdi:power-socket-eu
+presence_mode:
+    name: Jelenlét mód
+    options:
+        - "home"
+        - "away"
+        - "sleep"
+    icon: mdi:home
+

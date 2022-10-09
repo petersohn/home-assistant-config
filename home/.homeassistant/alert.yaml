@@ -1,0 +1,100 @@
+availability:
+  name: Availability
+  message: |
+    Néhány ESP nem működik.
+
+    ```
+    {{state_attr('binary_sensor.availability_alert', 'text')}}
+    ```
+  entity_id: binary_sensor.availability_alert
+  state: 'on'
+  repeat:
+    - 10
+    - 60
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert
+window_open:
+  name: Ablak nyitva
+  message: |
+    Valami nyitva maradt.
+
+    ```
+    {{state_attr('binary_sensor.window_alert', 'text')}}
+    ```
+  entity_id: binary_sensor.window_alert
+  state: 'on'
+  repeat:
+    - 1
+    - 5
+    - 10
+    - 30
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert
+freeze:
+  name: Fagyás
+  message: |
+    Fagyás.
+
+    ```
+    {{state_attr('binary_sensor.freeze_alert', 'text')}}
+    ```
+  entity_id: binary_sensor.freeze_alert
+  state: 'on'
+  repeat:
+    - 30
+    - 60
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert
+# tracker_update:
+#   name: Pozíció jelzés hiányzik
+#   message: >
+#     Pozíció nincs frissítve
+#     {{states('sensor.tracker_last_updated')}}
+#     perce.
+#   entity_id: binary_sensor.tracker_not_updated
+#   state: 'on'
+#   repeat:
+#     - 60
+#   can_acknowledge: true
+#   notifiers:
+#     - telegram_alert
+furnace_overheat:
+  name: Kazán túlmelegedés
+  message: >
+    Kazán túlmelegedés: {{states('sensor.temperature_furnace_wood')}} °C
+  entity_id: binary_sensor.furnace_overheat
+  state: 'on'
+  skip_first: true
+  repeat:
+    - 1
+    - 5
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert
+no_hot_water:
+  name: Nincs melegvíz
+  message: Nincs melegvíz
+  entity_id: binary_sensor.no_hot_water
+  state: 'on'
+  skip_first: true
+  repeat:
+    - 5
+    - 5
+    - 30
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert
+test:
+  name: Teszt riasztás
+  message: >
+    Teszt riaszás
+  entity_id: input_boolean.test_alert
+  state: 'on'
+  repeat:
+    - 1
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert
