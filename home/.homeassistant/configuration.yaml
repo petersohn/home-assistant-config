@@ -95,7 +95,7 @@ binary_sensor:
     host: !secret gateway_address
     name: gateway_available
   - platform: command_line
-    command: 'timeout 2 nc localhost 8888 </dev/null && echo ON || echo OFF'
+    command: 'timeout 2 nc localhost 6131 </dev/null && echo ON || echo OFF'
     name: ssh_tunnel_available
 
   - platform: tod
