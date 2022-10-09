@@ -804,7 +804,6 @@ views:
       - type: entities
         entities:
           - sensor.apc_input_voltage
-          - sensor.apc_battery_voltage
           - sensor.apc_battery_charge
           - sensor.apc_load
         title: local_device
@@ -814,7 +813,7 @@ views:
           - input_select.presence_mode
           - sensor.tracker_last_updated
           - person.peti
-          - sensor.peti_battery_level
+          - sensor.oneplus_battery_level
           - sensor.living_room_window_blind_state
           - sensor.dining_room_window_blind_state
     icon: 'mdi:wrench'
