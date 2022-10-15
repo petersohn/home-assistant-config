@@ -46,6 +46,18 @@ test_state_machine:
         args:
           entity_id: input_text.test_text_1
           value: timed2
+    expr_enter:
+      service:
+        service: input_text/set_value
+        args:
+          entity_id: input_text.test_text_2
+          value_expr: "'enter ' + v.sensor.expr_value"
+    expr_exit:
+      service:
+        service: input_text/set_value
+        args:
+          entity_id: input_text.test_text_2
+          value_expr: "'exit ' + v.sensor.expr_value"
     init_enter:
       service:
         service: input_text/set_value
@@ -67,6 +79,10 @@ test_state_machine:
       switch: input_boolean.test_switch3
     timed2:
       enter_action: timed2_enter
+    exprd:
+      enter_action: expr_enter
+      exit_action: expr_exit
+      switch: input_boolean.test_switch4
   triggers:
     to_foobar:
       type: condition

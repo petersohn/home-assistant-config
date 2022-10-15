@@ -19,10 +19,28 @@ class Action:
         else:
             self.calls = [(services['service'], services['args'])]
 
+        self.expr_cache = {}
+
     def execute(self):
         self.app.log('Execute action: {}'.format(self.name))
-        for service, args in self.calls:
-            self.app.call_service(service, **args)
+        for n, (service, args) in enumerate(self.calls):
+            real_args = {}
+            for name, value in args.items():
+                SUFFIX = '_expr'
+
+                if not name.endswith(SUFFIX):
+                    real_args[name] = value
+                    continue
+
+                real_name = name[:len(SUFFIX)]
+                key = (n, real_name)
+                expr = self.expr_cache.get(key)
+                if expr is None:
+                    expr = ExpressionEvaluator(self.app, value)
+                    self.expr_cache[key] = expr
+                real_args[real_name] = expr.get()
+
+            self.app.call_service(service, **real_args)
 
 
 class State:

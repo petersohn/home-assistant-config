@@ -9,9 +9,12 @@ Test Teardown  Cleanup AppDaemon
 ${text_field_1}   input_text.test_text_1
 ${text_field_2}   input_text.test_text_2
 ${input_field}    sensor.test_input
+${expr_value}     sensor.expr_value
 ${foobar_switch}  input_boolean.test_switch
-${baz_switch}  input_boolean.test_switch2
-${timed_switch}  input_boolean.test_switch3
+${baz_switch}     input_boolean.test_switch2
+${timed_switch}   input_boolean.test_switch3
+${expr_switch}    input_boolean.test_switch4
+${expr_value}     sensor.expr_value
 
 
 *** Test Cases ***
@@ -104,6 +107,22 @@ Timed State Change
     State Should Be  ${foobar_switch}  off
     State Should Be  ${baz_switch}  off
     State Should Be  ${timed_switch}  off
+
+Expr Actions
+    State Should Be  ${text_field_2}  ${Empty}
+    Set State  ${expr_value}  a
+    Turn On  ${expr_switch}
+    State Should Be  ${text_field_2}  enter a
+    Turn Off  ${expr_switch}
+    State Should Be  ${text_field_2}  exit a
+
+    Set State  ${expr_value}  b
+    Turn On  ${expr_switch}
+    State Should Be  ${text_field_2}  enter b
+    Set State  ${expr_value}  c
+    State Should Be  ${text_field_2}  enter b
+    Turn Off  ${expr_switch}
+    State Should Be  ${text_field_2}  exit c
 
 
 *** Keywords ***

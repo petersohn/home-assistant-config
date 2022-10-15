@@ -18,6 +18,7 @@ input_boolean:
     test_switch:
     test_switch2:
     test_switch3:
+    test_switch4:
     temperature_controller_pump:
 
 input_select:
