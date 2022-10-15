@@ -10,6 +10,7 @@ Test Teardown  Cleanup AppDaemon
 
 ${input_sensor1} =  sensor.test_input1
 ${input_sensor2} =  sensor.test_input2
+${input_sensor3} =  sensor.test_input3
 ${output_sensor} =  sensor.test_output
 
 
@@ -99,7 +100,6 @@ Args
     ${1}  a  secondfoo
     ${2}  b  thirdbar
 
-
 Changes
     [Setup]  Initialize  00:00:00  ExpressionChange
     ...  ${input_sensor1}=0
@@ -111,6 +111,20 @@ Changes
     Set State  ${input_sensor1}  1  foo=baz
     Unblock For  ${appdaemon_interval}
     State Should Be As  ${output_sensor}  str  00:01:00 00:01:30
+
+Nums
+    [Setup]  Initialize  00:00:00  ExpressionNums
+    ...  ${input_sensor1}=unknown
+    ...  ${input_sensor2}=unknown
+    ...  ${input_sensor3}=unknown
+    State Should Be  ${output_sensor}  0
+    Set State  ${input_sensor1}  12
+    Set State  ${input_sensor2}  6.5
+    Set State  ${input_sensor3}  -2
+    State Should Be  ${output_sensor}  16.5
+    Set State  ${input_sensor2}  foo
+    Set State  ${input_sensor1}  0
+    State Should Be  ${output_sensor}  -2.0
 
 
 *** Keywords ***

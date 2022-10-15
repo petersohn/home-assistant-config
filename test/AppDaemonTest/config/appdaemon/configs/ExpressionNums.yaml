@@ -1,0 +1,9 @@
+expression_nums:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+      sum(nums(
+      v.sensor.test_input1, v.sensor.test_input2, v.sensor.test_input3))
+    target: sensor.test_output

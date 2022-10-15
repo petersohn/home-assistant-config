@@ -15,6 +15,10 @@ class Evaluator:
         return self.__func(self.__prefix + str(value))
 
 
+def filter_nums(*args):
+    return filter(lambda x: type(x) == float, args)
+
+
 class ExpressionEvaluator:
     def __init__(self, app, expr, callback=None, extra_values={}):
         self.mutex = app.get_app('locker').get_mutex('ExpressionEvaluator')
@@ -49,6 +53,7 @@ class ExpressionEvaluator:
             'strptime': datetime.datetime.strptime,
             'dt': datetime.timedelta,
             't': datetime.datetime,
+            'nums': filter_nums,
             'args': self.app.args,
         }
 
