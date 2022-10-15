@@ -92,10 +92,9 @@ class State:
 
 
 class Trigger:
-    def __init__(self, app, name, data, callback):
+    def __init__(self, app, name, data):
         self.app = app
         self.name = name
-        self.callback = callback
         self.next_state = data['next_state']
 
         states = data.get('state')
@@ -129,18 +128,22 @@ class Trigger:
         pass
 
     def activate(self, state):
+        if state == self.next_state:
+            return
         if self.states is not None and state not in self.states:
             return
 
         with self.state_mutex.lock('activate'):
             self.app.log('Activate trigger: {}'.format(self.name))
             if not self.is_active:
+                self.is_active = True
                 self._activate()
 
     def deactivate(self):
         with self.state_mutex.lock('deactivate'):
             self.app.log('Deactivate trigger: {}'.format(self.name))
             if self.is_active:
+                self.is_active = False
                 self._deactivate()
 
 
@@ -166,9 +169,9 @@ class TimeTrigger(Trigger):
 
 class ExpressionTrigger(Trigger):
     def __init__(self, app, name, data):
-        super(TimeTrigger, self).__init__(app, name, data)
-        condtition = ExpressionEvaluator(
-            self.app, self.data['expr'], self._on_change)
+        super(ExpressionTrigger, self).__init__(app, name, data)
+        self.condition = ExpressionEvaluator(
+            self.app, data['expr'], self._on_change)
 
     def cleanup(self):
         self.condition.cleanup()
@@ -178,8 +181,12 @@ class ExpressionTrigger(Trigger):
             self.call_back()
 
     def _activate(self):
-        if self.condition.get():
-            self.run_in(lambda _: self.call_back(), 0)
+        self.app.run_in(lambda _: self.__activate(), 0)
+
+    def __activate(self):
+        value = self.condition.get()
+        if value:
+            self.call_back()
 
 
 class StateMachine(hass.Hass):

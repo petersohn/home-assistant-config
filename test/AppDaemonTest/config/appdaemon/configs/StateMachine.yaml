@@ -6,24 +6,58 @@ test_state_machine:
   global_dependencies:
     - expression
   actions:
-    simple:
+    init_enter:
       service:
         service: input_text/set_value
         args:
           entity_id: input_text.test_text_1
-          value: simple value
-    multi_service:
+          value: init value
+    foobar_enter:
       service:
         - service: input_text/set_value
           args:
             entity_id: input_text.test_text_1
-            value: simple value
-        - service: input_select/select_option
+            value: gone to foobar
+        - service: input_text/set_value
           args:
-            entity_id: input_text.test_text_1
-            value: simple value
+            entity_id: input_text.test_text_2
+            value: entered
+    foobar_exit:
+      service:
+        service: input_text/set_value
+        args:
+          entity_id: input_text.test_text_2
+          value: exited
+    baz_enter:
+      service:
+        service: input_text/set_value
+        args:
+          entity_id: input_text.test_text_1
+          value: it is baz
+    init_enter:
+      service:
+        service: input_text/set_value
+        args:
+          entity_id: input_text.test_text_1
+          value: init value
   states:
     init:
-      enter_action: simple
-  triggers: {}
+      enter_action: init_enter
+    foobar:
+      enter_action: foobar_enter
+      exit_action: foobar_exit
+      switch: input_boolean.test_switch
+    baz:
+      enter_action: baz_enter
+      switch: input_boolean.test_switch2
+  triggers:
+    to_foobar:
+      type: condition
+      state: init
+      expr: v.sensor.test_input == 1
+      next_state: foobar
+    to_baz:
+      type: condition
+      expr: v.sensor.test_input == 2
+      next_state: baz
   default_state: init
