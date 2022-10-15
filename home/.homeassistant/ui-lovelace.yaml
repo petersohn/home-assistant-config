@@ -73,13 +73,24 @@ views:
           - cover.dining_room
           - cover.living_room
         title: Redőny
-      - type: entities
-        state_color: true
-        entities:
-          - input_boolean.wood_heating
-          - climate.heater
-          - climate.daikin_living_room
-          - climate.daikin_bedroom
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: button
+                entity: input_boolean.climate_state_off
+              - type: button
+                entity: input_boolean.climate_state_auto
+              - type: button
+                entity: input_boolean.climate_state_heat_up
+              - type: button
+                entity: input_boolean.climate_state_keep_warm
+          - type: entities
+            state_color: true
+            entities:
+              - input_boolean.wood_heating
+              - climate.daikin_living_room
+              - climate.daikin_bedroom
         show_header_toggle: false
         title: Fűtés
       - type: entities

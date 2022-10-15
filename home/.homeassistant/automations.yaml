@@ -209,43 +209,6 @@
         data_template:
             entity_id: switch.light_attic_upstairs
 
-- alias: gázfűtés ki jelenlét váltásnál
-  trigger:
-      platform: state
-      entity_id: input_select.presence_mode
-      to: 'home'
-  condition:
-      condition: state
-      entity_id: input_boolean.wood_heating
-      state: 'on'
-  action:
-      - service: script.heating_off
-
-- alias: gázfűtés be
-  trigger:
-      platform: state
-      entity_id: input_select.presence_mode
-      from: 'home'
-  condition:
-      condition: state
-      entity_id: input_boolean.wood_heating
-      state: 'on'
-  action:
-      - service: script.heating_on
-
-- alias: gázfűtés ki fafűtés váltásnál
-  trigger:
-      platform: state
-      entity_id: input_boolean.wood_heating
-      from: 'off'
-      to: 'on'
-  condition:
-      condition: state
-      entity_id: input_select.presence_mode
-      state: 'home'
-  action:
-      - service: script.heating_off
-
 - alias: alvás RFID
   trigger:
       platform: event

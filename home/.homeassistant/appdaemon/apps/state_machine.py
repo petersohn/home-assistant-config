@@ -32,14 +32,15 @@ class Action:
                     real_args[name] = value
                     continue
 
-                real_name = name[:len(SUFFIX)]
+                real_name = name[:-len(SUFFIX)]
                 key = (n, real_name)
                 expr = self.expr_cache.get(key)
                 if expr is None:
                     expr = ExpressionEvaluator(self.app, value)
                     self.expr_cache[key] = expr
                 real_args[real_name] = expr.get()
-
+            self.app.log(service)
+            self.app.log(pformat(real_args))
             self.app.call_service(service, **real_args)
 
 
@@ -255,6 +256,7 @@ class StateMachine(hass.Hass):
                 return
 
             beginning_state = self.default_state
+            self.log(pformat(self.states))
             for name, state in self.states.items():
                 if state.switch is not None and self.get_state(state.switch) == 'on':
                     beginning_state = name
