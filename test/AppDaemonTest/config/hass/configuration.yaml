@@ -15,8 +15,9 @@ api:
 websocket_api:
 
 input_boolean:
-    test_switch2:
     test_switch:
+    test_switch2:
+    test_switch3:
     temperature_controller_pump:
 
 input_select:

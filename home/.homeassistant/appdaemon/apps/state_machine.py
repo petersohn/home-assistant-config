@@ -3,6 +3,7 @@ import appdaemon.plugins.hass.hassapi as hass
 from expression import ExpressionEvaluator
 
 import copy
+import datetime
 from pprint import pformat
 
 

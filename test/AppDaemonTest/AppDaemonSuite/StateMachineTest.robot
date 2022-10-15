@@ -11,6 +11,7 @@ ${text_field_2}   input_text.test_text_2
 ${input_field}    sensor.test_input
 ${foobar_switch}  input_boolean.test_switch
 ${baz_switch}  input_boolean.test_switch2
+${timed_switch}  input_boolean.test_switch3
 
 
 *** Test Cases ***
@@ -20,57 +21,89 @@ Enter And Exit Actions
     State Should Be  ${text_field_2}  ${empty}
     State Should Be  ${foobar_switch}  off
     State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  off
 
     Turn On  ${foobar_switch}
     State Should Be  ${text_field_1}  gone to foobar
     State Should Be  ${text_field_2}  entered
     State Should Be  ${foobar_switch}  on
     State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  off
 
     Turn Off  ${foobar_switch}
     State Should Be  ${text_field_1}  init value
     State Should Be  ${text_field_2}  exited
     State Should Be  ${foobar_switch}  off
     State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  off
 
 Switch Between States
     State Should Be  ${text_field_1}  init value
     State Should Be  ${foobar_switch}  off
     State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  off
 
     Turn On  ${baz_switch}
     State Should Be  ${text_field_1}  it is baz
     State Should Be  ${foobar_switch}  off
     State Should Be  ${baz_switch}  on
+    State Should Be  ${timed_switch}  off
 
     Turn On  ${foobar_switch}
     State Should Be  ${text_field_1}  gone to foobar
     State Should Be  ${foobar_switch}  on
     State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  off
 
 State Change With Value
     State Should Be  ${text_field_1}  init value
     State Should Be  ${foobar_switch}  off
     State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  off
 
     Set State  ${input_field}  1
     State Should Be  ${text_field_1}  gone to foobar
     State Should Be  ${foobar_switch}  on
     State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  off
     State Should Not Change For  ${foobar_switch}  ${appdaemon_interval}
 
     Set State  ${input_field}  2
     State Should Be  ${text_field_1}  it is baz
     State Should Be  ${foobar_switch}  off
     State Should Be  ${baz_switch}  on
+    State Should Be  ${timed_switch}  off
     State Should Not Change For  ${baz_switch}  ${appdaemon_interval}
 
     Set State  ${input_field}  1
     State Should Be  ${text_field_1}  it is baz
     State Should Be  ${foobar_switch}  off
     State Should Be  ${baz_switch}  on
+    State Should Be  ${timed_switch}  off
     State Should Not Change For  ${baz_switch}  ${appdaemon_interval}
 
+Timed State Change
+    State Should Be  ${text_field_1}  init value
+    State Should Be  ${foobar_switch}  off
+    State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  off
+
+    Schedule Call At  1 min
+    ...    turn_on  ${timed_switch}
+    State Should Change At  ${text_field_1}  timed  1 min
+    State Should Be  ${foobar_switch}  off
+    State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  on
+
+    State Should Change At  ${text_field_1}  timed2  2 min
+    State Should Be  ${foobar_switch}  off
+    State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  off
+
+    State Should Change At  ${text_field_1}  init value  2 min 30 sec
+    State Should Be  ${foobar_switch}  off
+    State Should Be  ${baz_switch}  off
+    State Should Be  ${timed_switch}  off
 
 
 *** Keywords ***
