@@ -58,6 +58,12 @@ test_state_machine:
         args:
           entity_id: input_text.test_text_2
           value_expr: "'exit ' + v.sensor.expr_value"
+    expr_next_enter:
+      service:
+        service: input_text/set_value
+        args:
+          entity_id: input_text.test_text_1
+          value: expr next
     init_enter:
       service:
         service: input_text/set_value
@@ -83,15 +89,19 @@ test_state_machine:
       enter_action: expr_enter
       exit_action: expr_exit
       switch: input_boolean.test_switch4
+    expr_next:
+      enter_action: expr_next_enter
   triggers:
     to_foobar:
       type: condition
       state: init
-      expr: v.sensor.test_input == 1
+      expr: >
+        v.sensor.test_input == 'foobar'
       next_state: foobar
     to_baz:
       type: condition
-      expr: v.sensor.test_input == 2
+      expr: >
+        v.sensor.test_input == 'baz'
       next_state: baz
     timed_next:
       type: time
@@ -105,4 +115,15 @@ test_state_machine:
       interval:
         seconds: 30
       next_state: init
+    to_expr_next:
+      type: condition
+      expr: >
+        v.sensor.test_input == 'expr'
+      next_state: expr_next
+    from_expr_next:
+      state: expr_next
+      type: condition
+      expr: >
+        v.sensor.test_input.startswith('to_')
+      next_state_expr: v.sensor.test_input[3:]
   default_state: init

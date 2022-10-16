@@ -115,7 +115,14 @@ class Trigger:
     def __init__(self, app, name, data):
         self.app = app
         self.name = name
-        self.next_state = data['next_state']
+        next_state_expr = data.get('next_state_expr')
+        if next_state_expr is not None:
+            self.next_state_expr = ExpressionEvaluator(
+                self.app, next_state_expr, self.on_next_state_change)
+            self.next_state = self.next_state_expr.get()
+        else:
+            self.next_state_expr = None
+            self.next_state = data['next_state']
 
         states = data.get('state')
         if type(states) is str:
@@ -147,13 +154,17 @@ class Trigger:
     def _deactivate(self):
         pass
 
+    def on_next_state_change(self, value):
+        with self.state_mutex.lock('on_next_state_change'):
+            self.next_state = value
+
     def activate(self, state):
-        if state == self.next_state:
-            return
         if self.states is not None and state not in self.states:
             return
 
         with self.state_mutex.lock('activate'):
+            if state == self.next_state:
+                return
             self.app.log('Activate trigger: {}'.format(self.name))
             if not self.is_active:
                 self.is_active = True
@@ -256,7 +267,6 @@ class StateMachine(hass.Hass):
                 return
 
             beginning_state = self.default_state
-            self.log(pformat(self.states))
             for name, state in self.states.items():
                 if state.switch is not None and self.get_state(state.switch) == 'on':
                     beginning_state = name

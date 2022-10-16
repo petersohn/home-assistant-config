@@ -64,21 +64,21 @@ State Change With Value
     State Should Be  ${baz_switch}  off
     State Should Be  ${timed_switch}  off
 
-    Set State  ${input_field}  1
+    Set State  ${input_field}  foobar
     State Should Be  ${text_field_1}  gone to foobar
     State Should Be  ${foobar_switch}  on
     State Should Be  ${baz_switch}  off
     State Should Be  ${timed_switch}  off
     State Should Not Change For  ${foobar_switch}  ${appdaemon_interval}
 
-    Set State  ${input_field}  2
+    Set State  ${input_field}  baz
     State Should Be  ${text_field_1}  it is baz
     State Should Be  ${foobar_switch}  off
     State Should Be  ${baz_switch}  on
     State Should Be  ${timed_switch}  off
     State Should Not Change For  ${baz_switch}  ${appdaemon_interval}
 
-    Set State  ${input_field}  1
+    Set State  ${input_field}  foobar
     State Should Be  ${text_field_1}  it is baz
     State Should Be  ${foobar_switch}  off
     State Should Be  ${baz_switch}  on
@@ -124,13 +124,23 @@ Expr Actions
     Turn Off  ${expr_switch}
     State Should Be  ${text_field_2}  exit c
 
+Expr Next State
+    Set State  ${input_field}  expr
+    State Should Be  ${text_field_1}  expr next
+    Set State  ${input_field}  to_foobar
+    State Should Be  ${text_field_1}  gone to foobar
+    Set State  ${input_field}  expr
+    State Should Be  ${text_field_1}  expr next
+    Set State  ${input_field}  to_baz
+    State Should Be  ${text_field_1}  it is baz
+
 
 *** Keywords ***
 
 Initialize
     Clean States
     Initialize States
-    ...   ${input_field}=${0}
+    ...   ${input_field}=${Empty}
     ...   ${text_field_1}=${Empty}
     ...   ${text_field_2}=${Empty}
     ${apps} =  Create List  TestApp  locker  mutex_graph  state_machine
