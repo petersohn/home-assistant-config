@@ -1177,11 +1177,11 @@ climate_state_machine:
         - service: climate/set_fan_mode
           args:
             entity_id: climate.daikin_living_room
-            fan_mode: auto
+            fan_mode: Auto
         - service: climate/set_fan_mode
           args:
             entity_id: climate.daikin_bedroom
-            fan_mode: auto
+            fan_mode: Auto
         - service: climate/set_swing_mode
           args:
             entity_id: climate.daikin_living_room
