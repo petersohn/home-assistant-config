@@ -1126,7 +1126,9 @@ heater_target:
     dependencies:
         - locker
     expr: >
-      18 if v.input_boolean.wood_heating else 21
+      v.input_number.heater_temperature_wood_heating
+      if v.input_boolean.wood_heating else
+      v.input_number.heater_temperature_normal
     target: sensor.heater_target
 
 climate_state_machine:
@@ -1224,7 +1226,8 @@ climate_state_machine:
         - keep_warm
       expr: >
         v.input_select.presence_mode == "home"
-      next_state: 'off'
+      next_state_expr: >
+        'off' if v.input_boolean.wood_heating else 'auto'
     keep_warm_start:
       type: condition
       state: 'off'
@@ -1241,3 +1244,20 @@ climate_state_machine:
         hours: 3
       next_state: 'off'
   default_state: 'off'
+
+air_quality_alert:
+    module: alert
+    class: AlertAggregator
+    target: binary_sensor.air_quality_alert
+    trigger_expr: >
+      v[name] and
+      v.sensor.pm10_outside > 40
+    text_expr: a[name].friendly_name
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+    sources:
+        - binary_sensor.window_bedroom
+        - binary_sensor.window_living_room
+        - binary_sensor.window_entrance

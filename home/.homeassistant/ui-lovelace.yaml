@@ -113,6 +113,8 @@ views:
       - type: entities
         state_color: true
         entities:
+          - input_number.heater_temperature_normal
+          - input_number.heater_temperature_wood_heating
           - input_boolean.wood_heating
           - climate.heater
           - climate.daikin_living_room

@@ -72,6 +72,7 @@ class State:
             self.app.cancel_listen_state(self.listen_handle)
 
     def on_switch_change(self, entity, attribute, old, new, kwargs):
+        self.app.log('{}: switch change: {} -> {}'.format(self.name, old, new))
         active = new == 'on'
         with self.callback_mutex.lock('on_switch_change'):
             with self.state_mutex.lock('on_switch_change'):
@@ -278,6 +279,7 @@ class StateMachine(hass.Hass):
 
     def reset_state(self):
         with self.mutex.lock('reset_state'):
+            self.log('reset state')
             self._change_state(self.default_state)
 
     def change_state(self, state):
@@ -287,6 +289,9 @@ class StateMachine(hass.Hass):
     def _change_state(self, state):
         if state not in self.states:
             raise RuntimeError('Invalid state: {}'.format(state))
+
+        if state == self.current_state:
+            return
 
         self.log('State change: {} -> {}'.format(self.current_state, state))
 

@@ -149,6 +149,16 @@ input_number:
     min: 0
     max: 28
     icon: mdi:calendar
+  heater_temperature_normal:
+    name: "Fűtés hőmérséklet"
+    min: 10
+    max: 25
+    icon: mdi:fireplace-off
+  heater_temperature_wood_heating:
+    name: "Fűtés hőmérséklet fa fűtésnél"
+    min: 10
+    max: 25
+    icon: mdi:fireplace
 
 mqtt_statestream:
   base_topic: home

@@ -14,6 +14,7 @@ availability:
   can_acknowledge: true
   notifiers:
     - telegram_alert
+
 window_open:
   name: Ablak nyitva
   message: |
@@ -32,6 +33,7 @@ window_open:
   can_acknowledge: true
   notifiers:
     - telegram_alert
+
 freeze:
   name: Fagyás
   message: |
@@ -48,6 +50,7 @@ freeze:
   can_acknowledge: true
   notifiers:
     - telegram_alert
+
 # tracker_update:
 #   name: Pozíció jelzés hiányzik
 #   message: >
@@ -61,6 +64,7 @@ freeze:
 #   can_acknowledge: true
 #   notifiers:
 #     - telegram_alert
+
 furnace_overheat:
   name: Kazán túlmelegedés
   message: >
@@ -74,6 +78,7 @@ furnace_overheat:
   can_acknowledge: true
   notifiers:
     - telegram_alert
+
 no_hot_water:
   name: Nincs melegvíz
   message: Nincs melegvíz
@@ -87,6 +92,7 @@ no_hot_water:
   can_acknowledge: true
   notifiers:
     - telegram_alert
+
 test:
   name: Teszt riasztás
   message: >
@@ -95,6 +101,23 @@ test:
   state: 'on'
   repeat:
     - 1
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert
+
+air_quality:
+  name: Levegő minőség
+  message: |
+    Rossz a levegő, csukd be az ablakot.
+
+    ```
+    {{state_attr('binary_sensor.air_quality_alert', 'text')}}
+    ```
+  entity_id: binary_sensor.air_quality_alert
+  state: 'on'
+  repeat:
+    - 1
+    - 5
   can_acknowledge: true
   notifiers:
     - telegram_alert
