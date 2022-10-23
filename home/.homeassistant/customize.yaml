@@ -103,6 +103,10 @@ binary_sensor.balcony_controller_available:
   friendly_name: Balcony Controller
   device_class: plug
 
+binary_sensor.climate_living_room_available:
+  friendly_name: Climete Living Room
+  device_class: plug
+
 sensor.furnace_temperature_free_memory:
   friendly_name: Furnace Temperature
   icon: mdi:memory
@@ -522,3 +526,11 @@ sensor.daikin_living_room_inside_temperature:
 
 sensor.daikin_living_room_outside_temperature:
   friendly_name: "Kinti hőmérséklet ház előtt"
+
+switch.climate_living_room:
+  friendly_name: Klíma nappali főkapcsoló
+  icon: mdi:hvac
+
+switch.climate_bedroom:
+  friendly_name: Klíma hálószoba főkapcsoló
+  icon: mdi:hvac

@@ -137,6 +137,20 @@ socket_bedroom_1_mode:
         - "karácsonyfa"
         - "szúnyogirtó"
     icon: mdi:power-socket-eu
+climate_living_room:
+    name: Klíma nappali főkapcsoló
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:hvac
+climate_bedroom:
+    name: Klíma hálószoba főkapcsoló
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:hvac
 presence_mode:
     name: Jelenlét mód
     options:

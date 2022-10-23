@@ -738,6 +738,15 @@ views:
           - input_select.socket_bedroom_1
           - input_select.socket_bedroom_1_mode
         show_header_toggle: false
+      - type: entities
+        entities:
+          - switch.climate_living_room
+          - input_select.climate_living_room
+          - sensor.energy_usage_climate_living_room
+          - switch.climate_bedroom
+          - input_select.climate_bedroom
+          - sensor.energy_usage_climate_bedroom
+        show_header_toggle: false
   - path: alerts
     title: Riasztások
     icon: 'mdi:alert'
@@ -786,6 +795,7 @@ views:
           - binary_sensor.main_controller_available
           - binary_sensor.main_controller2_available
           - binary_sensor.well_controller_available
+          - binary_sensor.climate_living_room_available
           - alert.availability
         title: device availability
         state_color: true

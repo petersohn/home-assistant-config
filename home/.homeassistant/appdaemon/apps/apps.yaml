@@ -1261,3 +1261,50 @@ air_quality_alert:
         - binary_sensor.window_bedroom
         - binary_sensor.window_living_room
         - binary_sensor.window_entrance
+
+auto_switch_climate_living_room:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.climate_living_room
+    switch: input_select.climate_living_room
+    reentrant: true
+
+climate_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: >
+        True
+
+climate_living_room_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_climate_living_room
+        - climate_enabler
+        - locker
+    enabler: climate_enabler
+    targets:
+        - auto_switch_climate_living_room
+
+auto_switch_climate_bedroom:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.climate_bedroom
+    switch: input_select.climate_bedroom
+    reentrant: true
+
+climate_bedroom_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_climate_bedroom
+        - climate_enabler
+        - locker
+    enabler: climate_enabler
+    targets:
+        - auto_switch_climate_bedroom
+

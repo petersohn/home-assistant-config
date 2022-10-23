@@ -146,6 +146,19 @@ sensor:
     name: pm10_outside
     value_template: '{{ value_json.pm10 }}'
     expire_after: 120
+  - state_topic: home/climate_living_room/tele/SENSOR
+    unit_of_measurement: "kWh"
+    name: energy_usage_climate_living_room
+    value_template: '{{ value_json.ENERGY.Total }}'
+    device_class: energy
+    state_class: total_increasing
+  - state_topic: home/climate_bedroom/tele/SENSOR
+    unit_of_measurement: "kWh"
+    name: energy_usage_climate_bedroom
+    value_template: '{{ value_json.ENERGY.Total }}'
+    device_class: energy
+    state_class: total_increasing
+
 binary_sensor:
   - state_topic: home/devices/well_controller/availability
     json_attributes_topic: home/devices/well_controller/availability
@@ -329,6 +342,27 @@ binary_sensor:
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
+
+  - state_topic: home/climate_living_room/tele/LWT
+    json_attributes_topic: home/climate_living_room/tele/STATE
+    json_attributes_template: >
+        {% set temp = {
+            'uptime': value_json.UptimeSec,
+        } %}
+        {{ temp | to_json }}
+    name: climate_bedroom_available
+    payload_on: 'Online'
+    payload_off: 'Offline'
+  - state_topic: home/climate_bedroom/tele/LWT
+    json_attributes_topic: home/climate_bedroom/tele/STATE
+    json_attributes_template: >
+        {% set temp = {
+            'uptime': value_json.UptimeSec,
+        } %}
+        {{ temp | to_json }}
+    name: climate_bedroom_available
+    payload_on: 'Online'
+    payload_off: 'Offline'
 
   - state_topic: home/sensors/motion/gate_reflector
     name: motion_sensor_driveway_uppest
@@ -541,3 +575,13 @@ switch:
     state_topic: home/switches/desktop_player/state
     payload_on: 1
     payload_off: 0
+  - name: climate_living_room
+    command_topic: home/climate_living_room/cmnd/POWER
+    state_topic: home/climate_living_room/stat/POWER
+    payload_on: 'ON'
+    payload_off: 'OFF'
+  - name: climate_bedroom
+    command_topic: home/climate_bedroom/cmnd/POWER
+    state_topic: home/climate_bedroom/stat/POWER
+    payload_on: 'ON'
+    payload_off: 'OFF'
