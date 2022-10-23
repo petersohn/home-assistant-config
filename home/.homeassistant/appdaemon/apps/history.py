@@ -406,6 +406,31 @@ class DecaySum(Aggregatum):
         return self.value
 
 
+class Derivate(Aggregatum):
+    def __init__(self, app, interval):
+        super(Derivate, self).__init__(app)
+        self.interval = interval.total_seconds()
+        self.value = 0.0
+        self.previous_value = None
+        self.time = None
+
+    def add(self, element):
+        if self.time is None:
+            self.time = element.time
+            self.previous_value = element.value
+            return
+
+        diff = (element.time - self.time).total_seconds()
+        self.app.log('{} -> {} i={} d={}'.format(self.previous_value, element.value, self.interval, diff))
+        if diff != 0:
+            self.value = (element.value - self.previous_value) * self.interval / diff
+            self.previous_value = element.value
+            self.time = element.time
+
+    def get(self):
+        return self.value
+
+
 class Aggregator:
     def __init__(self, app, callback):
         self.mutex = app.get_app('locker').get_mutex('Aggregator')
@@ -443,6 +468,7 @@ class Aggregator:
             "anglemean": lambda: Anglemean(self.app, get_interval()),
             "decay_sum": lambda: DecaySum(
                 self.app, get_interval(), self.app.args['fraction']),
+            "derivate": lambda: Derivate(self.app, get_interval()),
         }
         return aggregators[name]()
 

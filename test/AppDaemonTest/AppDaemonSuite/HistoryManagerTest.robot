@@ -281,6 +281,21 @@ Decaying Sum Value
     Unblock For  6 min
     State Should Be As  ${aggregated_entity}  float  ${0.1015625}
 
+Derivate Value
+    [Setup]  Initialize With History Manager  HistoryDerivateValue
+    Set State  ${entity}  1
+    Unblock For  1 min
+    Set State  ${entity}  10
+    State Should Be As  ${aggregated_entity}  float  ${9.0}
+    Unblock For  1 min
+    Set State  ${entity}  5
+    State Should Be As  ${aggregated_entity}  float  ${-5.0}
+    Unblock For  30 sec
+    Set State  ${entity}  6
+    State Should Be As  ${aggregated_entity}  float  ${2.0}
+    Unblock For  2 min
+    State Should Be As  ${aggregated_entity}  float  ${0.0}
+
 Binary Input
     [Setup]  Initialize  ${binary_name}  HistoryManagerBinary
     Unblock Until  5 min
