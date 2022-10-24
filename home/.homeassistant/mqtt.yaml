@@ -157,6 +157,7 @@ sensor:
         {% set temp = {
             'today': value_json.ENERGY.Today,
             'yesterday': value_json.ENERGY.Yesterday,
+            'power': value_json.ENERGY.Power,
         } %}
         {{ temp | to_json }}
   - state_topic: home/climate_bedroom/tele/SENSOR
@@ -170,6 +171,7 @@ sensor:
         {% set temp = {
             'today': value_json.ENERGY.Today,
             'yesterday': value_json.ENERGY.Yesterday,
+            'power': value_json.ENERGY.Power,
         } %}
         {{ temp | to_json }}
 
