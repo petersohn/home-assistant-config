@@ -148,30 +148,28 @@ sensor:
     expire_after: 120
   - state_topic: home/climate_living_room/tele/SENSOR
     json_attributes_topic: home/climate_living_room/tele/SENSOR
-    unit_of_measurement: "kWh"
-    name: energy_usage_climate_living_room
-    value_template: '{{ value_json.ENERGY.Total }}'
+    unit_of_measurement: "W"
+    name: power_climate_living_room
+    value_template: '{{ value_json.ENERGY.Power }}'
     device_class: energy
-    state_class: total_increasing
     json_attributes_template: >
         {% set temp = {
             'today': value_json.ENERGY.Today,
             'yesterday': value_json.ENERGY.Yesterday,
-            'power': value_json.ENERGY.Power,
+            'total': value_json.ENERGY.Total,
         } %}
         {{ temp | to_json }}
   - state_topic: home/climate_bedroom/tele/SENSOR
     json_attributes_topic: home/climate_bedroom/tele/SENSOR
-    unit_of_measurement: "kWh"
-    name: energy_usage_climate_bedroom
-    value_template: '{{ value_json.ENERGY.Total }}'
+    unit_of_measurement: "W"
+    name: power_climate_bedroom
+    value_template: '{{ value_json.ENERGY.Power }}'
     device_class: energy
-    state_class: total_increasing
     json_attributes_template: >
         {% set temp = {
             'today': value_json.ENERGY.Today,
             'yesterday': value_json.ENERGY.Yesterday,
-            'power': value_json.ENERGY.Power,
+            'total': value_json.ENERGY.Total,
         } %}
         {{ temp | to_json }}
 
