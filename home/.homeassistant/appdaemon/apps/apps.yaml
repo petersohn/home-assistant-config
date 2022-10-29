@@ -1289,30 +1289,6 @@ climate_living_room_switch:
     targets:
         - auto_switch_climate_living_room
 
-energy_usage_climate_living_room_history:
-    module: history
-    class: HistoryManager
-    dependencies: locker
-    entity: sensor.energy_usage_climate_living_room
-
-climate_living_room_power:
-  class: AggregatedValue
-  module: history
-  dependencies:
-      - energy_usage_climate_living_room_history
-      - locker
-  manager: energy_usage_climate_living_room_history
-  target: sensor.power_climate_living_room
-  aggregator: derivate
-  interval:
-    hours: 1
-  base_interval:
-    minutes: 10
-  attributes:
-    unit_of_measurement: "kW"
-    friendly_name: "Nappali klíma teljesítmény"
-    icon: mdi:lightning-bolt-circle
-
 auto_switch_climate_bedroom:
     module: auto_switch
     class: AutoSwitch
@@ -1332,26 +1308,3 @@ climate_bedroom_switch:
     targets:
         - auto_switch_climate_bedroom
 
-energy_usage_climate_bedroom_history:
-    module: history
-    class: HistoryManager
-    dependencies: locker
-    entity: sensor.energy_usage_climate_bedroom
-
-climate_bedroom_power:
-  class: AggregatedValue
-  module: history
-  dependencies:
-      - energy_usage_climate_bedroom_history
-      - locker
-  manager: energy_usage_climate_bedroom_history
-  target: sensor.power_climate_bedroom
-  aggregator: derivate
-  interval:
-    hours: 1
-  base_interval:
-    minutes: 10
-  attributes:
-    unit_of_measurement: "kW"
-    friendly_name: "Hálószoba klíma teljesítmény"
-    icon: mdi:lightning-bolt-circle
