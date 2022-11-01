@@ -72,7 +72,6 @@ sensor:
       - 'date'
       - 'time'
       - 'date_time'
-  - platform: moon
   - platform: command_line
     name: cpu_temperature
     command: "cat /sys/class/thermal/thermal_zone0/temp"
