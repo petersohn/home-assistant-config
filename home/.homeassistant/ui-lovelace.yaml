@@ -760,6 +760,7 @@ views:
           - alert.furnace_overheat
           - alert.window_open
           - alert.no_hot_water
+          - alert.air_quality
         title: Riasztások
       - type: entities
         entities:

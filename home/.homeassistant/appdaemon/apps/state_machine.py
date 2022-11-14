@@ -97,7 +97,7 @@ class State:
             self.is_active = True
 
     def exit(self):
-        with self.state_mutex.lock('enter'):
+        with self.state_mutex.lock('exit'):
             if not self.is_active:
                 return
 
