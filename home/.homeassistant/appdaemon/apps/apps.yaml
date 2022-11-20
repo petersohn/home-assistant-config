@@ -574,6 +574,19 @@ is_dark:
     global_dependencies:
         - expression
 
+is_sunlight:
+    module: enabler
+    class: ExpressionEnabler
+    delay:
+        minutes: 5
+    expr: >
+        ok.sensor.light_sunlight and
+        v.sensor.light_sunlight > 90
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+
 is_night_or_dark:
     module: enabler
     class: ExpressionEnabler
@@ -1010,7 +1023,9 @@ dining_room_window_blind_state:
         - locker
     expr: >
         'open' if v.input_select.presence_mode == 'home' or (
-        v.input_select.presence_mode == 'sleep' and v.binary_sensor.window_entrance)
+        v.input_select.presence_mode == 'sleep' and
+        v.binary_sensor.window_entrance) or (
+        v.input_select.presence_mode == 'away' and e.is_sunlight)
         else 'closed'
     target: sensor.dining_room_window_blind_state
 
