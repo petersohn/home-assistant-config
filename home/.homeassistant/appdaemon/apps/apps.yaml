@@ -1266,7 +1266,7 @@ air_quality_alert:
     target: binary_sensor.air_quality_alert
     trigger_expr: >
       v[name] and
-      v.sensor.pm10_outside > 40
+      v.sensor.pm10_outside > 50
     text_expr: a[name].friendly_name
     dependencies:
         - locker
