@@ -528,6 +528,23 @@ views:
                 option: 'auto'
             double_tap_action:
               action: more-info
+          - type: button
+            entity: switch.light_christmas_balcony
+            state_color: true
+            tap_action:
+              action: call-service
+              service: script.auto_switch_manual
+              service_data:
+                auto_switch: input_select.light_christmas_balcony
+                target: switch.light_christmas_balcony
+            hold_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: input_select.light_christmas_balcony
+                option: 'auto'
+            double_tap_action:
+              action: more-info
       - type: vertical-stack
         cards:
           - type: horizontal-stack
@@ -645,6 +662,7 @@ views:
               - input_select.light_garage
               - input_select.light_christmas_front
               - input_select.light_christmas_tree
+              - input_select.light_christmas_balcony
               - input_select.light_well
           - type: entities
             entities:

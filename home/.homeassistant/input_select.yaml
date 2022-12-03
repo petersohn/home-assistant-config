@@ -40,6 +40,13 @@ light_christmas_tree:
         - "on"
         - "off"
     icon: mdi:pine-tree
+light_christmas_balcony:
+    name: Karácsonyi világítás terasz
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:string-lights
 light_outside_1:
     name: Körvilágítás 1
     options:

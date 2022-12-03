@@ -539,6 +539,11 @@ switch:
     state_topic: home/switches/lights/christmas/tree/state
     payload_on: 1
     payload_off: 0
+  - name: light_christmas_balcony
+    command_topic: home/switches/lights/christmas/balcony/set
+    state_topic: home/switches/lights/christmas/balcony/state
+    payload_on: 1
+    payload_off: 0
   - name: light_gate_reflector
     command_topic: home/switches/lights/gate_reflector/set
     state_topic: home/switches/lights/gate_reflector/state

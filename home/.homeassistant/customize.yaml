@@ -390,6 +390,10 @@ switch.light_christmas_tree:
   friendly_name: "Karácsonyi világítás fenyőfa"
   icon: mdi:pine-tree
 
+switch.light_christmas_balcony:
+  friendly_name: "Karácsonyi világítás terasz"
+  icon: mdi:string-lights
+
 switch.light_gate_reflector:
   friendly_name: "Kapu reflektor"
   icon: mdi:spotlight

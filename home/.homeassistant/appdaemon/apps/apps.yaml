@@ -471,6 +471,13 @@ christmas_light_switch_tree:
     target: switch.light_christmas_tree
     switch: input_select.light_christmas_tree
 
+christmas_light_switch_balcony:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_christmas_balcony
+    switch: input_select.light_christmas_balcony
+
 christmas_lights_date_enabler:
     module: enabler
     class: DateEnabler
@@ -495,6 +502,7 @@ christmas_light_switcher:
     dependencies:
         - christmas_light_switch_front
         - christmas_light_switch_tree
+        - christmas_light_switch_balcony
         - christmas_lights_enabler
         - locker
     global_dependencies:
@@ -503,6 +511,7 @@ christmas_light_switcher:
     targets:
         - christmas_light_switch_front
         - christmas_light_switch_tree
+        - christmas_light_switch_balcony
 
 light_outside_switcher_1:
     class: EnabledSwitch
@@ -1109,6 +1118,7 @@ string_lights_icon:
     on_icon: mdi:string-lights
     entities:
       - switch.light_christmas_front
+      - switch.light_christmas_balcony
 
 play_icon:
     class: CustomIcon
