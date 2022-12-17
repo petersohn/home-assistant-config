@@ -319,3 +319,152 @@
     - service: input_boolean.turn_off
       data:
           entity_id: input_boolean.skip_balcony_watering
+
+- alias: klíma off
+  trigger:
+    platform: state
+    entity_id: input_select.climate_mode
+    to: 'off'
+  action:
+    - service: climate.set_hvac_mode
+      target:
+        entity_id:
+          - climate.daikin_bedroom
+          - climate.daikin_living_room
+      data:
+        hvac_mode: "off"
+
+- alias: klíma auto
+  trigger:
+    platform: state
+    entity_id: input_select.climate_mode
+    to: 'auto'
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
+      data:
+        hvac_mode: heat
+        temperature: "{{ states('sensor.heater_target') | float }}"
+    - service: climate.set_fan_mode
+      target:
+        entity_id:
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
+      data:
+        fan_mode: Auto
+    - service: climate.set_swing_mode
+      target:
+        entity_id:
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
+      data:
+        swing_mode: Vertical
+
+- alias: klíma felfűtés
+  trigger:
+    platform: state
+    entity_id: input_select.climate_mode
+    to:
+      - 'heat_up'
+      - 'keep_warm'
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id:
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
+      data:
+        hvac_mode: heat
+        temperature: "{{ states('sensor.heater_target') | float }}"
+    - service: climate.set_fan_mode
+      target:
+        entity_id:
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
+      data:
+        fan_mode: 5
+    - service: climate.set_swing_mode
+      target:
+        entity_id:
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
+      data:
+        swing_mode: Vertical
+
+- alias: klíma melegen tartás be
+  trigger:
+    platform: state
+    entity_id: sensor.time
+    to: '13:00'
+  condition:
+    and:
+      - condition: numeric_state
+        entity_id: sensor.heater_check
+        below: 12
+      - condition: state
+        entity_id: input_select.presence_mode
+        state: 'away'
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.climate_mode
+      data:
+        option: 'keep_warm'
+
+- alias: klíma melegen tartás ki
+  trigger:
+    platform: state
+    entity_id: input_select.climate_mode
+    to: 'keep_warm'
+    for: '03:00:00'
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.climate_mode
+      data:
+        option: 'off'
+
+- alias: hazajövés klíma kikapcsolás
+  trigger:
+    platform: state
+    entity_id: input_select.presence_mode
+    from: 'away'
+    to: 'home'
+  condition:
+    and:
+      - condition: state
+        entity_id: input_boolean.wood_heating
+        state: 'on'
+      - condition: state
+        entity_id: input_select.climate_mode
+        state: 'heat_up'
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.climate_mode
+      data:
+        option: 'off'
+
+- alias: hazajövés klíma auto
+  trigger:
+    platform: state
+    entity_id: input_select.presence_mode
+    from: 'away'
+    to: 'home'
+  condition:
+    and:
+      - condition: state
+        entity_id: input_boolean.wood_heating
+        state: 'off'
+      - condition: state
+        entity_id: input_select.climate_mode
+        state: 'heat_up'
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.climate_mode
+      data:
+        option: 'auto'

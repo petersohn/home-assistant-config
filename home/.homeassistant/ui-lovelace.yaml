@@ -78,17 +78,50 @@ views:
           - type: horizontal-stack
             cards:
               - type: button
-                entity: input_boolean.climate_state_off
+                entity: binary_sensor.climate_off
+                name: Ki
+                icon: mdi:thermometer-off
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'off'
               - type: button
-                entity: input_boolean.climate_state_auto
+                entity: binary_sensor.climate_auto
+                name: Auto
+                icon: mdi:thermometer-auto
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'auto'
               - type: button
-                entity: input_boolean.climate_state_heat_up
+                entity: binary_sensor.climate_heat_up
+                name: Felfűtés
+                icon: mdi:thermometer-chevron-up
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'heat_up'
               - type: button
-                entity: input_boolean.climate_state_keep_warm
+                entity: binary_sensor.climate_keep_warm
+                name: Melegen tartás
+                icon: mdi:thermometer-lines
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'keep_warm'
           - type: entities
             state_color: true
             entities:
               - input_boolean.wood_heating
+              - input_select.climate_mode
               - climate.daikin_living_room
               - climate.daikin_bedroom
         show_header_toggle: false

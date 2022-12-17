@@ -1138,7 +1138,6 @@ heater_check:
     expr: >
       min(nums(
       v.sensor.temperature_living_room_upper,
-      v.sensor.temperature_living_room_upper,
       v.sensor.temperature_bedroom_upper,
       v.sensor.temperature_kitchen,
       v.sensor.daikin_bedroom_inside_temperature,
@@ -1155,120 +1154,6 @@ heater_target:
       if v.input_boolean.wood_heating else
       v.input_number.heater_temperature_normal
     target: sensor.heater_target
-
-climate_state_machine:
-  module: state_machine
-  class: StateMachine
-  dependencies:
-    - locker
-    - heater_check
-    - heater_target
-  states:
-    'off':
-      switch: input_boolean.climate_state_off
-      enter_action: 'off'
-    auto:
-      switch: input_boolean.climate_state_auto
-      enter_action: auto
-    heat_up:
-      switch: input_boolean.climate_state_heat_up
-      enter_action: heat_up
-    keep_warm:
-      switch: input_boolean.climate_state_keep_warm
-      enter_action: heat_up
-  actions:
-    'off':
-      service:
-        - service: climate/set_hvac_mode
-          args:
-            entity_id: climate.daikin_living_room
-            hvac_mode: 'off'
-        - service: climate/set_hvac_mode
-          args:
-            entity_id: climate.daikin_bedroom
-            hvac_mode: 'off'
-    auto:
-      service:
-        - service: climate/set_temperature
-          args:
-            entity_id: climate.daikin_living_room
-            hvac_mode: heat
-            temperature_expr: v.sensor.heater_target
-        - service: climate/set_temperature
-          args:
-            entity_id: climate.daikin_bedroom
-            hvac_mode: heat
-            temperature_expr: v.sensor.heater_target
-        - service: climate/set_fan_mode
-          args:
-            entity_id: climate.daikin_living_room
-            fan_mode: Auto
-        - service: climate/set_fan_mode
-          args:
-            entity_id: climate.daikin_bedroom
-            fan_mode: Auto
-        - service: climate/set_swing_mode
-          args:
-            entity_id: climate.daikin_living_room
-            swing_mode: vertical
-        - service: climate/set_swing_mode
-          args:
-            entity_id: climate.daikin_bedroom
-            swing_mode: vertical
-    heat_up:
-      service:
-        - service: climate/set_temperature
-          args:
-            entity_id: climate.daikin_living_room
-            hvac_mode: heat
-            temperature_expr: v.sensor.heater_target
-        - service: climate/set_temperature
-          args:
-            entity_id: climate.daikin_bedroom
-            hvac_mode: heat
-            temperature_expr: v.sensor.heater_target
-        - service: climate/set_fan_mode
-          args:
-            entity_id: climate.daikin_living_room
-            fan_mode: 5
-        - service: climate/set_fan_mode
-          args:
-            entity_id: climate.daikin_bedroom
-            fan_mode: 5
-        - service: climate/set_swing_mode
-          args:
-            entity_id: climate.daikin_living_room
-            swing_mode: vertical
-        - service: climate/set_swing_mode
-          args:
-            entity_id: climate.daikin_bedroom
-            swing_mode: vertical
-  triggers:
-    gone_home:
-      type: condition
-      state:
-        - heat_up
-        - keep_warm
-      expr: >
-        v.input_select.presence_mode == "home"
-      next_state_expr: >
-        'off' if v.input_boolean.wood_heating else 'auto'
-    keep_warm_start:
-      type: condition
-      state: 'off'
-      expr: >
-        v.input_select.presence_mode != "home" and (
-        v.sensor.heater_check < 10 or (
-        v.sensor.heater_check < 12 and
-        v.sensor.time == "13:00"))
-      next_state: keep_warm
-    keep_warm_end:
-      type: time
-      state: keep_warm
-      interval:
-        hours: 3
-      next_state: 'off'
-  default_state: 'off'
 
 air_quality_alert:
     module: alert

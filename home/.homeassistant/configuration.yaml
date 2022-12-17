@@ -141,6 +141,23 @@ template:
       state: >
         {{ is_state('input_select.presence_mode', 'away') }}
 
+  - binary_sensor:
+    - name: climate_off
+      state: >
+        {{ is_state('input_select.climate_mode', 'off') }}
+  - binary_sensor:
+    - name: climate_auto
+      state: >
+        {{ is_state('input_select.climate_mode', 'auto') }}
+  - binary_sensor:
+    - name: climate_heat_up
+      state: >
+        {{ is_state('input_select.climate_mode', 'heat_up') }}
+  - binary_sensor:
+    - name: climate_keep_warm
+      state: >
+        {{ is_state('input_select.climate_mode', 'keep_warm') }}
+
 
 input_number:
   sprinkler_cellar_day:

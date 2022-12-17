@@ -14,19 +14,6 @@ skip_balcony_watering:
   name: Terasz locsolás kihagyása
   icon: mdi:water-off
 
-climate_state_off:
-  name: Klíma ki
-  icon: mdi:thermometer-off
-climate_state_auto:
-  name: Klíma auto
-  icon: mdi:thermometer-auto
-climate_state_heat_up:
-  name: Klíma felfűtés
-  icon: mdi:thermometer-chevron-up
-climate_state_keep_warm:
-  name: Klíma melegentartás
-  icon: mdi:thermometer-lines
-
 furnace_temperature_maintenance:
   name: Furnace Temperature
   icon: mdi:wrench

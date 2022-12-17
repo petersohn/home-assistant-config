@@ -158,11 +158,20 @@ climate_bedroom:
         - "on"
         - "off"
     icon: mdi:hvac
+
 presence_mode:
     name: Jelenlét mód
     options:
         - "home"
         - "away"
         - "sleep"
+    icon: mdi:home
+climate_mode:
+    name: Klíma mód
+    options:
+        - "off"
+        - "auto"
+        - "heat_up"
+        - "keep_warm"
     icon: mdi:home
 
