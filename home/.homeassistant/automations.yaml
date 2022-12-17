@@ -347,7 +347,7 @@
           - climate.daikin_bedroom
       data:
         hvac_mode: heat
-        temperature: "{{ states('sensor.heater_target') | float }}"
+        temperature: "{{ states('sensor.heater_target') | float(18) }}"
     - service: climate.set_fan_mode
       target:
         entity_id:
@@ -378,7 +378,7 @@
           - climate.daikin_bedroom
       data:
         hvac_mode: heat
-        temperature: "{{ states('sensor.heater_target') | float }}"
+        temperature: "{{ states('sensor.heater_target') | float(18) }}"
     - service: climate.set_fan_mode
       target:
         entity_id:

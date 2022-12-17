@@ -290,6 +290,7 @@ sensor.temperature_furnace_wood_in:
 sensor.temperature_hot_water:
   friendly_name: "Melegvíz"
   device_class: temperature
+  icon: mdi:thermometer-water
 
 sensor.temperature_dishwasher:
   friendly_name: "Mosogatógép hőmérséklet"
@@ -388,7 +389,7 @@ switch.light_christmas_front:
 
 switch.light_christmas_tree:
   friendly_name: "Karácsonyi világítás fenyőfa"
-  icon: mdi:pine-tree
+  icon: mdi:string-lights
 
 switch.light_christmas_balcony:
   friendly_name: "Karácsonyi világítás terasz"

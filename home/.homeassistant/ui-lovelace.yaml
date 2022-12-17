@@ -121,7 +121,6 @@ views:
             state_color: true
             entities:
               - input_boolean.wood_heating
-              - input_select.climate_mode
               - climate.daikin_living_room
               - climate.daikin_bedroom
         show_header_toggle: false
@@ -150,6 +149,7 @@ views:
           - input_number.heater_temperature_wood_heating
           - input_boolean.wood_heating
           - climate.heater
+          - input_select.climate_mode
           - climate.daikin_living_room
           - climate.daikin_bedroom
         show_header_toggle: false
@@ -769,7 +769,6 @@ views:
           - sensor.temperature_furnace_wood
           - sensor.temperature_furnace_wood_in
           - switch.heating_pump
-          - sensor.temperature_dishwasher
           - alert.furnace_overheat
         title: Fűtés
         show_header_toggle: false
