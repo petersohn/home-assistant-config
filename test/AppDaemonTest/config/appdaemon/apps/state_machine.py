@@ -1,1 +1,0 @@
-../../../../../home/.homeassistant/appdaemon/apps/state_machine.py
