@@ -1,16 +1,24 @@
 {
-    "debug": true,
+    "debug": false,
     "name": "balcony_controller",
     "availabilityTopic": "home/devices/balcony_controller/availability",
     "debugTopic": "home/devices/balcony_controller/debug",
     "interfaces": [
         {
             "type": "output",
-            "name": "relay",
+            "name": "sprinkler",
             "commandTopic": "home/switches/balcony_sprinkler/set",
             "default": false,
             "invert": true,
             "pin": 3
+        },
+        {
+            "type": "output",
+            "name": "light",
+            "commandTopic": "home/switches/lights/christmas/balcony/set",
+            "default": false,
+            "invert": true,
+            "pin": 1
         },
         {
             "type": "hm3301",
@@ -22,8 +30,14 @@
     "actions": [
         {
             "type": "publish",
-            "interface": "relay",
+            "interface": "sprinkler",
             "topic": "home/switches/balcony_sprinkler/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light",
+            "topic": "home/switches/lights/christmas/balcony/state",
             "retain": true
         },
         {
