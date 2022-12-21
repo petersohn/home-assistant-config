@@ -141,3 +141,5 @@ Initialize
     ${app_configs} =  Create List  TestApp  AutoSwitch${type}
     Initialize AppDaemon  ${apps}  ${app_configs}  suffix=${suffix}
     Unblock For  ${appdaemon_interval}
+
+# TODO: test turn off -> turn on before it would turn on

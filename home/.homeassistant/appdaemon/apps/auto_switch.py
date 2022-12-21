@@ -83,7 +83,8 @@ class AutoSwitch(hass.Hass):
 
     def __set_intended_state(self, state):
         self.log('Turning ' + state)
-        if self.get_state(self.target) != state:
+        if self.intended_state is not None or \
+                self.get_state(self.target) != state:
             self.intended_state = state
             self.timer = self.run_in(self.update, 10)
 
@@ -115,6 +116,10 @@ class AutoSwitch(hass.Hass):
                 self.log('State stabilized to {}'.format(new))
                 self.intended_state = None
                 self.__stop_timer()
+            else:
+                self.log('Wrong state: {}, intended={}'.format(
+                    value, self.intended_state))
+                self.__update()
 
     def __stop_timer(self):
         if self.timer:
