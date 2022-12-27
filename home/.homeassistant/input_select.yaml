@@ -173,5 +173,5 @@ climate_mode:
         - "auto"
         - "heat_up"
         - "keep_warm"
-    icon: mdi:home
+    icon: mdi:thermostat-auto
 

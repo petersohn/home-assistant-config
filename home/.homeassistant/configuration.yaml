@@ -10,6 +10,7 @@ homeassistant:
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/Budapest
+  country: HU
   customize: !include customize.yaml
 
 # Enables the frontend
@@ -108,7 +109,7 @@ climate:
   - platform: generic_thermostat
     name: heater
     heater: switch.heater
-    target_sensor: sensor.heater_target
+    target_sensor: sensor.heater_check
     min_temp: 10
     max_temp: 25
     ac_mode: false

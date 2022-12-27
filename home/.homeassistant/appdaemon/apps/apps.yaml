@@ -1217,4 +1217,13 @@ climate_bedroom_switch:
     enabler: climate_enabler
     targets:
         - auto_switch_climate_bedroom
-
+#
+# target_climate_mode:
+#     module: expression
+#     class: Expression
+#     dependencies:
+#         - locker
+#     expr: >
+#     states:
+#       'off': 'off'
+#     target: sensor.target_climate_mode
