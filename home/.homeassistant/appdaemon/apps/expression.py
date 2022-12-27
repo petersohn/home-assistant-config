@@ -96,7 +96,7 @@ class ExpressionEvaluator:
             self.app.listen_state(self._on_entity_change, entity=entity)
             self.entities.add(entity)
         value = self.app.get_state(entity)
-        if value is None:
+        if value is None or value == 'unknown' or value == 'unavailable':
             return ''
         if value == 'on':
             return True
