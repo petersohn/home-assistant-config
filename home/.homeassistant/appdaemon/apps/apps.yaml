@@ -1144,6 +1144,17 @@ heater_check:
       v.sensor.daikin_living_room_inside_temperature))
     target: sensor.heater_check
 
+heater_check2:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+      v.sensor.temperature_bedroom_upper or
+      v.sensor.temperature_living_room_upper or
+      v.sensor.temperature_kitchen
+    target: sensor.heater_check2
+
 heater_target:
     module: expression
     class: Expression

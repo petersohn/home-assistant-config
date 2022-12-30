@@ -123,10 +123,10 @@ climate:
     away_temp: 10
     precision: 0.5
 
-media_player:
-  - platform: clementine
-    name: desktop
-    host: !secret desktop_address
+# media_player:
+#   - platform: clementine
+#     name: desktop
+#     host: !secret desktop_address
 
 template:
   - binary_sensor:
