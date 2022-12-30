@@ -502,7 +502,6 @@ christmas_light_switcher:
     dependencies:
         - christmas_light_switch_front
         - christmas_light_switch_tree
-        - christmas_light_switch_balcony
         - christmas_lights_enabler
         - locker
     global_dependencies:
@@ -511,6 +510,29 @@ christmas_light_switcher:
     targets:
         - christmas_light_switch_front
         - christmas_light_switch_tree
+
+christmas_light_balcony_enabler:
+    module: enabler
+    class: MultiEnabler
+    dependencies:
+        - christmas_lights_date_enabler
+        - lights_should_be_on
+        - locker
+    enablers:
+        - christmas_lights_date_enabler
+        - lights_should_be_on
+
+christmas_light_balcony_switcher:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - christmas_light_switch_balcony
+        - christmas_light_balcony_enabler
+        - locker
+    global_dependencies:
+        - auto_switch
+    enabler: christmas_light_balcony_enabler
+    targets:
         - christmas_light_switch_balcony
 
 light_outside_switcher_1:
