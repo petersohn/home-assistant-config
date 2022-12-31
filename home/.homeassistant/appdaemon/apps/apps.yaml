@@ -406,18 +406,18 @@ driveway_lower_motion_sensor:
     enabler: motion_sensor_driveway_lower_enabler
     time: 2
 
-garage_driveway_motion_sensor:
-    class: TimerSwitch
-    module: timer_switch
-    dependencies:
-        - auto_switch_light_driveway
-        - sun_enabler_night
-        - locker
-    sensor: binary_sensor.motion_sensor_garage
-    targets:
-        - auto_switch_light_driveway
-    enabler: sun_enabler_night
-    time: 2
+# garage_driveway_motion_sensor:
+#     class: TimerSwitch
+#     module: timer_switch
+#     dependencies:
+#         - auto_switch_light_driveway
+#         - sun_enabler_night
+#         - locker
+#     sensor: binary_sensor.motion_sensor_garage
+#     targets:
+#         - auto_switch_light_driveway
+#     enabler: sun_enabler_night
+#     time: 2
 
 garage_motion_sensor:
     class: TimerSwitch
@@ -591,6 +591,16 @@ light_outside_switcher_2_4_5_6:
         - auto_switch_light_outside_5
         - auto_switch_light_outside_6
 
+sunlight:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+        v.sensor.light_sunlight
+        if not v.input_boolean.sunlight_sensor_maintenance
+        else 'unavailable'
+    target: sensor.light_sunlight_adjusted
 
 is_dark:
     module: enabler
@@ -598,8 +608,8 @@ is_dark:
     delay:
         minutes: 5
     expr: >
-        ok.sensor.light_sunlight and
-        v.sensor.light_sunlight <= 50
+        ok.sensor.light_sunlight_adjusted and
+        v.sensor.light_sunlight_adjusted <= 50
     dependencies:
         - locker
     global_dependencies:
@@ -611,8 +621,8 @@ is_sunlight:
     delay:
         minutes: 5
     expr: >
-        ok.sensor.light_sunlight and
-        v.sensor.light_sunlight > 90
+        ok.sensor.light_sunlight_adjusted and
+        v.sensor.light_sunlight_adjusted > 90
     dependencies:
         - locker
     global_dependencies:
@@ -1067,8 +1077,8 @@ is_dark_enough_to_close_blind:
         minutes: 5
     expr: >
         e.sun_enabler_night or (
-        ok.sensor.light_sunlight and
-        v.sensor.light_sunlight <= 40)
+        ok.sensor.light_sunlight_adjusted and
+        v.sensor.light_sunlight_adjusted <= 40)
     dependencies:
         - sun_enabler_night
         - locker

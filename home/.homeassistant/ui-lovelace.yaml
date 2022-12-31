@@ -869,6 +869,12 @@ views:
           - input_boolean.well_controller_maintenance
         title: device maintenance
         state_color: true
+        show_header_toggle: true
+      - type: entities
+        entities:
+          - input_boolean.sunlight_sensor_maintenance
+        title: sensor maintenance
+        state_color: true
         show_header_toggle: false
       - type: entities
         entities:
