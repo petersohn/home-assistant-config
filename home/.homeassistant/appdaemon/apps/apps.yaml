@@ -516,11 +516,11 @@ christmas_light_balcony_enabler:
     class: MultiEnabler
     dependencies:
         - christmas_lights_date_enabler
-        - lights_should_be_on
+        - light_outside_2_4_5_6_enabler
         - locker
     enablers:
         - christmas_lights_date_enabler
-        - lights_should_be_on
+        - light_outside_2_4_5_6_enabler
 
 christmas_light_balcony_switcher:
     class: EnabledSwitch
