@@ -1085,12 +1085,22 @@ is_dark_enough_to_close_blind:
     global_dependencies:
         - expression
 
+test:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+      v.input_select.presence_mode == 'home' and (
+      not e.is_dark_enough_to_close_blind or v.binary_sensor.window_living_room)
+    target: sensor.test
+
 living_room_window_blind_state:
     module: expression
     class: Expression
     dependencies:
         - locker
-        - e.is_dark_enough_to_close_blind
+        - is_dark_enough_to_close_blind
     expr: >
         'open' if v.input_select.presence_mode == 'home' and (
         not e.is_dark_enough_to_close_blind or v.binary_sensor.window_living_room)
