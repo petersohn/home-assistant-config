@@ -130,20 +130,6 @@ hot_water_pump:
         - "auto"
         - "on"
         - "off"
-socket_bedroom_1:
-    name: Hálószoba konnektor 1
-    options:
-        - "auto"
-        - "on"
-        - "off"
-    icon: mdi:power-socket-eu
-socket_bedroom_1_mode:
-    name: Hálószoba konnektor 1 mód
-    options:
-        - "off"
-        - "karácsonyfa"
-        - "szúnyogirtó"
-    icon: mdi:power-socket-eu
 climate_living_room:
     name: Klíma nappali főkapcsoló
     options:
@@ -158,6 +144,13 @@ climate_bedroom:
         - "on"
         - "off"
     icon: mdi:hvac
+christmas_tree:
+    name: Karácsonyfa
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:pine-tree
 
 presence_mode:
     name: Jelenlét mód

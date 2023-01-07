@@ -107,6 +107,10 @@ binary_sensor.climate_living_room_available:
   friendly_name: Climete Living Room
   device_class: plug
 
+binary_sensor.christmas_tree_switcher_available:
+  friendly_name: Christmas Tree Switch
+  device_class: plug
+
 sensor.furnace_temperature_free_memory:
   friendly_name: Furnace Temperature
   icon: mdi:memory
@@ -327,10 +331,6 @@ switch.hot_water_pump:
   friendly_name: "Meleg víz keringető"
   icon: mdi:shower-head
 
-switch.socket_bedroom_1:
-  friendly_name: "Hálószoba konnektor 1"
-  icon: mdi:power-socket-eu
-
 switch.well:
   friendly_name: "Kút"
   icon: mdi:water-pump
@@ -539,3 +539,7 @@ switch.climate_living_room:
 switch.climate_bedroom:
   friendly_name: Klíma hálószoba főkapcsoló
   icon: mdi:hvac
+
+switch.christmas_tree:
+  friendly_name: "Karácsonyfa"
+  icon: mdi:pine-tree

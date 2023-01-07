@@ -906,39 +906,35 @@ sprinkler_timer:
           time: sensor.sprinkler_run_time_2
     enabler: sprinkler_enabler
 
-socket_bedroom_1:
+christmas_tree:
     module: auto_switch
     class: AutoSwitch
     dependencies: locker
-    target: switch.socket_bedroom_1
-    switch: input_select.socket_bedroom_1
+    target: switch.christmas_tree
+    switch: input_select.christmas_tree
 
-socket_bedroom_1_enabler:
+christmas_tree_enabler:
     module: enabler
     class: ExpressionEnabler
     expr: >
-        (v.input_select.socket_bedroom_1_mode == "karácsonyfa" and
-        v.input_select.presence_mode == "home") or
-        (v.input_select.socket_bedroom_1_mode == "szúnyogirtó" and
-        v.input_select.presence_mode == "sleep" and
-        v.binary_sensor.window_bedroom)
+        v.input_select.presence_mode == "home"
     dependencies:
         - locker
     global_dependencies:
         - expression
 
-socket_bedroom_1_switcher:
+christmas_tree_switcher:
     class: EnabledSwitch
     module: enabled_switch
     dependencies:
-        - socket_bedroom_1
-        - socket_bedroom_1_enabler
+        - christmas_tree
+        - christmas_tree_enabler
         - locker
     global_dependencies:
         - auto_switch
-    enabler: socket_bedroom_1_enabler
+    enabler: christmas_tree_enabler
     targets:
-        - socket_bedroom_1
+        - christmas_tree
 
 availability_alerts:
     module: alert

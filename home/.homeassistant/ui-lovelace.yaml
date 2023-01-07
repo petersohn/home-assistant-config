@@ -785,8 +785,12 @@ views:
         state_color: true
         entities:
           - switch.socket_bedroom_1
-          - input_select.socket_bedroom_1
-          - input_select.socket_bedroom_1_mode
+        show_header_toggle: false
+      - type: entities
+        state_color: true
+        entities:
+          - switch.christmas_tree
+          - input_select.christmas_tree
         show_header_toggle: false
       - type: entities
         entities:
@@ -835,6 +839,7 @@ views:
           - binary_sensor.attic_lower_available
           - binary_sensor.balcony_controller_available
           - binary_sensor.bedroom_temperature_available
+          - binary_sensor.christmas_tree_switcher_available
           - binary_sensor.dining_room_window_available
           - binary_sensor.cellar_controller_available
           - binary_sensor.dishwasher_sensor_available
@@ -846,7 +851,7 @@ views:
           - binary_sensor.main_controller_available
           - binary_sensor.main_controller2_available
           - binary_sensor.well_controller_available
-          - binary_sensor.climate_living_room_available
+          # - binary_sensor.climate_living_room_available
           - alert.availability
         title: device availability
         state_color: true

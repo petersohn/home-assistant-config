@@ -356,6 +356,19 @@ binary_sensor:
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
+  - state_topic: home/devices/christmas_tree_switch/availability
+    json_attributes_topic: home/devices/christmas_tree_switch/availability
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: christmas_tree_switcher_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
 
   - state_topic: home/climate_living_room/tele/LWT
     json_attributes_topic: home/climate_living_room/tele/STATE
@@ -604,3 +617,8 @@ switch:
     state_topic: home/climate_bedroom/stat/POWER
     payload_on: 'ON'
     payload_off: 'OFF'
+  - name: christmas_tree
+    command_topic: home/switches/christmas_tree/set
+    state_topic: home/switches/christmas_tree/state
+    payload_on: 1
+    payload_off: 0
