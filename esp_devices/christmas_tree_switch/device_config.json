@@ -1,0 +1,25 @@
+{
+    "debug": true,
+    "name": "christmas_tree_switch",
+    "availabilityTopic": "home/devices/christmas_tree_switch/availability",
+    "debugTopic": "home/devices/christmas_tree_switch/debug",
+    "interfaces": [
+        {
+            "type": "output",
+            "name": "relay",
+            "commandTopic": "home/switches/christmas_tree/set",
+            "default": 0,
+            "invert": false,
+            "pin": 3
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "relay",
+            "topic": "home/switchesristmas_tree/state",
+            "template": "%1",
+            "retain": true
+        }
+    ]
+}
