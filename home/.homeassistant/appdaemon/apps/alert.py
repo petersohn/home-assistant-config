@@ -22,6 +22,7 @@ class AlertAggregator(hass.Hass):
 
         def on_change(self, value):
             with self.app.mutex.lock('on_change'):
+                self.app.log('{}: Change: {}'.format(self.entity, value))
                 if value:
                     if self.app.timeout is not None:
                         if self.value:
@@ -45,7 +46,12 @@ class AlertAggregator(hass.Hass):
                 if value != self.value:
                     self._handle_change(value)
 
+        def handle_change(self, value):
+            with self.app.mutex.lock('handle_change'):
+                self._handle_change(value)
+
         def _handle_change(self, value):
+            self.timer = None
             self.value = value
             self.app.on_change(self.entity, value)
 
