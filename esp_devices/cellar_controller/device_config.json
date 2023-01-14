@@ -1,14 +1,13 @@
 {
-    "debug": false,
+    "debug": true,
     "name": "cellar_controller",
-    "resetPin": 12,
     "availabilityTopic": "home/devices/cellar_controller/availability",
     "debugTopic": "home/devices/cellar_controller/debug",
     "interfaces": [
         {
             "type": "input",
             "name": "light_switch_cellar",
-            "pin": 15
+            "pin": 12
         },
         {
             "type": "output",
@@ -16,40 +15,12 @@
             "commandTopic": "home/switches/lights/cellar/set",
             "invert": true,
             "default": 0,
-            "pin": 2
-        },
-        {
-            "type": "input",
-            "name": "motion_sensor_garage",
-            "pin": 3
-        },
-        {
-            "type": "input",
-            "name": "motion_sensor_garage2",
             "pin": 4
-        },
-        {
-            "type": "output",
-            "name": "light_garage",
-            "commandTopic": "home/switches/lights/garage/set",
-            "invert": true,
-            "default": 0,
-            "pin": 16
         },
         {
             "type": "dht",
             "name": "temperature_cellar",
             "pin": 5
-        },
-        {
-            "type": "input",
-            "name": "motion_sensor_driveway_upper",
-            "pin": 1
-        },
-        {
-            "type": "input",
-            "name": "motion_sensor_driveway_lower",
-            "pin": 13
         },
         {
             "type": "dallasTemperature",
@@ -63,7 +34,7 @@
             "commandTopic": "home/switches/auto_sprinkler_cellar/set",
             "invert": true,
             "default": 0,
-            "pin": 0
+            "pin": 3
         }
     ],
     "actions": [
@@ -74,41 +45,11 @@
             "retain": true
         },
         {
-            "type": "publish",
-            "interface": "light_garage",
-            "topic": "home/switches/lights/garage/state",
-            "retain": true
-        },
-        {
-            "type": "publish",
-            "interface": "motion_sensor_driveway_upper",
-            "topic": "home/sensors/motion/driveway_upper",
-            "retain": false
-        },
-        {
-            "type": "publish",
-            "interface": "motion_sensor_driveway_lower",
-            "topic": "home/sensors/motion/driveway_lower",
-            "retain": false
-        },
-        {
-            "type": "publish",
-            "interface": "motion_sensor_garage",
-            "topic": "home/sensors/motion/garage",
-            "retain": false
-        },
-        {
-            "type": "publish",
-            "interface": "motion_sensor_garage2",
-            "topic": "home/sensors/motion/garage2",
-            "retain": false
-        },
-        {
             "type": "command",
             "interface": "light_switch_cellar",
             "target": "light_cellar",
             "command": "toggle",
-            "value": "1"
+            "value": "0"
         },
         {
             "type": "publish",
