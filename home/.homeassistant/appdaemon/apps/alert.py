@@ -88,9 +88,6 @@ class AlertAggregator(hass.Hass):
             self.log('Alert is initially on')
             self._turn_on()
 
-        for source in self.sources:
-            self.log('Source {} -> {}'.format(source.entity, source.get_text_value()))
-
         self.mutex = self.get_app('locker').get_mutex('AlertAggregator')
 
     def terminate(self):

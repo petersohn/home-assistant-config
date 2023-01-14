@@ -252,6 +252,19 @@ binary_sensor:
     value_template: '{{ value_json.available }}'
     payload_on: true
     payload_off: false
+  - state_topic: home/devices/garage_controller/availability
+    json_attributes_topic: home/devices/garage_controller/availability
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: garage_controller_available
+    value_template: '{{ value_json.available }}'
+    payload_on: true
+    payload_off: false
   - state_topic: home/devices/living_room_temperature/availability
     json_attributes_topic: home/devices/living_room_temperature/availability
     json_attributes_template: >

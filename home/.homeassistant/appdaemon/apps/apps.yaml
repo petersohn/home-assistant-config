@@ -958,6 +958,7 @@ availability_alerts:
         - main_controller2
         - driveway
         - cellar_controller
+        - garage_controller
         - living_room_temperature
         - bedroom_temperature
         - dishwasher_sensor

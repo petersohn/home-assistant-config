@@ -32,6 +32,9 @@ driveway_maintenance:
 cellar_controller_maintenance:
   name: Cellar Controller
   icon: mdi:wrench
+garage_controller_maintenance:
+  name: Garage Controller
+  icon: mdi:wrench
 living_room_temperature_maintenance:
   name: Living Room Temperature
   icon: mdi:wrench
