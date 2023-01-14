@@ -17,7 +17,7 @@
         {
             "type": "publish",
             "interface": "relay",
-            "topic": "home/switchesristmas_tree/state",
+            "topic": "home/switches/christmas_tree/state",
             "template": "%1",
             "retain": true
         }
