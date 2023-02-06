@@ -119,7 +119,7 @@ class AutoSwitch(hass.Hass):
             else:
                 self.log('Wrong state: {}, intended={}'.format(
                     value, self.intended_state))
-                self.__update()
+                self.__update(self.state)
 
     def __stop_timer(self):
         if self.timer:
