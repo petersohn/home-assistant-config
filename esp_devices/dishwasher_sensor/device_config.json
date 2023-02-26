@@ -1,7 +1,8 @@
 {
     "debug": true,
     "name": "dishwasher_sensor",
-    "availabilityTopic": "home/devices/dishwasher_sensor/availability",
+    "availabilityTopic": "home/devices/dishwasher_sensor/available",
+    "statusTopic": "home/devices/dishwasher_sensor/status",
     "debugTopic": "home/devices/dishwasher_sensor/debug",
     "interfaces": [
         {

@@ -1,7 +1,8 @@
 {
     "debug": true,
     "name": "christmas_tree_switch",
-    "availabilityTopic": "home/devices/christmas_tree_switch/availability",
+    "availabilityTopic": "home/devices/christmas_tree_switch/available",
+    "statusTopic": "home/devices/christmas_tree_switch/status",
     "debugTopic": "home/devices/christmas_tree_switch/debug",
     "interfaces": [
         {

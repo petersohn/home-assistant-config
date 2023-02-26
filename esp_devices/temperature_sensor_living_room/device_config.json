@@ -1,7 +1,8 @@
 {
     "debug": true,
     "name": "living_room_temperature",
-    "availabilityTopic": "home/devices/living_room_temperature/availability",
+    "availabilityTopic": "home/devices/living_room_temperature/available",
+    "statusTopic": "home/devices/living_room_temperature/status",
     "debugTopic": "home/devices/living_room_temperature/debug",
     "interfaces": [
         {

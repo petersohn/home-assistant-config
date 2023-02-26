@@ -1,7 +1,8 @@
 {
     "debug": true,
     "name": "main_panel",
-    "availabilityTopic": "home/devices/main_panel/availability",
+    "availabilityTopic": "home/devices/main_panel/available",
+    "statusTopic": "home/devices/main_panel/status",
     "debugTopic": "home/devices/main_panel/debug",
     "interfaces": [
         {

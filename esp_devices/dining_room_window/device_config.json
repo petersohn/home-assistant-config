@@ -1,7 +1,8 @@
 {
     "debug": true,
     "name": "dining_room_window",
-    "availabilityTopic": "home/devices/dining_room_window/availability",
+    "availabilityTopic": "home/devices/dining_room_window/available",
+    "statusTopic": "home/devices/dining_room_window/status",
     "debugTopic": "home/devices/dining_room_window/debug",
     "interfaces": [
         {

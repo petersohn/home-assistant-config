@@ -1,7 +1,8 @@
 {
     "debug": true,
     "name": "serverPowerSupply",
-    "availabilityTopic": "home/serverPowerSupply/availability",
+    "availabilityTopic": "home/serverPowerSupply/available",
+    "statusTopic": "home/serverPowerSupply/status",
     "debugTopic": "home/serverPowerSupply/debug",
     "interfaces": [
         {

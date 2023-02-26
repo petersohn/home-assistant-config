@@ -1,7 +1,8 @@
 {
     "debug": false,
     "name": "attic_lower",
-    "availabilityTopic": "home/devices/attic_lower/availability",
+    "availabilityTopic": "home/devices/attic_lower/available",
+    "statusTopic": "home/devices/attic_lower/status",
     "debugTopic": "home/devices/attic_lower/debug",
     "interfaces": [
         {

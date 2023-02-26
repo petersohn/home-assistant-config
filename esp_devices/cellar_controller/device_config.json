@@ -1,7 +1,8 @@
 {
     "debug": true,
     "name": "cellar_controller",
-    "availabilityTopic": "home/devices/cellar_controller/availability",
+    "availabilityTopic": "home/devices/cellar_controller/available",
+    "statusTopic": "home/devices/cellar_controller/status",
     "debugTopic": "home/devices/cellar_controller/debug",
     "interfaces": [
         {

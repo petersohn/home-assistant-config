@@ -1,7 +1,8 @@
 {
     "debug": false,
     "name": "bedroom_temperature",
-    "availabilityTopic": "home/devices/bedroom_temperature/availability",
+    "availabilityTopic": "home/devices/bedroom_temperature/available",
+    "statusTopic": "home/devices/bedroom_temperature/status",
     "debugTopic": "home/devices/bedroom_temperature/debug",
     "interfaces": [
         {

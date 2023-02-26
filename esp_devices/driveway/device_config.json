@@ -1,7 +1,8 @@
 {
     "debug": true,
     "name": "driveway",
-    "availabilityTopic": "home/devices/driveway/availability",
+    "availabilityTopic": "home/devices/driveway/available",
+    "statusTopic": "home/devices/driveway/status",
     "debugTopic": "home/devices/driveway/debug",
     "interfaces": [
         {

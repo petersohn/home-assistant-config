@@ -1,7 +1,8 @@
 {
     "debug": true,
     "name": "well_remote",
-    "availabilityTopic": "home/devices/well_remote/availability",
+    "availabilityTopic": "home/devices/well_remote/available",
+    "statusTopic": "home/devices/well_remote/status",
     "debugTopic": "home/devices/well_remote/debug",
     "interfaces": [
         {
