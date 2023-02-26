@@ -174,8 +174,8 @@ sensor:
         {{ temp | to_json }}
 
 binary_sensor:
-  - state_topic: home/devices/well_controller/availability
-    json_attributes_topic: home/devices/well_controller/availability
+  - state_topic: home/devices/well_controller/available
+    json_attributes_topic: home/devices/well_controller/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -184,11 +184,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: well_controller_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/main_controller/availability
-    json_attributes_topic: home/devices/main_controller/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/main_controller/available
+    json_attributes_topic: home/devices/main_controller/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -197,11 +196,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: main_controller_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/main_controller2/availability
-    json_attributes_topic: home/devices/main_controller2/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/main_controller2/available
+    json_attributes_topic: home/devices/main_controller2/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -210,11 +208,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: main_controller2_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/furnaceTemperature/availability
-    json_attributes_topic: home/devices/furnaceTemperature/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/furnaceTemperature/available
+    json_attributes_topic: home/devices/furnaceTemperature/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -223,11 +220,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: furnace_temperature_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/driveway/availability
-    json_attributes_topic: home/devices/driveway/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/driveway/available
+    json_attributes_topic: home/devices/driveway/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -236,11 +232,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: driveway_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/cellar_controller/availability
-    json_attributes_topic: home/devices/cellar_controller/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/cellar_controller/available
+    json_attributes_topic: home/devices/cellar_controller/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -249,11 +244,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: cellar_controller_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/garage_controller/availability
-    json_attributes_topic: home/devices/garage_controller/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/garage_controller/available
+    json_attributes_topic: home/devices/garage_controller/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -262,11 +256,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: garage_controller_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/living_room_temperature/availability
-    json_attributes_topic: home/devices/living_room_temperature/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/living_room_temperature/available
+    json_attributes_topic: home/devices/living_room_temperature/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -275,11 +268,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: living_room_temperature_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/bedroom_temperature/availability
-    json_attributes_topic: home/devices/bedroom_temperature/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/bedroom_temperature/available
+    json_attributes_topic: home/devices/bedroom_temperature/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -288,11 +280,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: bedroom_temperature_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/dishwasher_sensor/availability
-    json_attributes_topic: home/devices/dishwasher_sensor/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/dishwasher_sensor/available
+    json_attributes_topic: home/devices/dishwasher_sensor/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -301,11 +292,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: dishwasher_sensor_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/gate_reflector/availability
-    json_attributes_topic: home/devices/gate_reflector/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/gate_reflector/available
+    json_attributes_topic: home/devices/gate_reflector/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -314,11 +304,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: gate_reflector_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/attic_lower/availability
-    json_attributes_topic: home/devices/attic_lower/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/attic_lower/available
+    json_attributes_topic: home/devices/attic_lower/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -327,11 +316,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: attic_lower_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/dining_room_window/availability
-    json_attributes_topic: home/devices/dining_room_window/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/dining_room_window/available
+    json_attributes_topic: home/devices/dining_room_window/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -340,11 +328,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: dining_room_window_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/living_room_window/availability
-    json_attributes_topic: home/devices/living_room_window/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/living_room_window/available
+    json_attributes_topic: home/devices/living_room_window/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -353,11 +340,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: living_room_window_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/balcony_controller/availability
-    json_attributes_topic: home/devices/balcony_controller/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/balcony_controller/available
+    json_attributes_topic: home/devices/balcony_controller/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -366,11 +352,10 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: balcony_controller_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
-  - state_topic: home/devices/christmas_tree_switch/availability
-    json_attributes_topic: home/devices/christmas_tree_switch/availability
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/christmas_tree_switch/available
+    json_attributes_topic: home/devices/christmas_tree_switch/status
     json_attributes_template: >
         {% set temp = {
             'free_memory': value_json.freeMemory,
@@ -379,9 +364,8 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: christmas_tree_switcher_available
-    value_template: '{{ value_json.available }}'
-    payload_on: true
-    payload_off: false
+    payload_on: 1
+    payload_off: 0
 
   - state_topic: home/climate_living_room/tele/LWT
     json_attributes_topic: home/climate_living_room/tele/STATE
