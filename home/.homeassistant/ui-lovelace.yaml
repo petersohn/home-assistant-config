@@ -706,6 +706,12 @@ views:
               - input_select.light_outside_5
               - input_select.light_outside_6
             state_color: true
+      - type: entities
+        state_color: true
+        entities:
+          - switch.christmas_tree
+          - input_select.christmas_tree
+        show_header_toggle: false
       - type: vertical-stack
         cards:
         - type: horizontal-stack
@@ -785,12 +791,6 @@ views:
         state_color: true
         entities:
           - switch.socket_bedroom_1
-        show_header_toggle: false
-      - type: entities
-        state_color: true
-        entities:
-          - switch.christmas_tree
-          - input_select.christmas_tree
         show_header_toggle: false
       - type: entities
         entities:

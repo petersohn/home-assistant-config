@@ -8,144 +8,218 @@ sensor:
     unit_of_measurement: "°C"
     name: temperature_outside
     expire_after: 120
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/humidity/outside
     unit_of_measurement: "%"
     name: humidity_outside
     expire_after: 120
-  - state_topic: home/sensors/temperature/outside2
-    unit_of_measurement: "°C"
-    name: temperature_outside2
-    expire_after: 120
-  - state_topic: home/sensors/humidity/outside2
-    unit_of_measurement: "%"
-    name: humidity_outside2
-    expire_after: 120
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/furnace_room
     unit_of_measurement: "°C"
     name: temperature_furnace_room
     expire_after: 120
+    availability_topic: home/devices/furnaceTemperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/humidity/furnace_room
     unit_of_measurement: "%"
     name: humidity_furnace_room
     expire_after: 120
+    availability_topic: home/devices/furnaceTemperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/cellar
     unit_of_measurement: "°C"
     name: temperature_cellar
     expire_after: 120
+    availability_topic: home/devices/cellar_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/humidity/cellar
     unit_of_measurement: "%"
     name: humidity_cellar
     expire_after: 120
+    availability_topic: home/devices/cellar_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/attic
     unit_of_measurement: "°C"
     name: temperature_attic
     expire_after: 120
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/humidity/attic
     unit_of_measurement: "%"
     name: humidity_attic
     expire_after: 120
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/living_room/lower
     unit_of_measurement: "°C"
     name: temperature_living_room_lower
     expire_after: 120
+    availability_topic: home/devices/living_room_temperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/humidity/living_room/lower
     unit_of_measurement: "%"
     name: humidity_living_room_lower
     expire_after: 120
+    availability_topic: home/devices/living_room_temperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/living_room/upper
     unit_of_measurement: "°C"
     name: temperature_living_room_upper
     expire_after: 120
+    availability_topic: home/devices/living_room_temperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/humidity/living_room/upper
     unit_of_measurement: "%"
     name: humidity_living_room_upper
     expire_after: 120
+    availability_topic: home/devices/living_room_temperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/bedroom/lower
     unit_of_measurement: "°C"
     name: temperature_bedroom_lower
     expire_after: 120
+    availability_topic: home/devices/bedroom_temperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/humidity/bedroom/lower
     unit_of_measurement: "%"
     name: humidity_bedroom_lower
     expire_after: 120
+    availability_topic: home/devices/bedroom_temperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/bedroom/upper
     unit_of_measurement: "°C"
     name: temperature_bedroom_upper
     expire_after: 120
+    availability_topic: home/devices/bedroom_temperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/humidity/bedroom/upper
     unit_of_measurement: "%"
     name: humidity_bedroom_upper
     expire_after: 120
+    availability_topic: home/devices/bedroom_temperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/kitchen
     unit_of_measurement: "°C"
     name: temperature_kitchen
     expire_after: 120
+    availability_topic: home/devices/dishwasher_sensor/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/humidity/kitchen
     unit_of_measurement: "%"
     name: humidity_kitchen
     expire_after: 120
+    availability_topic: home/devices/dishwasher_sensor/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/dishwasher
     unit_of_measurement: "°C"
     name: temperature_dishwasher
     expire_after: 30
+    availability_topic: home/devices/dishwasher_sensor/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/water/dishwasher
     unit_of_measurement: "l"
     name: water_usage_dishwasher
-  - state_topic: home/sensors/water/main
-    unit_of_measurement: "l"
-    name: water_usage
+    availability_topic: home/devices/dishwasher_sensor/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/furnace/gas
     unit_of_measurement: "°C"
     name: temperature_furnace_gas
     expire_after: 30
+    availability_topic: home/devices/furnaceTemperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/furnace/wood
     unit_of_measurement: "°C"
     name: temperature_furnace_wood
     expire_after: 30
+    availability_topic: home/devices/furnaceTemperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/furnace/wood_in
     unit_of_measurement: "°C"
     name: temperature_furnace_wood_in
     expire_after: 30
+    availability_topic: home/devices/furnaceTemperature/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/hot_water
     unit_of_measurement: "°C"
     name: temperature_hot_water
     expire_after: 30
+    availability_topic: home/devices/cellar_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/wind/direction
     unit_of_measurement: "°"
     name: wind_direction
     expire_after: 30
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/wind/strength
     unit_of_measurement: "km/h"
     name: wind_strength
     expire_after: 30
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/rain
     unit_of_measurement: "mm"
     name: rain
-  - state_topic: home/sensors/light/shadow
-    unit_of_measurement: "%"
-    name: light_shadow
-    value_template: "{{ value | float / 10.24 }}"
-    expire_after: 60
   - state_topic: home/sensors/light/sunlight
     unit_of_measurement: "%"
     name: light_sunlight
     value_template: "{{ value | float / 10.24 }}"
     expire_after: 60
+    availability_topic: home/devices/main_controller2/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/air_quality/outside
     unit_of_measurement: "μg/m³"
     name: pm1_outside
     value_template: '{{ value_json.pm1 }}'
     expire_after: 120
+    availability_topic: home/devices/balcony_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/air_quality/outside
     unit_of_measurement: "μg/m³"
     name: pm2_5_outside
     value_template: '{{ value_json.pm2_5 }}'
     expire_after: 120
+    availability_topic: home/devices/balcony_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/air_quality/outside
     unit_of_measurement: "μg/m³"
     name: pm10_outside
     value_template: '{{ value_json.pm10 }}'
     expire_after: 120
+    availability_topic: home/devices/balcony_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/climate_living_room/tele/SENSOR
     json_attributes_topic: home/climate_living_room/tele/SENSOR
     unit_of_measurement: "W"
@@ -392,46 +466,79 @@ binary_sensor:
     name: motion_sensor_driveway_uppest
     payload_on: 1
     payload_off: 0
+    # availability_topic: home/devices/gate_reflector/available
+    # payload_available: 1
+    # payload_not_available: 0
   - state_topic: home/sensors/motion/driveway_upper
     name: motion_sensor_driveway_upper
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/garage_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/motion/driveway_lower
     name: motion_sensor_driveway_lower
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/garage_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/motion/garage
     name: motion_sensor_garage
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/garage_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/motion/garage2
     name: motion_sensor_garage2
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/garage_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/motion/well
     name: motion_sensor_well
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/door/attic_hatch
     name: door_attic_hatch
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/attic_lower/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/door/main_entrance
     name: door_main_entrance
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/main_controller2/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/window/entrance
     name: window_entrance
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/main_controller2/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/window/bedroom
     name: window_bedroom
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/main_controller2/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/window/living_room
     name: window_living_room
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/living_room_window/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: "$SYS/broker/connection/hassbian.homeassistant_gateway/state"
     name: mosquitto_bridge_available
     payload_on: 1
@@ -450,6 +557,9 @@ cover:
     position_topic: "home/blind/dining_room/position"
     position_open: 100
     position_closed: 0
+    availability_topic: home/devices/dining_room_window/available
+    payload_available: 1
+    payload_not_available: 0
   - command_topic: "home/blind/living_room/set"
     set_position_topic: "home/blind/living_room/set"
     device_class: blind
@@ -462,6 +572,9 @@ cover:
     position_topic: "home/blind/living_room/position"
     position_open: 100
     position_closed: 0
+    availability_topic: home/devices/living_room_window/available
+    payload_available: 1
+    payload_not_available: 0
 
 switch:
   - name: well
@@ -469,136 +582,217 @@ switch:
     state_topic: home/switches/well/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: auto_sprinkler1
     command_topic: home/switches/auto_sprinkler1/set
     state_topic: home/switches/auto_sprinkler1/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: auto_sprinkler2
     command_topic: home/switches/auto_sprinkler2/set
     state_topic: home/switches/auto_sprinkler2/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: auto_sprinkler3
     command_topic: home/switches/auto_sprinkler3/set
     state_topic: home/switches/auto_sprinkler3/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: auto_sprinkler4
     command_topic: home/switches/auto_sprinkler4/set
     state_topic: home/switches/auto_sprinkler4/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: auto_sprinkler_cellar
     command_topic: home/switches/auto_sprinkler_cellar/set
     state_topic: home/switches/auto_sprinkler_cellar/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: balcony_sprinkler
     command_topic: home/switches/balcony_sprinkler/set
     state_topic: home/switches/balcony_sprinkler/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: heating_pump
     command_topic: home/switches/heating_pump/set
     state_topic: home/switches/heating_pump/status
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/furnaceTemperature/available
+    payload_available: 1
+    payload_not_available: 0
   - name: hot_water_pump
     command_topic: home/switches/hot_water_pump/set
     state_topic: home/switches/hot_water_pump/status
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/furnaceTemperature/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_driveway
     command_topic: home/switches/lights/driveway/set
     state_topic: home/switches/lights/driveway/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/driveway/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_well
     command_topic: home/switches/lights/well/set
     state_topic: home/switches/lights/well/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_attic_downstairs
     command_topic: home/switches/lights/attic/downstairs/set
     state_topic: home/switches/lights/attic/downstairs/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/attic_lower/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_attic_upstairs
     command_topic: home/switches/lights/attic/upstairs/set
     state_topic: home/switches/lights/attic/upstairs/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_cellar
     command_topic: home/switches/lights/cellar/set
     state_topic: home/switches/lights/cellar/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/cellar_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_garage
     command_topic: home/switches/lights/garage/set
     state_topic: home/switches/lights/garage/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/garage_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_christmas_front
     command_topic: home/switches/lights/christmas/front/set
     state_topic: home/switches/lights/christmas/front/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_christmas_tree
     command_topic: home/switches/lights/christmas/tree/set
     state_topic: home/switches/lights/christmas/tree/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/well_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_christmas_balcony
     command_topic: home/switches/lights/christmas/balcony/set
     state_topic: home/switches/lights/christmas/balcony/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/balcony_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_gate_reflector
     command_topic: home/switches/lights/gate_reflector/set
     state_topic: home/switches/lights/gate_reflector/state
     payload_on: 1
     payload_off: 0
+    # availability_topic: home/devices/gate_reflector/available
+    # payload_available: 1
+    # payload_not_available: 0
   - name: light_outside_1
     command_topic: home/switches/lights/outside/1/set
     state_topic: home/switches/lights/outside/1/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_outside_2
     command_topic: home/switches/lights/outside/2/set
     state_topic: home/switches/lights/outside/2/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_outside_3
     command_topic: home/switches/lights/outside/3/set
     state_topic: home/switches/lights/outside/3/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_outside_4
     command_topic: home/switches/lights/outside/4/set
     state_topic: home/switches/lights/outside/4/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_outside_5
     command_topic: home/switches/lights/outside/5/set
     state_topic: home/switches/lights/outside/5/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/attic_lower/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_outside_6
     command_topic: home/switches/lights/outside/6/set
     state_topic: home/switches/lights/outside/6/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/attic_lower/available
+    payload_available: 1
+    payload_not_available: 0
   - name: socket_bedroom_1
     command_topic: home/switches/socket_bedroom_1/bedroom/set
     state_topic: home/switches/socket_bedroom_1/bedroom/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/bedroom_temperature/available
+    payload_available: 1
+    payload_not_available: 0
   - name: heater
     command_topic: home/switches/heater/main/set
     state_topic: home/switches/heater/main/status
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/furnaceTemperature/available
+    payload_available: 1
+    payload_not_available: 0
   - name: desktop_player
     command_topic: home/switches/desktop_player/set
     state_topic: home/switches/desktop_player/state
@@ -619,3 +813,9 @@ switch:
     state_topic: home/switches/christmas_tree/state
     payload_on: 1
     payload_off: 0
+    availability_topic: home/devices/christmas_tree_switch/available
+    payload_available: 1
+    payload_not_available: 0
+    availability_topic: home/devices/christmas_tree_switch/available
+    payload_available: 1
+    payload_not_available: 0
