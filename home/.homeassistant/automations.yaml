@@ -145,9 +145,13 @@
       to: 'not_home'
       for: '00:01:00'
   condition:
-    condition: state
-    entity_id: input_select.presence_mode
-    state: 'home'
+    and:
+      - condition: state
+        entity_id: input_select.presence_mode
+        state: 'home'
+      - not:
+        - condition: template
+          value_template: !secret wifi_sensor_template
   action:
       - service: input_select.select_option
         data_template:

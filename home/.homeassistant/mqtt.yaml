@@ -734,7 +734,7 @@ switch:
     state_topic: home/switches/lights/outside/1/state
     payload_on: 1
     payload_off: 0
-    availability_topic: home/devices/main_controller/available
+    availability_topic: home/devices/main_controller2/available
     payload_available: 1
     payload_not_available: 0
   - name: light_outside_2
@@ -742,7 +742,7 @@ switch:
     state_topic: home/switches/lights/outside/2/state
     payload_on: 1
     payload_off: 0
-    availability_topic: home/devices/main_controller/available
+    availability_topic: home/devices/main_controller2/available
     payload_available: 1
     payload_not_available: 0
   - name: light_outside_3
@@ -750,7 +750,7 @@ switch:
     state_topic: home/switches/lights/outside/3/state
     payload_on: 1
     payload_off: 0
-    availability_topic: home/devices/main_controller/available
+    availability_topic: home/devices/main_controller2/available
     payload_available: 1
     payload_not_available: 0
   - name: light_outside_4
@@ -758,7 +758,7 @@ switch:
     state_topic: home/switches/lights/outside/4/state
     payload_on: 1
     payload_off: 0
-    availability_topic: home/devices/main_controller/available
+    availability_topic: home/devices/main_controller2/available
     payload_available: 1
     payload_not_available: 0
   - name: light_outside_5
@@ -798,6 +798,9 @@ switch:
     state_topic: home/switches/desktop_player/state
     payload_on: 1
     payload_off: 0
+    # availability_topic: home/devices/desktop_player/available
+    # payload_available: 1
+    # payload_not_available: 0
   - name: climate_living_room
     command_topic: home/climate_living_room/cmnd/POWER
     state_topic: home/climate_living_room/stat/POWER
@@ -813,9 +816,6 @@ switch:
     state_topic: home/switches/christmas_tree/state
     payload_on: 1
     payload_off: 0
-    availability_topic: home/devices/christmas_tree_switch/available
-    payload_available: 1
-    payload_not_available: 0
     availability_topic: home/devices/christmas_tree_switch/available
     payload_available: 1
     payload_not_available: 0
