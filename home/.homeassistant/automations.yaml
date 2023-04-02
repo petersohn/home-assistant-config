@@ -472,3 +472,17 @@
         entity_id: input_select.climate_mode
       data:
         option: 'auto'
+
+- alias: zene bekapcsolás
+  trigger:
+    platform: state
+    entity_id: sensor.time
+    to: '07:05'
+  condition:
+    condition: state
+    entity_id: input_select.presence_mode
+    state: 'home'
+  action:
+    - service: homeassistant.turn_on
+      data_template:
+          entity_id: switch.desktop_player
