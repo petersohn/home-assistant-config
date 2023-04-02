@@ -8,8 +8,7 @@
         {
             "type": "input",
             "name": "rain",
-            "pin": 0,
-            "cycle": "multi"
+            "pin": 0
         },
         {
             "type": "counter",
@@ -30,6 +29,7 @@
         {
             "type": "input",
             "name": "light_switch_attic_upstairs",
+            "cycle": "single",
             "pin": 4
         },
         {

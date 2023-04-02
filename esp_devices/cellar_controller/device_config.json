@@ -8,6 +8,7 @@
         {
             "type": "input",
             "name": "light_switch_cellar",
+            "cycle": "single",
             "pin": 12
         },
         {

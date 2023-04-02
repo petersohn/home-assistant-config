@@ -22,10 +22,10 @@
             "pin": 1
         },
         {
-            "type": "hm3301",
-            "name": "hm3301",
-            "sda": 0,
-            "scl": 2
+            "type": "sds011",
+            "name": "sds011",
+            "tx": 0,
+            "rx": 2
         }
     ],
     "actions": [
@@ -43,10 +43,10 @@
         },
         {
             "type": "publish",
-            "interface": "hm3301",
+            "interface": "sds011",
             "topic": "home/sensors/air_quality/outside",
             "retain": true,
-            "template": "{\"pm1\":%1,\"pm2_5\":%2,\"pm10\":%3}"
+            "template": "{\"pm2_5\":%1,\"pm10\":%2}"
         }
     ]
 }
