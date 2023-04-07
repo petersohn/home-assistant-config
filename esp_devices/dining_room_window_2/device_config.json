@@ -1,0 +1,95 @@
+{
+    "debug": true,
+    "name": "dining_room_window_2",
+    "availabilityTopic": "home/devices/dining_room_window_2/available",
+    "statusTopic": "home/devices/dining_room_window_2/status",
+    "debugTopic": "home/devices/dining_room_window_2/debug",
+    "interfaces": [
+        {
+            "type": "cover",
+            "name": "blind",
+            "commandTopic": "home/blind/dining_room_2/set",
+            "upPin": 14,
+            "downPin": 16,
+            "upMovementPin": 3,
+            "downMovementPin": 4,
+            "invertInput": false,
+            "invertOutput": true,
+            "closedPosition": 25
+        },
+        {
+            "type": "input",
+            "name": "up_switch",
+            "pin": 0
+        },
+        {
+            "type": "input",
+            "name": "down_switch",
+            "pin": 2
+        },
+        {
+            "type": "input",
+            "name": "stop_switch",
+            "pin": 5
+        },
+        {
+            "type": "input",
+            "name": "window",
+            "pin": 12
+        },
+        {
+            "type": "input",
+            "name": "door",
+            "pin": 13
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "blind",
+            "topic": "home/blind/dining_room_2/state",
+            "template": "%1",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "blind",
+            "topic": "home/blind/dining_room_2/position",
+            "template": "%2",
+            "retain": true
+        },
+        {
+            "type": "command",
+            "interface": "up_switch",
+            "target": "blind",
+            "command": "OPEN",
+            "value": "0"
+        },
+        {
+            "type": "command",
+            "interface": "down_switch",
+            "target": "blind",
+            "command": "CLOSE",
+            "value": "0"
+        },
+        {
+            "type": "command",
+            "interface": "stop_switch",
+            "target": "blind",
+            "command": "STOP",
+            "value": "0"
+        },
+        {
+            "type": "publish",
+            "interface": "window",
+            "topic": "home/sensors/window/dining_room_2",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "door",
+            "topic": "home/sensors/door/storage",
+            "retain": true
+        }
+    ]
+}
