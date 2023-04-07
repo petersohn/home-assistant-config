@@ -98,7 +98,10 @@ class EntityEnabler(Enabler):
 
     def _on_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('_on_change'):
-            self.change(self._get())
+            value = self._get()
+            self.log('state change {}: {} -> {} value={}'.format(
+                entity, old, new, value))
+            self.change(value)
 
     def _get(self):
         return False

@@ -225,7 +225,7 @@ sensor:
     unit_of_measurement: "W"
     name: power_climate_living_room
     value_template: '{{ value_json.ENERGY.Power }}'
-    device_class: energy
+    device_class: power
     json_attributes_template: >
         {% set temp = {
             'today': value_json.ENERGY.Today,
@@ -238,7 +238,7 @@ sensor:
     unit_of_measurement: "W"
     name: power_climate_bedroom
     value_template: '{{ value_json.ENERGY.Power }}'
-    device_class: energy
+    device_class: power
     json_attributes_template: >
         {% set temp = {
             'today': value_json.ENERGY.Today,
