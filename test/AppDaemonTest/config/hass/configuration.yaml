@@ -35,8 +35,35 @@ input_select:
             - "off"
 
 input_text:
-  test_text_1:
-  test_text_2:
+    test_text_1:
+    test_text_2:
+
+input_number:
+    cover_position:
+        min: 0
+        max: 100
+        initial: 0
+
+cover:
+    - platform: template
+      covers:
+          test_cover:
+              position_template: "{{ states('input_number.cover_position') }}"
+              open_cover:
+                  service: input_number.set_value
+                  data:
+                      entity_id: input_number.cover_position
+                      value: 100
+              close_cover:
+                  service: input_number.set_value
+                  data:
+                      entity_id: input_number.cover_position
+                      value: 0
+              set_cover_position:
+                  service: input_number.set_value
+                  data:
+                      entity_id: input_number.cover_position
+                      value: "{{ position }}"
 
 history:
 

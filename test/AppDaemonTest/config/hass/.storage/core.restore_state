@@ -1,0 +1,211 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "core.restore_state",
+  "data": [
+    {
+      "state": {
+        "entity_id": "input_select.test_input_select",
+        "state": "one",
+        "attributes": {
+          "options": [
+            "one",
+            "two",
+            "three",
+            "four"
+          ],
+          "editable": false
+        },
+        "last_changed": "2023-04-10T10:49:21.150240+00:00",
+        "last_updated": "2023-04-10T10:49:21.150240+00:00",
+        "context": {
+          "id": "01GXNCHPZYWGH6G0E7RN51VQ5Q",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "extra_data": null,
+      "last_seen": "2023-04-10T10:51:46.217484+00:00"
+    },
+    {
+      "state": {
+        "entity_id": "input_select.test_auto_switch_switch",
+        "state": "auto",
+        "attributes": {
+          "options": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "editable": false
+        },
+        "last_changed": "2023-04-10T10:49:21.151041+00:00",
+        "last_updated": "2023-04-10T10:49:21.151041+00:00",
+        "context": {
+          "id": "01GXNCHPZZ9JKWW88D1NTCFC3G",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "extra_data": null,
+      "last_seen": "2023-04-10T10:51:46.217484+00:00"
+    },
+    {
+      "state": {
+        "entity_id": "input_text.test_text_1",
+        "state": "unknown",
+        "attributes": {
+          "editable": false,
+          "min": 0,
+          "max": 100,
+          "pattern": null,
+          "mode": "text"
+        },
+        "last_changed": "2023-04-10T10:49:21.151138+00:00",
+        "last_updated": "2023-04-10T10:49:21.151138+00:00",
+        "context": {
+          "id": "01GXNCHPZZ3TB971WQBH6Y4Y9B",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "extra_data": null,
+      "last_seen": "2023-04-10T10:51:46.217484+00:00"
+    },
+    {
+      "state": {
+        "entity_id": "input_text.test_text_2",
+        "state": "unknown",
+        "attributes": {
+          "editable": false,
+          "min": 0,
+          "max": 100,
+          "pattern": null,
+          "mode": "text"
+        },
+        "last_changed": "2023-04-10T10:49:21.151222+00:00",
+        "last_updated": "2023-04-10T10:49:21.151222+00:00",
+        "context": {
+          "id": "01GXNCHPZZKE39V61VTC8HKTSB",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "extra_data": null,
+      "last_seen": "2023-04-10T10:51:46.217484+00:00"
+    },
+    {
+      "state": {
+        "entity_id": "input_boolean.test_switch",
+        "state": "off",
+        "attributes": {
+          "editable": false
+        },
+        "last_changed": "2023-04-10T10:49:21.151310+00:00",
+        "last_updated": "2023-04-10T10:49:21.151310+00:00",
+        "context": {
+          "id": "01GXNCHPZZF8WX4JJVVXBWZA09",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "extra_data": null,
+      "last_seen": "2023-04-10T10:51:46.217484+00:00"
+    },
+    {
+      "state": {
+        "entity_id": "input_boolean.test_switch2",
+        "state": "off",
+        "attributes": {
+          "editable": false
+        },
+        "last_changed": "2023-04-10T10:49:21.151390+00:00",
+        "last_updated": "2023-04-10T10:49:21.151390+00:00",
+        "context": {
+          "id": "01GXNCHPZZ8739ZNAE70S9R6XC",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "extra_data": null,
+      "last_seen": "2023-04-10T10:51:46.217484+00:00"
+    },
+    {
+      "state": {
+        "entity_id": "input_boolean.test_switch3",
+        "state": "off",
+        "attributes": {
+          "editable": false
+        },
+        "last_changed": "2023-04-10T10:49:21.151469+00:00",
+        "last_updated": "2023-04-10T10:49:21.151469+00:00",
+        "context": {
+          "id": "01GXNCHPZZRYVK6SJGDRX651S7",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "extra_data": null,
+      "last_seen": "2023-04-10T10:51:46.217484+00:00"
+    },
+    {
+      "state": {
+        "entity_id": "input_boolean.test_switch4",
+        "state": "off",
+        "attributes": {
+          "editable": false
+        },
+        "last_changed": "2023-04-10T10:49:21.151546+00:00",
+        "last_updated": "2023-04-10T10:49:21.151546+00:00",
+        "context": {
+          "id": "01GXNCHPZZHM1P0RADQH1AB37A",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "extra_data": null,
+      "last_seen": "2023-04-10T10:51:46.217484+00:00"
+    },
+    {
+      "state": {
+        "entity_id": "input_boolean.temperature_controller_pump",
+        "state": "off",
+        "attributes": {
+          "editable": false
+        },
+        "last_changed": "2023-04-10T10:49:21.151626+00:00",
+        "last_updated": "2023-04-10T10:49:21.151626+00:00",
+        "context": {
+          "id": "01GXNCHPZZNV7B2KX4063XF7D3",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "extra_data": null,
+      "last_seen": "2023-04-10T10:51:46.217484+00:00"
+    },
+    {
+      "state": {
+        "entity_id": "input_number.cover_position",
+        "state": "0.0",
+        "attributes": {
+          "initial": 0.0,
+          "editable": false,
+          "min": 0.0,
+          "max": 100.0,
+          "step": 1.0,
+          "mode": "slider"
+        },
+        "last_changed": "2023-04-10T10:49:21.151707+00:00",
+        "last_updated": "2023-04-10T10:49:21.151707+00:00",
+        "context": {
+          "id": "01GXNCHPZZGHK5SDYCNGK0G45E",
+          "parent_id": null,
+          "user_id": null
+        }
+      },
+      "extra_data": null,
+      "last_seen": "2023-04-10T10:51:46.217484+00:00"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "auth",
+  "data": {
+    "users": [
+      {
+        "id": "629075ee6fd64ab0b912d76e7811b014",
+        "group_ids": [
+          "system-read-only"
+        ],
+        "is_owner": false,
+        "is_active": true,
+        "name": "Home Assistant Content",
+        "system_generated": true,
+        "local_only": false
+      }
+    ],
+    "groups": [
+      {
+        "id": "system-admin",
+        "name": "Administrators"
+      },
+      {
+        "id": "system-users",
+        "name": "Users"
+      },
+      {
+        "id": "system-read-only",
+        "name": "Read Only"
+      }
+    ],
+    "credentials": [],
+    "refresh_tokens": [
+      {
+        "id": "5bc6d7de76264d2b9674e5b36ceb1c75",
+        "user_id": "629075ee6fd64ab0b912d76e7811b014",
+        "client_id": null,
+        "client_name": null,
+        "client_icon": null,
+        "token_type": "system",
+        "created_at": "2023-04-10T10:47:40.548704+00:00",
+        "access_token_expiration": 1800.0,
+        "token": "56f34ef767b7686b7a5d6564175f66fb637a71d3a4e9d0503f8061886270920dcdabf39c53dcb79f95bfbe3ab2bcca49a5a9f7edef62cd4a5468cb9c65e580bf",
+        "jwt_key": "f35813f0f154a106936d574b8e32300c4e724925ac15f3f7ea73379a8af4fef7f840e29a01d783fbca426536f379d7d42763b340911b996a9a0872d909e7e74d",
+        "last_used_at": null,
+        "last_used_ip": null,
+        "credential_id": null,
+        "version": "2023.4.2"
+      }
+    ]
+  }
+}
