@@ -914,6 +914,4 @@ views:
           - sensor.tracker_last_updated
           - person.peti
           - sensor.oneplus_battery_level
-          - sensor.living_room_window_blind_state
-          - sensor.dining_room_window_blind_state
     icon: 'mdi:wrench'

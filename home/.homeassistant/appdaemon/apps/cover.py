@@ -22,7 +22,7 @@ class CoverController(hass.Hass):
 
     def _set_value(self, value):
         self.log('Changing to {}'.format(value))
-        if type(value) is float:
+        if type(value) is float or type(value) is int:
             if value >= 0 and value <= 100:
                 self.call_service(
                     'cover/set_cover_position',

@@ -1063,18 +1063,22 @@ freeze_alerts:
         - sensor.temperature_living_room_lower
         - sensor.temperature_kitchen
 
-dining_room_window_blind_state:
-    module: expression
-    class: Expression
+dining_room_window_blind:
+    module: cover
+    class: CoverController
     dependencies:
         - locker
+    global_dependencies:
+        - expression
     expr: >
         'open' if v.input_select.presence_mode == 'home' or (
         v.input_select.presence_mode == 'sleep' and
         v.binary_sensor.window_entrance) or (
         v.input_select.presence_mode == 'away' and e.is_sunlight)
         else 'closed'
-    target: sensor.dining_room_window_blind_state
+    target: cover.dining_room
+    delay:
+      seconds: 30
 
 is_dark_enough_to_close_blind:
     module: enabler
@@ -1091,21 +1095,25 @@ is_dark_enough_to_close_blind:
     global_dependencies:
         - expression
 
-living_room_window_blind_state:
-    module: expression
-    class: Expression
+living_room_window_blind:
+    module: cover
+    class: CoverController
     dependencies:
         - locker
         - is_dark_enough_to_close_blind
+    global_dependencies:
+        - expression
     expr: >
         'open' if v.input_select.presence_mode == 'home' and (
         not e.is_dark_enough_to_close_blind or v.binary_sensor.window_living_room)
-        else 'half' if (v.input_select.presence_mode == 'away' and
+        else 45 if (v.input_select.presence_mode == 'away' and
         not e.is_dark_enough_to_close_blind) or (
         v.input_select.presence_mode == 'sleep' and
         v.binary_sensor.window_living_room)
         else 'closed'
-    target: sensor.living_room_window_blind_state
+    target: cover.living_room
+    delay:
+        seconds: 10
 
 cellar_sprinkler_switcher:
     class: TimerSequence
