@@ -1080,13 +1080,13 @@ dining_room_window_blind:
     delay:
       seconds: 30
 
-is_dark_enough_to_close_blind:
+is_light_enough_to_open_blind:
     module: enabler
     class: ExpressionEnabler
     delay:
         minutes: 5
     expr: >
-        e.sun_enabler_night or (
+        not e.sun_enabler_night and not (
         ok.sensor.light_sunlight_adjusted and
         v.sensor.light_sunlight_adjusted <= 40)
     dependencies:
@@ -1095,19 +1095,69 @@ is_dark_enough_to_close_blind:
     global_dependencies:
         - expression
 
+dining_room_2_window_blind:
+    module: cover
+    class: CoverController
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+        - is_light_enough_to_open_blind
+    expr: >
+        'open' if v.input_select.presence_mode == 'home' and (
+        e.is_light_enough_to_open_blind or v.binary_sensor.window_dining_room_2)
+        else 'closed'
+    target: cover.dining_room_2
+    delay:
+      seconds: 30
+
+auto_switch_storage_window_blind:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: input_boolean.storage_window_blind_open
+    reentrant: true
+
+storage_door_open:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_storage_window_blind
+        - locker
+    sensor: binary_sensor.door_storage
+    targets:
+        - auto_switch_storage_window_blind
+    enabler: is_light_enough_to_open_blind
+    time: 30
+
+storage_window_blind:
+    module: cover
+    class: CoverController
+    dependencies:
+        - locker
+        - auto_switch_storage_window_blind
+    global_dependencies:
+        - expression
+    expr: >
+        'open' if v.input_boolean.storage_window_blind_open
+        else 'closed'
+    target:
+        - cover.storage_1
+        - cover.storage_2
+
 living_room_window_blind:
     module: cover
     class: CoverController
     dependencies:
         - locker
-        - is_dark_enough_to_close_blind
+        - is_light_enough_to_open_blind
     global_dependencies:
         - expression
     expr: >
         'open' if v.input_select.presence_mode == 'home' and (
-        not e.is_dark_enough_to_close_blind or v.binary_sensor.window_living_room)
+        e.is_light_enough_to_open_blind or v.binary_sensor.window_living_room)
         else 45 if (v.input_select.presence_mode == 'away' and
-        not e.is_dark_enough_to_close_blind) or (
+        e.is_light_enough_to_open_blind) or (
         v.input_select.presence_mode == 'sleep' and
         v.binary_sensor.window_living_room)
         else 'closed'

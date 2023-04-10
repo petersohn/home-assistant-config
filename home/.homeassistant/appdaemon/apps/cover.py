@@ -6,7 +6,11 @@ import expression
 
 class CoverController(hass.Hass):
     def initialize(self):
-        self.target = self.args['target']
+        target = self.args['target']
+        if type(target) is list:
+            self.targets = target
+        else:
+            self.targets = [target]
         self.mutex = self.get_app('locker').get_mutex('CoverController')
 
         self.expression = expression.ExpressionEvaluator(
@@ -20,22 +24,26 @@ class CoverController(hass.Hass):
     def cleanup(self):
         self.expression.cleanup()
 
+    def _execute(self, service, **kwargs):
+        for target in self.targets:
+            kwargs['entity_id'] = target
+            self.call_service(service, **kwargs)
+
     def _set_value(self, value):
         self.log('Changing to {}'.format(value))
         if type(value) is float or type(value) is int:
             if value >= 0 and value <= 100:
-                self.call_service(
+                self._execute(
                     'cover/set_cover_position',
-                    entity_id=self.target,
                     position=int(value))
                 return
         elif type(value) is str:
             lower = value.lower()
             if lower == 'open':
-                self.call_service('cover/open_cover', entity_id=self.target)
+                self._execute('cover/open_cover')
                 return
             if lower == 'closed':
-                self.call_service('cover/close_cover', entity_id=self.target)
+                self._execute('cover/close_cover')
                 return
 
         self.log('Invalid value: {}'.format(value))

@@ -13,6 +13,7 @@ test_alert:
 skip_balcony_watering:
   name: Terasz locsolás kihagyása
   icon: mdi:water-off
+storage_window_blind_open:
 
 furnace_temperature_maintenance:
   name: Furnace Temperature
