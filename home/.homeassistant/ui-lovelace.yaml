@@ -76,6 +76,7 @@ views:
           - cover.storage_1
           - cover.storage_2
         title: Redőny
+        state_color: true
       - type: vertical-stack
         cards:
           - type: horizontal-stack
