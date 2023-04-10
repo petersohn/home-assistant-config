@@ -96,7 +96,19 @@ binary_sensor.attic_lower_available:
   device_class: plug
 
 binary_sensor.dining_room_window_available:
-  friendly_name: Dining Room Window
+  friendly_name: Dining Room Window Back
+  device_class: plug
+
+binary_sensor.dining_room_window_2_available:
+  friendly_name: Dining Room Window Front
+  device_class: plug
+
+binary_sensor.storage_window_1_available:
+  friendly_name: Storage 1
+  device_class: plug
+
+binary_sensor.storage_window_2_available:
+  friendly_name: Storage 2
   device_class: plug
 
 binary_sensor.living_room_window_available:
@@ -381,8 +393,24 @@ binary_sensor.door_main_entrance:
   friendly_name: "Bejárati ajtó"
   device_class: door
 
+binary_sensor.door_storage:
+  friendly_name: "Kamra ajtó"
+  device_class: door
+
 binary_sensor.window_entrance:
-  friendly_name: "Ablak étkező"
+  friendly_name: "Ablak étkező hátsó"
+  device_class: window
+
+binary_sensor.window_dining_room_2:
+  friendly_name: "Ablak étkező első"
+  device_class: window
+
+binary_sensor.window_storage_1:
+  friendly_name: "Ablak kamra 1"
+  device_class: window
+
+binary_sensor.window_storage_2:
+  friendly_name: "Ablak kamra 2"
   device_class: window
 
 binary_sensor.window_bedroom:
@@ -409,7 +437,16 @@ binary_sensor.availability_alert:
   icon: mdi:flash-alert
 
 cover.dining_room:
-  friendly_name: Étkező
+  friendly_name: Étkező hátsó
+
+cover.dining_room_2:
+  friendly_name: Étkező első
+
+cover.storage_1:
+  friendly_name: Kamra 1
+
+cover.storage_2:
+  friendly_name: Kamra 2
 
 cover.living_room:
   friendly_name: Nappali

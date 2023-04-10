@@ -942,8 +942,9 @@ availability_alerts:
     target: binary_sensor.availability_alert
     trigger_expr: >
       v.input_select.presence_mode != 'sleep' and
-      not v['input_boolean.' + name + '_maintenance'] and
-      not v['binary_sensor.' + name + '_available']
+      not v['input_boolean.' + name + '_maintenance'] and (
+      not ok['binary_sensor.' + name + '_available'] or
+      not v['binary_sensor.' + name + '_available'])
     text_expr: a['binary_sensor.' + name + '_available'].friendly_name
     timeout:
         minutes: 5
@@ -965,8 +966,11 @@ availability_alerts:
         - gate_reflector
         - attic_lower
         - dining_room_window
+        - dining_room_window_2
         - living_room_window
         - balcony_controller
+        - storage_window_1
+        - storage_window_2
 
 window_alerts:
     module: alert
@@ -982,7 +986,12 @@ window_alerts:
         - binary_sensor.window_bedroom
         - binary_sensor.window_living_room
         - binary_sensor.window_entrance
+        - binary_sensor.window_dining_room_2
+        - binary_sensor.window_storage_1
+        - binary_sensor.window_storage_2
+        - binary_sensor.door_main_entrance
         - binary_sensor.door_attic_hatch
+        - binary_sensor.door_storage
 
 tracker_changes:
     class: ChangeTracker
@@ -1200,6 +1209,7 @@ air_quality_alert:
     class: AlertAggregator
     target: binary_sensor.air_quality_alert
     trigger_expr: >
+      ok.sensor.pm10_outside and
       v[name] and
       v.sensor.pm10_outside > 50
     text_expr: a[name].friendly_name

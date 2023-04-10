@@ -51,7 +51,16 @@ attic_lower_maintenance:
   name: Attic Lower
   icon: mdi:wrench
 dining_room_window_maintenance:
-  name: Dining Room Window
+  name: Dining Room Window Back
+  icon: mdi:wrench
+dining_room_window_2_maintenance:
+  name: Dining Room Window Front
+  icon: mdi:wrench
+storage_window_1_maintenance:
+  name: Storage Window 1
+  icon: mdi:wrench
+storage_window_2_maintenance:
+  name: Storage Window 2
   icon: mdi:wrench
 living_room_window_maintenance:
   name: Living Room Window

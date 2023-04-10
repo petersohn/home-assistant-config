@@ -71,7 +71,10 @@ views:
       - type: entities
         entities:
           - cover.dining_room
+          - cover.dining_room_2
           - cover.living_room
+          - cover.storage_1
+          - cover.storage_2
         title: Redőny
       - type: vertical-stack
         cards:
@@ -130,9 +133,13 @@ views:
         entities:
           - binary_sensor.door_attic_hatch
           - binary_sensor.door_main_entrance
+          - binary_sensor.door_storage
           - binary_sensor.window_entrance
+          - binary_sensor.window_dining_room_2
           - binary_sensor.window_bedroom
           - binary_sensor.window_living_room
+          - binary_sensor.window_storage_1
+          - binary_sensor.window_storage_2
           - alert.window_open
         title: Ajtók
         show_header_toggle: false
@@ -841,6 +848,7 @@ views:
           - binary_sensor.bedroom_temperature_available
           - binary_sensor.christmas_tree_switcher_available
           - binary_sensor.dining_room_window_available
+          - binary_sensor.dining_room_window_2_available
           - binary_sensor.cellar_controller_available
           - binary_sensor.dishwasher_sensor_available
           - binary_sensor.driveway_available
@@ -851,6 +859,8 @@ views:
           - binary_sensor.living_room_window_available
           - binary_sensor.main_controller_available
           - binary_sensor.main_controller2_available
+          - binary_sensor.storage_window_1_available
+          - binary_sensor.storage_window_2_available
           - binary_sensor.well_controller_available
           # - binary_sensor.climate_living_room_available
           - alert.availability
@@ -862,7 +872,7 @@ views:
           - input_boolean.attic_lower_maintenance
           - input_boolean.balcony_controller_maintenance
           - input_boolean.bedroom_temperature_maintenance
-          - input_boolean.dining_room_window_maintenance
+          - input_boolean.dining_room_window_2_maintenance
           - input_boolean.cellar_controller_maintenance
           - input_boolean.dishwasher_sensor_maintenance
           - input_boolean.driveway_maintenance
@@ -873,6 +883,8 @@ views:
           - input_boolean.living_room_window_maintenance
           - input_boolean.main_controller_maintenance
           - input_boolean.main_controller2_maintenance
+          - input_boolean.storage_window_1_maintenance
+          - input_boolean.storage_window_2_maintenance
           - input_boolean.well_controller_maintenance
         title: device maintenance
         state_color: true

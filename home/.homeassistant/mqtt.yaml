@@ -404,6 +404,42 @@ binary_sensor:
     name: dining_room_window_available
     payload_on: 1
     payload_off: 0
+  - state_topic: home/devices/dining_room_window_2/available
+    json_attributes_topic: home/devices/dining_room_window_2/status
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: dining_room_window_2_available
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/storage_window_1/available
+    json_attributes_topic: home/devices/storage_window_1/status
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: storage_window_1_available
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/devices/storage_window_2/available
+    json_attributes_topic: home/devices/storage_window_2/status
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: storage_window_2_available
+    payload_on: 1
+    payload_off: 0
   - state_topic: home/devices/living_room_window/available
     json_attributes_topic: home/devices/living_room_window/status
     json_attributes_template: >
@@ -518,11 +554,39 @@ binary_sensor:
     availability_topic: home/devices/main_controller2/available
     payload_available: 1
     payload_not_available: 0
+  - state_topic: home/sensors/door/storage
+    name: door_storage
+    payload_on: 1
+    payload_off: 0
+    availability_topic: home/devices/dining_room_window_2/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/window/entrance
     name: window_entrance
     payload_on: 1
     payload_off: 0
     availability_topic: home/devices/main_controller2/available
+    payload_available: 1
+    payload_not_available: 0
+  - state_topic: home/sensors/window/dining_room_2
+    name: window_dining_room_2
+    payload_on: 1
+    payload_off: 0
+    availability_topic: home/devices/dining_room_window_2/available
+    payload_available: 1
+    payload_not_available: 0
+  - state_topic: home/sensors/window/storage_1
+    name: window_storage_1
+    payload_on: 1
+    payload_off: 0
+    availability_topic: home/devices/storage_window_1/available
+    payload_available: 1
+    payload_not_available: 0
+  - state_topic: home/sensors/window/storage_2
+    name: window_storage_2
+    payload_on: 1
+    payload_off: 0
+    availability_topic: home/devices/storage_window_2/available
     payload_available: 1
     payload_not_available: 0
   - state_topic: home/sensors/window/bedroom
@@ -560,6 +624,21 @@ cover:
     availability_topic: home/devices/dining_room_window/available
     payload_available: 1
     payload_not_available: 0
+  - command_topic: "home/blind/dining_room_2/set"
+    set_position_topic: "home/blind/dining_room_2/set"
+    device_class: blind
+    name: dining_room_2
+    state_topic: "home/blind/dining_room_2/state"
+    state_opening: OPENING
+    state_closing: CLOSING
+    state_open: OPEN
+    state_closed: CLOSED
+    position_topic: "home/blind/dining_room_2/position"
+    position_open: 100
+    position_closed: 0
+    availability_topic: home/devices/dining_room_window_2/available
+    payload_available: 1
+    payload_not_available: 0
   - command_topic: "home/blind/living_room/set"
     set_position_topic: "home/blind/living_room/set"
     device_class: blind
@@ -573,6 +652,36 @@ cover:
     position_open: 100
     position_closed: 0
     availability_topic: home/devices/living_room_window/available
+    payload_available: 1
+    payload_not_available: 0
+  - command_topic: "home/blind/storage_1/set"
+    set_position_topic: "home/blind/storage_1/set"
+    device_class: blind
+    name: storage_1
+    state_topic: "home/blind/storage_1/state"
+    state_opening: OPENING
+    state_closing: CLOSING
+    state_open: OPEN
+    state_closed: CLOSED
+    position_topic: "home/blind/storage_1/position"
+    position_open: 100
+    position_closed: 0
+    availability_topic: home/devices/storage_window_1/available
+    payload_available: 1
+    payload_not_available: 0
+  - command_topic: "home/blind/storage_2/set"
+    set_position_topic: "home/blind/storage_2/set"
+    device_class: blind
+    name: storage_2
+    state_topic: "home/blind/storage_2/state"
+    state_opening: OPENING
+    state_closing: CLOSING
+    state_open: OPEN
+    state_closed: CLOSED
+    position_topic: "home/blind/storage_2/position"
+    position_open: 100
+    position_closed: 0
+    availability_topic: home/devices/storage_window_2/available
     payload_available: 1
     payload_not_available: 0
 
