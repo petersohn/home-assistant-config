@@ -873,6 +873,7 @@ views:
           - input_boolean.attic_lower_maintenance
           - input_boolean.balcony_controller_maintenance
           - input_boolean.bedroom_temperature_maintenance
+          - input_boolean.dining_room_window_maintenance
           - input_boolean.dining_room_window_2_maintenance
           - input_boolean.cellar_controller_maintenance
           - input_boolean.dishwasher_sensor_maintenance
