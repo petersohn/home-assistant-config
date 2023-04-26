@@ -64,8 +64,12 @@ views:
                 entity: sensor.rain_last_hour
                 graph: line
         title: Időjárás
-      - type: button
-        entity: switch.desktop_player
+      - type: horizontal-stack
+        cards:
+        - type: button
+          entity: switch.desktop_player
+        - type: button
+          entity: input_boolean.desktop_player_pause
       # - type: media-control
       #   entity: media_player.desktop
       - type: entities

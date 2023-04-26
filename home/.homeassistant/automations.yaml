@@ -430,3 +430,37 @@
     - service: homeassistant.turn_on
       data_template:
           entity_id: switch.desktop_player
+
+- alias: szünet be
+  trigger:
+    platform: state
+    entity_id: input_boolean.desktop_player_pause
+    to: 'on'
+  action:
+    - service: homeassistant.turn_off
+      data:
+        entity_id: switch.desktop_player
+
+- alias: szünet ki
+  trigger:
+    platform: state
+    entity_id: input_boolean.desktop_player_pause
+    to: 'on'
+    for: '00:07:00'
+  action:
+    - service: homeassistant.turn_on
+      data:
+        entity_id: switch.desktop_player
+    - service: homeassistant.turn_off
+      data:
+        entity_id: input_boolean.desktop_player_pause
+
+- alias: szünet leállítás
+  trigger:
+    platform: state
+    entity_id: switch.desktop_player
+    to: 'on'
+  action:
+    - service: homeassistant.turn_off
+      data:
+        entity_id: input_boolean.desktop_player_pause
