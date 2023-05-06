@@ -12,10 +12,16 @@ class CoverController(hass.Hass):
         self.expression = expression.ExpressionEvaluator(
             self, self.args['expr'], self.on_expression_change)
         self.value = self.expression.get()
+        self.expected_value = None
 
         delay = self.args.get('delay')
         self.delay = datetime.timedelta(**delay) if delay is not None else None
         self.timer = None
+
+        state = self.get_state(self.target)
+        self.log('---> {}'.format(state))
+        self.is_available = state != 'unavailable'
+        self.listen_state(self.on_state_change, entity=self.target)
 
     def cleanup(self):
         self.expression.cleanup()
@@ -26,6 +32,12 @@ class CoverController(hass.Hass):
 
     def _set_value(self, value):
         self.log('Changing to {}'.format(value))
+        self.expected_value = value
+
+        if not self.is_available:
+            self.log('Not available')
+            return
+
         if type(value) is float or type(value) is int:
             if value >= 0 and value <= 100:
                 self._execute(
@@ -66,3 +78,15 @@ class CoverController(hass.Hass):
         with self.mutex.lock('on_expression_change'):
             self.timer = None
             self._set_value(kwargs['value'])
+
+    def on_state_change(self, entity, attribute, old, new, kwargs):
+        with self.mutex.lock('on_state_change'):
+            was_available = self.is_available
+            is_available = new != 'unavailable'
+            self.is_available = is_available
+
+            if not was_available and is_available:
+                self.log('Became available')
+                self._set_value(self.expected_value)
+            elif was_available and not is_available:
+                self.log('Became unavailable')

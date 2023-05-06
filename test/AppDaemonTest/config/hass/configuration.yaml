@@ -20,6 +20,7 @@ input_boolean:
     test_switch3:
     test_switch4:
     temperature_controller_pump:
+    cover_available:
 
 input_select:
     test_input_select:
@@ -49,6 +50,7 @@ cover:
       covers:
           test_cover:
               position_template: "{{ states('input_number.cover_position') }}"
+              availability_template: "{{ states('sensor.cover_available') }}"
               open_cover:
                   service: input_number.set_value
                   data:
