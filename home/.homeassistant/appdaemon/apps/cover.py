@@ -6,11 +6,7 @@ import expression
 
 class CoverController(hass.Hass):
     def initialize(self):
-        target = self.args['target']
-        if type(target) is list:
-            self.targets = target
-        else:
-            self.targets = [target]
+        self.target = self.args['target']
         self.mutex = self.get_app('locker').get_mutex('CoverController')
 
         self.expression = expression.ExpressionEvaluator(
@@ -25,9 +21,8 @@ class CoverController(hass.Hass):
         self.expression.cleanup()
 
     def _execute(self, service, **kwargs):
-        for target in self.targets:
-            kwargs['entity_id'] = target
-            self.call_service(service, **kwargs)
+        kwargs['entity_id'] = self.target
+        self.call_service(service, **kwargs)
 
     def _set_value(self, value):
         self.log('Changing to {}'.format(value))

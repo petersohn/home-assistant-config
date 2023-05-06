@@ -1130,7 +1130,7 @@ storage_door_open:
     enabler: is_light_enough_to_open_blind
     time: 30
 
-storage_window_blind:
+storage_window_blind_1:
     module: cover
     class: CoverController
     dependencies:
@@ -1141,9 +1141,20 @@ storage_window_blind:
     expr: >
         'open' if v.input_boolean.storage_window_blind_open
         else 'closed'
-    target:
-        - cover.storage_1
-        - cover.storage_2
+    target: cover.storage_2
+
+storage_window_blind_2:
+    module: cover
+    class: CoverController
+    dependencies:
+        - locker
+        - auto_switch_storage_window_blind
+    global_dependencies:
+        - expression
+    expr: >
+        'open' if v.input_boolean.storage_window_blind_open
+        else 'closed'
+    target: cover.storage_2
 
 living_room_window_blind:
     module: cover
