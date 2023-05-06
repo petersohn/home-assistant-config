@@ -1038,6 +1038,7 @@ furnace_overheat_warning:
     dependencies:
         - locker
     expr: >
+        ok.sensor.temperature_furnace_wood and
         v.sensor.temperature_furnace_wood > 90
     target: binary_sensor.furnace_overheat
     attributes:
