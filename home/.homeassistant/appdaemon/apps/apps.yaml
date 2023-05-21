@@ -1140,9 +1140,11 @@ storage_window_blind_1:
     global_dependencies:
         - expression
     expr: >
-        'open' if v.input_boolean.storage_window_blind_open
+        'open' if
+        v.input_boolean.storage_window_blind_open or
+        v.binary_sensor.window_storage_1
         else 'closed'
-    target: cover.storage_2
+    target: cover.storage_1
 
 storage_window_blind_2:
     module: cover
@@ -1153,7 +1155,9 @@ storage_window_blind_2:
     global_dependencies:
         - expression
     expr: >
-        'open' if v.input_boolean.storage_window_blind_open
+        'open' if
+        v.input_boolean.storage_window_blind_open or
+        v.binary_sensor.window_storage_2
         else 'closed'
     target: cover.storage_2
 
