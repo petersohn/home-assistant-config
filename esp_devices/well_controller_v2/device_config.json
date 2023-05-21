@@ -47,7 +47,7 @@
             "commandTopic": "home/switches/auto_sprinkler3/set",
             "default": false,
             "invert": true,
-            "pin": 4
+            "pin": 16
         },
         {
             "type": "output",
@@ -77,6 +77,12 @@
             "type": "input",
             "name": "motion_sensor",
             "pin": 13
+        },
+        {
+            "type": "keepalive",
+            "name": "keepalive",
+            "resetInterval": 50,
+            "pin": 4
         }
     ],
     "actions": [

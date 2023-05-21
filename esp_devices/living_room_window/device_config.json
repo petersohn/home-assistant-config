@@ -36,6 +36,12 @@
             "type": "input",
             "name": "window",
             "pin": 13
+        },
+        {
+            "type": "keepalive",
+            "name": "keepalive",
+            "resetInterval": 50,
+            "pin": 12
         }
     ],
     "actions": [

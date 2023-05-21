@@ -31,6 +31,12 @@
             "type": "input",
             "name": "stop_switch",
             "pin": 5
+        },
+        {
+            "type": "keepalive",
+            "name": "keepalive",
+            "resetInterval": 50,
+            "pin": 12
         }
     ],
     "actions": [

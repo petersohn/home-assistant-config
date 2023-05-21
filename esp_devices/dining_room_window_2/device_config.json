@@ -30,7 +30,7 @@
         {
             "type": "input",
             "name": "stop_switch",
-            "pin": 5
+            "pin": 15
         },
         {
             "type": "input",
@@ -41,6 +41,12 @@
             "type": "input",
             "name": "door",
             "pin": 13
+        },
+        {
+            "type": "keepalive",
+            "name": "keepalive",
+            "resetInterval": 50,
+            "pin": 5
         }
     ],
     "actions": [
@@ -77,7 +83,7 @@
             "interface": "stop_switch",
             "target": "blind",
             "command": "STOP",
-            "value": "0"
+            "value": "1"
         },
         {
             "type": "publish",
