@@ -1,8 +1,3 @@
-broker: !secret mqtt_address
-port: !secret mqtt_port
-client_id: home-assistant-1
-username: !secret mosquitto_username
-password: !secret mosquitto_password
 sensor:
   - state_topic: home/sensors/temperature/outside
     unit_of_measurement: "°C"
@@ -423,6 +418,8 @@ binary_sensor:
             'free_memory': value_json.freeMemory,
             'uptime': value_json.uptime,
             'restarted': value_json.restarted,
+            'avgCycleTime': value_json.avgCycleTime,
+            'maxCycleTime': value_json.maxCycleTime,
         } %}
         {{ temp | to_json }}
     name: storage_window_1_available
@@ -435,6 +432,8 @@ binary_sensor:
             'free_memory': value_json.freeMemory,
             'uptime': value_json.uptime,
             'restarted': value_json.restarted,
+            'avgCycleTime': value_json.avgCycleTime,
+            'maxCycleTime': value_json.maxCycleTime,
         } %}
         {{ temp | to_json }}
     name: storage_window_2_available
