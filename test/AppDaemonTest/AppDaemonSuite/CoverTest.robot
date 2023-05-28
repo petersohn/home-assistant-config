@@ -74,7 +74,9 @@ Temporary Manual Mode
     Schedule Call At  1 min
     ...    set_sensor_state  ${input_entity}  50
     Schedule Call At  3 min
-    ...    set_value  ${output_entity}  80
+    ...    call_service_  cover/set_cover_position  ${output_entity}  80.0
+    ...    entity_id=cover.test_cover
+    ...    position=80
     Schedule Call At  4 min
     ...    set_sensor_state  ${availablility_entity}  off
     Schedule Call At  5 min

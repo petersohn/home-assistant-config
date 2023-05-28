@@ -235,6 +235,10 @@ class TestApp(hass.Hass):
         self.__block_for_state_change(entity, str(state))
         super(TestApp, self).set_value(entity, state)
 
+    def call_service_(self, service, target_entity, target_state, **kwargs):
+        self.__block_for_state_change(target_entity, str(target_state))
+        self.call_service(service, **kwargs)
+
     def turn_on(self, entity):
         self.__block_for_state_change(entity, 'on')
         super(TestApp, self).turn_on(entity)
