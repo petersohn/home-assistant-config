@@ -40,10 +40,11 @@ Delay
     ...    set_sensor_state  ${input_entity}  75
     Schedule Call At  2 min 30 sec
     ...    set_sensor_state  ${input_entity}  closed
+
     State Should Change At  ${output_entity}  50.0  1 min 30 sec
     State Should Change At  ${output_entity}  0.0  3 min 30 sec
 
-Availablility
+Availability
     [Setup]  Initialize  CoverDelay
     Schedule Call At  10 sec
     ...    set_sensor_state  ${availablility_entity}  off
@@ -68,6 +69,25 @@ Availablility
     State Should Change At  ${output_entity}  100.0  5 min
     State Should Change At  ${output_entity}  0.0  7 min
 
+Temporary Manual Mode
+    [Setup]  Initialize  CoverDelay
+    Schedule Call At  1 min
+    ...    set_sensor_state  ${input_entity}  50
+    Schedule Call At  3 min
+    ...    set_value  ${output_entity}  80
+    Schedule Call At  4 min
+    ...    set_sensor_state  ${availablility_entity}  off
+    Schedule Call At  5 min
+    ...    set_sensor_state  ${availablility_entity}  on
+    Schedule Call At  7 min
+    ...    set_sensor_state  ${input_entity}  50
+    Schedule Call At  8 min 30 sec
+    ...    set_sensor_state  ${input_entity}  closed
+
+    State Should Change At  ${output_entity}  50.0  2 min
+    State Should Change At  ${output_entity}  80.0  3 min
+    State Should Change At  ${output_entity}  0.0   9 min 30 sec
+
 
 *** Keywords ***
 
@@ -86,3 +106,4 @@ Initialize
     ${app_configs} =  Create List  TestApp  Cover  ${config}
     Initialize AppDaemon  ${apps}  ${app_configs}
     Unblock For  ${appdaemon_interval}
+    Set Value  ${output_entity}  ${0}

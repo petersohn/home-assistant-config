@@ -222,6 +222,11 @@ Select Option
     Call Function  select_option  ${entity_id}  ${value}
     Wait Until State Is Stable
 
+Set Value
+    [Arguments]  ${entity_id}  ${value}
+    Call Function  set_value  ${entity_id}  ${value}
+    Wait Until State Is Stable
+
 Turn On
     [Arguments]  ${entity_id}
     Call Function  turn_on  ${entity_id}

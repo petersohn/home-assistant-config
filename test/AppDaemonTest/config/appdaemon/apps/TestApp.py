@@ -189,10 +189,10 @@ class TestApp(hass.Hass):
 
     def __state_set(self, entity, attribute, old, new, kwargs):
         self.log(
-            'state changed: ' + entity + '='
-            + str(new) + ' pending=' + str(
-                [k + '->' + v.state
-                 for k, v in self.__pending_states.items()]))
+            'state changed: {}={} pending={}'.format(
+                entity, new,
+                ['{}->{}'.format(k, v.state)
+                for k, v in self.__pending_states.items()]))
         pending_state = self.__pending_states.get(
             entity, self.PendingState())
         if pending_state.state != new:
@@ -226,10 +226,14 @@ class TestApp(hass.Hass):
             self.set_state(entity, state=state, attributes=attributes)
 
     def select_option(self, entity, state):
-        self.log('asd')
         state = str(state)
         self.__block_for_state_change(entity, state)
         super(TestApp, self).select_option(entity_id=entity, option=state)
+
+    def set_value(self, entity, state):
+        state = float(state)
+        self.__block_for_state_change(entity, str(state))
+        super(TestApp, self).set_value(entity, state)
 
     def turn_on(self, entity):
         self.__block_for_state_change(entity, 'on')
