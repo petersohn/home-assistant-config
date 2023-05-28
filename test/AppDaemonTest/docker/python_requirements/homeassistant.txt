@@ -1,5 +1,1 @@
 homeassistant
-aiohttp_cors==0.7.0
-pyotp==2.3.0
-PyQRCode==1.2.1
-sqlalchemy

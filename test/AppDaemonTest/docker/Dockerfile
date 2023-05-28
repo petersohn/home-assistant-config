@@ -1,4 +1,4 @@
-FROM python:stretch
+FROM python:3.11
 
 COPY python_requirements /python_requirements
 RUN pip3 install -r /python_requirements/robot.txt
