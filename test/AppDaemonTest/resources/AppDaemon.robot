@@ -212,6 +212,11 @@ State Should Be As
     ${value} =  Get State  ${entity_id}  result_type=${type}
     Should Be Equal  ${value}  ${expected_value}
 
+Wait For State
+    [Arguments]  ${entity_id}  ${value}
+    Call Function  wait_for_state_change  ${entity_id}  ${value}
+    Wait Until State Is Stable
+
 Set State
     [Arguments]  ${entity_id}  ${value}  &{attributes}
     Call Function  set_sensor_state  ${entity_id}  ${value}  ${attributes}

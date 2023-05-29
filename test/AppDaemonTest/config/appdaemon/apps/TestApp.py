@@ -202,7 +202,7 @@ class TestApp(hass.Hass):
         if len(self.__pending_states) == 0:
             Blocker.set_state_blocker.unblock()
 
-    def __block_for_state_change(self, entity, state):
+    def wait_for_state_change(self, entity, state):
         old_state = self.get_state(entity)
         self.log(
             'state change initiated for {}: old={} target={}'.format(
@@ -219,7 +219,7 @@ class TestApp(hass.Hass):
 
     def set_sensor_state(self, entity, state, attributes=None):
         state = str(state)
-        self.__block_for_state_change(entity, state)
+        self.wait_for_state_change(entity, state)
         if not attributes:
             self.set_state(entity, state=state)
         else:
@@ -227,22 +227,22 @@ class TestApp(hass.Hass):
 
     def select_option(self, entity, state):
         state = str(state)
-        self.__block_for_state_change(entity, state)
+        self.wait_for_state_change(entity, state)
         super(TestApp, self).select_option(entity_id=entity, option=state)
 
     def set_value(self, entity, state):
         state = float(state)
-        self.__block_for_state_change(entity, str(state))
+        self.wait_for_state_change(entity, str(state))
         super(TestApp, self).set_value(entity, state)
 
     def call_service_(self, service, target_entity, target_state, **kwargs):
-        self.__block_for_state_change(target_entity, str(target_state))
+        self.wait_for_state_change(target_entity, str(target_state))
         self.call_service(service, **kwargs)
 
     def turn_on(self, entity):
-        self.__block_for_state_change(entity, 'on')
+        self.wait_for_state_change(entity, 'on')
         super(TestApp, self).turn_on(entity)
 
     def turn_off(self, entity):
-        self.__block_for_state_change(entity, 'off')
+        self.wait_for_state_change(entity, 'off')
         super(TestApp, self).turn_off(entity)

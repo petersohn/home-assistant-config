@@ -67,7 +67,7 @@ class CoverController(hass.Hass):
         elif mode == 'temp':
             self.mode = self.Mode.TEMP
         else:
-            self.error('Invalid mode: {}'.format(mode))
+            self.log('Invalid mode: {}'.format(mode))
             self._set_mode(self.Mode.AUTO)
 
     def _execute(self, service, **kwargs):
@@ -186,7 +186,7 @@ class CoverController(hass.Hass):
     def on_mode_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_mode_change'):
             if old != new:
-                self.log('New mode: {}').format(new)
+                self.log('New mode: {} -> {}'.format(old, new))
                 self._set_mode_from_str(new)
                 if self.mode == self.Mode.AUTO:
                     self.log('Back to auto, resetting value.')

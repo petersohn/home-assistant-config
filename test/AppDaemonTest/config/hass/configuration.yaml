@@ -36,6 +36,11 @@ input_select:
       - "auto"
       - "on"
       - "off"
+  test_cover_mode:
+    options:
+      - "auto"
+      - "temp"
+      - "manual"
 
 input_text:
   test_text_1:
