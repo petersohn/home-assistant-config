@@ -31,7 +31,7 @@ class CoverController(hass.Hass):
             self.mode = self.Mode.AUTO
 
         state = self.get_state(self.target)
-        self.is_available = state != 'unavailable'
+        self.is_available = state is not None and state != 'unavailable'
         self.listen_state(
             self.on_state_change, entity=self.target, attribute='all')
         self._reset_target()
@@ -157,7 +157,6 @@ class CoverController(hass.Hass):
         was_available = self.is_available
         is_available = \
             state is not None and \
-            state != 'unknown' and \
             state != 'unavailable'
         self.is_available = is_available
 
@@ -166,6 +165,12 @@ class CoverController(hass.Hass):
             self._reset_value()
         elif was_available and not is_available:
             self.log('Became unavailable')
+        elif state == 'unknown' and \
+                self.mode == self.Mode.AUTO and \
+                self.expected_value is not None:
+            self.log('State unknown, need to reset.')
+            self._reset_value()
+            return
 
         if not self.is_available or self.mode != self.Mode.AUTO:
             self._reset_target()

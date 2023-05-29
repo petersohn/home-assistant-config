@@ -219,7 +219,7 @@ Initialize
     [Arguments]  ${config}
     Clean States
     Initialize States
-    ...    ${input_entity}=${Empty}
+    ...    ${input_entity}=0
     ...    ${availablility_entity}=on
     ${apps} =  Create List  TestApp  locker  mutex_graph  expression  cover
     ${app_configs} =  Create List  TestApp  Cover  ${config}
