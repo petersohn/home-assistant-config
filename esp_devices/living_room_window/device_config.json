@@ -48,15 +48,15 @@
         {
             "type": "publish",
             "interface": "blind",
-            "topic": "home/blind/living_room/state",
-            "template": "%1",
+            "topic": "home/blind/living_room/position",
+            "template": "%2",
             "retain": true
         },
         {
             "type": "publish",
             "interface": "blind",
-            "topic": "home/blind/living_room/position",
-            "template": "%2",
+            "topic": "home/blind/living_room/state",
+            "template": "%1",
             "retain": true
         },
         {

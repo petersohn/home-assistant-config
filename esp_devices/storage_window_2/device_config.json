@@ -48,15 +48,15 @@
         {
             "type": "publish",
             "interface": "blind",
-            "topic": "home/blind/storage_2/state",
-            "template": "%1",
+            "topic": "home/blind/storage_2/position",
+            "template": "%2",
             "retain": true
         },
         {
             "type": "publish",
             "interface": "blind",
-            "topic": "home/blind/storage_2/position",
-            "template": "%2",
+            "topic": "home/blind/storage_2/state",
+            "template": "%1",
             "retain": true
         },
         {

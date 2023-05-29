@@ -43,15 +43,15 @@
         {
             "type": "publish",
             "interface": "blind",
-            "topic": "home/blind/dining_room/state",
-            "template": "%1",
+            "topic": "home/blind/dining_room/position",
+            "template": "%2",
             "retain": true
         },
         {
             "type": "publish",
             "interface": "blind",
-            "topic": "home/blind/dining_room/position",
-            "template": "%2",
+            "topic": "home/blind/dining_room/state",
+            "template": "%1",
             "retain": true
         },
         {
