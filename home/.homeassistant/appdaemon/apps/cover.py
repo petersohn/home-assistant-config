@@ -38,7 +38,7 @@ class CoverController(hass.Hass):
         self.listen_state(
             self.on_state_change, entity=self.target, attribute='all')
 
-        self.target_position = None
+        self._reset_target()
 
     def cleanup(self):
         self.expression.cleanup()
@@ -78,6 +78,7 @@ class CoverController(hass.Hass):
         self._set_value(self.expected_value)
 
     def _set_value_inner(self, value):
+        self.arrived_at_target = None
         if type(value) is float or type(value) is int:
             if value >= 0 and value <= 100:
                 self._execute(
@@ -162,23 +163,25 @@ class CoverController(hass.Hass):
         elif was_available and not is_available:
             self.log('Became unavailable')
 
-        if not self.is_available:
-            self.target_position = None
+        if not self.is_available or self.mode != self.Mode.AUTO:
+            self._reset_target()
             return
 
         is_moving = state == 'opening' or state == 'closing'
         if self.target_position is not None:
             position = int(states['attributes']['current_position'])
-            if not is_moving:
-                if position == self.target_position:
-                    self.log('Reached target position')
-                    self.target_position = None
-                else:
-                    self.log('Stopped at {}, changing to temp'.format(position))
-                    self._set_mode(self.Mode.TEMP)
-        elif is_moving and self.mode == self.Mode.AUTO:
-            self.log('Started {}, changing to temp'.format(state))
-            self._set_mode(self.Mode.TEMP)
+            if not self.arrived_at_target:  # None or False
+                self.arrived_at_target = not is_moving and \
+                    position == self.target_position
+
+            if not self.arrived_at_target and not is_moving:
+                self.log('Stopped at {}, changing to temp'.format(position))
+                self._set_mode(self.Mode.TEMP)
+            elif self.arrived_at_target and position != self.target_position:
+                self.log('Started {} off, changing to temp'.format(state))
+                self._set_mode(self.Mode.TEMP)
+        else:
+            self.log('Position not yet set')
 
     def on_mode_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_mode_change'):
@@ -189,4 +192,8 @@ class CoverController(hass.Hass):
                     self.log('Back to auto, resetting value.')
                     self._reset_value()
                 else:
-                    self.target_position = None
+                    self._reset_target()
+
+    def _reset_target(self):
+        self.target_position = None
+        self.arrived_at_target = None
