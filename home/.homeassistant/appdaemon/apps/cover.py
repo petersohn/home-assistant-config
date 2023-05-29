@@ -177,8 +177,10 @@ class CoverController(hass.Hass):
             if not self.arrived_at_target and \
                     not is_moving and \
                     position == self.target_position:
+                self.log('Arrived at target')
                 self.arrived_at_target = True
             if self.arrived_at_target is None and is_moving:
+                self.log('Started moving')
                 self.arrived_at_target = False
 
             if self.arrived_at_target is False and not is_moving:
