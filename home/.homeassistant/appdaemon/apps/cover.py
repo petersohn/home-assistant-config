@@ -37,8 +37,10 @@ class CoverController(hass.Hass):
         self.is_available = state != 'unavailable'
         self.listen_state(
             self.on_state_change, entity=self.target, attribute='all')
-
         self._reset_target()
+        if self.is_available and self.mode == self.Mode.AUTO:
+            self._set_value(self.value)
+
 
     def cleanup(self):
         self.expression.cleanup()
@@ -191,7 +193,6 @@ class CoverController(hass.Hass):
                 self._set_mode(self.Mode.TEMP)
         else:
             self.log('Position not yet set')
-            self._reset_value()
 
     def on_mode_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_mode_change'):
