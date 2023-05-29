@@ -1178,6 +1178,7 @@ living_room_window_blind:
         v.binary_sensor.window_living_room)
         else 'closed'
     target: cover.living_room
+    mode_switch: input_select.living_room_window_blind
     delay:
         seconds: 10
 

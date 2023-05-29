@@ -152,6 +152,14 @@ christmas_tree:
         - "off"
     icon: mdi:pine-tree
 
+living_room_window_blind:
+    name: Nappali redőny mód
+    options:
+        - "auto"
+        - "manual"
+        - "temp"
+    icon: mdi:blinds-horizontal
+
 presence_mode:
     name: Jelenlét mód
     options:

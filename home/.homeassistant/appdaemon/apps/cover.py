@@ -145,10 +145,13 @@ class CoverController(hass.Hass):
 
     def on_state_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_state_change'):
-            # self.log('--> {}'.format(new))
+            if old['state'] != new['state']:
+                self.log('State changed: {} -> {}'.format(
+                    old['state'],new['state']))
             self._check_state(new)
 
     def _check_state(self, states):
+        # self.log('--> {}'.format(states))
         state = states['state']
         was_available = self.is_available
         is_available = \
@@ -170,11 +173,15 @@ class CoverController(hass.Hass):
         is_moving = state == 'opening' or state == 'closing'
         if self.target_position is not None:
             position = int(states['attributes']['current_position'])
-            if not self.arrived_at_target:  # None or False
-                self.arrived_at_target = not is_moving and \
-                    position == self.target_position
+            # None or False
+            if not self.arrived_at_target and \
+                    not is_moving and \
+                    position == self.target_position:
+                self.arrived_at_target = True
+            if self.arrived_at_target is None and is_moving:
+                self.arrived_at_target = False
 
-            if not self.arrived_at_target and not is_moving:
+            if self.arrived_at_target is False and not is_moving:
                 self.log('Stopped at {}, changing to temp'.format(position))
                 self._set_mode(self.Mode.TEMP)
             elif self.arrived_at_target and position != self.target_position:
@@ -182,6 +189,7 @@ class CoverController(hass.Hass):
                 self._set_mode(self.Mode.TEMP)
         else:
             self.log('Position not yet set')
+            self._reset_value()
 
     def on_mode_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_mode_change'):

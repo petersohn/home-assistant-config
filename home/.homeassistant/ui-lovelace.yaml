@@ -77,6 +77,7 @@ views:
           - cover.dining_room
           - cover.dining_room_2
           - cover.living_room
+          - input_select.living_room_window_blind
           - cover.storage_1
           - cover.storage_2
         title: Redőny
