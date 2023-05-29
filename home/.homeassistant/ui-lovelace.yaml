@@ -75,11 +75,15 @@ views:
       - type: entities
         entities:
           - cover.dining_room
+          - input_select.dining_room_window_blind_1
           - cover.dining_room_2
+          - input_select.dining_room_window_blind_2
           - cover.living_room
           - input_select.living_room_window_blind
           - cover.storage_1
+          - input_select.storage_window_blind_1
           - cover.storage_2
+          - input_select.storage_window_blind_2
         title: Redőny
         state_color: true
       - type: vertical-stack

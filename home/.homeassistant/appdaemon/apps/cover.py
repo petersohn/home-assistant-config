@@ -39,7 +39,8 @@ class CoverController(hass.Hass):
                 self.mode == self.Mode.AUTO \
                 and self.value is not None:
             self._set_value(self.value)
-
+        else:
+            self.expected_value = self.value
 
     def cleanup(self):
         self.expression.cleanup()
@@ -118,6 +119,9 @@ class CoverController(hass.Hass):
             return
 
         self._set_value_inner(value)
+        self._force_check_state()
+
+    def _force_check_state(self):
         self._check_state(self.get_state(self.target, attribute='all'))
 
     def on_expression_change(self, value):
@@ -185,13 +189,13 @@ class CoverController(hass.Hass):
                     position == self.target_position:
                 self.log('Arrived at target')
                 self.arrived_at_target = True
-            if self.arrived_at_target is None and is_moving:
+            elif self.arrived_at_target is None and is_moving:
                 self.log('Started moving')
                 self.arrived_at_target = False
-
-            if self.arrived_at_target is False and not is_moving:
-                self.log('Stopped at {}, changing to temp'.format(position))
-                self._set_mode(self.Mode.TEMP)
+            elif self.arrived_at_target is False and \
+                    not is_moving:
+                self.log('Stopped at {}, force resetting'.format(position))
+                self._reset_value()
             elif self.arrived_at_target and position != self.target_position:
                 self.log('Started {} off, changing to temp'.format(state))
                 self._set_mode(self.Mode.TEMP)
