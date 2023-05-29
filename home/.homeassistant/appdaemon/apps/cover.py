@@ -24,7 +24,7 @@ class CoverController(hass.Hass):
 
         self.mode_switch = self.args.get('mode_switch')
         if self.mode_switch is not None:
-            self.mode = self.get_state(self.mode_switch)
+            mode = self.get_state(self.mode_switch)
             self._set_mode_from_str(mode)
             self.listen_state(self.on_mode_change, entity=self.mode_switch)
         else:
