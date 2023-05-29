@@ -24,11 +24,8 @@ class CoverController(hass.Hass):
 
         self.mode_switch = self.args.get('mode_switch')
         if self.mode_switch is not None:
-            mode = self.get_state(self.mode_switch)
-            if mode == 'temp':
-                self._set_mode(self.Mode.AUTO)
-            else:
-                self._set_mode_from_str(mode)
+            self.mode = self.get_state(self.mode_switch)
+            self._set_mode_from_str(mode)
             self.listen_state(self.on_mode_change, entity=self.mode_switch)
         else:
             self.mode = self.Mode.AUTO
@@ -38,7 +35,9 @@ class CoverController(hass.Hass):
         self.listen_state(
             self.on_state_change, entity=self.target, attribute='all')
         self._reset_target()
-        if self.is_available and self.mode == self.Mode.AUTO:
+        if self.is_available and \
+                self.mode == self.Mode.AUTO \
+                and self.value is not None:
             self._set_value(self.value)
 
 
