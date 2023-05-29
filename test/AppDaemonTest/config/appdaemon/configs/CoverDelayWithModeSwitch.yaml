@@ -1,0 +1,12 @@
+test_cover:
+    class: CoverController
+    module: cover
+    target: cover.test_cover
+    mode_switch: input_select.test_cover_mode
+    expr: v.sensor.test_cover_position
+    delay:
+        minutes: 1
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
