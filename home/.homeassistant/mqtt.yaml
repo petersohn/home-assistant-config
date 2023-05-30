@@ -394,6 +394,8 @@ binary_sensor:
             'free_memory': value_json.freeMemory,
             'uptime': value_json.uptime,
             'restarted': value_json.restarted,
+            'avgCycleTime': value_json.avgCycleTime,
+            'maxCycleTime': value_json.maxCycleTime,
         } %}
         {{ temp | to_json }}
     name: dining_room_window_available
@@ -406,6 +408,8 @@ binary_sensor:
             'free_memory': value_json.freeMemory,
             'uptime': value_json.uptime,
             'restarted': value_json.restarted,
+            'avgCycleTime': value_json.avgCycleTime,
+            'maxCycleTime': value_json.maxCycleTime,
         } %}
         {{ temp | to_json }}
     name: dining_room_window_2_available
@@ -446,6 +450,8 @@ binary_sensor:
             'free_memory': value_json.freeMemory,
             'uptime': value_json.uptime,
             'restarted': value_json.restarted,
+            'avgCycleTime': value_json.avgCycleTime,
+            'maxCycleTime': value_json.maxCycleTime,
         } %}
         {{ temp | to_json }}
     name: living_room_window_available
