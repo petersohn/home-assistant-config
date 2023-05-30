@@ -22,25 +22,26 @@ class CoverController(hass.Hass):
         self.delay = datetime.timedelta(**delay) if delay is not None else None
         self.timer = None
 
-        self.mode_switch = self.args.get('mode_switch')
-        if self.mode_switch is not None:
-            mode = self.get_state(self.mode_switch)
-            self._set_mode_from_str(mode)
-            self.listen_state(self.on_mode_change, entity=self.mode_switch)
-        else:
-            self.mode = self.Mode.AUTO
+        with self.mutex.lock('initialize'):
+            self.mode_switch = self.args.get('mode_switch')
+            if self.mode_switch is not None:
+                mode = self.get_state(self.mode_switch)
+                self._set_mode_from_str(mode)
+                self.listen_state(self.on_mode_change, entity=self.mode_switch)
+            else:
+                self.mode = self.Mode.AUTO
 
-        state = self.get_state(self.target)
-        self.is_available = state is not None and state != 'unavailable'
-        self.listen_state(
-            self.on_state_change, entity=self.target, attribute='all')
-        self._reset_target()
-        if self.is_available and \
-                self.mode == self.Mode.AUTO \
-                and self.value is not None:
-            self._set_value(self.value)
-        else:
-            self.expected_value = self.value
+            state = self.get_state(self.target)
+            self.is_available = state is not None and state != 'unavailable'
+            self.listen_state(
+                self.on_state_change, entity=self.target, attribute='all')
+            self._reset_target()
+            if self.is_available and \
+                    self.mode == self.Mode.AUTO \
+                    and self.value is not None:
+                self._set_value(self.value)
+            else:
+                self.expected_value = self.value
 
     def cleanup(self):
         self.expression.cleanup()
