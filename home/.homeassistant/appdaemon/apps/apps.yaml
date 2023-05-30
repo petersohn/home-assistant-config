@@ -1078,7 +1078,7 @@ dining_room_window_blind:
         v.input_select.presence_mode == 'away' and e.is_sunlight)
         else 'closed'
     target: cover.dining_room
-    mode_switch: input_select.dinign_room_window_blind_1
+    mode_switch: input_select.dining_room_window_blind_1
     delay:
       seconds: 30
 
@@ -1110,7 +1110,7 @@ dining_room_2_window_blind:
         e.is_light_enough_to_open_blind or v.binary_sensor.window_dining_room_2)
         else 'closed'
     target: cover.dining_room_2
-    mode_switch: input_select.dinign_room_window_blind_2
+    mode_switch: input_select.dining_room_window_blind_2
     delay:
       seconds: 30
 
