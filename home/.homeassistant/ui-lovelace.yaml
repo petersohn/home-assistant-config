@@ -923,5 +923,6 @@ views:
           - input_select.presence_mode
           - sensor.tracker_last_updated
           - person.peti
-          - sensor.oneplus_battery_level
+          - sensor.pixel_7_battery_level
+          - sensor.pixel_7_wifi_connection
     icon: 'mdi:wrench'
