@@ -47,12 +47,12 @@ recorder:
   auto_purge: true
   purge_keep_days: 14
   db_url: !secret db_location
-
-# Enables support for tracking state changes over time.
-history:
   exclude:
     domains:
       - group
+
+# Enables support for tracking state changes over time.
+history:
 
 # View all events in a logbook
 logbook:
@@ -67,19 +67,24 @@ input_select: !include input_select.yaml
 mqtt: !include mqtt.yaml
 script: !include script.yaml
 
+command_line:
+  - sensor:
+      name: cpu_temperature
+      command: "cat /sys/class/thermal/thermal_zone0/temp"
+      # If errors occur, make sure configuration file is encoded as UTF-8
+      unit_of_measurement: "°C"
+      value_template: "{{ value | multiply(0.001) }}"
+      scan_interval: 10
+  - binary_sensor:
+      command: 'timeout 2 nc localhost 6131 </dev/null && echo ON || echo OFF'
+      name: ssh_tunnel_available
+
 sensor:
   - platform: time_date
     display_options:
       - 'date'
       - 'time'
       - 'date_time'
-  - platform: command_line
-    name: cpu_temperature
-    command: "cat /sys/class/thermal/thermal_zone0/temp"
-    # If errors occur, make sure configuration file is encoded as UTF-8
-    unit_of_measurement: "°C"
-    value_template: "{{ value | multiply(0.001) }}"
-    scan_interval: 10
 
 binary_sensor:
   - platform: ping
@@ -94,10 +99,6 @@ binary_sensor:
   - platform: ping
     host: !secret gateway_address
     name: gateway_available
-  - platform: command_line
-    command: 'timeout 2 nc localhost 6131 </dev/null && echo ON || echo OFF'
-    name: ssh_tunnel_available
-
   - platform: tod
     name: Night
     after: sunset
