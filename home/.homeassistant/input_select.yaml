@@ -203,4 +203,10 @@ climate_mode:
         - "heat_up"
         - "keep_warm"
     icon: mdi:thermostat-auto
+season_mode:
+    name: Évszak mód
+    options:
+        - summer
+        - winter
+    icon: mdi:weather-sunny
 

@@ -133,6 +133,7 @@ views:
           - type: entities
             state_color: true
             entities:
+              - input_select.season_mode
               - input_boolean.wood_heating
               - climate.daikin_living_room
               - climate.daikin_bedroom
@@ -925,4 +926,8 @@ views:
           - person.peti
           - sensor.pixel_7_battery_level
           - sensor.pixel_7_wifi_connection
+      - type: entities
+        entities:
+          - sensor.date
+          - sensor.time
     icon: 'mdi:wrench'

@@ -1064,18 +1064,34 @@ freeze_alerts:
         - sensor.temperature_living_room_lower
         - sensor.temperature_kitchen
 
+window_blind_shield_1:
+    module: enabler
+    class: ExpressionEnabler
+    expr: >
+        v.input_select.season_mode == 'summer' and
+        v.sensor.time >= '13:00' and
+        v.sensor.time < '18:00'
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+
 dining_room_window_blind:
     module: cover
     class: CoverController
     dependencies:
         - locker
+        - window_blind_shield_1
     global_dependencies:
         - expression
     expr: >
-        'open' if v.input_select.presence_mode == 'home' or (
+        75 if v.input_select.presence_mode == 'home' and e.window_blind_shield_1
+        else 'open' if v.input_select.presence_mode == 'home' or (
         v.input_select.presence_mode == 'sleep' and
         v.binary_sensor.window_entrance) or (
-        v.input_select.presence_mode == 'away' and e.is_sunlight)
+        v.input_select.presence_mode == 'away' and
+        e.is_sunlight and
+        v.input_select.season_mode == 'winter')
         else 'closed'
     target: cover.dining_room
     mode_switch: input_select.dining_room_window_blind_1
@@ -1097,6 +1113,17 @@ is_light_enough_to_open_blind:
     global_dependencies:
         - expression
 
+window_blind_shield_2:
+    module: enabler
+    class: ExpressionEnabler
+    expr: >
+        v.input_select.season_mode == 'summer' and
+        v.sensor.time < '09:00'
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+
 dining_room_2_window_blind:
     module: cover
     class: CoverController
@@ -1105,8 +1132,10 @@ dining_room_2_window_blind:
     global_dependencies:
         - expression
         - is_light_enough_to_open_blind
+        - window_blind_shield_2
     expr: >
-        'open' if v.input_select.presence_mode == 'home' and (
+        75 if v.input_select.presence_mode == 'home' and e.window_blind_shield_2
+        else 'open' if v.input_select.presence_mode == 'home' and (
         e.is_light_enough_to_open_blind or v.binary_sensor.window_dining_room_2)
         else 'closed'
     target: cover.dining_room_2
