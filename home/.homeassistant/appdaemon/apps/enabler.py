@@ -17,6 +17,10 @@ class Enabler(hass.Hass):
             'Enabler.Callbacks')
         self.log('Init: {}'.format(self.state))
 
+    def terminate(self):
+        if self.change_timer is not None:
+            self.cancel_timer(self.change_timer)
+
     def get_callbacks(self):
         with self.callbacks_mutex.lock('do_change'):
             return list(self.callbacks.values())
@@ -36,12 +40,12 @@ class Enabler(hass.Hass):
 
         with self.state_mutex.lock('change'):
             self.log('change={} delay={}'.format(state, self.delay))
-            if self.change_state is not None:
-                assert self.change_timer is not None
+            if self.change_timer is not None:
                 if self.change_state == state:
                     self.log('no change'.format(state))
                     return
                 self.cancel_timer(self.change_timer)
+                self.change_timer = None
             self.change_state = state
             self.change_timer = self.run_in(
                 self.on_timeout, self.delay.total_seconds())
