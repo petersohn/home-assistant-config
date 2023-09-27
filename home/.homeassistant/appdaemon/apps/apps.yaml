@@ -1387,6 +1387,34 @@ climate_bedroom_switch:
     enabler: climate_enabler
     targets:
         - auto_switch_climate_bedroom
+
+water_heater_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: >
+        True
+
+auto_switch_water_heater:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.water_heater
+    switch: input_select.water_heater
+    reentrant: true
+
+water_heater_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_water_heater
+        - water_heater_enabler
+        - locker
+    enabler: water_heater_enabler
+    targets:
+        - auto_switch_water_heater
+
 #
 # target_climate_mode:
 #     module: expression

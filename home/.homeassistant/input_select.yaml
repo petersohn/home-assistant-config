@@ -144,6 +144,13 @@ climate_bedroom:
         - "on"
         - "off"
     icon: mdi:hvac
+water_heater:
+    name: Vízmelegítő
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:water-boiler
 christmas_tree:
     name: Karácsonyfa
     options:

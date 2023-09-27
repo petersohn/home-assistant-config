@@ -818,6 +818,9 @@ views:
           - switch.climate_bedroom
           - input_select.climate_bedroom
           - sensor.power_climate_bedroom
+          - switch.water_heater
+          - input_select.water_heater
+          - sensor.power_water_heater
         show_header_toggle: false
   - path: alerts
     title: Riasztások

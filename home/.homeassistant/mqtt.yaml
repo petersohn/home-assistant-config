@@ -241,6 +241,19 @@ sensor:
             'total': value_json.ENERGY.Total,
         } %}
         {{ temp | to_json }}
+  - state_topic: home/water_heater/tele/SENSOR
+    json_attributes_topic: home/water_heater/tele/SENSOR
+    unit_of_measurement: "W"
+    name: power_water_heater
+    value_template: '{{ value_json.ENERGY.Power }}'
+    device_class: power
+    json_attributes_template: >
+        {% set temp = {
+            'today': value_json.ENERGY.Today,
+            'yesterday': value_json.ENERGY.Yesterday,
+            'total': value_json.ENERGY.Total,
+        } %}
+        {{ temp | to_json }}
 
 binary_sensor:
   - state_topic: home/devices/well_controller/available
@@ -489,7 +502,7 @@ binary_sensor:
             'uptime': value_json.UptimeSec,
         } %}
         {{ temp | to_json }}
-    name: climate_bedroom_available
+    name: climate_living_room_available
     payload_on: 'Online'
     payload_off: 'Offline'
   - state_topic: home/climate_bedroom/tele/LWT
@@ -500,6 +513,16 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: climate_bedroom_available
+    payload_on: 'Online'
+    payload_off: 'Offline'
+  - state_topic: home/water_heater/tele/LWT
+    json_attributes_topic: home/water_heater/tele/STATE
+    json_attributes_template: >
+        {% set temp = {
+            'uptime': value_json.UptimeSec,
+        } %}
+        {{ temp | to_json }}
+    name: water_heater_available
     payload_on: 'Online'
     payload_off: 'Offline'
 
@@ -923,6 +946,11 @@ switch:
   - name: climate_bedroom
     command_topic: home/climate_bedroom/cmnd/POWER
     state_topic: home/climate_bedroom/stat/POWER
+    payload_on: 'ON'
+    payload_off: 'OFF'
+  - name: water_heater
+    command_topic: home/water_heater/cmnd/POWER
+    state_topic: home/water_heater/stat/POWER
     payload_on: 'ON'
     payload_off: 'OFF'
   - name: christmas_tree

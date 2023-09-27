@@ -106,6 +106,9 @@ class AutoSwitch(hass.Hass):
     def on_target_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_target_change'):
             value = self.get_state(entity)
+            if value != 'on' and value != 'off':
+                self.log('Invalid state: {}'.format(value))
+                return
             if not self.intended_state:
                 if self.switch is None or self.get_state(self.switch) == 'auto':
                     self.log('State change detected: {}'.format(value))

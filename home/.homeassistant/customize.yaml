@@ -493,6 +493,10 @@ switch.climate_bedroom:
   friendly_name: Klíma hálószoba főkapcsoló
   icon: mdi:hvac
 
+switch.water_heater:
+  friendly_name: Vízmelegítő
+  icon: mdi:water-boiler
+
 switch.christmas_tree:
   friendly_name: "Karácsonyfa"
   icon: mdi:pine-tree
