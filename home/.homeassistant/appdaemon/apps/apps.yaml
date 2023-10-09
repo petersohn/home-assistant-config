@@ -1106,7 +1106,7 @@ is_light_enough_to_open_blind:
     expr: >
         not e.sun_enabler_night and not (
         ok.sensor.light_sunlight_adjusted and
-        v.sensor.light_sunlight_adjusted <= 40)
+        v.sensor.light_sunlight_adjusted <= 30)
     dependencies:
         - sun_enabler_night
         - locker
