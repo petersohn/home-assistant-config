@@ -787,6 +787,17 @@ views:
     icon: 'mdi:engine'
     badges: []
     cards:
+      - type: sensor
+        entity: sensor.inverter_active_power
+        graph: line
+      - type: entities
+        title: Napelem
+        entities:
+          - sensor.inverter_alarms
+          - sensor.inverter_daily_yield
+          - sensor.inverter_device_status
+          - sensor.inverter_efficiency
+          - sensor.inverter_inverter_state
       - type: entities
         entities:
           - sensor.temperature_furnace_gas
