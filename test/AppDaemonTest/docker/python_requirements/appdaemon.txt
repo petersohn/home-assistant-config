@@ -4,7 +4,7 @@ appdaemon==3.0.5
 astral==1.7.1
 async-timeout==3.0.1
 bcrypt==3.2.0
-certifi==2020.12.5
+certifi==2023.7.22
 cffi==1.14.4
 chardet==4.0.0
 daemonize==2.5.0
