@@ -13,6 +13,20 @@ sensor:
     availability_topic: home/devices/well_controller/available
     payload_available: 1
     payload_not_available: 0
+  - state_topic: home/sensors/temperature/outside2
+    unit_of_measurement: "°C"
+    name: temperature_outside2
+    expire_after: 120
+    availability_topic: home/devices/gate_reflector/available
+    payload_available: 1
+    payload_not_available: 0
+  - state_topic: home/sensors/humidity/outside2
+    unit_of_measurement: "%"
+    name: humidity_outside2
+    expire_after: 120
+    availability_topic: home/devices/gate_reflector/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/temperature/furnace_room
     unit_of_measurement: "°C"
     name: temperature_furnace_room
@@ -530,9 +544,9 @@ binary_sensor:
     name: motion_sensor_driveway_uppest
     payload_on: 1
     payload_off: 0
-    # availability_topic: home/devices/gate_reflector/available
-    # payload_available: 1
-    # payload_not_available: 0
+    availability_topic: home/devices/gate_reflector/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/motion/driveway_upper
     name: motion_sensor_driveway_upper
     payload_on: 1
@@ -863,9 +877,9 @@ switch:
     state_topic: home/switches/lights/gate_reflector/state
     payload_on: 1
     payload_off: 0
-    # availability_topic: home/devices/gate_reflector/available
-    # payload_available: 1
-    # payload_not_available: 0
+    availability_topic: home/devices/gate_reflector/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_outside_1
     command_topic: home/switches/lights/outside/1/set
     state_topic: home/switches/lights/outside/1/state
