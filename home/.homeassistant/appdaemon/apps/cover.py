@@ -71,7 +71,7 @@ class CoverController(hass.Hass):
             self.mode = self.Mode.TEMP
         else:
             self.log('Invalid mode: {}'.format(mode))
-            self._set_mode(self.Mode.AUTO)
+            self._set_mode(self.Mode.TEMP)
 
     def _execute(self, service, **kwargs):
         kwargs['entity_id'] = self.target
@@ -190,16 +190,13 @@ class CoverController(hass.Hass):
                     position == self.target_position:
                 self.log('Arrived at target')
                 self.arrived_at_target = True
+                self._set_mode(self.Mode.TEMP)
             elif self.arrived_at_target is None and is_moving:
                 self.log('Started moving')
                 self.arrived_at_target = False
-            elif self.arrived_at_target is False and \
-                    not is_moving:
+            elif self.arrived_at_target is False and not is_moving:
                 self.log('Stopped at {}, force resetting'.format(position))
                 self._reset_value()
-            elif self.arrived_at_target and position != self.target_position:
-                self.log('Started {} off, changing to temp'.format(state))
-                self._set_mode(self.Mode.TEMP)
         else:
             self.log('Position not yet set')
 
