@@ -78,6 +78,15 @@ command_line:
   - binary_sensor:
       command: 'timeout 2 nc localhost 6131 </dev/null && echo ON || echo OFF'
       name: ssh_tunnel_available
+  - binary_sensor:
+      command: !secret printer_command
+      name: cups_available
+  - notify:
+      name: restart_cups
+      command: !secret restart_cups_command
+  - notify:
+      name: restart_upsd
+      command: !secret restart_upsd_command
 
 sensor:
   - platform: time_date

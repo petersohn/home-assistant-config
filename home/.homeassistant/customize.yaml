@@ -42,6 +42,11 @@ binary_sensor.ssh_tunnel_available:
   icon: mdi:download-network
   device_class: connectivity
 
+binary_sensor.cups_available:
+  friendly_name: Nyomtató
+  icon: mdi:printer
+  device_class: connectivity
+
 binary_sensor.mosquitto_bridge_available:
   friendly_name: Mosquitto Bridge
   icon: mdi:bridge

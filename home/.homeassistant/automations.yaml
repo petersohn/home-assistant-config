@@ -464,3 +464,23 @@
     - service: homeassistant.turn_off
       data:
         entity_id: input_boolean.desktop_player_pause
+
+- alias: cupsd restart
+  trigger:
+    platform: state
+    entity_id: binary_sensor.cups_available
+    to: 'off'
+  action:
+    - service: notify.restart_cups
+      data:
+        message: a
+
+- alias: cupsd restart
+  trigger:
+    platform: state
+    entity_id: sensor.apc_input_voltage
+    to: 'unavailable'
+  action:
+    - service: notify.restart_upsd
+      data:
+        message: a

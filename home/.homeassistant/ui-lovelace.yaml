@@ -863,6 +863,7 @@ views:
           - binary_sensor.internet_available
           - binary_sensor.gateway_available
           - binary_sensor.ssh_tunnel_available
+          - binary_sensor.cups_available
         title: Hálózat
         state_color: true
         show_header_toggle: false
