@@ -164,35 +164,35 @@ living_room_window_blind:
     options:
         - "auto"
         - "manual"
-        - "temp"
+        - "stable"
     icon: mdi:blinds-horizontal
 dining_room_window_blind_1:
     name: Étkező első redőny mód
     options:
         - "auto"
         - "manual"
-        - "temp"
+        - "stable"
     icon: mdi:blinds-horizontal
 dining_room_window_blind_2:
     name: Étkező hátsó redőny mód
     options:
         - "auto"
         - "manual"
-        - "temp"
+        - "stable"
     icon: mdi:blinds-horizontal
 storage_window_blind_1:
     name: Kamra 1 redőny mód
     options:
         - "auto"
         - "manual"
-        - "temp"
+        - "stable"
     icon: mdi:blinds-horizontal
 storage_window_blind_2:
     name: Kamra 2 redőny mód
     options:
         - "auto"
         - "manual"
-        - "temp"
+        - "stable"
     icon: mdi:blinds-horizontal
 
 presence_mode:

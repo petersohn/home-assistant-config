@@ -7,7 +7,7 @@ class CoverController(hass.Hass):
     class Mode:
         AUTO = 0
         MANUAL = 1
-        TEMP = 2
+        STABLE = 2
 
     def initialize(self):
         self.target = self.args['target']
@@ -56,8 +56,8 @@ class CoverController(hass.Hass):
             self.select_option(self.mode_switch, 'auto')
         elif state == self.Mode.MANUAL:
             self.select_option(self.mode_switch, 'manual')
-        elif state == self.Mode.TEMP:
-            self.select_option(self.mode_switch, 'temp')
+        elif state == self.Mode.STABLE:
+            self.select_option(self.mode_switch, 'stable')
         else:
             self.error('Invalid state: {}'.format(state))
             self.mode = self.Mode.AUTO
@@ -67,11 +67,11 @@ class CoverController(hass.Hass):
             self.mode = self.Mode.AUTO
         elif mode == 'manual':
             self.mode = self.Mode.MANUAL
-        elif mode == 'temp':
-            self.mode = self.Mode.TEMP
+        elif mode == 'stable':
+            self.mode = self.Mode.STABLE
         else:
             self.log('Invalid mode: {}'.format(mode))
-            self._set_mode(self.Mode.TEMP)
+            self._set_mode(self.Mode.STABLE)
 
     def _execute(self, service, **kwargs):
         kwargs['entity_id'] = self.target
@@ -105,7 +105,7 @@ class CoverController(hass.Hass):
     def _set_value(self, value):
         self.log('Changing to {}'.format(value))
 
-        if self.expected_value != value and self.mode == self.Mode.TEMP:
+        if self.expected_value != value and self.mode == self.Mode.STABLE:
             self.log('Setting mode back to auto')
             self._set_mode(self.Mode.AUTO)
 
@@ -190,7 +190,7 @@ class CoverController(hass.Hass):
                     position == self.target_position:
                 self.log('Arrived at target')
                 self.arrived_at_target = True
-                self._set_mode(self.Mode.TEMP)
+                self._set_mode(self.Mode.STABLE)
             elif self.arrived_at_target is None and is_moving:
                 self.log('Started moving')
                 self.arrived_at_target = False

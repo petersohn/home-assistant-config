@@ -39,7 +39,7 @@ input_select:
   test_cover_mode:
     options:
       - "auto"
-      - "temp"
+      - "stable"
       - "manual"
 
 input_text:
