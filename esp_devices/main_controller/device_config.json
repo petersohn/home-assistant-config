@@ -34,6 +34,14 @@
         },
         {
             "type": "output",
+            "name": "light0",
+            "commandTopic": "home/switches/lights/outside/0/set",
+            "invert": true,
+            "default": 0,
+            "pin": 5
+        },
+        {
+            "type": "output",
             "name": "light_christmas",
             "commandTopic": "home/switches/lights/christmas/front/set",
             "invert": true,
@@ -63,6 +71,12 @@
             "type": "publish",
             "interface": "light_christmas",
             "topic": "home/switches/lights/christmas/front/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light0",
+            "topic": "home/switches/lights/outside/0/state",
             "retain": true
         },
         {
