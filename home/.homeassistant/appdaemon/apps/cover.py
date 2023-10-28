@@ -43,7 +43,7 @@ class CoverController(hass.Hass):
             else:
                 self.expected_value = self.value
 
-    def cleanup(self):
+    def terminate(self):
         self.expression.cleanup()
 
     def _set_mode(self, state):
@@ -129,7 +129,7 @@ class CoverController(hass.Hass):
     def on_expression_change(self, value):
         with self.mutex.lock('on_expression_change'):
             if self.value == value:
-                self.log('Value unchanged: {} -> {}'.format(self.value, value))
+                self.log('Value unchanged: {}'.format(value))
                 return
 
             self.log('Value changed: {} -> {}'.format(self.value, value))
