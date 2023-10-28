@@ -167,14 +167,14 @@ living_room_window_blind:
         - "stable"
     icon: mdi:blinds-horizontal
 dining_room_window_blind_1:
-    name: Étkező első redőny mód
+    name: Étkező hátsó redőny mód
     options:
         - "auto"
         - "manual"
         - "stable"
     icon: mdi:blinds-horizontal
 dining_room_window_blind_2:
-    name: Étkező hátsó redőny mód
+    name: Étkező első redőny mód
     options:
         - "auto"
         - "manual"

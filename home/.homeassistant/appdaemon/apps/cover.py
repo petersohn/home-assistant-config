@@ -81,6 +81,7 @@ class CoverController(hass.Hass):
         self._set_value(self.expected_value)
 
     def _set_value_inner(self, value):
+        self.log('Execute command: {}'.format(value))
         self.arrived_at_target = None
         if type(value) is float or type(value) is int:
             if value >= 0 and value <= 100:
@@ -127,10 +128,11 @@ class CoverController(hass.Hass):
 
     def on_expression_change(self, value):
         with self.mutex.lock('on_expression_change'):
-            self.log('Value changed: {} -> {}'.format(self.value, value))
             if self.value == value:
+                self.log('Value unchanged: {} -> {}'.format(self.value, value))
                 return
 
+            self.log('Value changed: {} -> {}'.format(self.value, value))
             self.value = value
 
             if self.delay is None:
@@ -138,6 +140,7 @@ class CoverController(hass.Hass):
                 return
 
             if self.timer is not None:
+                self.log('Reset timer')
                 self.cancel_timer(self.timer)
                 self.timer = None
 
@@ -146,6 +149,7 @@ class CoverController(hass.Hass):
 
     def on_delay(self, kwargs):
         with self.mutex.lock('on_expression_change'):
+            self.log('Time is up')
             self.timer = None
             self._set_value(kwargs['value'])
 
