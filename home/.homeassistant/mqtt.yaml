@@ -880,6 +880,14 @@ switch:
     availability_topic: home/devices/gate_reflector/available
     payload_available: 1
     payload_not_available: 0
+  - name: light_outside_0
+    command_topic: home/switches/lights/outside/0/set
+    state_topic: home/switches/lights/outside/0/state
+    payload_on: 1
+    payload_off: 0
+    availability_topic: home/devices/main_controller/available
+    payload_available: 1
+    payload_not_available: 0
   - name: light_outside_1
     command_topic: home/switches/lights/outside/1/set
     state_topic: home/switches/lights/outside/1/state

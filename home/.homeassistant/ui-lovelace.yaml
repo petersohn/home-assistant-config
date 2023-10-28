@@ -601,6 +601,23 @@ views:
           - type: horizontal-stack
             cards:
               - type: button
+                entity: switch.light_outside_0
+                state_color: true
+                tap_action:
+                  action: call-service
+                  service: script.auto_switch_manual
+                  service_data:
+                    auto_switch: input_select.light_outside_0
+                    target: switch.light_outside_0
+                hold_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.light_outside_0
+                    option: 'auto'
+                double_tap_action:
+                  action: more-info
+              - type: button
                 entity: switch.light_outside_1
                 state_color: true
                 tap_action:
@@ -717,6 +734,7 @@ views:
               - input_select.light_well
           - type: entities
             entities:
+              - input_select.light_outside_0
               - input_select.light_outside_1
               - input_select.light_outside_2
               - input_select.light_outside_3

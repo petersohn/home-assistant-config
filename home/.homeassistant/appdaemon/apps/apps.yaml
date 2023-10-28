@@ -67,6 +67,14 @@ auto_switch_light_garage:
     switch: input_select.light_garage
     reentrant: true
 
+auto_switch_light_outside_0:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_outside_0
+    switch: input_select.light_outside_0
+    reentrant: true
+
 auto_switch_light_outside_1:
     module: auto_switch
     class: AutoSwitch
@@ -534,6 +542,19 @@ christmas_light_balcony_switcher:
     enabler: christmas_light_balcony_enabler
     targets:
         - christmas_light_switch_balcony
+
+light_outside_switcher_0:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_light_outside_0
+        - sun_enabler_night
+        - locker
+    global_dependencies:
+        - auto_switch
+    enabler: sun_enabler_night
+    targets:
+        - auto_switch_light_outside_0
 
 light_outside_switcher_1:
     class: EnabledSwitch

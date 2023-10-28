@@ -332,6 +332,10 @@ switch.light_gate_reflector:
   friendly_name: "Kapu reflektor"
   icon: mdi:spotlight
 
+switch.light_outside_0:
+  friendly_name: "Körvilágítás 0"
+  icon: mdi:coach-lamp
+
 switch.light_outside_1:
   friendly_name: "Körvilágítás 1"
   icon: mdi:coach-lamp

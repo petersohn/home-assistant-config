@@ -47,6 +47,13 @@ light_christmas_balcony:
         - "on"
         - "off"
     icon: mdi:string-lights
+light_outside_0:
+    name: Körvilágítás 0
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:coach-lamp
 light_outside_1:
     name: Körvilágítás 1
     options:
