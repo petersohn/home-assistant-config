@@ -1193,7 +1193,7 @@ storage_door_open:
     targets:
         - auto_switch_storage_window_blind
     enabler: storage_window_blind_auto_open_enabler
-    time: 30
+    time: 60
 
 storage_window_blind_1:
     module: cover
