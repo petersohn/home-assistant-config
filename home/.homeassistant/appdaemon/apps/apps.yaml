@@ -1409,13 +1409,25 @@ climate_bedroom_switch:
     targets:
         - auto_switch_climate_bedroom
 
+is_attic_warm_enough_for_water_heater:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    delay:
+        minutes: 30
+    expr: >
+        not ok.sensor.temperature_attic or v.sensor.temperature_attic > 2
+
 water_heater_enabler:
     module: enabler
     class: ExpressionEnabler
     dependencies:
         - locker
+        - is_attic_warm_enough_for_water_heater
     expr: >
-        True
+      e.is_attic_warm_enough_for_water_heater
+      or (v.sensor.time >= '10:00' and v.sensor.time <= '19:00')
 
 auto_switch_water_heater:
     module: auto_switch
