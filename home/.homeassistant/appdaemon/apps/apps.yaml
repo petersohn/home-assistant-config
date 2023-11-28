@@ -1334,17 +1334,6 @@ heater_check2:
       v.sensor.temperature_kitchen
     target: sensor.heater_check2
 
-heater_target:
-    module: expression
-    class: Expression
-    dependencies:
-        - locker
-    expr: >
-      v.input_number.heater_temperature_wood_heating
-      if v.input_boolean.wood_heating else
-      v.input_number.heater_temperature_normal
-    target: sensor.heater_target
-
 air_quality_alert:
     module: alert
     class: AlertAggregator

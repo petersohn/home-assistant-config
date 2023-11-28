@@ -286,7 +286,10 @@
   trigger:
     platform: state
     entity_id: input_select.climate_mode
-    to: 'auto'
+    to:
+      - 'auto'
+      - 'heat_up'
+      - 'keep_warm'
   action:
     - service: climate.set_temperature
       target:
@@ -295,7 +298,14 @@
           - climate.daikin_bedroom
       data:
         hvac_mode: heat
-        temperature: "{{ states('sensor.heater_target') | float(18) }}"
+        temperature: >
+          {% if is_state('input_select.climate_mode', 'heat_up') %}
+          {{ (states('input_number.heater_temperature_normal') | float(20)) + 1 }}
+          {% elif is_state('input_select.climate_mode', 'keep_warm') %}
+          {{ 15 }}
+          {% else %}
+          {{ states('input_number.heater_temperature_normal') | float(20) }}
+          {% endif %}
     - service: climate.set_fan_mode
       target:
         entity_id:
@@ -311,42 +321,11 @@
       data:
         swing_mode: Vertical
 
-- alias: klíma felfűtés
-  trigger:
-    platform: state
-    entity_id: input_select.climate_mode
-    to:
-      - 'heat_up'
-      - 'keep_warm'
-  action:
-    - service: climate.set_temperature
-      target:
-        entity_id:
-          - climate.daikin_living_room
-          - climate.daikin_bedroom
-      data:
-        hvac_mode: heat
-        temperature: "{{ states('sensor.heater_target') | float(18) }}"
-    - service: climate.set_fan_mode
-      target:
-        entity_id:
-          - climate.daikin_living_room
-          - climate.daikin_bedroom
-      data:
-        fan_mode: 5
-    - service: climate.set_swing_mode
-      target:
-        entity_id:
-          - climate.daikin_living_room
-          - climate.daikin_bedroom
-      data:
-        swing_mode: Vertical
-
 - alias: klíma melegen tartás be
   trigger:
     platform: state
     entity_id: sensor.time
-    to: '13:00'
+    to: '09:00'
   condition:
     and:
       - condition: numeric_state
@@ -367,7 +346,7 @@
     platform: state
     entity_id: input_select.climate_mode
     to: 'keep_warm'
-    for: '03:00:00'
+    for: '8:00:00'
   action:
     - service: input_select.select_option
       target:
@@ -475,7 +454,7 @@
       data:
         message: a
 
-- alias: cupsd restart
+- alias: upsd restart
   trigger:
     platform: state
     entity_id: sensor.apc_input_voltage
