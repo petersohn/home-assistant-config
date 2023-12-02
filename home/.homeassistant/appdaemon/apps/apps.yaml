@@ -1418,6 +1418,16 @@ water_heater_enabler:
       e.is_attic_warm_enough_for_water_heater
       or (v.sensor.time >= '10:00' and v.sensor.time <= '19:00')
 
+is_water_heater_stopped:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    delay:
+        minutes: 2
+    expr: >
+        not ok.sensor.power_water_heater or v.sensor.power_water_heater < 10
+
 auto_switch_water_heater:
     module: auto_switch
     class: AutoSwitch
@@ -1432,8 +1442,10 @@ water_heater_switch:
     dependencies:
         - auto_switch_water_heater
         - water_heater_enabler
+        - is_water_heater_stopped
         - locker
     enabler: water_heater_enabler
+    off_guard: is_water_heater_stopped
     targets:
         - auto_switch_water_heater
 
