@@ -155,7 +155,7 @@ class CoverController(hass.Hass):
 
     def on_state_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_state_change'):
-            if old['state'] != new['state']:
+            if new is not None and (old is None or old['state'] != new['state']):
                 self.log('State changed: {} -> {}'.format(
                     old['state'],new['state']))
             self._check_state(new)
