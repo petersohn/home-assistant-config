@@ -11,6 +11,8 @@ Test Teardown  Cleanup AppDaemon
 ${switch1} =  input_boolean.test_switch
 ${switch2} =  input_boolean.test_switch2
 ${enabler} =  test_enabler
+${on_guard} =  test_on_guard
+${off_guard} =  test_off_guard
 
 
 *** Test Cases ***
@@ -36,6 +38,22 @@ Start With On
     Set Enabled State  ${enabler}  enable
     State Should Be  ${switch1}  on
     State Should Be  ${switch2}  on
+
+Guards
+    [Setup]  Initialize  EnabledSwitchGuards
+    State Should Be  ${switch1}  off
+    Set Enabled State  ${enabler}  enable
+    State Should Be  ${switch1}  off
+    Set Enabled State  ${on_guard}  enable
+    State Should Be  ${switch1}  on
+    Set Enabled State  ${enabler}  disable
+    State Should Be  ${switch1}  on
+    Set Enabled State  ${off_guard}  enable
+    State Should Be  ${switch1}  off
+    Set Enabled State  ${enabler}  enable
+    State Should Be  ${switch1}  on
+    Set Enabled State  ${enabler}  disable
+    State Should Be  ${switch1}  off
 
 
 *** Keywords ***

@@ -1,0 +1,40 @@
+test_enabler:
+    module: enabler
+    class: ScriptEnabler
+    initial: false
+    dependencies: locker
+
+test_on_guard:
+    module: enabler
+    class: ScriptEnabler
+    initial: false
+    dependencies: locker
+
+test_off_guard:
+    module: enabler
+    class: ScriptEnabler
+    initial: false
+    dependencies: locker
+
+test_switch:
+    class: AutoSwitch
+    module: auto_switch
+    target: input_boolean.test_switch
+    dependencies: locker
+
+test_enabled_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - test_enabler
+        - test_on_guard
+        - test_off_guard
+        - test_switch
+        - locker
+    global_dependencies:
+        - auto_switch
+    enabler: test_enabler
+    on_guard: test_on_guard
+    off_guard: test_off_guard
+    targets:
+        - test_switch
