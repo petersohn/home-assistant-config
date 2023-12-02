@@ -55,6 +55,30 @@ Guards
     Set Enabled State  ${enabler}  disable
     State Should Be  ${switch1}  off
 
+Turn Guards On And Off
+    [Setup]  Initialize  EnabledSwitchGuards
+    State Should Be  ${switch1}  off
+    Set Enabled State  ${on_guard}  enable
+    State Should Be  ${switch1}  off
+    Set Enabled State  ${on_guard}  disable
+    State Should Be  ${switch1}  off
+    Set Enabled State  ${off_guard}  enable
+    State Should Be  ${switch1}  off
+    Set Enabled State  ${off_guard}  disable
+    State Should Be  ${switch1}  off
+    Set Enabled State  ${on_guard}  enable
+    Set Enabled State  ${enabler}  enable
+    State Should Be  ${switch1}  on
+    Set Enabled State  ${on_guard}  disable
+    State Should Be  ${switch1}  on
+    Set Enabled State  ${off_guard}  enable
+    State Should Be  ${switch1}  on
+    Set Enabled State  ${off_guard}  disable
+    State Should Be  ${switch1}  on
+    Set Enabled State  ${off_guard}  enable
+    Set Enabled State  ${enabler}  disable
+    State Should Be  ${switch1}  off
+
 
 *** Keywords ***
 
