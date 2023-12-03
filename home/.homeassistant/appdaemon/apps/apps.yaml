@@ -1424,7 +1424,7 @@ is_water_heater_stopped:
     dependencies:
         - locker
     delay:
-        minutes: 2
+        minutes: 10
     expr: >
         not ok.sensor.power_water_heater or v.sensor.power_water_heater < 10
 
