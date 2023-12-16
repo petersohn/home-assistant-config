@@ -539,6 +539,11 @@ binary_sensor:
     name: water_heater_available
     payload_on: 'Online'
     payload_off: 'Offline'
+  - state_topic: instar/camera1/status/connection
+    name: camera1_available
+    payload_on: 1
+    payload_off: 0
+    value_template: '{{ value_json.val }}'
 
   - state_topic: home/sensors/motion/gate_reflector
     name: motion_sensor_driveway_uppest

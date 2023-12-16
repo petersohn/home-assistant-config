@@ -132,6 +132,10 @@ binary_sensor.christmas_tree_switcher_available:
   friendly_name: Christmas Tree Switch
   device_class: plug
 
+binary_sensor.camera1_available:
+  friendly_name: Camera 1
+  device_class: plug
+
 sensor.temperature_outside:
   friendly_name: "Kinti hőmérséklet"
   device_class: temperature
@@ -255,6 +259,9 @@ sensor.rain:
 sensor.cpu_temperature:
   friendly_name: "CPU hőmérséklet"
   icon: mdi:thermometer
+
+sensor.solar_panel_pictures_size_command:
+  friendly_name: "Napelem képek adatmennyiség"
 
 switch.heating_pump:
   friendly_name: "Keringető szivattyú"

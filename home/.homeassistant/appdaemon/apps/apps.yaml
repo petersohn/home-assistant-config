@@ -968,6 +968,30 @@ availability_alerts:
       not v['binary_sensor.' + name + '_available'])
     text_expr: a['binary_sensor.' + name + '_available'].friendly_name
     timeout:
+        minutes: 30
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+    sources:
+        - driveway
+        - living_room_temperature
+        - bedroom_temperature
+        - dishwasher_sensor
+        - gate_reflector
+        - attic_lower
+        - garage_controller
+
+availability_alerts_critical:
+    module: alert
+    class: AlertAggregator
+    target: binary_sensor.availability_alert_critical
+    trigger_expr: >
+      not v['input_boolean.' + name + '_maintenance'] and (
+      not ok['binary_sensor.' + name + '_available'] or
+      not v['binary_sensor.' + name + '_available'])
+    text_expr: a['binary_sensor.' + name + '_available'].friendly_name
+    timeout:
         minutes: 5
     dependencies:
         - locker
@@ -978,20 +1002,14 @@ availability_alerts:
         - well_controller
         - main_controller
         - main_controller2
-        - driveway
         - cellar_controller
-        - garage_controller
-        - living_room_temperature
-        - bedroom_temperature
-        - dishwasher_sensor
-        - gate_reflector
-        - attic_lower
         - dining_room_window
         - dining_room_window_2
         - living_room_window
         - balcony_controller
         - storage_window_1
         - storage_window_2
+        - camera1
 
 window_alerts:
     module: alert

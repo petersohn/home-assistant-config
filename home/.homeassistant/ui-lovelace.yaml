@@ -863,6 +863,7 @@ views:
       - type: entities
         entities:
           - alert.availability
+          - alert.availability_critical
           - alert.freeze
           - alert.tracker_update
           - alert.furnace_overheat
@@ -894,6 +895,7 @@ views:
           - binary_sensor.attic_lower_available
           - binary_sensor.balcony_controller_available
           - binary_sensor.bedroom_temperature_available
+          - binary_sensor.camera1_available
           - binary_sensor.christmas_tree_switcher_available
           - binary_sensor.dining_room_window_available
           - binary_sensor.dining_room_window_2_available
@@ -912,6 +914,7 @@ views:
           - binary_sensor.well_controller_available
           # - binary_sensor.climate_living_room_available
           - alert.availability
+          - alert.availability_critical
         title: device availability
         state_color: true
         show_header_toggle: false
@@ -920,6 +923,7 @@ views:
           - input_boolean.attic_lower_maintenance
           - input_boolean.balcony_controller_maintenance
           - input_boolean.bedroom_temperature_maintenance
+          - input_boolean.camera1_maintenance
           - input_boolean.dining_room_window_maintenance
           - input_boolean.dining_room_window_2_maintenance
           - input_boolean.cellar_controller_maintenance
@@ -947,6 +951,7 @@ views:
       - type: entities
         entities:
           - sensor.cpu_temperature
+          - sensor.solar_panel_pictures_size
         title: local_device
         show_header_toggle: false
       - type: entities
@@ -954,7 +959,7 @@ views:
           - sensor.apc_input_voltage
           - sensor.apc_battery_charge
           - sensor.apc_load
-        title: local_device
+        title: UPS
         show_header_toggle: false
       - type: entities
         entities:

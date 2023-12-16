@@ -1,12 +1,29 @@
 availability:
-  name: Availability
+  name: Availability Noncritical
   message: |
-    Néhány ESP nem működik.
+    Néhány nem kritikus ESP nem működik.
 
     ```
     {{state_attr('binary_sensor.availability_alert', 'text')}}
     ```
   entity_id: binary_sensor.availability_alert
+  state: 'on'
+  repeat:
+    - 10
+    - 60
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert
+
+availability_critical:
+  name: Availability Critical
+  message: |
+    Néhány kritikus ESP nem működik.
+
+    ```
+    {{state_attr('binary_sensor.availability_alert', 'text')}}
+    ```
+  entity_id: binary_sensor.availability_alert_critical
   state: 'on'
   repeat:
     - 10

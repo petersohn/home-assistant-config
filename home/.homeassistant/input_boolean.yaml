@@ -72,6 +72,10 @@ living_room_window_maintenance:
 balcony_controller_maintenance:
   name: Balcony Controller
   icon: mdi:wrench
+camera1_maintenance:
+  name: Camera 1
+  icon: mdi:wrench
+
 sunlight_sensor_maintenance:
   name: Sunlight Sensor
   icon: mdi:weather-sunny-alert
