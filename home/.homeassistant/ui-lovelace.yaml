@@ -155,6 +155,10 @@ views:
         title: Ajtók
         show_header_toggle: false
 
+      - type: entities
+        entities:
+          - camera.camera1
+
     icon: 'mdi:home'
   - path: temperature-inside
     title: 'Benti hőmérséklet'

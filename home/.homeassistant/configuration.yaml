@@ -206,3 +206,6 @@ notify:
   - name: telegram_alert
     platform: telegram
     chat_id: !secret telegram_chat_id
+
+stream:
+  ll_hls: true
