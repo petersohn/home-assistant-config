@@ -1318,7 +1318,6 @@ lightbulb_icon:
     entities:
       - switch.light_attic_upstairs
       - switch.light_attic_downstairs
-      - switch.light_cellar
       - switch.light_garage
 
 string_lights_icon:

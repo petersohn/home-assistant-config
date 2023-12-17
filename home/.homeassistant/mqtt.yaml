@@ -844,14 +844,6 @@ switch:
     availability_topic: home/devices/main_controller/available
     payload_available: 1
     payload_not_available: 0
-  - name: light_cellar
-    command_topic: home/switches/lights/cellar/set
-    state_topic: home/switches/lights/cellar/state
-    payload_on: 1
-    payload_off: 0
-    availability_topic: home/devices/cellar_controller/available
-    payload_available: 1
-    payload_not_available: 0
   - name: light_garage
     command_topic: home/switches/lights/garage/set
     state_topic: home/switches/lights/garage/state
