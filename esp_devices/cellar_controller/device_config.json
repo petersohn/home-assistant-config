@@ -7,28 +7,13 @@
     "interfaces": [
         {
             "type": "input",
-            "name": "light_switch_cellar",
-            "cycle": "single",
+            "name": "door",
             "pin": 12
-        },
-        {
-            "type": "output",
-            "name": "light_cellar",
-            "commandTopic": "home/switches/lights/cellar/set",
-            "invert": true,
-            "default": 0,
-            "pin": 4
         },
         {
             "type": "dht",
             "name": "temperature_cellar",
             "pin": 5
-        },
-        {
-            "type": "dallasTemperature",
-            "name": "dallas",
-            "interval": 15,
-            "pin": 14
         },
         {
             "type": "output",
@@ -42,16 +27,9 @@
     "actions": [
         {
             "type": "publish",
-            "interface": "light_cellar",
-            "topic": "home/switches/lights/cellar/state",
+            "interface": "door",
+            "topic": "home/sensors/door/cellar",
             "retain": true
-        },
-        {
-            "type": "command",
-            "interface": "light_switch_cellar",
-            "target": "light_cellar",
-            "command": "toggle",
-            "value": "0"
         },
         {
             "type": "publish",
@@ -71,13 +49,6 @@
             "type": "publish",
             "interface": "sprinkler",
             "topic": "home/switches/auto_sprinkler_cellar/state",
-            "retain": true
-        },
-        {
-            "type": "publish",
-            "interface": "dallas",
-            "topic": "home/sensors/temperature/hot_water",
-            "payload": {"type": "value", "index": 1},
             "retain": true
         }
     ]
