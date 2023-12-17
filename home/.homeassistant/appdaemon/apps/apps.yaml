@@ -968,7 +968,7 @@ availability_alerts:
       not v['binary_sensor.' + name + '_available'])
     text_expr: a['binary_sensor.' + name + '_available'].friendly_name
     timeout:
-        minutes: 30
+        hours: 1
     dependencies:
         - locker
     global_dependencies:
