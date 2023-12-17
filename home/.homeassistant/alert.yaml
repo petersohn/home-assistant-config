@@ -68,6 +68,40 @@ freeze:
   notifiers:
     - telegram_alert
 
+window_open_sleep:
+  name: Ablak nyitva
+  message: |
+    Valami nyitva maradt.
+
+    ```
+    {{state_attr('binary_sensor.window_alert', 'text')}}
+    ```
+  entity_id: binary_sensor.window_alert_sleep
+  state: 'on'
+  repeat:
+    - 1
+    - 5
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert
+
+freeze:
+  name: Fagyás
+  message: |
+    Fagyás.
+
+    ```
+    {{state_attr('binary_sensor.freeze_alert', 'text')}}
+    ```
+  entity_id: binary_sensor.freeze_alert
+  state: 'on'
+  repeat:
+    - 30
+    - 60
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert
+
 # tracker_update:
 #   name: Pozíció jelzés hiányzik
 #   message: >
