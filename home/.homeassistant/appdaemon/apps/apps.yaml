@@ -1438,8 +1438,7 @@ is_attic_warm_enough_for_water_heater:
     delay:
         minutes: 30
     expr: >
-        not ok.sensor.temperature_attic or v.sensor.temperature_attic > (
-        2 if v.sensor.time > '12:00' else 4)
+        not ok.sensor.temperature_attic or v.sensor.temperature_attic > 3
 
 water_heater_enabler:
     module: enabler
@@ -1449,7 +1448,7 @@ water_heater_enabler:
         - is_attic_warm_enough_for_water_heater
     expr: >
       e.is_attic_warm_enough_for_water_heater
-      or (v.sensor.time >= '10:00' and v.sensor.time <= '19:00')
+      or v.sensor.time >= '10:00'
 
 is_water_heater_stopped:
     module: enabler
