@@ -823,6 +823,8 @@ views:
           - sensor.temperature_furnace_wood
           - sensor.temperature_furnace_wood_in
           - switch.heating_pump
+          - switch.heater
+          - sensor.heater_check2
           - alert.furnace_overheat
         title: Fűtés
         show_header_toggle: false
