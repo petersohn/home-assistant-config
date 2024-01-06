@@ -83,6 +83,26 @@ Start When Motion At Initialization Expr
     [Setup]  Initialize  00:00:00  TimerSwitchExpr  on
     Start When Motion At Initialization
 
+Delay
+    [Setup]  Initialize  00:00:00  TimerSwitchDelay
+    Schedule Call At  1 min
+    ...    set_sensor_state  ${motion_detector}  on
+    Schedule Call At  1 min 40 sec
+    ...    set_sensor_state  ${motion_detector}  off
+    Schedule Call At  4 min
+    ...    set_sensor_state  ${motion_detector}  on
+    Schedule Call At  4 min 20 sec
+    ...    set_sensor_state  ${motion_detector}  off
+    Schedule Call At  5 min
+    ...    set_sensor_state  ${motion_detector}  on
+    Schedule Call At  6 min
+    ...    set_sensor_state  ${motion_detector}  off
+
+    State Should Change At  ${switch}  on   1 min 30 sec
+    State Should Change At  ${switch}  off  2 min 40 sec
+    State Should Change At  ${switch}  on   5 min 30 sec
+    State Should Change At  ${switch}  off  7 min
+
 Timer Sequence
     [Setup]  Initialize  00:00:00  TimerSequence
     Set Enabled State  ${enabler}  disable

@@ -22,7 +22,7 @@ class Enabler(hass.Hass):
             self.cancel_timer(self.change_timer)
 
     def get_callbacks(self):
-        with self.callbacks_mutex.lock('do_change'):
+        with self.callbacks_mutex.lock('get_callbacks'):
             return list(self.callbacks.values())
 
     def call_callbacks(self, callbacks):

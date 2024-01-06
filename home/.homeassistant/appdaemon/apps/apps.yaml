@@ -361,6 +361,7 @@ driveway_uppest_reflector_motion_sensor:
         - auto_switch_light_gate_reflector
     enabler: motion_sensor_driveway_uppest_enabler
     time: 1
+    delay: 1
 
 driveway_uppest_motion_sensor:
     class: TimerSwitch
@@ -374,6 +375,7 @@ driveway_uppest_motion_sensor:
         - auto_switch_light_driveway
     enabler: motion_sensor_driveway_uppest_enabler
     time: 2
+    delay: 1
 
 driveway_upper_reflector_motion_sensor:
     class: TimerSwitch
@@ -387,6 +389,7 @@ driveway_upper_reflector_motion_sensor:
         - auto_switch_light_gate_reflector
     enabler: motion_sensor_driveway_upper_enabler
     time: 1
+    delay: 1
 
 driveway_upper_motion_sensor:
     class: TimerSwitch
@@ -400,6 +403,7 @@ driveway_upper_motion_sensor:
         - auto_switch_light_driveway
     enabler: motion_sensor_driveway_upper_enabler
     time: 2
+    delay: 1
 
 driveway_lower_motion_sensor:
     class: TimerSwitch
@@ -413,6 +417,7 @@ driveway_lower_motion_sensor:
         - auto_switch_light_driveway
     enabler: motion_sensor_driveway_lower_enabler
     time: 2
+    delay: 1
 
 garage_driveway_motion_sensor:
     class: TimerSwitch
@@ -426,6 +431,7 @@ garage_driveway_motion_sensor:
         - auto_switch_light_driveway
     enabler: sun_enabler_night
     time: 2
+    delay: 1
 
 garage_motion_sensor:
     class: TimerSwitch
@@ -439,6 +445,7 @@ garage_motion_sensor:
         - auto_switch_light_garage
     enabler: motion_sensor_garage_enabler
     time: 1
+    delay: 1
 
 garage2_motion_sensor:
     class: TimerSwitch
@@ -450,6 +457,7 @@ garage2_motion_sensor:
     targets:
         - auto_switch_light_garage
     time: 1
+    delay: 1
 
 well_motion_sensor:
     class: TimerSwitch
@@ -464,6 +472,7 @@ well_motion_sensor:
         - auto_switch_light_driveway
     enabler: motion_sensor_well_enabler
     time: 2
+    delay: 1
 
 christmas_light_switch_front:
     module: auto_switch

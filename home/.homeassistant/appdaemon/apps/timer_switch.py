@@ -63,12 +63,14 @@ class Timer:
 
     def stop(self):
         with self.mutex.lock('stop'):
+            self.app.log('Stop timer')
             if self.timer is not None:
                 self.app.cancel_timer(self.timer)
                 self.timer = None
 
     def start(self):
         with self.mutex.lock('start'):
+            self.app.log('Start timer')
             if type(self.time) is float:
                 time = self.time
             else:
@@ -107,6 +109,14 @@ class TimerSwitch(hass.Hass):
             self.enabler = None
             self.enabler_id = None
 
+        delay = self.args.get('delay')
+        if delay is not None:
+            self.delay = float(delay)
+        else:
+            self.delay = None
+
+        self.delay_timer = None
+
         self.mutex = self.get_app('locker').get_mutex('TimerSwitch')
         with self.mutex.lock('initialize'):
             self.timer = Timer(self, self.args['time'], self.on_timeout)
@@ -140,14 +150,41 @@ class TimerSwitch(hass.Hass):
         if self.enabler is None or self.enabler.is_enabled():
             self.__start()
 
+    def _handle_change(self, value):
+        self.is_on = value
+        if value:
+            self.__handle_start()
+        else:
+            self.__handle_stop()
+
     def on_change(self, value):
         with self.mutex.lock('on_change'):
             self.log('on_change: {}'.format(value))
-            self.is_on = value
+            if self.delay is None:
+                self._handle_change(value)
+                return
+
+            if self.delay_timer is not None:
+                if value:
+                    self.error('Timer should not be running')
+                self.log('stop delay')
+                self.cancel_timer(self.delay_timer)
+                self.delay_timer = None
+
+            if self.is_on == value:
+                self.log('no change')
+                return
+
             if value:
-                self.__handle_start()
+                self.delay_timer = self.run_in(self.on_delay, self.delay)
             else:
-                self.__handle_stop()
+                self._handle_change(False)
+
+    def on_delay(self, kwargs):
+        with self.mutex.lock('on_delay'):
+            if self.delay_timer is not None:
+                self._handle_change(True)
+                self.delay_timer = None
 
     def __handle_stop(self):
         if not self.timer.is_running():
