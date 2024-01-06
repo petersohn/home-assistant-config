@@ -102,18 +102,6 @@ sensor:
       - 'date_time'
 
 binary_sensor:
-  - platform: ping
-    host: !secret router_address
-    name: network_available
-  - platform: ping
-    host: !secret desktop_address
-    name: desktop_available
-  - platform: ping
-    host: google.com
-    name: internet_available
-  - platform: ping
-    host: !secret gateway_address
-    name: gateway_available
   - platform: tod
     name: Night
     after: sunset
@@ -137,11 +125,6 @@ climate:
       seconds: 15
     away_temp: 10
     precision: 0.5
-
-# media_player:
-#   - platform: clementine
-#     name: desktop
-#     host: !secret desktop_address
 
 template:
   - binary_sensor:
