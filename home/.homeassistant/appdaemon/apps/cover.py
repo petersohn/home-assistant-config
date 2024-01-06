@@ -189,9 +189,14 @@ class CoverController(hass.Hass):
             self._reset_target()
             return
 
+        current_position = states['attributes'].get('current_position')
+        if current_position is None:
+            self.log('Cannot determine current position')
+            return
+
         is_moving = state == 'opening' or state == 'closing'
         if self.target_position is not None:
-            position = int(states['attributes']['current_position'])
+            position = int(current_position)
             # None or False
             if not self.arrived_at_target and \
                     not is_moving and \
