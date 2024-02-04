@@ -1374,6 +1374,9 @@ heater_check2:
       v.sensor.temperature_bedroom_upper or
       v.sensor.temperature_kitchen
     target: sensor.heater_check2
+    attributes:
+      icon: mdi:thermometer
+      unit_of_measurement: "°C"
 
 air_quality_alert:
     module: alert
