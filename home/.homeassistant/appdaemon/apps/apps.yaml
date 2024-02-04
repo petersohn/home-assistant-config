@@ -1073,6 +1073,7 @@ tracker_last_updated:
     target: sensor.tracker_last_updated
     attributes:
         unit_of_measurement: min
+        icon: mdi:crosshairs-question
 
 tracker_last_changed:
     module: expression
@@ -1375,7 +1376,7 @@ heater_check2:
       v.sensor.temperature_kitchen
     target: sensor.heater_check2
     attributes:
-      icon: mdi:thermometer
+      icon: mdi:home-thermometer-outline
       unit_of_measurement: "°C"
 
 air_quality_alert:

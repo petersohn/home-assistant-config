@@ -219,14 +219,17 @@ sensor.humidity_attic:
 sensor.temperature_furnace_gas:
   friendly_name: "Gázkazán"
   device_class: temperature
+  icon: mdi:thermometer-water
 
 sensor.temperature_furnace_wood:
   friendly_name: "Fakazán"
   device_class: temperature
+  icon: mdi:thermometer-water
 
 sensor.temperature_furnace_wood_in:
   friendly_name: "Fakazán bemenet"
   device_class: temperature
+  icon: mdi:thermometer-water
 
 sensor.temperature_hot_water:
   friendly_name: "Melegvíz"
@@ -485,9 +488,11 @@ switch.desktop_player:
 
 climate.daikin_living_room:
   friendly_name: Klíma nappali
+  icon: mdi:heat-pump
 
 climate.daikin_bedroom:
   friendly_name: Klíma hálószoba
+  icon: mdi:heat-pump
 
 sensor.daikin_bedroom_inside_temperature:
   friendly_name: "Hálószoba hőmérséklet 2"
@@ -503,11 +508,11 @@ sensor.daikin_living_room_outside_temperature:
 
 switch.climate_living_room:
   friendly_name: Klíma nappali főkapcsoló
-  icon: mdi:hvac
+  icon: mdi:heat-pump
 
 switch.climate_bedroom:
   friendly_name: Klíma hálószoba főkapcsoló
-  icon: mdi:hvac
+  icon: mdi:heat-pump
 
 switch.water_heater:
   friendly_name: Vízmelegítő
@@ -516,3 +521,16 @@ switch.water_heater:
 switch.christmas_tree:
   friendly_name: "Karácsonyfa"
   icon: mdi:pine-tree
+
+sensor.inverter_device_status:
+  icon: mdi:solar-power
+
+sensor.inverter_inverter_state:
+  icon: mdi:solar-power
+
+sensor.inverter_alarms:
+  icon: mdi:solar-power
+
+sensor.inverter_efficiency:
+  icon: mdi:percent-circle
+

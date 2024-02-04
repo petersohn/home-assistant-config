@@ -143,14 +143,14 @@ climate_living_room:
         - "auto"
         - "on"
         - "off"
-    icon: mdi:hvac
+    icon: mdi:heat-pump
 climate_bedroom:
     name: Klíma hálószoba főkapcsoló
     options:
         - "auto"
         - "on"
         - "off"
-    icon: mdi:hvac
+    icon: mdi:heat-pump
 water_heater:
     name: Vízmelegítő
     options:
