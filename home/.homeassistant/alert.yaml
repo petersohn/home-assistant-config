@@ -21,7 +21,7 @@ availability_critical:
     Néhány kritikus ESP nem működik.
 
     ```
-    {{state_attr('binary_sensor.availability_alert', 'text')}}
+    {{state_attr('binary_sensor.availability_alert_critical', 'text')}}
     ```
   entity_id: binary_sensor.availability_alert_critical
   state: 'on'
