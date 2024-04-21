@@ -396,19 +396,61 @@
       data:
         option: 'auto'
 
-- alias: zene bekapcsolás
+- alias: nappali klíma csendes be
   trigger:
     platform: state
-    entity_id: sensor.time
-    to: '07:05'
-  condition:
-    condition: state
-    entity_id: input_select.presence_mode
-    state: 'home'
+    entity_id: input_boolean.living_room_climate_fan_silence
+    to:
+      - 'on'
   action:
-    - service: homeassistant.turn_on
-      data_template:
-          entity_id: switch.desktop_player
+    - service: climate.set_fan_mode
+      target:
+        entity_id:
+          - climate.daikin_living_room
+      data:
+        fan_mode: Silence
+
+- alias: hálószoba klíma csendes be
+  trigger:
+    platform: state
+    entity_id: input_boolean.bedroom_climate_fan_silence
+    to:
+      - 'on'
+  action:
+    - service: climate.set_fan_mode
+      target:
+        entity_id:
+          - climate.daikin_bedroom
+      data:
+        fan_mode: Silence
+
+- alias: nappali klíma csendes ki
+  trigger:
+    platform: state
+    entity_id: input_boolean.living_room_climate_fan_silence
+    to:
+      - 'off'
+  action:
+    - service: climate.set_fan_mode
+      target:
+        entity_id:
+          - climate.daikin_living_room
+      data:
+        fan_mode: Auto
+
+- alias: hálószoba klíma csendes ki
+  trigger:
+    platform: state
+    entity_id: input_boolean.bedroom_climate_fan_silence
+    to:
+      - 'off'
+  action:
+    - service: climate.set_fan_mode
+      target:
+        entity_id:
+          - climate.daikin_bedroom
+      data:
+        fan_mode: Auto
 
 - alias: szünet be
   trigger:
@@ -449,6 +491,7 @@
     platform: state
     entity_id: binary_sensor.cups_available
     to: 'off'
+    for: '00:05:00'
   action:
     - service: notify.restart_cups
       data:
@@ -459,6 +502,7 @@
     platform: state
     entity_id: sensor.apc_input_voltage
     to: 'unavailable'
+    for: '00:05:00'
   action:
     - service: notify.restart_upsd
       data:

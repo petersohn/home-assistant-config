@@ -130,6 +130,12 @@ views:
                   service_data:
                     entity_id: input_select.climate_mode
                     option: 'keep_warm'
+          - type: horizontal-stack
+            cards:
+              - type: button
+                entity: input_boolean.living_room_climate_fan_silence
+              - type: button
+                entity: input_boolean.bedroom_climate_fan_silence
           - type: entities
             state_color: true
             entities:
