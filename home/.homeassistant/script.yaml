@@ -26,6 +26,19 @@ auto_switch_manual:
                       on
                   {% endif %}
 
+toggle_silence:
+    sequence:
+        - service: climate.set_fan_mode
+          target:
+            entity_id: '{{ entity }}'
+          data:
+            fan_mode: >
+                  {% if is_state_attr(entity, 'fan_mode', 'Silence') %}
+                      Auto
+                  {% else %}
+                      Silence
+                  {% endif %}
+
 heating_on:
   sequence:
       - service: climate.set_temperature

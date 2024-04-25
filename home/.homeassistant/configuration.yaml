@@ -156,6 +156,14 @@ template:
     - name: climate_keep_warm
       state: >
         {{ is_state('input_select.climate_mode', 'keep_warm') }}
+  - binary_sensor:
+    - name: living_room_climate_silence
+      state: >
+        {{ is_state_attr('climate.daikin_living_room', 'fan_mode', 'Silence') }}
+  - binary_sensor:
+    - name: bedroom_climate_silence
+      state: >
+        {{ is_state_attr('climate.daikin_bedroom', 'fan_mode', 'Silence') }}
 
 
 input_number:

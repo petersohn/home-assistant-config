@@ -133,9 +133,23 @@ views:
           - type: horizontal-stack
             cards:
               - type: button
-                entity: input_boolean.living_room_climate_fan_silence
+                entity: binary_sensor.living_room_climate_silence
+                name: Nappali klíma csendes
+                icon: mdi:fan-chevron-down
+                tap_action:
+                  action: call-service
+                  service: script.toggle_silence
+                  service_data:
+                    entity: climate.daikin_living_room
               - type: button
-                entity: input_boolean.bedroom_climate_fan_silence
+                entity: binary_sensor.bedroom_climate_silence
+                name: Hálószoba klíma csendes
+                icon: mdi:fan-chevron-down
+                tap_action:
+                  action: call-service
+                  service: script.toggle_silence
+                  service_data:
+                    entity: climate.daikin_bedroom
           - type: entities
             state_color: true
             entities:

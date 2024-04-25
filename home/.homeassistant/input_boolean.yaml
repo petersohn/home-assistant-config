@@ -17,12 +17,6 @@ storage_window_blind_open:
 desktop_player_pause:
   name: Szünet
   icon: mdi:pause-circle
-living_room_climate_fan_silence:
-  name: Nappali klíma csendes mód
-  icon: mdi:fan-chevron-down
-bedroom_climate_fan_silence:
-  name: Hálószoba klíma csendes mód
-  icon: mdi:fan-chevron-down
 
 furnace_temperature_maintenance:
   name: Furnace Temperature
