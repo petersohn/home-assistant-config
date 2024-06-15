@@ -631,6 +631,8 @@ sunlight:
         if not v.input_boolean.sunlight_sensor_maintenance
         else 'unavailable'
     target: sensor.light_sunlight_adjusted
+    attributes:
+        unit_of_measurement: '%'
 
 is_dark:
     module: enabler
@@ -1182,7 +1184,8 @@ window_blind_shield_2:
     class: ExpressionEnabler
     expr: >
         v.input_select.season_mode == 'summer' and
-        v.sensor.time < '09:00'
+        v.sensor.time < '09:00' and
+        not e.sun_enabler_night
     dependencies:
         - locker
     global_dependencies:
