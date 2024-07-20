@@ -180,6 +180,7 @@ views:
       - type: entities
         entities:
           - camera.camera1
+          - camera.camera2
 
     icon: 'mdi:home'
   - path: temperature-inside
@@ -916,6 +917,7 @@ views:
           - binary_sensor.balcony_controller_available
           - binary_sensor.bedroom_temperature_available
           - binary_sensor.camera1_available
+          - binary_sensor.camera2_available
           - binary_sensor.christmas_tree_switcher_available
           - binary_sensor.dining_room_window_available
           - binary_sensor.dining_room_window_2_available
@@ -944,6 +946,7 @@ views:
           - input_boolean.balcony_controller_maintenance
           - input_boolean.bedroom_temperature_maintenance
           - input_boolean.camera1_maintenance
+          - input_boolean.camera2_maintenance
           - input_boolean.dining_room_window_maintenance
           - input_boolean.dining_room_window_2_maintenance
           - input_boolean.cellar_controller_maintenance

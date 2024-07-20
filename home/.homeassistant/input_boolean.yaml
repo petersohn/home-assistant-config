@@ -73,7 +73,10 @@ balcony_controller_maintenance:
   name: Balcony Controller
   icon: mdi:wrench
 camera1_maintenance:
-  name: Camera 1
+  name: Kamera kapu
+  icon: mdi:wrench
+camera2_maintenance:
+  name: Kamera bejáró
   icon: mdi:wrench
 
 sunlight_sensor_maintenance:

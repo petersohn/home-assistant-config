@@ -133,7 +133,11 @@ binary_sensor.christmas_tree_switcher_available:
   device_class: plug
 
 binary_sensor.camera1_available:
-  friendly_name: Camera 1
+  friendly_name: Kamera kapu
+  device_class: plug
+
+binary_sensor.camera2_available:
+  friendly_name: Kamera bejáró
   device_class: plug
 
 sensor.temperature_outside:

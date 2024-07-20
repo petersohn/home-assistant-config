@@ -1021,6 +1021,7 @@ availability_alerts_critical:
         - storage_window_1
         - storage_window_2
         - camera1
+        - camera2
 
 window_alerts:
     module: alert
@@ -1184,7 +1185,7 @@ window_blind_shield_2:
     class: ExpressionEnabler
     expr: >
         v.input_select.season_mode == 'summer' and
-        v.sensor.time < '09:00' and
+        v.sensor.time < '10:00' and
         not e.sun_enabler_night
     dependencies:
         - locker

@@ -544,6 +544,11 @@ binary_sensor:
     payload_on: 1
     payload_off: 0
     value_template: '{{ value_json.val }}'
+  - state_topic: instar/camera2/status/connection
+    name: camera2_available
+    payload_on: 1
+    payload_off: 0
+    value_template: '{{ value_json.val }}'
 
   - state_topic: home/sensors/motion/gate_reflector
     name: motion_sensor_driveway_uppest

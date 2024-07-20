@@ -12,6 +12,8 @@ homeassistant:
   time_zone: Europe/Budapest
   country: HU
   customize: !include customize.yaml
+  allowlist_external_dirs:
+    - /tmp
 
 # Enables the frontend
 frontend:
