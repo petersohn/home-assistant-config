@@ -268,6 +268,26 @@ sensor:
             'total': value_json.ENERGY.Total,
         } %}
         {{ temp | to_json }}
+  - state_topic: instar/camera1/status/features/nightvision/currentbrightness
+    unit_of_measurement: "%"
+    name: light_camera1
+    value_template: "{{ 100.0 - (value_json.val | float) / 2.55 }}"
+    expire_after: 60
+    availability:
+      topic: instar/camera1/status/connection
+      value_template: '{{ value_json.val }}'
+      payload_available: 1
+      payload_not_available: 0
+  - state_topic: instar/camera2/status/features/nightvision/currentbrightness
+    unit_of_measurement: "%"
+    name: light_camera2
+    value_template: "{{ 100.0 - (value_json.val | float) / 2.55 }}"
+    expire_after: 60
+    availability:
+      topic: instar/camera2/status/connection
+      value_template: '{{ value_json.val }}'
+      payload_available: 1
+      payload_not_available: 0
 
 binary_sensor:
   - state_topic: home/devices/well_controller/available
@@ -992,3 +1012,51 @@ switch:
     availability_topic: home/devices/christmas_tree_switch/available
     payload_available: 1
     payload_not_available: 0
+  - name: camera1_alarm
+    state_topic: instar/camera1/status/alarm/actions/enable
+    value_template: '{{ value_json.val }}'
+    state_off: 0
+    state_on: 1
+    command_topic: instar/camera1/alarm/actions/enable
+    payload_off: '{"val":"0"}'
+    payload_on: '{"val":"1"}'
+    availability:
+      topic: instar/camera1/status/connection
+      value_template: '{{ value_json.val }}'
+      payload_available: 1
+      payload_not_available: 0
+  - name: camera2_alarm
+    state_topic: instar/camera2/status/alarm/actions/enable
+    value_template: '{{ value_json.val }}'
+    state_off: 0
+    state_on: 1
+    command_topic: instar/camera2/alarm/actions/enable
+    payload_off: '{"val":"0"}'
+    payload_on: '{"val":"1"}'
+    availability:
+      topic: instar/camera2/status/connection
+      value_template: '{{ value_json.val }}'
+      payload_available: 1
+      payload_not_available: 0
+
+light:
+  - name: camera1_ir
+    state_topic: instar/camera1/status/features/nightvision/autoled
+    command_topic: instar/camera1/features/nightvision/autoled
+    payload_off: '{"val":"0"}'
+    payload_on: '{"val":"2"}'
+    availability:
+      topic: instar/camera1/status/connection
+      value_template: '{{ value_json.val }}'
+      payload_available: 1
+      payload_not_available: 0
+  - name: camera2_ir
+    state_topic: instar/camera2/status/features/nightvision/autoled
+    command_topic: instar/camera2/features/nightvision/autoled
+    payload_off: '{"val":"0"}'
+    payload_on: '{"val":"2"}'
+    availability:
+      topic: instar/camera2/status/connection
+      value_template: '{{ value_json.val }}'
+      payload_available: 1
+      payload_not_available: 0

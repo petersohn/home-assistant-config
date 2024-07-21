@@ -177,11 +177,6 @@ views:
         title: Ajtók
         show_header_toggle: false
 
-      - type: entities
-        entities:
-          - camera.camera1
-          - camera.camera2
-
     icon: 'mdi:home'
   - path: temperature-inside
     title: 'Benti hőmérséklet'
@@ -337,6 +332,30 @@ views:
             entity: sensor.pm10_outside
             graph: line
     icon: 'mdi:weather-pouring'
+  - path: camera
+    title: 'Kamera'
+    icon: 'mdi:cctv'
+    cards:
+      - type: entities
+        state_color: true
+        title: Kapu
+        entities:
+          - camera.camera1
+          - sensor.light_camera1
+          - light.camera1_ir
+          - input_select.camera1_ir
+          - switch.camera1_alarm
+          - input_select.camera1_alarm
+      - type: entities
+        state_color: true
+        title: Bejáró
+        entities:
+          - camera.camera2
+          - sensor.light_camera2
+          - light.camera2_ir
+          - input_select.camera2_ir
+          - switch.camera2_alarm
+          - input_select.camera2_alarm
   - path: garden
     title: 'Kert'
     icon: 'mdi:tree'

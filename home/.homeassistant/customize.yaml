@@ -140,6 +140,22 @@ binary_sensor.camera2_available:
   friendly_name: Kamera bejáró
   device_class: plug
 
+light.camera1_ir:
+  friendly_name: Kamera kapu IR LED
+  icon: mdi:track-light
+
+light.camera2_ir:
+  friendly_name: Kamera bejáró IR LED
+  icon: mdi:track-light
+
+switch.camera1_alarm:
+  friendly_name: Kamera kapu alarm
+  icon: mdi:cctv
+
+switch.camera2_alarm:
+  friendly_name: Kamera bejáró alarm
+  icon: mdi:cctv
+
 sensor.temperature_outside:
   friendly_name: "Kinti hőmérséklet"
   device_class: temperature
@@ -312,7 +328,7 @@ switch.light_driveway:
 
 switch.light_well:
   friendly_name: "Kút"
-  icon: mdi:spotlight
+  icon: mdi:light-flood-down
 
 switch.light_attic_upstairs:
   friendly_name: "Padlás fent"
@@ -340,7 +356,7 @@ switch.light_christmas_balcony:
 
 switch.light_gate_reflector:
   friendly_name: "Kapu reflektor"
-  icon: mdi:spotlight
+  icon: mdi:light-flood-down
 
 switch.light_outside_0:
   friendly_name: "Körvilágítás 0"
@@ -450,6 +466,14 @@ sensor.light_shadow:
 
 sensor.light_sunlight:
   friendly_name: "Fény napfény"
+  icon: mdi:weather-sunny
+
+sensor.light_camera1:
+  friendly_name: "Fény kapu"
+  icon: mdi:weather-sunny
+
+sensor.light_camera2:
+  friendly_name: "Fény bejáró"
   icon: mdi:weather-sunny
 
 switch.heater:

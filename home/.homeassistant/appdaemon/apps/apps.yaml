@@ -1355,6 +1355,28 @@ play_icon:
     entities:
       - switch.desktop_player
 
+cctv_icon:
+    class: CustomIcon
+    module: custom_icon
+    dependencies:
+        - locker
+    off_icon: mdi:cctv-off
+    on_icon: mdi:cctv
+    entities:
+      - switch.camera1_alarm
+      - switch.camera2_alarm
+
+track_light_icon:
+    class: CustomIcon
+    module: custom_icon
+    dependencies:
+        - locker
+    off_icon: mdi:track-light-off
+    on_icon: mdi:track-light
+    entities:
+      - light.camera1_ir
+      - light.camera2_ir
+
 heater_check:
     module: expression
     class: Expression
@@ -1497,6 +1519,114 @@ water_heater_switch:
     off_guard: is_water_heater_stopped
     targets:
         - auto_switch_water_heater
+
+auto_switch_camera1_ir:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: light.camera1_ir
+    switch: input_select.camera1_ir
+    reentrant: true
+
+camera1_ir_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: >
+        True
+
+camera1_ir_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_camera1_ir
+        - camera1_ir_enabler
+        - locker
+    enabler: camera1_ir_enabler
+    targets:
+        - auto_switch_camera1_ir
+
+auto_switch_camera2_ir:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: light.camera2_ir
+    switch: input_select.camera2_ir
+    reentrant: true
+
+camera2_ir_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: >
+        True
+
+camera2_ir_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_camera2_ir
+        - camera2_ir_enabler
+        - locker
+    enabler: camera2_ir_enabler
+    targets:
+        - auto_switch_camera2_ir
+
+auto_switch_camera1_alarm:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.camera1_alarm
+    switch: input_select.camera1_alarm
+    reentrant: true
+
+camera1_alarm_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: >
+        True
+
+camera1_alarm_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_camera1_alarm
+        - camera1_alarm_enabler
+        - locker
+    enabler: camera1_alarm_enabler
+    targets:
+        - auto_switch_camera1_alarm
+
+auto_switch_camera2_alarm:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.camera2_alarm
+    switch: input_select.camera2_alarm
+    reentrant: true
+
+camera2_alarm_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: >
+        True
+
+camera2_alarm_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_camera2_alarm
+        - camera2_alarm_enabler
+        - locker
+    enabler: camera2_alarm_enabler
+    targets:
+        - auto_switch_camera2_alarm
 
 #
 # target_climate_mode:

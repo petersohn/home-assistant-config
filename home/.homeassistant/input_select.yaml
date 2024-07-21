@@ -11,14 +11,14 @@ light_well:
         - "auto"
         - "on"
         - "off"
-    icon: mdi:spotlight
+    icon: mdi:light-flood-down
 light_gate_reflector:
     name: Kapu reflektor
     options:
         - "auto"
         - "on"
         - "off"
-    icon: mdi:spotlight
+    icon: mdi:light-flood-down
 light_garage:
     name: Garázs világítás
     options:
@@ -165,6 +165,34 @@ christmas_tree:
         - "on"
         - "off"
     icon: mdi:pine-tree
+camera1_ir:
+    name: Kamera kapu IR LED
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:track-light
+camera2_ir:
+    name: Kamera bejáró IR LED
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:track-light
+camera1_alarm:
+    name: Kamera kapu alarm
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:cctv
+camera2_alarm:
+    name: Kamera bejáró alarm
+    options:
+        - "auto"
+        - "on"
+        - "off"
+    icon: mdi:cctv
 
 living_room_window_blind:
     name: Nappali redőny mód
