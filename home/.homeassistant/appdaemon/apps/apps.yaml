@@ -1561,7 +1561,7 @@ camera2_ir_enabler:
     dependencies:
         - locker
     expr: >
-        True
+      not v.switch.light_driveway and not v.switch.light_outside_4 and not v.switch.light_outside_5
 
 camera2_ir_switch:
     class: EnabledSwitch
@@ -1615,7 +1615,7 @@ camera2_alarm_enabler:
     dependencies:
         - locker
     expr: >
-        True
+      v.input_select.presence_mode != 'home'
 
 camera2_alarm_switch:
     class: EnabledSwitch

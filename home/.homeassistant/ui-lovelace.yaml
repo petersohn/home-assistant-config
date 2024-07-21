@@ -339,6 +339,7 @@ views:
       - type: entities
         state_color: true
         title: Kapu
+        show_header_toggle: false
         entities:
           - camera.camera1
           - sensor.light_camera1
@@ -349,6 +350,7 @@ views:
       - type: entities
         state_color: true
         title: Bejáró
+        show_header_toggle: false
         entities:
           - camera.camera2
           - sensor.light_camera2
