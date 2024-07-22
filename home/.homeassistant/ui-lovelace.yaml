@@ -347,6 +347,7 @@ views:
           - input_select.camera1_ir
           - switch.camera1_alarm
           - input_select.camera1_alarm
+          - binary_sensor.camera1_recording
       - type: entities
         state_color: true
         title: Bejáró
@@ -358,6 +359,7 @@ views:
           - input_select.camera2_ir
           - switch.camera2_alarm
           - input_select.camera2_alarm
+          - binary_sensor.camera2_recording
   - path: garden
     title: 'Kert'
     icon: 'mdi:tree'

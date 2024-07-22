@@ -156,6 +156,14 @@ switch.camera2_alarm:
   friendly_name: Kamera bejáró alarm
   icon: mdi:cctv
 
+binary_sensor.camera1_recording:
+  friendly_name: Kamera kapu felvétel
+  icon: mdi:record-rec
+
+binary_sensor.camera2_recording:
+  friendly_name: Kamera bejáró felvétel
+  icon: mdi:record-rec
+
 sensor.temperature_outside:
   friendly_name: "Kinti hőmérséklet"
   device_class: temperature

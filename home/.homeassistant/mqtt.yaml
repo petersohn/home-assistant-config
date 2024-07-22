@@ -686,6 +686,26 @@ binary_sensor:
     name: mosquitto_bridge_available
     payload_on: 1
     payload_off: 0
+  - state_topic: instar/camera1/status/task/video/rec/status
+    name: camera1_recording
+    payload_on: 1
+    payload_off: 0
+    value_template: '{{ value_json.val }}'
+    availability:
+      topic: instar/camera1/status/connection
+      value_template: '{{ value_json.val }}'
+      payload_available: 1
+      payload_not_available: 0
+  - state_topic: instar/camera2/status/task/video/rec/status
+    name: camera2_recording
+    payload_on: 1
+    payload_off: 0
+    value_template: '{{ value_json.val }}'
+    availability:
+      topic: instar/camera2/status/connection
+      value_template: '{{ value_json.val }}'
+      payload_available: 1
+      payload_not_available: 0
 
 cover:
   - command_topic: "home/blind/dining_room/set"
@@ -1045,6 +1065,7 @@ light:
     command_topic: instar/camera1/features/nightvision/autoled
     payload_off: '{"val":"0"}'
     payload_on: '{"val":"2"}'
+    optimistic: false
     availability:
       topic: instar/camera1/status/connection
       value_template: '{{ value_json.val }}'
@@ -1055,6 +1076,7 @@ light:
     command_topic: instar/camera2/features/nightvision/autoled
     payload_off: '{"val":"0"}'
     payload_on: '{"val":"2"}'
+    optimistic: false
     availability:
       topic: instar/camera2/status/connection
       value_template: '{{ value_json.val }}'
