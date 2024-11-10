@@ -1222,7 +1222,7 @@ storage_window_blind_auto_open_enabler:
     module: enabler
     class: ExpressionEnabler
     expr: >
-      v.input_select.presence_mode == 'home' and e.is_light_enough_to_open_blind
+        v.input_select.presence_mode == 'home' and e.is_light_enough_to_open_blind
     dependencies:
         - is_light_enough_to_open_blind
         - locker
@@ -1241,6 +1241,26 @@ storage_door_open:
         - auto_switch_storage_window_blind
     enabler: storage_window_blind_auto_open_enabler
     time: 60
+
+storage_window_blind_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: >
+        v.input_select.presence_mode == 'home'
+        and e.is_light_enough_to_open_blind
+        and v.input_select.season_mode == 'winter'
+
+storage_window_blind_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - storage_window_blind_enabler
+        - locker
+    enabler: storage_window_blind_enabler
+    targets:
+        - auto_switch_storage_window_blind
 
 storage_window_blind_1:
     module: cover
