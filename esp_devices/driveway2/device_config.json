@@ -1,0 +1,22 @@
+{
+    "debug": true,
+    "name": "driveway2",
+    "availabilityTopic": "home/devices/driveway2/available",
+    "statusTopic": "home/devices/driveway2/status",
+    "debugTopic": "home/devices/driveway2/debug",
+    "interfaces": [
+        {
+            "type": "input",
+            "name": "motion_sensor",
+            "pin": 3
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "motion_sensor",
+            "topic": "home/sensors/motion/driveway_upper",
+            "retain": false
+        }
+    ]
+}

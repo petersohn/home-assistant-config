@@ -1,5 +1,5 @@
 {
-    "debug": true,
+    "debug": false,
     "name": "driveway",
     "availabilityTopic": "home/devices/driveway/available",
     "statusTopic": "home/devices/driveway/status",
@@ -9,10 +9,21 @@
             "type": "output",
             "name": "relay",
             "commandTopic": "home/switches/lights/driveway/set",
+            "pin": 1
+        },
+        {
+            "type": "input",
+            "name": "motion_sensor",
             "pin": 3
         }
     ],
     "actions": [
+        {
+            "type": "publish",
+            "interface": "motion_sensor",
+            "topic": "home/sensors/motion/driveway_lower",
+            "retain": false
+        },
         {
             "type": "publish",
             "interface": "relay",

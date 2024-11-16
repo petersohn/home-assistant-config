@@ -30,16 +30,6 @@
             "invert": true,
             "default": 0,
             "pin": 16
-        },
-        {
-            "type": "input",
-            "name": "motion_sensor_driveway_upper",
-            "pin": 5
-        },
-        {
-            "type": "input",
-            "name": "motion_sensor_driveway_lower",
-            "pin": 13
         }
     ],
     "actions": [
@@ -48,18 +38,6 @@
             "interface": "light_garage",
             "topic": "home/switches/lights/garage/state",
             "retain": true
-        },
-        {
-            "type": "publish",
-            "interface": "motion_sensor_driveway_upper",
-            "topic": "home/sensors/motion/driveway_upper",
-            "retain": false
-        },
-        {
-            "type": "publish",
-            "interface": "motion_sensor_driveway_lower",
-            "topic": "home/sensors/motion/driveway_lower",
-            "retain": false
         },
         {
             "type": "publish",
