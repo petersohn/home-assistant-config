@@ -947,6 +947,7 @@ views:
           - binary_sensor.cellar_controller_available
           - binary_sensor.dishwasher_sensor_available
           - binary_sensor.driveway_available
+          - binary_sensor.driveway2_available
           - binary_sensor.furnace_temperature_available
           - binary_sensor.garage_controller_available
           - binary_sensor.gate_reflector_available
@@ -974,7 +975,7 @@ views:
           - input_boolean.dining_room_window_2_maintenance
           - input_boolean.cellar_controller_maintenance
           - input_boolean.dishwasher_sensor_maintenance
-          - input_boolean.driveway_maintenance
+          - input_boolean.driveway2_maintenance
           - input_boolean.furnace_temperature_maintenance
           - input_boolean.garage_controller_maintenance
           - input_boolean.gate_reflector_maintenance

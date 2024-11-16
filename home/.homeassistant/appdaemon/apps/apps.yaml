@@ -986,6 +986,7 @@ availability_alerts:
         - expression
     sources:
         - driveway
+        - driveway2
         - living_room_temperature
         - bedroom_temperature
         - dishwasher_sensor

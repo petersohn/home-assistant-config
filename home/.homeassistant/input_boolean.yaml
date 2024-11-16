@@ -33,6 +33,9 @@ main_controller2_maintenance:
 driveway_maintenance:
   name: Driveway
   icon: mdi:wrench
+driveway2_maintenance:
+  name: Driveway 2
+  icon: mdi:wrench
 cellar_controller_maintenance:
   name: Cellar Controller
   icon: mdi:wrench

@@ -72,6 +72,10 @@ binary_sensor.driveway_available:
   friendly_name: Driveway
   device_class: plug
 
+binary_sensor.driveway2_available:
+  friendly_name: Driveway 2
+  device_class: plug
+
 binary_sensor.cellar_controller_available:
   friendly_name: Cellar Controller
   device_class: plug

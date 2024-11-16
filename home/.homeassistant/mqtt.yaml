@@ -350,6 +350,18 @@ binary_sensor:
     name: driveway_available
     payload_on: 1
     payload_off: 0
+  - state_topic: home/devices/driveway2/available
+    json_attributes_topic: home/devices/driveway2/status
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: driveway2_available
+    payload_on: 1
+    payload_off: 0
   - state_topic: home/devices/cellar_controller/available
     json_attributes_topic: home/devices/cellar_controller/status
     json_attributes_template: >
@@ -581,14 +593,14 @@ binary_sensor:
     name: motion_sensor_driveway_upper
     payload_on: 1
     payload_off: 0
-    availability_topic: home/devices/garage_controller/available
+    availability_topic: home/devices/driveway2/available
     payload_available: 1
     payload_not_available: 0
   - state_topic: home/sensors/motion/driveway_lower
     name: motion_sensor_driveway_lower
     payload_on: 1
     payload_off: 0
-    availability_topic: home/devices/garage_controller/available
+    availability_topic: home/devices/driveway/available
     payload_available: 1
     payload_not_available: 0
   - state_topic: home/sensors/motion/garage
