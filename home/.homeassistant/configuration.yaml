@@ -187,6 +187,7 @@ mqtt_statestream:
       - input_select
       - sensor
       - binary_sensor
+      - switch
 
 influxdb:
   host: localhost
