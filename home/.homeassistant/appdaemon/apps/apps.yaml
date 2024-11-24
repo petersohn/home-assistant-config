@@ -1252,6 +1252,8 @@ storage_window_blind_enabler:
         v.input_select.presence_mode == 'home'
         and e.is_light_enough_to_open_blind
         and v.input_select.season_mode == 'winter'
+    delay:
+        seconds: 30
 
 storage_window_blind_switch:
     class: EnabledSwitch

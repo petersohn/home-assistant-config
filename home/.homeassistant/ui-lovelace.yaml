@@ -975,6 +975,7 @@ views:
           - input_boolean.dining_room_window_2_maintenance
           - input_boolean.cellar_controller_maintenance
           - input_boolean.dishwasher_sensor_maintenance
+          - input_boolean.driveway_maintenance
           - input_boolean.driveway2_maintenance
           - input_boolean.furnace_temperature_maintenance
           - input_boolean.garage_controller_maintenance
