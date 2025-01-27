@@ -9,12 +9,12 @@
             "type": "output",
             "name": "relay",
             "commandTopic": "home/switches/lights/driveway/set",
-            "pin": 1
+            "pin": 3
         },
         {
             "type": "input",
             "name": "motion_sensor",
-            "pin": 3
+            "pin": 1
         }
     ],
     "actions": [
