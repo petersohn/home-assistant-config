@@ -89,12 +89,6 @@ command_line:
   - notify:
       name: restart_upsd
       command: !secret restart_upsd_command
-  - sensor:
-      name: solar_panel_pictures_size
-      command: !secret solar_panel_pictures_size_command
-      unit_of_measurement: "b"
-      scan_interval: 1800
-      icon: mdi:camera-image
 
 sensor:
   - platform: time_date
