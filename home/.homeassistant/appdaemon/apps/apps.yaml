@@ -429,6 +429,7 @@ garage_driveway_motion_sensor:
     sensor: binary_sensor.motion_sensor_garage
     targets:
         - auto_switch_light_driveway
+        - auto_switch_light_outside_5
     enabler: sun_enabler_night
     time: 2
     delay: 1
