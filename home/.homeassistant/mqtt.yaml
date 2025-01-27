@@ -702,7 +702,8 @@ binary_sensor:
     name: camera1_recording
     payload_on: 1
     payload_off: 0
-    value_template: '{{ value_json.val }}'
+    value_template: >
+      {% if value_json.val | int == 0 %}0{%else%}1{%endif%}
     availability:
       topic: instar/camera1/status/connection
       value_template: '{{ value_json.val }}'
@@ -712,7 +713,8 @@ binary_sensor:
     name: camera2_recording
     payload_on: 1
     payload_off: 0
-    value_template: '{{ value_json.val }}'
+    value_template: >
+      {% if value_json.val | int == 0 %}0{%else%}1{%endif%}
     availability:
       topic: instar/camera2/status/connection
       value_template: '{{ value_json.val }}'
