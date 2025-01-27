@@ -1096,3 +1096,13 @@ light:
       value_template: '{{ value_json.val }}'
       payload_available: 1
       payload_not_available: 0
+
+button:
+  - name: camera2_record
+    availability:
+      topic: instar/camera2/status/connection
+      value_template: '{{ value_json.val }}'
+      payload_available: 1
+      payload_not_available: 0
+    command_topic: instar/camera2/task/video/rec/start
+    payload_press: '{"val": "30"}'

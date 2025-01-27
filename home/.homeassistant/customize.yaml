@@ -168,6 +168,10 @@ binary_sensor.camera2_recording:
   friendly_name: Kamera bejáró felvétel
   icon: mdi:record-rec
 
+button.camera2_record:
+  friendly_name: Kamera bejáró felvétel start
+  icon: mdi:record-rec
+
 sensor.temperature_outside:
   friendly_name: "Kinti hőmérséklet"
   device_class: temperature
@@ -573,4 +577,3 @@ sensor.inverter_alarms:
 
 sensor.inverter_efficiency:
   icon: mdi:percent-circle
-

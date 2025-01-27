@@ -453,10 +453,29 @@
         message: a
 
 - alias: Camera2 sync
-  trigger:
-    platform: time_pattern
-    minutes: '/2'
+  triggers:
+    - trigger: time_pattern
+      hours: '/2'
+    - trigger: homeassistant
+      event: start
+    - trigger: state
+      entity_id: binary_sensor.camera2_recording
+      to: 'off'
   action:
     - service: notify.camera2_sync
       data:
         message: a
+
+- alias: Camera2 record
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.motion_sensor_garage
+      to: 'on'
+    - trigger: state
+      entity_id: binary_sensor.motion_sensor_driveway_lower
+      to: 'on'
+  actions:
+    - action: button.press
+      target:
+        entity_id: button.camera2_record
+      data: {}

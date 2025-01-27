@@ -360,6 +360,7 @@ views:
           - switch.camera2_alarm
           - input_select.camera2_alarm
           - binary_sensor.camera2_recording
+          - button.camera2_record
   - path: garden
     title: 'Kert'
     icon: 'mdi:tree'
