@@ -451,3 +451,12 @@
     - service: notify.restart_upsd
       data:
         message: a
+
+- alias: Camera2 sync
+  trigger:
+    platform: time_pattern
+    minutes: '/2'
+  action:
+    - service: notify.camera2_sync
+      data:
+        message: a

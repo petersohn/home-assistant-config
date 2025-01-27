@@ -89,6 +89,9 @@ command_line:
   - notify:
       name: restart_upsd
       command: !secret restart_upsd_command
+  - notify:
+      name: camera2_sync
+      command: !secret camera2_sync_command
 
 sensor:
   - platform: time_date
