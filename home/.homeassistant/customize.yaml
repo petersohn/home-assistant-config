@@ -164,6 +164,10 @@ binary_sensor.camera1_recording:
   friendly_name: Kamera kapu felvétel
   icon: mdi:record-rec
 
+button.camera1_record:
+  friendly_name: Kamera kapu felvétel start
+  icon: mdi:record-rec
+
 binary_sensor.camera2_recording:
   friendly_name: Kamera bejáró felvétel
   icon: mdi:record-rec

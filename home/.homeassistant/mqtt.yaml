@@ -1054,6 +1054,7 @@ switch:
     command_topic: instar/camera1/alarm/actions/enable
     payload_off: '{"val":"0"}'
     payload_on: '{"val":"1"}'
+    optimistic: false
     availability:
       topic: instar/camera1/status/connection
       value_template: '{{ value_json.val }}'
@@ -1067,6 +1068,7 @@ switch:
     command_topic: instar/camera2/alarm/actions/enable
     payload_off: '{"val":"0"}'
     payload_on: '{"val":"1"}'
+    optimistic: false
     availability:
       topic: instar/camera2/status/connection
       value_template: '{{ value_json.val }}'
@@ -1098,6 +1100,14 @@ light:
       payload_not_available: 0
 
 button:
+  - name: camera1_record
+    availability:
+      topic: instar/camera1/status/connection
+      value_template: '{{ value_json.val }}'
+      payload_available: 1
+      payload_not_available: 0
+    command_topic: instar/camera1/task/video/rec/start
+    payload_press: '{"val": "30"}'
   - name: camera2_record
     availability:
       topic: instar/camera2/status/connection

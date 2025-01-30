@@ -90,6 +90,9 @@ command_line:
       name: restart_upsd
       command: !secret restart_upsd_command
   - notify:
+      name: camera1_sync
+      command: !secret camera1_sync_command
+  - notify:
       name: camera2_sync
       command: !secret camera2_sync_command
 

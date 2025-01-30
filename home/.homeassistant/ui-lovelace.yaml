@@ -348,6 +348,7 @@ views:
           - switch.camera1_alarm
           - input_select.camera1_alarm
           - binary_sensor.camera1_recording
+          - button.camera1_record
       - type: entities
         state_color: true
         title: Bejáró

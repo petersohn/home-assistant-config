@@ -452,6 +452,20 @@
       data:
         message: a
 
+- alias: Camera1 sync
+  triggers:
+    - trigger: time_pattern
+      hours: '/2'
+    - trigger: homeassistant
+      event: start
+    - trigger: state
+      entity_id: binary_sensor.camera1_recording
+      to: 'off'
+  action:
+    - service: notify.camera1_sync
+      data:
+        message: a
+
 - alias: Camera2 sync
   triggers:
     - trigger: time_pattern
