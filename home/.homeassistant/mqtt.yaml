@@ -288,6 +288,13 @@ sensor:
       value_template: '{{ value_json.val }}'
       payload_available: 1
       payload_not_available: 0
+  - state_topic: home/devices/driveway/temperature
+    name: driveway_device_temperature
+    unit_of_measurement: "°C"
+    expire_after: 60
+    availability_topic: home/devices/driveway/available
+    payload_available: 1
+    payload_not_available: 0
 
 binary_sensor:
   - state_topic: home/devices/well_controller/available
@@ -350,6 +357,14 @@ binary_sensor:
     name: driveway_available
     payload_on: 1
     payload_off: 0
+  - state_topic: home/devices/driveway/heater
+    name: driveway_device_heater
+    payload_on: 1
+    payload_off: 0
+    availability_topic: home/devices/driveway/available
+    payload_available: 1
+    payload_not_available: 0
+    icon: mdi:radiator
   - state_topic: home/devices/driveway2/available
     json_attributes_topic: home/devices/driveway2/status
     json_attributes_template: >

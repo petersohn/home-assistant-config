@@ -994,6 +994,13 @@ views:
         show_header_toggle: true
       - type: entities
         entities:
+          - sensor.driveway_device_temperature
+          - binary_sensor.driveway_device_heater
+        title: device heater
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
           - input_boolean.sunlight_sensor_maintenance
         title: sensor maintenance
         state_color: true
