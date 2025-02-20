@@ -295,6 +295,15 @@ sensor:
     availability_topic: home/devices/driveway/available
     payload_available: 1
     payload_not_available: 0
+    icon: mdi:thermometer
+  - state_topic: home/devices/attic_lower/temperature
+    name: attic_lower_device_temperature
+    unit_of_measurement: "°C"
+    expire_after: 60
+    availability_topic: home/devices/attic_lower/available
+    payload_available: 1
+    payload_not_available: 0
+    icon: mdi:thermometer
 
 binary_sensor:
   - state_topic: home/devices/well_controller/available
@@ -362,6 +371,14 @@ binary_sensor:
     payload_on: 1
     payload_off: 0
     availability_topic: home/devices/driveway/available
+    payload_available: 1
+    payload_not_available: 0
+    icon: mdi:radiator
+  - state_topic: home/devices/attic_lower/heater
+    name: attic_lower_device_heater
+    payload_on: 1
+    payload_off: 0
+    availability_topic: home/devices/attic_lower/available
     payload_available: 1
     payload_not_available: 0
     icon: mdi:radiator
