@@ -1,5 +1,5 @@
 {
-    "debug": false,
+    "debug": true,
     "name": "attic_lower",
     "availabilityTopic": "home/devices/attic_lower/available",
     "statusTopic": "home/devices/attic_lower/status",
@@ -9,6 +9,19 @@
             "type": "input",
             "name": "hatch",
             "pin": 3
+        },
+        {
+            "type": "output",
+            "name": "heater",
+            "invert": true,
+            "pin": 12
+        },
+        {
+            "type": "dallasTemperature",
+            "name": "dallas",
+            "interval": "30",
+            "devices": 1,
+            "pin": 13
         },
         {
             "type": "output",
@@ -24,7 +37,7 @@
             "commandTopic": "home/switches/lights/attic/downstairs/set",
             "invert": true,
             "default": 0,
-            "pin": 1
+            "pin": 4
         },
         {
             "type": "output",
@@ -59,6 +72,44 @@
             "interface": "hatch",
             "topic": "home/sensors/door/attic_hatch",
             "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "heater",
+            "topic": "home/devices/attic_lower/heater"
+        },
+        {
+            "type": "publish",
+            "interface": "dallas",
+            "topic": "home/devices/attic_lower/temperature"
+        },
+        {
+            "type": "command",
+            "interface": "dallas",
+            "target": "heater",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": "<=",
+                    "ops": [{"type": "value"}, -2]
+                },
+                "then": "1",
+                "else": ""
+            }
+        },
+        {
+            "type": "command",
+            "interface": "dallas",
+            "target": "heater",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": ">=",
+                    "ops": [{"type": "value"}, 5]
+                },
+                "then": "0",
+                "else": ""
+            }
         }
     ]
 }
