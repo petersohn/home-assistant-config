@@ -116,7 +116,7 @@ climate:
     name: heater
     heater: switch.heater
     target_sensor: sensor.heater_check2
-    min_temp: 11
+    min_temp: 11.5
     max_temp: 25
     ac_mode: false
     cold_tolerance: 1.0
@@ -125,7 +125,7 @@ climate:
       minutes: 15
     keep_alive:
       seconds: 15
-    away_temp: 11
+    away_temp: 11.5
     precision: 0.5
 
 template:
