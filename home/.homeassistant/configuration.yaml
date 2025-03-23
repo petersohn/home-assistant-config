@@ -178,7 +178,7 @@ input_number:
     name: "Fűtés hőmérséklet"
     min: 10
     max: 25
-    icon: mdi:fireplace-off
+    icon: mdi:thermostat
 
 mqtt_statestream:
   base_topic: home
