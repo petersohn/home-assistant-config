@@ -1044,6 +1044,7 @@ window_alerts:
         - binary_sensor.window_storage_2
         - binary_sensor.door_main_entrance
         - binary_sensor.door_attic_hatch
+        - binary_sensor.door_furnace_room
         - binary_sensor.door_storage
         - binary_sensor.door_cellar
 
@@ -1059,6 +1060,7 @@ window_alerts_sleep:
         - expression
     sources:
         - binary_sensor.door_attic_hatch
+        - binary_sensor.door_furnace_room
         - binary_sensor.door_cellar
 
 tracker_changes:

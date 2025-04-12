@@ -663,6 +663,13 @@ binary_sensor:
     availability_topic: home/devices/attic_lower/available
     payload_available: 1
     payload_not_available: 0
+  - state_topic: home/sensors/door/furnace_room
+    name: door_furnace_room
+    payload_on: 1
+    payload_off: 0
+    availability_topic: home/devices/attic_lower/available
+    payload_available: 1
+    payload_not_available: 0
   - state_topic: home/sensors/door/main_entrance
     name: door_main_entrance
     payload_on: 1

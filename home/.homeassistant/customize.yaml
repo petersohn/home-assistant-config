@@ -444,6 +444,10 @@ binary_sensor.door_attic_hatch:
   friendly_name: "Padlás feljáró"
   device_class: door
 
+binary_sensor.door_furnace_room:
+  friendly_name: "Kazánház ajtó"
+  device_class: door
+
 binary_sensor.door_main_entrance:
   friendly_name: "Bejárati ajtó"
   device_class: door
