@@ -7,6 +7,11 @@
     "interfaces": [
         {
             "type": "input",
+            "name": "door",
+            "pin": 5
+        },
+        {
+            "type": "input",
             "name": "hatch",
             "pin": 3
         },
@@ -71,6 +76,12 @@
             "type": "publish",
             "interface": "hatch",
             "topic": "home/sensors/door/attic_hatch",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "door",
+            "topic": "home/sensors/door/furnace_room",
             "retain": true
         },
         {
