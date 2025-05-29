@@ -480,14 +480,28 @@
       data:
         message: a
 
+# - alias: Camera1 record
+#   triggers:
+#     - trigger: state
+#       entity_id: binary_sensor.motion_sensor_driveway_upper
+#       to: 'on'
+#     - trigger: state
+#       entity_id: binary_sensor.motion_sensor_driveway_lower
+#       to: 'on'
+#   actions:
+#     - action: button.press
+#       target:
+#         entity_id: button.camera2_record
+#       data: {}
+
 - alias: Camera2 record
   triggers:
     - trigger: state
       entity_id: binary_sensor.motion_sensor_garage
       to: 'on'
-    - trigger: state
-      entity_id: binary_sensor.motion_sensor_driveway_lower
-      to: 'on'
+    # - trigger: state
+    #   entity_id: binary_sensor.motion_sensor_driveway_lower
+    #   to: 'on'
   actions:
     - action: button.press
       target:
