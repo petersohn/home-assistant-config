@@ -77,6 +77,13 @@ command_line:
       unit_of_measurement: "°C"
       value_template: "{{ value | multiply(0.001) }}"
       scan_interval: 10
+      device_class: temperature
+  - sensor:
+      name: free_space
+      command: "df -B 1 / | tail -n1 | cut -d ' ' -f 4"
+      unit_of_measurement: "B"
+      scan_interval: 30
+      device_class: data_size
   - binary_sensor:
       command: 'timeout 2 nc localhost 6131 </dev/null && echo ON || echo OFF'
       name: ssh_tunnel_available
@@ -166,6 +173,10 @@ template:
     - name: bedroom_climate_silence
       state: >
         {{ is_state_attr('climate.daikin_bedroom', 'fan_mode', 'Silence') }}
+  - binary_sensor:
+    - name: low_free_space
+      state: >
+        {{ (states('sensor.free_space') | float) < 10 * 1024 * 1024 * 1024 }}
 
 
 input_number:

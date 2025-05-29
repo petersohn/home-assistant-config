@@ -155,3 +155,17 @@ air_quality:
   can_acknowledge: true
   notifiers:
     - telegram_alert
+
+low_space:
+  name: Kevés a szabad hely
+  message: >
+    {% set value = (states('sensor.free_space') | float) / 1024 / 1024 / 1024 %}
+    Kevés a szabad hely: {{ "%.3f" | format(value) }} GB
+  entity_id: binary_sensor.low_free_space
+  state: 'on'
+  skip_first: false
+  repeat:
+    - 30
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert

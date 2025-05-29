@@ -303,6 +303,10 @@ sensor.cpu_temperature:
   friendly_name: "CPU hőmérséklet"
   icon: mdi:thermometer
 
+sensor.free_space:
+  friendly_name: "Szabad hely"
+  icon: mdi:harddisk
+
 sensor.solar_panel_pictures_size_command:
   friendly_name: "Napelem képek adatmennyiség"
 

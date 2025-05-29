@@ -917,6 +917,7 @@ views:
           - alert.window_open_sleep
           - alert.no_hot_water
           - alert.air_quality
+          - alert.low_space
         title: Riasztások
       - type: entities
         entities:
@@ -1011,7 +1012,8 @@ views:
       - type: entities
         entities:
           - sensor.cpu_temperature
-          - sensor.solar_panel_pictures_size
+          - sensor.free_space
+          - alert.low_space
         title: local_device
         show_header_toggle: false
       - type: entities
