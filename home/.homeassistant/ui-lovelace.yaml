@@ -1013,7 +1013,9 @@ views:
         entities:
           - sensor.cpu_temperature
           - sensor.free_space
+          - sensor.free_space_data
           - alert.low_space
+          - alert.low_space_data
         title: local_device
         show_header_toggle: false
       - type: entities

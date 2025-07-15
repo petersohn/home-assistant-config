@@ -80,9 +80,15 @@ command_line:
       device_class: temperature
   - sensor:
       name: free_space
-      command: "df -B 1 / | tail -n1 | cut -d ' ' -f 4"
+      command: "df -B 1 / | tail -n1 | awk '{print $4}'"
       unit_of_measurement: "B"
-      scan_interval: 30
+      scan_interval: 60
+      device_class: data_size
+  - sensor:
+      name: free_space_data
+      command: "df -B 1 /data | tail -n1 | awk '{print $4}'"
+      unit_of_measurement: "B"
+      scan_interval: 60
       device_class: data_size
   - binary_sensor:
       command: 'timeout 2 nc localhost 6131 </dev/null && echo ON || echo OFF'
@@ -177,6 +183,10 @@ template:
     - name: low_free_space
       state: >
         {{ (states('sensor.free_space') | float) < 10 * 1024 * 1024 * 1024 }}
+  - binary_sensor:
+    - name: low_free_space_data
+      state: >
+        {{ (states('sensor.free_space_data') | float) < 10 * 1024 * 1024 * 1024 }}
 
 
 input_number:

@@ -304,7 +304,11 @@ sensor.cpu_temperature:
   icon: mdi:thermometer
 
 sensor.free_space:
-  friendly_name: "Szabad hely"
+  friendly_name: "Szabad hely root"
+  icon: mdi:harddisk
+
+sensor.free_space_data:
+  friendly_name: "Szabad hely data"
   icon: mdi:harddisk
 
 sensor.solar_panel_pictures_size_command:

@@ -648,13 +648,26 @@ is_dark:
     global_dependencies:
         - expression
 
-is_sunlight:
+is_sunlight_or_false:
     module: enabler
     class: ExpressionEnabler
     delay:
         minutes: 5
     expr: >
         ok.sensor.light_sunlight_adjusted and
+        v.sensor.light_sunlight_adjusted > 90
+    dependencies:
+        - locker
+    global_dependencies:
+        - expression
+
+is_sunlight_or_true:
+    module: enabler
+    class: ExpressionEnabler
+    delay:
+        minutes: 5
+    expr: >
+        not ok.sensor.light_sunlight_adjusted or
         v.sensor.light_sunlight_adjusted > 90
     dependencies:
         - locker
@@ -1141,7 +1154,8 @@ window_blind_shield_1:
     expr: >
         v.input_select.season_mode == 'summer' and
         v.sensor.time >= '13:00' and
-        v.sensor.time < '18:00'
+        v.sensor.time < '18:00' and
+        e.is_sunlight_or_true
     dependencies:
         - locker
     global_dependencies:
@@ -1161,7 +1175,7 @@ dining_room_window_blind:
         v.input_select.presence_mode == 'sleep' and
         v.binary_sensor.window_entrance) or (
         v.input_select.presence_mode == 'away' and
-        e.is_sunlight and
+        e.is_sunlight_or_false and
         v.input_select.season_mode == 'winter')
         else 'closed'
     target: cover.dining_room
