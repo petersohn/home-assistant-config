@@ -1,0 +1,100 @@
+{
+    "debug": true,
+    "name": "battery_charger",
+    "availabilityTopic": "home/battery_charger/available",
+    "statusTopic": "home/battery_charger/status",
+    "analogInputs": [
+        {
+            "name": "mcp",
+            "type": "mcp3008",
+            "sck": 0,
+            "mosi": 2,
+            "miso": 14,
+            "cs": 12
+        }
+    ],
+    "interfaces": [
+        {
+            "type": "analog",
+            "name": "voltage",
+            "intervalMs": 100,
+            "input": "mcp.0",
+            "max": 20,
+            "precision": 1,
+            "aggregateTime": 200
+        },
+        {
+            "type": "output",
+            "name": "switch",
+            "invert": true,
+            "default": 0,
+            "pin": 3
+        }
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "switch",
+            "topic": "home/battery_charger/state",
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "voltage",
+            "topic": "home/battery_charger/voltage/avg",
+            "template": "%1",
+            "minimumSendInterval": 60000,
+            "sendDiff": 0.5,
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "voltage",
+            "topic": "home/battery_charger/voltage/max",
+            "template": "%2",
+            "minimumSendInterval": 60000,
+            "sendDiff": 0.5,
+            "retain": false
+        },
+        {
+            "type": "command",
+            "interface": "voltage",
+            "target": "switch",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": "&",
+                    "ops": [
+                        {
+                            "type": ">=",
+                            "ops": [{"type": "value", "index": 2}, 2]
+                        },
+                        {
+                            "type": "<",
+                            "ops": [{"type": "value", "index": 2}, 13]
+                        }
+                    ]
+                },
+                "then": "1",
+                "else": {
+                    "type": "if",
+                    "cond": {
+                        "type": "|",
+                        "ops": [
+                            {
+                                "type": "<",
+                                "ops": [{"type": "value", "index": 2}, 2]
+                            },
+                            {
+                                "type": ">",
+                                "ops": [{"type": "value", "index": 2}, 15]
+                            }
+                        ]
+                    },
+                    "then": "0",
+                    "else": ""
+                }
+            }
+        }
+    ]
+}

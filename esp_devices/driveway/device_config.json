@@ -1,5 +1,5 @@
 {
-    "debug": false,
+    "debug": true,
     "name": "driveway",
     "availabilityTopic": "home/devices/driveway/available",
     "statusTopic": "home/devices/driveway/status",
@@ -10,25 +10,12 @@
             "name": "relay",
             "commandTopic": "home/switches/lights/driveway/set",
             "invert": true,
-            "pin": 3
-        },
-        {
-            "type": "output",
-            "name": "heater",
-            "invert": true,
-            "pin": 2
+            "pin": 0
         },
         {
             "type": "input",
             "name": "motion_sensor",
-            "pin": 1
-        },
-        {
-            "type": "dallasTemperature",
-            "name": "dallas",
-            "interval": "30",
-            "devices": 1,
-            "pin": 0
+            "pin": 3
         }
     ],
     "actions": [
@@ -43,44 +30,6 @@
             "interface": "relay",
             "topic": "home/switches/lights/driveway/state",
             "retain": true
-        },
-        {
-            "type": "publish",
-            "interface": "heater",
-            "topic": "home/devices/driveway/heater"
-        },
-        {
-            "type": "publish",
-            "interface": "dallas",
-            "topic": "home/devices/driveway/temperature"
-        },
-        {
-            "type": "command",
-            "interface": "dallas",
-            "target": "heater",
-            "command": {
-                "type": "if",
-                "cond": {
-                    "type": "<=",
-                    "ops": [{"type": "value"}, -2]
-                },
-                "then": "1",
-                "else": ""
-            }
-        },
-        {
-            "type": "command",
-            "interface": "dallas",
-            "target": "heater",
-            "command": {
-                "type": "if",
-                "cond": {
-                    "type": ">=",
-                    "ops": [{"type": "value"}, 5]
-                },
-                "then": "0",
-                "else": ""
-            }
         }
     ]
 }

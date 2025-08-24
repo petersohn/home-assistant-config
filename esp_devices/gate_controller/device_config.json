@@ -1,0 +1,89 @@
+{
+    "debug": true,
+    "name": "gate_controller",
+    "availabilityTopic": "home/devices/gate_controller/available",
+    "statusTopic": "home/devices/gate_controller/status",
+    "debugTopic": "home/devices/gate_controller/debug",
+    "interfaces": [
+        {
+            "type": "cover",
+            "name": "gate",
+            "commandTopic": "home/gate/main/set",
+            "upPin": 0,
+            "downPin": 2,
+            "upMovementPin": 3,
+            "downMovementPin": 4,
+            "stopPin": 16,
+            "invertInput": false,
+            "invertOutput": true,
+            "closedPosition": 5,
+            "positionSensors": [
+                {
+                    "position": 0,
+                    "pin": 13,
+                    "invert": true
+                },
+                {
+                    "position": 40,
+                    "pin": 12,
+                    "invert": true
+                },
+                {
+                    "position": 100,
+                    "pin": 5,
+                    "invert": true
+                }
+            ]
+        },
+    ],
+    "actions": [
+        {
+            "type": "publish",
+            "interface": "light1",
+            "topic": "home/switches/lights/outside/1/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light2",
+            "topic": "home/switches/lights/outside/2/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light3",
+            "topic": "home/switches/lights/outside/3/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light4",
+            "topic": "home/switches/lights/outside/4/state",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "light_sensor",
+            "topic": "home/sensors/light/sunlight",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "door",
+            "topic": "home/sensors/door/main_entrance",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "window1",
+            "topic": "home/sensors/window/entrance",
+            "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "window2",
+            "topic": "home/sensors/window/bedroom",
+            "retain": true
+        }
+    ]
+}
