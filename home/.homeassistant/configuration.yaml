@@ -105,9 +105,11 @@ command_line:
   - notify:
       name: camera1_sync
       command: !secret camera1_sync_command
+      command_timeout: 60
   - notify:
       name: camera2_sync
       command: !secret camera2_sync_command
+      command_timeout: 60
 
 sensor:
   - platform: time_date

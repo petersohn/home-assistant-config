@@ -901,6 +901,11 @@ views:
           - input_select.water_heater
           - sensor.power_water_heater
         show_header_toggle: false
+      - type: entities
+        entities:
+          - sensor.battery_voltage
+          - binary_sensor.battery_charging
+        show_header_toggle: false
   - path: alerts
     title: Riasztások
     icon: 'mdi:alert'
@@ -942,6 +947,7 @@ views:
         entities:
           - binary_sensor.attic_lower_available
           - binary_sensor.balcony_controller_available
+          - binary_sensor.battery_charger_available
           - binary_sensor.bedroom_temperature_available
           - binary_sensor.camera1_available
           - binary_sensor.camera2_available

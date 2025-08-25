@@ -144,6 +144,10 @@ binary_sensor.camera2_available:
   friendly_name: Kamera bejáró
   device_class: plug
 
+binary_sensor.battery_charger_available:
+  friendly_name: Battery Charger
+  device_class: plug
+
 light.camera1_ir:
   friendly_name: Kamera kapu IR LED
   icon: mdi:track-light

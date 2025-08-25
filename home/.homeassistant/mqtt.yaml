@@ -304,8 +304,24 @@ sensor:
     payload_available: 1
     payload_not_available: 0
     icon: mdi:thermometer
+  - state_topic: home/battery_charger/voltage/max
+    name: battery_voltage
+    unit_of_measurement: "V"
+    expire_after: 120
+    availability_topic: home/battery_charger/available
+    payload_available: 1
+    payload_not_available: 0
+    icon: mdi:battery
 
 binary_sensor:
+  - state_topic: home/battery_charger/state
+    name: battery_charging
+    availability_topic: home/battery_charger/available
+    payload_available: 1
+    payload_not_available: 0
+    icon: mdi:battery-charging
+    payload_on: 1
+    payload_off: 0
   - state_topic: home/devices/well_controller/available
     json_attributes_topic: home/devices/well_controller/status
     json_attributes_template: >
@@ -570,6 +586,18 @@ binary_sensor:
         } %}
         {{ temp | to_json }}
     name: christmas_tree_switcher_available
+    payload_on: 1
+    payload_off: 0
+  - state_topic: home/battery_charger/available
+    json_attributes_topic: home/battery_charger/status
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: battery_charger_available
     payload_on: 1
     payload_off: 0
 
@@ -1111,47 +1139,3 @@ switch:
     availability:
       topic: instar/camera2/status/connection
       value_template: '{{ value_json.val }}'
-      payload_available: 1
-      payload_not_available: 0
-
-light:
-  - name: camera1_ir
-    state_topic: instar/camera1/status/features/nightvision/autoled
-    command_topic: instar/camera1/features/nightvision/autoled
-    payload_off: '{"val":"0"}'
-    payload_on: '{"val":"2"}'
-    optimistic: false
-    availability:
-      topic: instar/camera1/status/connection
-      value_template: '{{ value_json.val }}'
-      payload_available: 1
-      payload_not_available: 0
-  - name: camera2_ir
-    state_topic: instar/camera2/status/features/nightvision/autoled
-    command_topic: instar/camera2/features/nightvision/autoled
-    payload_off: '{"val":"0"}'
-    payload_on: '{"val":"2"}'
-    optimistic: false
-    availability:
-      topic: instar/camera2/status/connection
-      value_template: '{{ value_json.val }}'
-      payload_available: 1
-      payload_not_available: 0
-
-button:
-  - name: camera1_record
-    availability:
-      topic: instar/camera1/status/connection
-      value_template: '{{ value_json.val }}'
-      payload_available: 1
-      payload_not_available: 0
-    command_topic: instar/camera1/task/video/rec/start
-    payload_press: '{"val": "30"}'
-  - name: camera2_record
-    availability:
-      topic: instar/camera2/status/connection
-      value_template: '{{ value_json.val }}'
-      payload_available: 1
-      payload_not_available: 0
-    command_topic: instar/camera2/task/video/rec/start
-    payload_press: '{"val": "30"}'
