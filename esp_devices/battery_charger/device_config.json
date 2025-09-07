@@ -17,7 +17,7 @@
         {
             "type": "analog",
             "name": "voltage",
-            "intervalMs": 100,
+            "intervalMs": 500,
             "input": "mcp.0",
             "max": 20,
             "precision": 1,
@@ -28,7 +28,8 @@
             "name": "switch",
             "invert": true,
             "default": 0,
-            "pin": 3
+            "commandTopic": "home/battery_charger/set",
+            "pin": 16
         }
     ],
     "actions": [
@@ -36,7 +37,7 @@
             "type": "publish",
             "interface": "switch",
             "topic": "home/battery_charger/state",
-            "retain": false
+            "retain": true
         },
         {
             "type": "publish",
@@ -55,46 +56,6 @@
             "minimumSendInterval": 60000,
             "sendDiff": 0.5,
             "retain": false
-        },
-        {
-            "type": "command",
-            "interface": "voltage",
-            "target": "switch",
-            "command": {
-                "type": "if",
-                "cond": {
-                    "type": "&",
-                    "ops": [
-                        {
-                            "type": ">=",
-                            "ops": [{"type": "value", "index": 2}, 2]
-                        },
-                        {
-                            "type": "<",
-                            "ops": [{"type": "value", "index": 2}, 13]
-                        }
-                    ]
-                },
-                "then": "1",
-                "else": {
-                    "type": "if",
-                    "cond": {
-                        "type": "|",
-                        "ops": [
-                            {
-                                "type": "<",
-                                "ops": [{"type": "value", "index": 2}, 2]
-                            },
-                            {
-                                "type": ">",
-                                "ops": [{"type": "value", "index": 2}, 15]
-                            }
-                        ]
-                    },
-                    "then": "0",
-                    "else": ""
-                }
-            }
         }
     ]
 }
