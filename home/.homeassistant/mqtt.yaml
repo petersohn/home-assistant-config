@@ -304,8 +304,16 @@ sensor:
     payload_available: 1
     payload_not_available: 0
     icon: mdi:thermometer
+  - state_topic: home/battery_charger/voltage/avg
+    name: battery_voltage_avg
+    unit_of_measurement: "V"
+    expire_after: 120
+    availability_topic: home/battery_charger/available
+    payload_available: 1
+    payload_not_available: 0
+    icon: mdi:battery
   - state_topic: home/battery_charger/voltage/max
-    name: battery_voltage
+    name: battery_voltage_max
     unit_of_measurement: "V"
     expire_after: 120
     availability_topic: home/battery_charger/available
@@ -314,14 +322,6 @@ sensor:
     icon: mdi:battery
 
 binary_sensor:
-  - state_topic: home/battery_charger/state
-    name: battery_charging
-    availability_topic: home/battery_charger/available
-    payload_available: 1
-    payload_not_available: 0
-    icon: mdi:battery-charging
-    payload_on: 1
-    payload_off: 0
   - state_topic: home/devices/well_controller/available
     json_attributes_topic: home/devices/well_controller/status
     json_attributes_template: >
@@ -1139,3 +1139,12 @@ switch:
     availability:
       topic: instar/camera2/status/connection
       value_template: '{{ value_json.val }}'
+  - state_topic: home/battery_charger/state
+    command_topic: home/battery_charger/set
+    name: battery_charging
+    availability_topic: home/battery_charger/available
+    payload_available: 1
+    payload_not_available: 0
+    icon: mdi:battery-charging
+    payload_on: 1
+    payload_off: 0

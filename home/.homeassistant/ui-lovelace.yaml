@@ -903,8 +903,9 @@ views:
         show_header_toggle: false
       - type: entities
         entities:
-          - sensor.battery_voltage
-          - binary_sensor.battery_charging
+          - sensor.battery_voltage_avg
+          - sensor.battery_voltage_max
+          - switch.battery_charging
         show_header_toggle: false
   - path: alerts
     title: Riasztások
