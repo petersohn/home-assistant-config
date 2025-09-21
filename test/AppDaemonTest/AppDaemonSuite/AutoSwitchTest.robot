@@ -84,6 +84,18 @@ Target State Changes
     State Should Be  ${target}  on
     State Should Be  ${switch}  auto
 
+Enabled State Changes
+    [Teardown]  Cleanup AppDaemon
+    Initialize  Enabled
+    Set Enabled State  ${enabler}  enable
+    Turn On Auto Switch  ${name}
+    State Should Be  ${target}  on
+    Set Enabled State  ${enabler}  disable
+    State Should Be  ${target}  off
+    Set Enabled State  ${enabler}  enable
+    State Should Be  ${target}  on
+
+
 Reentrancy
     [Template]  Switch On And Off Multiple Times
 #   type       expected
