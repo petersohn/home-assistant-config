@@ -19,6 +19,18 @@ class AutoSwitch(hass.Hass):
             self.state = None
             self.run_in(lambda _: self.init(), 0)
 
+            enabler = self.args.get('enabler')
+            if enabler is not None:
+                self.enabler = self.get_app(enabler)
+                self.enabler_id = self.enabler.add_callback(self.on_enabled_changed)
+            else:
+                self.enabler = None
+                self.enabler_id = None
+
+    def terminate(self):
+        if self.enabler is not None:
+            self.enabler.remove_callback(self.enabler_id)
+
     def init(self):
         with self.mutex.lock('init'):
             try:
@@ -58,6 +70,10 @@ class AutoSwitch(hass.Hass):
             else:
                 self.__update(0)
 
+    def on_enabled_changed(self):
+        with self.mutex.lock('on_enabled_changed'):
+            self.__update(self.state)
+
     def __update(self, state):
         self.__stop_timer()
         self.log('Got new state: {} -> {}'.format(self.state, state))
@@ -67,7 +83,8 @@ class AutoSwitch(hass.Hass):
             self.log('On manual mode')
             return
 
-        if state == 0:
+        if state == 0 or (self.enabler is not None
+                and not self.enabler.is_enabled()):
             self.__set_intended_state('off')
             if self.get_state(self.target) != 'off':
                 self.turn_off(self.target)
