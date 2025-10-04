@@ -35,12 +35,21 @@ heating_pump:
     maximum_out: 60
     minimum_out: 30
 
+is_not_sleeping:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: >
+        v.input_select.presence_mode != 'sleep'
+
 auto_switch_light_driveway:
     module: auto_switch
     class: AutoSwitch
     dependencies: locker
     target: switch.light_driveway
     switch: input_select.light_driveway
+    enabler: is_not_sleeping
     reentrant: true
 
 auto_switch_light_well:
