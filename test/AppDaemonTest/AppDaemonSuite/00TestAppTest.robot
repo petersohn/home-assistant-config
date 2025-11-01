@@ -338,13 +338,13 @@ Initialize
     ...    ${test_sensor}=${test_sensor_value}
     ...    ${test_sensor2}=${test_sensor_value}
     ...    ${test_selector}=one
-    ${apps} =  Create List  TestApp  locker  mutex_graph
+    ${apps} =  Create List  TestApp  locker  mutex_graph  hass
     ${app_configs} =  Create List  TestApp
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
 
 Initialize With External Test App
     Clean States
-    ${apps} =  Create List  TestApp  locker  mutex_graph  TestOtherApp
+    ${apps} =  Create List  TestApp  locker  mutex_graph  TestOtherApp  hass
     ${app_configs} =  Create List  TestApp  TestOtherApp
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
 

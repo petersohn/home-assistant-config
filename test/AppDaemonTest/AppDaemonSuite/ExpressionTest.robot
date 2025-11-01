@@ -152,7 +152,7 @@ Initialize
     [Arguments]  ${start_time}  @{configs}  &{initial_values}
     Clean States
     Initialize States  &{initial_values}
-    ${apps} =  Create List  TestApp  locker  mutex_graph  expression  history
+    ${apps} =  Create List  TestApp  locker  mutex_graph  expression  history  hass
     ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     ...                   start_date=${default_start_date}

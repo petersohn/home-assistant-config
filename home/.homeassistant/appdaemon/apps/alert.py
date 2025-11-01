@@ -1,4 +1,4 @@
-import appdaemon.plugins.hass.hassapi as hass
+import hass
 import expression
 import datetime
 

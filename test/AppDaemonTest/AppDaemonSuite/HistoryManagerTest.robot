@@ -378,7 +378,7 @@ Initialize
     ...    ${entity}=${0}
     ${apps} =  Create List  TestApp  history  enabler
     ...                     aggregator  locker  mutex_graph  auto_switch
-    ...                     enabled_switch
+    ...                     enabled_switch  hass
     ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}
     Wait Until Keyword Succeeds  30 sec  1 sec  Should Be Loaded  ${app_name}

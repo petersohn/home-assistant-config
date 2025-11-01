@@ -89,7 +89,7 @@ Initialize
     ...    ${switch1}=off
     ...    ${switch2}=off
     ${apps} =  Create List  TestApp  locker  mutex_graph  enabled_switch
-    ...                     auto_switch  enabler
+    ...                     auto_switch  enabler  hass
     ${app_configs} =  Create List  TestApp  ${config}
     Initialize AppDaemon  ${apps}  ${app_configs}  00:00:00
     Unblock For  ${appdaemon_interval}

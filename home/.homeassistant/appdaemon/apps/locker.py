@@ -1,4 +1,4 @@
-import appdaemon.plugins.hass.hassapi as hass
+import hass
 from mutex_graph import edge_target, edge_name, find_cycle, format_graph, \
     base_vertex, Deadlock, WrongUnlockOrder
 import json

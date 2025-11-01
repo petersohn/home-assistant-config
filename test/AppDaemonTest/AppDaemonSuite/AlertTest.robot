@@ -204,7 +204,7 @@ Initialize
     Initialize States
     ...    ${alert_sensor}=off
     ...    &{states}
-    ${apps} =  Create List  TestApp  locker  mutex_graph  expression  history  alert
+    ${apps} =  Create List  TestApp  locker  mutex_graph  expression  history  alert  hass
     ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  00:00:00
     Unblock For  ${appdaemon_interval}

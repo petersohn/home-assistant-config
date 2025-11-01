@@ -1,27 +1,33 @@
 global_modules:
     - mutex_graph
     - expression
+    - hass
 
 locker:
     module: locker
     class: Locker
-    global_dependencies: mutex_graph
+    global_dependencies:
+      - mutex_graph
+      - hass
     enable_logging: false
 
 wind_direction_yr:
     class: WindDirection
     module: wind_direction
     entity: sensor.yr_wind_direction
+    global_dependencies: hass
 
 wind_direction:
     class: WindDirection
     module: wind_direction
     entity: sensor.wind_direction
+    global_dependencies: hass
 
 wind_direction_average_icon:
     class: WindDirection
     module: wind_direction
     entity: sensor.wind_direction_average
+    global_dependencies: hass
 
 heating_pump:
     class: TemperatureBasic

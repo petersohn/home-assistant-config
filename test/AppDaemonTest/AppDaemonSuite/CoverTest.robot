@@ -221,7 +221,7 @@ Initialize
     Initialize States
     ...    ${input_entity}=0
     ...    ${availablility_entity}=on
-    ${apps} =  Create List  TestApp  locker  mutex_graph  expression  cover
+    ${apps} =  Create List  TestApp  locker  mutex_graph  expression  cover  hass
     ${app_configs} =  Create List  TestApp  Cover  ${config}
     Initialize AppDaemon  ${apps}  ${app_configs}
     Unblock For  ${appdaemon_interval}

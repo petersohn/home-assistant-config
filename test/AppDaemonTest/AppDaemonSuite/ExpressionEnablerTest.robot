@@ -149,7 +149,7 @@ Initialize
     ...    ${input_binary2}=off
     ...    ${input_sensor1}=${initial_value}
     ...    ${input_sensor2}=${initial_value}
-    ${apps} =  Create List  TestApp  locker  mutex_graph  expression  enabler
+    ${apps} =  Create List  TestApp  locker  mutex_graph  expression  enabler  hass
     ${app_configs} =  Create List  TestApp  ExpressionEnabler
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     ...                   start_date=${start_date}  suffix=${suffix}

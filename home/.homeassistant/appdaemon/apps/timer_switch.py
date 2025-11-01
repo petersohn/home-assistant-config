@@ -1,4 +1,4 @@
-import appdaemon.plugins.hass.hassapi as hass
+import hass
 import auto_switch
 import traceback
 

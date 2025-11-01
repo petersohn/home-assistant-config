@@ -179,7 +179,7 @@ Initialize Base
     ...    ${input_binary}=off
     ...    ${input_sensor_num}=0
     ...    ${input_sensor_txt}=${Empty}
-    ${apps} =  Create List  TestApp  locker  mutex_graph  enabler  @{modules}
+    ${apps} =  Create List  TestApp  locker  mutex_graph  enabler  hass  @{modules}
     ${app_configs} =  Create List  TestApp  @{configs}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     ...                   start_date=${start_date}  suffix=${suffix}

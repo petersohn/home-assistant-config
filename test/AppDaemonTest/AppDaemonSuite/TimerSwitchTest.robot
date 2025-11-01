@@ -362,7 +362,7 @@ Initialize
     ...    ${sensor}=${Empty}
     ...    ${switch}=off
     ${apps} =  Create List  TestApp  locker  mutex_graph  timer_switch
-    ...                     auto_switch  enabler  expression
+    ...                     auto_switch  enabler  expression  hass
     ${app_configs} =  Create List  TestApp  TimerSwitchBase  ${config}
     Initialize AppDaemon  ${apps}  ${app_configs}  ${start_time}
     Unblock For  ${appdaemon_interval}

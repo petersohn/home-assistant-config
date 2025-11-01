@@ -1,0 +1,1 @@
+../../../../../home/.homeassistant/appdaemon/apps/hass.py

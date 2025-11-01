@@ -57,7 +57,7 @@ Initialize
     ...    ${in}=20
     ...    ${out}=20
     ...    ${target}=off
-    ${apps} =  Create List  TestApp  locker  mutex_graph  temperature_basic
+    ${apps} =  Create List  TestApp  locker  mutex_graph  temperature_basic  hass
     ${app_configs} =  Create List  TestApp  TemperatureBasic
     Initialize AppDaemon  ${apps}  ${app_configs}  00:00:00
     Unblock For  ${appdaemon_interval}
