@@ -56,6 +56,46 @@
             "minimumSendInterval": 60000,
             "sendDiff": 0.5,
             "retain": false
+        },
+        {
+            "type": "command",
+            "interface": "voltage",
+            "target": "switch",
+            "command": {
+                "type": "if",
+                "cond": {
+                    "type": "&",
+                    "ops": [
+                        {
+                            "type": ">=",
+                            "ops": [{"type": "value", "index": 1}, 2]
+                        },
+                        {
+                            "type": "<",
+                            "ops": [{"type": "value", "index": 1}, 12.5]
+                        }
+                    ]
+                },
+                "then": "1",
+                "else": {
+                    "type": "if",
+                    "cond": {
+                        "type": "|",
+                        "ops": [
+                            {
+                                "type": "<",
+                                "ops": [{"type": "value", "index": 1}, 2]
+                            },
+                            {
+                                "type": ">",
+                                "ops": [{"type": "value", "index": 1}, 15.5]
+                            }
+                        ]
+                    },
+                    "then": "0",
+                    "else": ""
+                }
+            }
         }
     ]
 }
