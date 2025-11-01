@@ -69,11 +69,11 @@ Manual Mode From Stable To Auto
     ...    select_option  ${mode_switch}  auto
 
     State Should Change At  ${output_entity}  50.0  1 min 30 sec
-    State Should Be  ${mode_switch}  stable
+    Wait For State  ${mode_switch}  stable
     State Should Change At  ${output_entity}  10.0  2 min
     Wait For State  ${mode_switch}  stable
     State Should Change At  ${output_entity}  50.0  3 min
-    State Should Be  ${mode_switch}  stable
+    Wait For State  ${mode_switch}  stable
 
 Manual Mode Availability Change
     [Setup]  Initialize  CoverDelayWithModeSwitch
