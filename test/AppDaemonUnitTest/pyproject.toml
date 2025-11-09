@@ -6,3 +6,6 @@ disallow_untyped_calls = true
 [tool.basedpyright]
 reportAny = false
 reportExplicitAny = false
+
+[tool.black]
+line-length = 80
