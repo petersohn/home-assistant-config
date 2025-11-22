@@ -1,4 +1,4 @@
-from . import hass
+import hass
 from mutex_graph import (
     edge_target,
     edge_name,
