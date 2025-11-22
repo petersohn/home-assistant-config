@@ -12,7 +12,7 @@ Create Test Harness
     ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}  result_format=datetime
     ${app_manager} =  Create App Manager  ${start_datetime}
     Set Test Variable  ${app_manager}
-    ${locker} =  Add App  locker  Locker  locker
+    ${locker} =  Call Method  ${app_manager}  create_app  locker  Locker  locker
     Set Test Variable  ${locker}
 
 Cleanup Test Harness
@@ -41,13 +41,16 @@ Advance Time To
     Call Method  ${app_manager}  advance_time_to
     ...    ${target_datetime}  ${appdaemon_interval}
 
+Get Current Time
+    ${result} =  Call Method  ${app_manager}  datetime
+    RETURN  ${result}
 
 Wait For State Change
     [Arguments]  ${entity}
     ...          ${timeout}=${None}
     ...          ${deadline}=${None}
     IF  ${{$timeout is not None}}
-        ${now} =  Call Method  ${app_manager}  datetime
+        ${now} =  Get Current Time
         ${deadline} =  Add Time To Date  ${now}  ${timeout}  result_format=datetime
     END
     Call Method  ${app_manager}

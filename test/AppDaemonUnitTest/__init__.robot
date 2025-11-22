@@ -1,16 +1,13 @@
 *** Settings ***
 
 Library         DateTime
-Library         libraries/Config.py
+Library         libraries/config.py
 Library         apps/mutex_graph.py
 Resource        resources/TestHarness.robot
 Suite Setup     Run Keywords
 ...             Initialize Variables
 Suite Teardown  Run Keywords
 ...             Check Global Mutex Graph
-Test Setup      Create Test Harness
-Test Teardown   Cleanup Test Harness
-Variables       libraries/Directories.py
 
 
 *** Keywords ***

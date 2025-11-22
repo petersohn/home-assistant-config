@@ -81,6 +81,19 @@ class AppManager:
         self.__scheduled_task_order: list[int] = []
         self.__has_error = False
 
+    def create_app(
+        self,
+        library_name: str,
+        class_name: str,
+        app_name: str,
+        **kwargs: Any,
+    ) -> Hass:
+        library = __import__("apps." + library_name, fromlist=[class_name])
+        class_ = getattr(library, class_name)
+        obj = class_()
+        self.add_app(app_name, obj, kwargs)
+        return obj
+
     def add_app(self, name: str, app: Hass, args: dict[str, Any]) -> None:
         with ErrorHandler(self, name):
             app.init_app(self, name, args)

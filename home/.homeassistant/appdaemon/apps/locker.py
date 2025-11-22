@@ -1,6 +1,13 @@
-import hass
-from mutex_graph import edge_target, edge_name, find_cycle, format_graph, \
-    base_vertex, Deadlock, WrongUnlockOrder
+from . import hass
+from mutex_graph import (
+    edge_target,
+    edge_name,
+    find_cycle,
+    format_graph,
+    base_vertex,
+    Deadlock,
+    WrongUnlockOrder,
+)
 import json
 import threading
 
@@ -31,7 +38,7 @@ class Mutex:
 
 class Locker(hass.Hass):
     def initialize(self):
-        self.enable_logging = self.args.get('enable_logging', False)
+        self.enable_logging = self.args.get("enable_logging", False)
         self.current_graph = {}
         self.global_graph = {}
         self.current_stack = {}
@@ -45,30 +52,30 @@ class Locker(hass.Hass):
             return
         with self.lock:
             stack = self.current_stack.setdefault(
-                threading.current_thread().ident, [(base_vertex, '')])
+                threading.current_thread().ident, [(base_vertex, "")]
+            )
             last_mutex = edge_target(stack[-1])
             stack.append((mutex_name, lock_name))
             edge = (mutex_name, lock_name)
             self.global_graph.setdefault(last_mutex, set()).add(edge)
             self.current_graph.setdefault(last_mutex, set()).add(edge)
             if find_cycle(self.current_graph):
-                raise Deadlock(format_graph(self.current_graph, 'Deadlock'))
+                raise Deadlock(format_graph(self.current_graph, "Deadlock"))
 
     def pop_edge(self, mutex_name, lock_name):
         if not self.enable_logging:
             return
         with self.lock:
-            stack = self.current_stack.get(
-                threading.current_thread().ident, None)
+            stack = self.current_stack.get(threading.current_thread().ident, None)
             if stack is None:
                 raise WrongUnlockOrder()
             element = stack.pop()
-            if edge_target(element) != mutex_name or \
-                    edge_name(element) != lock_name:
+            if edge_target(element) != mutex_name or edge_name(element) != lock_name:
                 raise WrongUnlockOrder()
             self.current_graph[edge_target(stack[-1])].remove(element)
 
     def get_global_graph(self):
         import copy
+
         with self.lock:
             return copy.deepcopy(self.global_graph)
