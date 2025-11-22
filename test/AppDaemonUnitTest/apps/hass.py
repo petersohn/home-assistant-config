@@ -289,18 +289,30 @@ class Hass:
         assert self.__manager is not None
         return self.__manager.datetime()
 
-    def get_state(self, name: str) -> str | dict[str, str] | None:
+    def get_state(self, entity_id: str) -> str | dict[str, str] | None:
         assert self.__manager is not None
-        return self.__manager.get_state(name)
+        return self.__manager.get_state(entity_id)
 
     def set_state(
         self,
-        name: str,
+        entity_id: str,
         state: str | None,
         attributes: dict[str, str] | None = None,
     ) -> None:
         assert self.__manager is not None
-        self.__manager.set_state(name, state, attributes)
+        self.__manager.set_state(entity_id, state, attributes)
+
+    def select_option(self, entity_id: str, value: str) -> None:
+        assert self.__manager is not None
+        self.__manager.set_state(entity_id, value)
+
+    def turn_on(self, entity_id: str) -> None:
+        assert self.__manager is not None
+        self.__manager.set_state(entity_id, "on")
+
+    def turn_off(self, entity_id: str) -> None:
+        assert self.__manager is not None
+        self.__manager.set_state(entity_id, "off")
 
     def listen_state(
         self,

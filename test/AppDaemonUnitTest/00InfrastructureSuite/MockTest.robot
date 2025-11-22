@@ -55,51 +55,6 @@ Advance Time To Date Time
     ${unblock_time} =  Set Variable  2018-01-01 01:05:00
     Advance Time To Date Time  ${unblock_time}
     Current Time Should Be  01:05:00
-#
-#Unblock Until Sunrise
-#    [Setup]  Initialize  ${before_sunrise}
-#    Unblock Until Sunrise  -10 sec
-#    Sun Should Be Down
-#    Unblock For  10 sec
-#    Sun Should Be Up
-#
-#Unblock Until Sunset
-#    [Setup]  Initialize  ${before_sunset}
-#    Unblock Until Sunset  -10 sec
-#    Sun Should Be Up
-#    Unblock For  10 sec
-#    Sun Should Be Down
-#
-#
-#Select Option
-#    Select Option  ${test_selector}  two
-#    Wait Until State Becomes  ${test_selector}  two
-#    State Should Be  ${test_selector}  two
-#    Select Option  ${test_selector}  one
-#    Wait Until State Becomes  ${test_selector}  one
-#    State Should Be  ${test_selector}  one
-#    Select Option  ${test_selector}  four
-#    Wait Until State Becomes  ${test_selector}  four
-#    State Should Be  ${test_selector}  four
-#    Select Option  ${test_selector}  three
-#    Wait Until State Becomes  ${test_selector}  three
-#    State Should Be  ${test_selector}  three
-#
-#Turn On And Off
-#    Turn On  ${test_switch}
-#    State Should Be  ${test_switch}  on
-#    Turn Off  ${test_switch}
-#    State Should Be  ${test_switch}  off
-#    Turn On  ${test_switch}
-#    State Should Be  ${test_switch}  on
-#    Turn On  ${test_switch}
-#    State Should Be  ${test_switch}  on
-#
-#Turn On Or Off Test
-#    [Template]  Test Turn On Or Off
-#    on
-#    off
-#
 #Schedule State Change In Some Time
 #    Schedule Call In  2:00
 #    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}

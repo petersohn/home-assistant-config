@@ -16,8 +16,6 @@ Initialize Variables
     ${appdaemon_interval} =  Convert Time  10 s  result_format=timedelta
     Set Suite Variable  ${appdaemon_interval}  children=true
     Set Suite Variable  ${default_start_date}  2018-01-01 00:00:00  children=true
-    Set Suite Variable  ${before_sunrise}  07:20:00  children=true
-    Set Suite Variable  ${before_sunset}  15:50:00  children=true
 
     ${global_mutex_graph} =  Create Dictionary
     Set Suite Variable  ${global_mutex_graph}  children=true
