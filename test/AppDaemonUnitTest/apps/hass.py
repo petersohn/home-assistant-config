@@ -234,6 +234,19 @@ class AppManager:
     def advance_time(self, amount: timedelta, delta: timedelta) -> None:
         self.advance_time_to(self.__datetime + amount, delta)
 
+    def wait_for_state_change(
+        self,
+        entity: str,
+        deadline: datetime | None,
+        delta: timedelta,
+    ) -> None:
+        initial_state = self.get_state(entity)
+
+        while (not deadline or self.__datetime < deadline) and self.get_state(
+            entity
+        ) == initial_state:
+            self.step(delta)
+
 
 class Hass:
     def __init__(self):
