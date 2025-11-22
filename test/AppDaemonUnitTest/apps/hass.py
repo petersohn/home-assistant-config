@@ -88,7 +88,7 @@ class AppManager:
         app_name: str,
         **kwargs: Any,
     ) -> Hass:
-        library = __import__("apps." + library_name, fromlist=[class_name])
+        library = __import__(library_name)
         class_ = getattr(library, class_name)
         obj = class_()
         self.add_app(app_name, obj, kwargs)

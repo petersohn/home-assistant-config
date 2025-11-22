@@ -2,5 +2,5 @@
 
 script_dir=$(readlink -e "$(dirname "$0")")
 cd "$script_dir"
-export PYTHONPATH="${script_dir}:${PYTHONPATH}"
+export PYTHONPATH="${script_dir}:${script_dir}/apps:${PYTHONPATH}"
 exec python -m robot "$@" .
