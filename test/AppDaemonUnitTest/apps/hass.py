@@ -196,7 +196,11 @@ class AppManager:
         return self.__has_error
 
     def log(self, app: str, msg: str, level: LogLevel) -> None:
-        print("[{}] {}: {}".format(level, app, msg))
+        print(
+            "{} [{}] {}: {}".format(
+                self.__datetime.strftime("%Y-%m-%d %H:%M:%S"), level, app, msg
+            )
+        )
         if level == "CRITICAL" or level == "ERROR":
             self.__has_error = True
 
