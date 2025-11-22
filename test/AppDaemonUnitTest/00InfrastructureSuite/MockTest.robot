@@ -3,7 +3,7 @@
 Library         DateTime
 Resource        resources/TestHarness.robot
 Resource        resources/DateTime.robot
-Test Setup      Create Test Harness  start_time=${start_time}
+Test Setup      Initialize
 Test Teardown   Cleanup Test Harness
 
 
@@ -28,23 +28,33 @@ Start Time
 Different Start Time
     [Setup]  Create Test Harness  start_time=${alternate_start_time}
     Current Time Should Be  ${alternate_start_time}
-#
-#Initial State
-#    State Should Be  ${test_sensor}  ${test_sensor_value}
-#
-#Unblock For Some Time
-#    Unblock For  2 min
-#    Current Time Should Be  01:02:00
-#
-#Unblock Until Some Time
-#    ${unblock_time} =  Set Variable  01:05:00
-#    Unblock Until  ${unblock_time}
-#    Current Time Should Be  ${unblock_time}
-#
-#Unblock Until Exact Time
-#    ${unblock_time} =  Set Variable  2018-01-01 01:05:00
-#    Unblock Until Date Time  ${unblock_time}
-#    Current Time Should Be  01:05:00
+
+Set State
+    Set State  ${test_sensor}  ${new_sensor_value}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Set Attribute
+    Set State  ${test_sensor}  foobar  a=attr1  b=attr2
+    State Should Be  ${test_sensor}  foobar
+    Attribute Should Be  ${test_sensor}  a  attr1
+    Attribute Should Be  ${test_sensor}  b  attr2
+
+Advance Time
+    Advance Time  2 min
+    Current Time Should Be  01:02:00
+    Advance Time  5 min
+    Current Time Should Be  01:07:00
+
+Advance Time To
+    Advance Time To  01:05:00
+    Current Time Should Be  01:05:00
+    Advance Time To  01:10:00
+    Current Time Should Be  01:10:00
+
+Advance Time To Date Time
+    ${unblock_time} =  Set Variable  2018-01-01 01:05:00
+    Advance Time To Date Time  ${unblock_time}
+    Current Time Should Be  01:05:00
 #
 #Unblock Until Sunrise
 #    [Setup]  Initialize  ${before_sunrise}
@@ -60,17 +70,6 @@ Different Start Time
 #    Unblock For  10 sec
 #    Sun Should Be Down
 #
-#Set State
-#    Set State  ${test_sensor}  ${new_sensor_value}
-#    Wait Until State Becomes  ${test_sensor}  ${new_sensor_value}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#
-#Set Attribute
-#    Set State  ${test_sensor}  foobar  a=attr1  b=attr2
-#    Wait Until State Becomes  ${test_sensor}  foobar
-#    State Should Be  ${test_sensor}  foobar
-#    Attribute Should Be  ${test_sensor}  a  attr1
-#    Attribute Should Be  ${test_sensor}  b  attr2
 #
 #Select Option
 #    Select Option  ${test_selector}  two
@@ -344,3 +343,8 @@ Different Start Time
 #Sun Should Be Down
 #    ${result} =  Call Function  sun_up
 #    Should Be True  not ${result}
+
+*** Keywords ***
+
+Initialize
+    Create Test Harness  start_time=${start_time}

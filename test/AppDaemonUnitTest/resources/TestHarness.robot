@@ -9,6 +9,7 @@ Library    libraries/config.py
 
 Create Test Harness
     [Arguments]  ${start_date}=${default_start_date}  ${start_time}=00:00:00
+    Set Test Variable  ${start_date}
     ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}  result_format=datetime
     ${app_manager} =  Create App Manager  ${start_datetime}
     Set Test Variable  ${app_manager}
@@ -37,13 +38,47 @@ Advance Time
 
 Advance Time To
     [Arguments]  ${target}
-    ${target_datetime} =  Convert Time  ${target}  result_format=datetime
+    ${target_date} =  Add Time To Date  ${start_date}  ${target}
+    Advance Time To Date Time  ${target_date}
+
+Advance Time To Date Time
+    [Arguments]  ${target}
+    ${target_datetime} =  Convert Date  ${target}  result_format=datetime
     Call Method  ${app_manager}  advance_time_to
     ...    ${target_datetime}  ${appdaemon_interval}
 
 Get Current Time
     ${result} =  Call Method  ${app_manager}  datetime
     RETURN  ${result}
+
+Get State
+    [Arguments]  ${entity_id}  &{kwargs}
+    ${value} =  Call Method  ${app_manager}  get_state  ${entity_id}  &{kwargs}
+    RETURN  ${value}
+
+State Should Be
+    [Arguments]  ${entity_id}  ${expected_value}
+    ${value} =  Get State  ${entity_id}
+    Should Be Equal  ${value}  ${expected_value}
+
+Attribute Should Be
+    [Arguments]  ${entity_id}  ${attribute}  ${expected_value}
+    ${value} =  Get State  ${entity_id}  attribute=${attribute}
+    Should Be Equal  ${value}  ${expected_value}
+
+State Should Not Be
+    [Arguments]  ${entity_id}  ${not_expected_value}
+    ${value} =  Get State  ${entity_id}
+    Should Not Be Equal  ${value}  ${not_expected_value}
+
+State Should Be As
+    [Arguments]  ${entity_id}  ${type}  ${expected_value}
+    ${value} =  Get State  ${entity_id}  result_type=${type}
+    Should Be Equal  ${value}  ${expected_value}
+
+Set State
+    [Arguments]  ${entity_id}  ${value}  &{attributes}
+    Call Method  ${app_manager}  set_state  ${entity_id}  ${value}  ${attributes}
 
 Wait For State Change
     [Arguments]  ${entity}
