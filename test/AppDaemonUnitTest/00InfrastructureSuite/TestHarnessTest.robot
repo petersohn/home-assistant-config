@@ -125,29 +125,23 @@ Wait For State Change With Deadline
     State Should Be  ${test_sensor}  ${new_sensor_value}
     Current Time Should Be  01:01:50
 
-#Unblock Until State Change With Deadline
-#    Schedule Call At  01:00:20
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Unblock Until State Change  ${test_sensor}  deadline=01:00:30
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#    Current Time Should Be  01:00:20
-#
-#Unblock Until State Change With New State
-#    Schedule Call At  01:00:20
-#    ...    set_sensor_state  ${test_sensor}  ${intermediate_sensor_value}
-#    Schedule Call At  01:00:40
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Unblock Until State Change  ${test_sensor}  new=${new_sensor_value}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#
-#Unblock Until State Change With Old State
-#    Schedule Call At  01:00:20
-#    ...    set_sensor_state  ${test_sensor}  ${intermediate_sensor_value}
-#    Schedule Call At  01:00:40
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Unblock Until State Change  ${test_sensor}  old=${intermediate_sensor_value}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#
+Wait For State Change With New State
+    Schedule Call At  01:00:20
+    ...    set_state  ${test_sensor}  ${intermediate_sensor_value}
+    Schedule Call At  01:00:40
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Wait For State Change  ${test_sensor}  new=${new_sensor_value}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  01:00:40
+
+Wait For State Change With Old State
+    Schedule Call At  01:00:20
+    ...    set_state  ${test_sensor}  ${intermediate_sensor_value}
+    Schedule Call At  01:00:40
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Wait For State Change  ${test_sensor}  old=${intermediate_sensor_value}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
 #State Should Not Change For Some Time
 #    Schedule Call In  30 sec
 #    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}

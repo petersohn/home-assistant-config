@@ -260,13 +260,28 @@ class AppManager:
         entity: str,
         deadline: datetime | None,
         delta: timedelta,
+        old: str | None = None,
+        new: str | None = None,
     ) -> None:
-        initial_state = self.get_state(entity)
+        current_state = self.get_state(entity)
 
-        while (not deadline or self.__datetime < deadline) and self.get_state(
-            entity
-        ) == initial_state:
+        step_count = 0
+        while not deadline or self.__datetime < deadline:
             self.step(delta)
+
+            state = self.get_state(entity)
+            self.__debug("{}: {} -> {}".format(entity, current_state, state))
+            if (
+                state != current_state
+                and (old is None or current_state == old)
+                and (new is None or state == new)
+            ):
+                break
+
+            current_state = state
+            step_count += 1
+            if step_count >= 10000:
+                raise RuntimeError("State did not change in time")
 
 
 class Hass:

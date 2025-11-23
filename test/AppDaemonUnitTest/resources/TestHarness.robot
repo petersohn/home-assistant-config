@@ -108,6 +108,7 @@ Wait For State Change
     [Arguments]  ${entity}
     ...          ${timeout}=${None}
     ...          ${deadline}=${None}
+    ...          &{kwargs}
     IF  ${{$timeout is not None}}
         ${now} =  Get Current Time
         ${date_time} =  Add Time To Date  ${now}  ${timeout}  result_format=datetime
@@ -116,5 +117,5 @@ Wait For State Change
     ELSE
         ${date_time} =  Set Variable  ${None}
     END
-    Call Method  ${app_manager}
-    ...    wait_for_state_change  ${entity}  ${date_time}  ${appdaemon_interval}
+    Call Method  ${app_manager}  wait_for_state_change
+    ...    ${entity}  ${date_time}  ${appdaemon_interval}  &{kwargs}
