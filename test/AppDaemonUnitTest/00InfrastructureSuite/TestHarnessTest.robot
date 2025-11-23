@@ -142,159 +142,73 @@ Wait For State Change With Old State
     Wait For State Change  ${test_sensor}  old=${intermediate_sensor_value}
     State Should Be  ${test_sensor}  ${new_sensor_value}
 
-#State Should Not Change For Some Time
-#    Schedule Call In  30 sec
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    State Should Not Change For  ${test_sensor}  20 sec
-#    Current Time Should Be  01:00:20
-#
-#State Should Not Change Until Some Time
-#    Schedule Call In  30 sec
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    State Should Not Change Until  ${test_sensor}  01:00:20
-#    Current Time Should Be  01:00:20
-#
-#State Should Change In Some Time
-#    ${time} =  Set Variable  30 sec
-#    Schedule Call In  ${time}
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    State Should Change In  ${test_sensor}  ${new_sensor_value}  ${time}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#    Current Time Should Be  01:00:30
-#
-#State Should Change At Some Time
-#    ${time} =  Set Variable  01:01:00
-#    Schedule Call At  ${time}
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    State Should Change At  ${test_sensor}  ${new_sensor_value}  ${time}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#    Current Time Should Be  ${time}
-#
-#State Should Change In One Time Frame
-#    ${time} =  Set Variable  ${appdaemon_interval}
-#    Schedule Call In  ${time}
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    State Should Change In  ${test_sensor}  ${new_sensor_value}  ${time}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#    Current Time Should Be  01:00:10
-#
-#State Should Change At Next Time Frame
-#    ${time} =  Set Variable  01:00:10
-#    Schedule Call At  ${time}
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    State Should Change At  ${test_sensor}  ${new_sensor_value}  ${time}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#    Current Time Should Be  ${time}
-#
-#State Changes Too Early
-#    ${time} =  Set Variable  01:00:10
-#    ${expected} =  Add Time To Time  ${time}  ${appdaemon_interval}
-#    Schedule Call At  ${time}
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Run Keyword And Expect Error  ${new_sensor_value} != ${test_sensor_value}
-#    ...    State Should Change At  ${test_sensor}  ${new_sensor_value}
-#    ...    ${expected}
-#
-#State Changes Too Late
-#    ${expected} =  Set Variable  01:00:10
-#    ${time} =  Add Time To Time  ${expected}  ${appdaemon_interval}
-#    Schedule Call At  ${time}
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Run Keyword And Expect Error
-#    ...    *failed after retrying *${test_sensor_value} != ${new_sensor_value}
-#    ...    State Should Change At  ${test_sensor}  ${new_sensor_value}
-#    ...    ${expected}
-#
-#Clean Home Assistant States
-#    Turn On  ${test_switch}
-#    Clean States
-#    Run Keyword And Expect Error  *Internal Server Error*
-#    ...    Get State  ${test_sensor}
-#    State Should Be  ${test_switch}  off
-#
-#Type Conversions
-#    [Template]  Convert Types
-#    Foo      ${None}  Foo
-#    ${21}    ${None}  ${21}
-#    ${41}    int      ${41}
-#    ${26}    str      26
-#    ${True}  str      True
-#    ${0}     bool     ${False}
-#    ${1}     bool     ${True}
-#    123      int      ${123}
-#    41.5     float    ${41.5}
-#    41.0     Int      ${41}
-#    0        percent  ${0}
-#    1        percent  ${100}
-#    0.5      percent  ${50}
-#    0.426    percent  ${42}
-#    2.0      percent  ${200}
-#    2019-01-04 12:30  convert_date       2019-01-04 12:30:00.000
-#    12:14:40.123      convert_timedelta  12:14:40.123
-#    03:10             convert_time       ${190.0}
-#
-#Test Get Date
-#    ${expected} =  Add Time To Date  ${default_start_date}  ${start_time}
-#    ${now} =  Get Date
-#    Should Be Equal  ${now}  ${expected}
-#
-#    Unblock For  20 s
-#    ${expected} =  Add Time To Date  ${expected}  20 s
-#    ${now} =  Get Date
-#    Should Be Equal  ${now}  ${expected}
-#
-#    Unblock For  15 m
-#    ${expected} =  Add Time To Date  ${expected}  15 m
-#    ${now} =  Get Date
-#    Should Be Equal  ${now}  ${expected}
-#
-#
-#Converted State Expectations
-#    Set State  ${test_sensor}  12
-#    State Should Be As  ${test_sensor}  int  ${12}
-#
-#Call External App
-#    [Setup]  Initialize With External Test App
-#    ${input} =  Set Variable  Some Test
-#    ${result} =  Call Function  call_on_app
-#    ...    other_test_app  other_test  ${input}
-#    Should Be Equal  ${result}  ${input}
-#
-#
-#*** Keywords ***
-#
-#Convert Types
-#    [Arguments]  ${argument}  ${type}  ${expected_result}
-#
-#    ${arg_types} =  Create List  ${type}
-#    ${result1} =  Call Function  test  ${argument}  arg_types=${arg_types}
-#    Should Be Equal  ${result1}  ${expected_result}
-#
-#    ${kwarg_types} =  Create Dictionary  arg=${type}
-#    ${result2} =  Call Function  test  arg=${argument}
-#    ...    kwarg_types=${kwarg_types}
-#    Should Be Equal  ${result2}  ${expected_result}
-#
-#    ${result_list} =  Create List  ${expected_result}  ${expected_result}
-#    ${expected_wrapped_result} =  Create Dictionary
-#    ...    list=${result_list}
-#    ...    tuple=${result_list}
-#    ${result3} =  Call Function  test_wrap  ${argument}  arg_types=${arg_types}
-#    Should Be Equal  ${result3}  ${expected_wrapped_result}
-#
-#Test Turn On Or Off
-#    [Arguments]  ${state}
-#    Turn On Or Off  ${test_switch}  ${state}
-#    State Should Be  ${test_switch}  ${state}
-#
-#Sun Should Be Up
-#    ${result} =  Call Function  sun_up
-#    Should Be True  ${result}
-#
-#Sun Should Be Down
-#    ${result} =  Call Function  sun_up
-#    Should Be True  not ${result}
+State Should Not Change For Some Time
+    Schedule Call In  30 sec
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    State Should Not Change For  ${test_sensor}  20 sec
+    Current Time Should Be  01:00:20
 
+State Should Not Change Until Some Time
+    Schedule Call In  30 sec
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    State Should Not Change Until  ${test_sensor}  01:00:20
+    Current Time Should Be  01:00:20
+
+State Should Change In Some Time
+    ${time} =  Set Variable  30 sec
+    Schedule Call In  ${time}
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    State Should Change In  ${test_sensor}  ${new_sensor_value}  ${time}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  01:00:30
+
+State Should Change At Some Time
+    ${time} =  Set Variable  01:01:00
+    Schedule Call At  ${time}
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    State Should Change At  ${test_sensor}  ${new_sensor_value}  ${time}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  ${time}
+
+State Should Change In One Time Frame
+    ${time} =  Set Variable  ${appdaemon_interval}
+    Schedule Call In  ${time}
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    State Should Change In  ${test_sensor}  ${new_sensor_value}  ${time}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  01:00:10
+
+State Should Change At Next Time Frame
+    ${time} =  Set Variable  01:00:10
+    Schedule Call At  ${time}
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    State Should Change At  ${test_sensor}  ${new_sensor_value}  ${time}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  ${time}
+
+State Changes Too Early
+    ${time} =  Set Variable  01:00:10
+    ${expected} =  Add Time To Time  ${time}  ${appdaemon_interval}
+    Schedule Call At  ${time}
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Run Keyword And Expect Error  ${new_sensor_value} != ${test_sensor_value}
+    ...    State Should Change At  ${test_sensor}  ${new_sensor_value}
+    ...    ${expected}
+
+State Changes Too Late
+    ${expected} =  Set Variable  01:00:10
+    ${time} =  Add Time To Time  ${expected}  ${appdaemon_interval}
+    Schedule Call At  ${time}
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Run Keyword And Expect Error
+    ...    *${test_sensor_value} != ${new_sensor_value}
+    ...    State Should Change At  ${test_sensor}  ${new_sensor_value}
+    ...    ${expected}
+
+Converted State Expectations
+    Set State  ${test_sensor}  12
+    State Should Be As  ${test_sensor}  int  ${12}
+#
 *** Keywords ***
 
 Initialize

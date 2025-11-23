@@ -312,9 +312,11 @@ class Hass:
         assert self.__manager is not None
         return self.__manager.datetime()
 
-    def get_state(self, entity_id: str) -> str | dict[str, str] | None:
+    def get_state(
+        self, entity_id: str, attribute: str | None = None
+    ) -> str | dict[str, str] | None:
         assert self.__manager is not None
-        return self.__manager.get_state(entity_id)
+        return self.__manager.get_state(entity_id, attribute)
 
     def set_state(
         self,

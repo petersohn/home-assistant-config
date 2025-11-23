@@ -60,7 +60,7 @@ Get Current Time
 
 Get State
     [Arguments]  ${entity_id}  &{kwargs}
-    ${value} =  Call Method  ${app_manager}  get_state  ${entity_id}  &{kwargs}
+    ${value} =  Call Method  ${test_app}  get_state_as  ${entity_id}  &{kwargs}
     RETURN  ${value}
 
 State Should Be
@@ -80,7 +80,7 @@ State Should Not Be
 
 State Should Be As
     [Arguments]  ${entity_id}  ${type}  ${expected_value}
-    ${value} =  Get State  ${entity_id}  result_type=${type}
+    ${value} =  Get State  ${entity_id}  type=${type}
     Should Be Equal  ${value}  ${expected_value}
 
 Set State
@@ -119,3 +119,38 @@ Wait For State Change
     END
     Call Method  ${app_manager}  wait_for_state_change
     ...    ${entity}  ${date_time}  ${appdaemon_interval}  &{kwargs}
+
+State Should Not Change For
+    [Arguments]  ${entity}  ${time}
+    ${old_state} =  Get State  ${entity}
+    ${before_time} =  Get Current Time
+    Wait For State Change  ${entity}  timeout=${time}
+    ${after_time} =  Get Current Time
+    State Should Be  ${entity}  ${old_state}
+    ${time_difference} =  Subtract Date From Date  ${after_time}  ${before_time}
+    ${expected_difference} =  Convert Time  ${time}
+    Should Be Equal  ${time_difference}  ${expected_difference}
+
+State Should Not Change Until
+    [Arguments]  ${entity}  ${time}
+    ${old_state} =  Get State  ${entity}
+    Wait For State Change  ${entity}  deadline=${time}
+    State Should Be  ${entity}  ${old_state}
+    Current Time Should Be  ${time}
+
+State Should Change At
+    [Arguments]  ${entity}  ${value}  ${time}
+    ${deadline} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
+    State Should Not Be  ${entity}  ${value}
+    State Should Not Change Until  ${entity}  ${deadline}
+    Step
+    State Should Be  ${entity}  ${value}
+
+State Should Change In
+    [Arguments]  ${entity}  ${value}  ${time}
+    ${timeout} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
+    State Should Not Be  ${entity}  ${value}
+    State Should Not Change For  ${entity}  ${timeout}
+    Step
+    State Should Be  ${entity}  ${value}
+
