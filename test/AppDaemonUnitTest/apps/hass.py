@@ -194,7 +194,11 @@ class AppManager:
 
     def schedule_task(self, task: ScheduledTask) -> int:
         id = self.__get_id()
+        self.__debug(
+            "schedule task {} at {}".format(id, task.time.strftime("%H:%M:%S"))
+        )
         self.__scheduled_tasks[id] = task
+        self.__scheduled_task_order.append(id)
         self.__sort_tasks()
         return id
 
@@ -217,8 +221,12 @@ class AppManager:
         if level == "CRITICAL" or level == "ERROR":
             self.__has_error = True
 
+    def __debug(self, msg: str) -> None:
+        self.log("AppManager", msg, "DEBUG")
+
     def step(self, delta: timedelta) -> None:
         self.__datetime += delta
+        self.__debug("step")
         while len(self.__scheduled_task_order) != 0:
             id = self.__scheduled_task_order[-1]
             task = self.__scheduled_tasks[id]

@@ -13,11 +13,18 @@ Create Test Harness
     ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}  result_format=datetime
     ${app_manager} =  Create App Manager  ${start_datetime}
     Set Test Variable  ${app_manager}
-    ${locker} =  Call Method  ${app_manager}  create_app  locker  Locker  locker
+    ${locker} =  Create App  locker  Locker  locker
     Set Test Variable  ${locker}
+    ${test_app} =  Create App  test_app  TestApp  test_app
+    Set Test Variable  ${test_app}
 
 Cleanup Test Harness
     Append And Check Mutex Graph
+
+Create App
+    [Arguments]  ${module}  ${class}  ${name}
+    ${app} =  Call Method  ${app_manager}  create_app  ${module}  ${class}  ${name}
+    [Return]  ${app}
 
 Append And Check Mutex Graph
     ${mutex_graph} =  Call Method  ${locker}  get_global_graph
@@ -28,7 +35,7 @@ Append And Check Mutex Graph
     Should Be Equal  ${deadlock}  ${False}
 
 Step
-    Call Method  ${app_manager}  ${appdaemon_interval}
+    Call Method  ${app_manager}  step  ${appdaemon_interval}
 
 Advance Time
     [Arguments]  ${amount}
@@ -79,6 +86,18 @@ State Should Be As
 Set State
     [Arguments]  ${entity_id}  ${value}  &{attributes}
     Call Method  ${app_manager}  set_state  ${entity_id}  ${value}  ${attributes}
+
+Schedule Call In
+    [Arguments]  ${time}  ${function}  @{args}  &{kwargs}
+    ${delay} =  Convert Time  ${time}  result_format=timedelta
+    Call Method  ${test_app}
+    ...    schedule_call_in  ${delay}  ${function}  @{args}  &{kwargs}
+
+Schedule Call At
+    [Arguments]  ${time}  ${function}  @{args}  &{kwargs}
+    ${date_time} =  Add Time To Date  ${start_date}  ${time}  result_format=datetime
+    Call Method  ${test_app}
+    ...    schedule_call_at  ${date_time}  ${function}  @{args}  &{kwargs}
 
 Wait For State Change
     [Arguments]  ${entity}

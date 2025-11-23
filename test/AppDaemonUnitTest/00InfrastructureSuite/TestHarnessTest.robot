@@ -39,6 +39,12 @@ Set Attribute
     Attribute Should Be  ${test_sensor}  a  attr1
     Attribute Should Be  ${test_sensor}  b  attr2
 
+Step
+    Step
+    Current Time Should Be  01:00:10
+    Step
+    Current Time Should Be  01:00:20
+
 Advance Time
     Advance Time  2 min
     Current Time Should Be  01:02:00
@@ -55,21 +61,22 @@ Advance Time To Date Time
     ${unblock_time} =  Set Variable  2018-01-01 01:05:00
     Advance Time To Date Time  ${unblock_time}
     Current Time Should Be  01:05:00
-#Schedule State Change In Some Time
-#    Schedule Call In  2:00
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Unblock For  1:50
-#    State Should Be  ${test_sensor}  ${test_sensor_value}
-#    Unblock For  ${appdaemon_interval}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#
-#Schedule State Change At Some Time
-#    Schedule Call At  01:10:00
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Unblock Until  01:09:50
-#    State Should Be  ${test_sensor}  ${test_sensor_value}
-#    Unblock For  ${appdaemon_interval}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Schedule State Change In Some Time
+    Schedule Call In  2:00
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Advance Time  1:50
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Step
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Schedule State Change At Some Time
+    Schedule Call At  01:10:00
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Advance Time To  01:09:50
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Step
+    State Should Be  ${test_sensor}  ${new_sensor_value}
 #
 #Schedule State Change At Exact Time
 #    Schedule Call At Date Time  2018-01-01 01:10:00
@@ -303,3 +310,4 @@ Advance Time To Date Time
 
 Initialize
     Create Test Harness  start_time=${start_time}
+    Set State  ${test_sensor}  ${test_sensor_value}
