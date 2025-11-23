@@ -14,8 +14,6 @@ ${test_sensor2} =                sensor.test_sensor2
 ${test_sensor_value} =           sensor state
 ${intermediate_sensor_value} =   intermediate sensor state
 ${new_sensor_value} =            new sensor state
-${test_switch} =                 input_boolean.test_switch
-${test_selector} =               input_select.test_input_select
 ${start_time} =                  01:00:00
 ${alternate_start_time} =        10:11:20
 

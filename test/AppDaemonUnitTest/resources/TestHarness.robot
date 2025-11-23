@@ -153,4 +153,3 @@ State Should Change In
     State Should Not Change For  ${entity}  ${timeout}
     Step
     State Should Be  ${entity}  ${value}
-
