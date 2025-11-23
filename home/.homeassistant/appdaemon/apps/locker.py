@@ -18,10 +18,12 @@ class Lock:
         self.name = name
 
     def __enter__(self):
+        # self.mutex.locker.log("lock {}.{}".format(self.mutex.name, self.name))
         self.mutex.locker.push_edge(self.mutex.name, self.name)
         self.mutex._lock.acquire()
 
     def __exit__(self, *args):
+        # self.mutex.locker.log("unlock {}.{}".format(self.mutex.name, self.name))
         self.mutex._lock.release()
         self.mutex.locker.pop_edge(self.mutex.name, self.name)
 

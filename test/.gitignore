@@ -1,4 +1,5 @@
 output/
+logs/
 .HA_VERSION
 .pabotsuitenames
 log.html

@@ -36,7 +36,7 @@ class DFS:
         self._search(starting_vertex)
 
 
-base_vertex = ''
+base_vertex = ""
 
 
 def find_cycle(graph):
@@ -45,18 +45,21 @@ def find_cycle(graph):
     for vertex, edges in graph.items():
         for edge in edges:
             target = edge_target(edge)
-            if search.enter[target] <= search.enter[vertex] and \
-                    search.exit[target] > search.exit[vertex]:
+            if (
+                search.enter[target] <= search.enter[vertex]
+                and search.exit[target] >= search.exit[vertex]
+            ):
                 return True
     return False
 
 
 def format_graph(graph, name):
-    result = ''
+    result = ""
     for vertex, edges in graph.items():
         for edge in edges:
             result += '    "{}" -> "{}" [label="{}"]\n'.format(
-                vertex, edge_target(edge), edge_name(edge))
+                vertex, edge_target(edge), edge_name(edge)
+            )
     return 'digraph "{}"{{\n{}}}\n'.format(name, result)
 
 

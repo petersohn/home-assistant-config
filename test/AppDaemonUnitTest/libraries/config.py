@@ -24,19 +24,7 @@ def repeat_item[T](item: T, count: int) -> list[T]:
     return [item] * count
 
 
-def create_app_manager(start_datetime: datetime) -> hass.AppManager:
-    return hass.AppManager(start_datetime)
-
-
-def add_app(
-    manager: hass.AppManager,
-    library_name: str,
-    class_name: str,
-    app_name: str,
-    **kwargs: Any,
-) -> hass.Hass:
-    library = __import__("apps." + library_name)
-    class_ = getattr(library, class_name)
-    obj = class_()
-    manager.add_app(app_name, obj, kwargs)
-    return obj
+def create_app_manager(
+    start_datetime: datetime, log_filename: str
+) -> hass.AppManager:
+    return hass.AppManager(start_datetime, log_filename)

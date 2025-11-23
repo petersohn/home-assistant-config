@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from inspect import Traceback
 from typing import Any, Callable, Literal, NamedTuple
 from traceback import format_exception
+import os
 
 
 class State:
@@ -71,7 +72,7 @@ class ErrorHandler:
 
 
 class AppManager:
-    def __init__(self, begin_time: datetime):
+    def __init__(self, begin_time: datetime, log_filename: str):
         self.__apps: dict[str, Hass] = {}
         self.__states: dict[str, State] = {}
         self.__state_callbacks: dict[int, StateCallbackRecord] = {}
@@ -80,6 +81,11 @@ class AppManager:
         self.__scheduled_tasks: dict[int, ScheduledTask] = {}
         self.__scheduled_task_order: list[int] = []
         self.__has_error = False
+        self.__log_filename = log_filename
+        if os.path.exists(log_filename):
+            os.remove(log_filename)
+        else:
+            os.makedirs(os.path.dirname(log_filename), exist_ok=True)
 
     def create_app(
         self,
@@ -95,24 +101,23 @@ class AppManager:
         return obj
 
     def add_app(self, name: str, app: Hass, args: dict[str, Any]) -> None:
-        with ErrorHandler(self, name):
-            app.init_app(self, name, args)
+        app.init_app(self, name, args)
         self.__apps[name] = app
 
     def remove_app(self, name: str) -> None:
         app = self.__apps[name]
         del self.__apps[name]
-        for id in [
+        for id in (
             key
             for key, value in self.__state_callbacks.items()
             if value.app == name
-        ]:
+        ):
             self.cancel_listen_state(id)
-        for id in [
+        for id in (
             key
             for key, value in self.__scheduled_tasks.items()
             if value.app == name
-        ]:
+        ):
             self.cancel_timer(id)
         with ErrorHandler(self, name):
             app.terminate()
@@ -134,6 +139,7 @@ class AppManager:
 
     def set_state(
         self,
+        app: str,
         name: str,
         state: str | None,
         attributes: dict[str, str] | None = None,
@@ -141,34 +147,75 @@ class AppManager:
         data = self.__states.setdefault(name, State())
         old = data.to_map()
         data.state = None if state is None else str(state)
+        new = data.to_map()
+        self.__debug("Set state {} by {}: {}".format(name, app, new))
 
         if attributes is not None:
             data.attributes.update(attributes)
 
-        for callback in self.__state_callbacks.values():
+        for id, callback in self.__state_callbacks.items():
             if callback.entity != name:
                 continue
-            with ErrorHandler(self, callback.app):
-                if callback.attribute is None:
-                    old_state = old["state"]
-                    if callback.old is not None and old_state != callback.old:
-                        continue
-                    if callback.new is not None and data.state != callback.new:
-                        continue
-                    callback.callback(name, None, old_state, data.state, {})
-                elif callback.attribute == "all":
-                    callback.callback(
-                        name, callback.attribute, old, data.to_map(), {}
+
+            def call_callback(
+                f: StateCallback,
+                name: str,
+                attribute: str | None,
+                old: str | None,
+                new: str | None,
+            ):
+                f(name, attribute, old, new, {})
+
+            func: SchedulerChallback | None = None
+
+            def schedule_call(
+                f: StateCallback,
+                attribute: str | None,
+                old: str | None,
+                new: str | None,
+            ):
+                self.__debug(
+                    "Schedule state change callback {} for {}".format(id, app)
+                )
+                _ = self.schedule_task(
+                    ScheduledTask(
+                        app=app,
+                        time=self.__datetime,
+                        callback=lambda _: call_callback(
+                            f, name, attribute, old, new
+                        ),
+                        repeat=None,
                     )
-                else:
-                    old_attr = old["attributes"].get(callback.attribute)
-                    new_attr = data.attributes.get(callback.attribute)
-                    if callback.old is not None and old_attr != callback.old:
-                        continue
-                    if callback.new is not None and new_attr != callback.new:
-                        continue
-                    callback.callback(
-                        name, callback.attribute, old_attr, new_attr, {}
+                )
+
+            if callback.attribute is None:
+                old_state = old["state"]
+                if (
+                    data.state != old_state
+                    and (callback.old is None or old_state == callback.old)
+                    and (callback.new is None or data.state == callback.new)
+                ):
+                    schedule_call(
+                        callback.callback, None, old_state, data.state
+                    )
+            elif callback.attribute == "all":
+                if old != new:
+                    schedule_call(
+                        callback.callback, callback.attribute, old, new
+                    )
+            else:
+                old_attr = old["attributes"].get(callback.attribute)
+                new_attr = data.attributes.get(callback.attribute)
+                if (
+                    old_attr != new_attr
+                    and (callback.old is None or old_attr == callback.old)
+                    and (callback.new is None or new_attr == callback.new)
+                ):
+                    schedule_call(
+                        callback.callback,
+                        callback.attribute,
+                        old_attr,
+                        new_attr,
                     )
 
     def __get_id(self) -> int:
@@ -181,13 +228,19 @@ class AppManager:
         callback: StateCallbackRecord,
     ) -> int:
         id = self.__get_id()
+        self.__debug(
+            "Listen state {} by {}: {}".format(
+                callback.entity, callback.app, id
+            )
+        )
         self.__state_callbacks[id] = callback
         return id
 
     def cancel_listen_state(self, id: int) -> None:
         del self.__state_callbacks[id]
 
-    def __sort_tasks(self) -> None:
+    def __calculate_scheduled_task_order(self):
+        self.__scheduled_task_order = list(self.__scheduled_tasks.keys())
         self.__scheduled_task_order.sort(
             key=lambda i: self.__scheduled_tasks[i].time, reverse=True
         )
@@ -198,13 +251,12 @@ class AppManager:
             "schedule task {} at {}".format(id, task.time.strftime("%H:%M:%S"))
         )
         self.__scheduled_tasks[id] = task
-        self.__scheduled_task_order.append(id)
-        self.__sort_tasks()
+        self.__calculate_scheduled_task_order()
         return id
 
     def cancel_timer(self, id: int) -> None:
         del self.__scheduled_tasks[id]
-        self.__scheduled_task_order.remove(id)
+        self.__calculate_scheduled_task_order()
 
     def datetime(self) -> datetime:
         return self.__datetime
@@ -213,11 +265,12 @@ class AppManager:
         return self.__has_error
 
     def log(self, app: str, msg: str, level: LogLevel) -> None:
-        print(
-            "{} [{}] {}: {}".format(
-                self.__datetime.strftime("%Y-%m-%d %H:%M:%S"), level, app, msg
-            )
+        line = "{} [{}] {}: {}".format(
+            self.__datetime.strftime("%Y-%m-%d %H:%M:%S"), level, app, msg
         )
+        print(line)
+        with open(self.__log_filename, "a") as f:
+            print(line, file=f)
         if level == "CRITICAL" or level == "ERROR":
             self.__has_error = True
 
@@ -227,17 +280,21 @@ class AppManager:
     def step(self, delta: timedelta) -> None:
         self.__datetime += delta
         self.__debug("step")
+        self.call_pending_callbacks()
+
+    def call_pending_callbacks(self):
         while len(self.__scheduled_task_order) != 0:
             id = self.__scheduled_task_order[-1]
             task = self.__scheduled_tasks[id]
             if task.time > self.__datetime:
                 break
 
+            self.__debug("Execute scheduled task {}".format(id))
             with ErrorHandler(self, task.app):
                 task.callback({})
 
             del self.__scheduled_tasks[id]
-            _ = self.__scheduled_task_order.pop()
+            self.__calculate_scheduled_task_order()
             if task.repeat is not None:
                 _ = self.schedule_task(
                     ScheduledTask(
@@ -325,19 +382,19 @@ class Hass:
         attributes: dict[str, str] | None = None,
     ) -> None:
         assert self.__manager is not None
-        self.__manager.set_state(entity_id, state, attributes)
+        self.__manager.set_state(self.__name, entity_id, state, attributes)
 
-    def select_option(self, entity_id: str, value: str) -> None:
+    def select_option(self, entity_id: str, option: str) -> None:
         assert self.__manager is not None
-        self.__manager.set_state(entity_id, value)
+        self.__manager.set_state(self.__name, entity_id, option)
 
     def turn_on(self, entity_id: str) -> None:
         assert self.__manager is not None
-        self.__manager.set_state(entity_id, "on")
+        self.__manager.set_state(self.__name, entity_id, "on")
 
     def turn_off(self, entity_id: str) -> None:
         assert self.__manager is not None
-        self.__manager.set_state(entity_id, "off")
+        self.__manager.set_state(self.__name, entity_id, "off")
 
     def listen_state(
         self,

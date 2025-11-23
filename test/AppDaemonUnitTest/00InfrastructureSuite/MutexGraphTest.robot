@@ -15,6 +15,7 @@ Find Cycle
     {'': [('a', 'e1'), ('b', 'e2')], 'b': [('', 'e3')]}  ${True}
     {'': [('a', 'e1')], 'a': [('b', 'e2')], 'b': [('', 'e3')]}  ${True}
     {'': [('a', 'e1'), ('b', 'e2')], 'a': [('b', 'e3'), ('c', 'e4')], 'c': [('b', 'e5'), ('a', 'e6')]}  ${True}
+    {'': [('a', 'e1')], 'a': [('a', 'e2')]}  ${True}
 
 Append Graph
     [Template]  Test Append Graph

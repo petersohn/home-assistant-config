@@ -2,6 +2,7 @@
 
 Library    apps/mutex_graph.py
 Library    libraries/config.py
+Library    DateTime
 
 *** Variables ***
 
@@ -11,9 +12,9 @@ Create Test Harness
     [Arguments]  ${start_date}=${default_start_date}  ${start_time}=00:00:00
     Set Test Variable  ${start_date}
     ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}  result_format=datetime
-    ${app_manager} =  Create App Manager  ${start_datetime}
+    ${app_manager} =  Create App Manager  ${start_datetime}  logs/${SUITE_NAME}/${TEST_NAME}.log
     Set Test Variable  ${app_manager}
-    ${locker} =  Create App  locker  Locker  locker
+    ${locker} =  Create App  locker  Locker  locker  enable_logging=${True}
     Set Test Variable  ${locker}
     ${test_app} =  Create App  test_app  TestApp  test_app
     Set Test Variable  ${test_app}
@@ -22,9 +23,9 @@ Cleanup Test Harness
     Append And Check Mutex Graph
 
 Create App
-    [Arguments]  ${module}  ${class}  ${name}
-    ${app} =  Call Method  ${app_manager}  create_app  ${module}  ${class}  ${name}
-    [Return]  ${app}
+    [Arguments]  ${module}  ${class}  ${name}  &{args}
+    ${app} =  Call Method  ${app_manager}  create_app  ${module}  ${class}  ${name}  &{args}
+    RETURN  ${app}
 
 Append And Check Mutex Graph
     ${mutex_graph} =  Call Method  ${locker}  get_global_graph
@@ -33,6 +34,12 @@ Append And Check Mutex Graph
     Log  ${graph_str}
     ${deadlock} =  Find Cycle  ${mutex_graph}
     Should Be Equal  ${deadlock}  ${False}
+
+Call On App
+    [Arguments]  ${app}  ${method}  @{args}  &{kwargs}
+    ${result} =  Call Method  ${app}  ${method}  @{args}  &{kwargs}
+    Call Method  ${app_manager}  call_pending_callbacks
+    RETURN  ${result}
 
 Step
     Call Method  ${app_manager}  step  ${appdaemon_interval}
@@ -60,7 +67,7 @@ Get Current Time
 
 Get State
     [Arguments]  ${entity_id}  &{kwargs}
-    ${value} =  Call Method  ${test_app}  get_state_as  ${entity_id}  &{kwargs}
+    ${value} =  Call On App  ${test_app}  get_state_as  ${entity_id}  &{kwargs}
     RETURN  ${value}
 
 State Should Be
@@ -85,12 +92,20 @@ State Should Be As
 
 Set State
     [Arguments]  ${entity_id}  ${value}  &{attributes}
-    Call Method  ${app_manager}  set_state  ${entity_id}  ${value}  ${attributes}
+    Call On App  ${test_app}  set_state  ${entity_id}  ${value}  ${attributes}
+
+Turn On
+    [Arguments]  ${entity_id}
+    Set State  ${entity_id}  on
+
+Turn Off
+    [Arguments]  ${entity_id}
+    Set State  ${entity_id}  off
 
 Schedule Call In
     [Arguments]  ${time}  ${function}  @{args}  &{kwargs}
     ${delay} =  Convert Time  ${time}  result_format=timedelta
-    Call Method  ${test_app}
+    Call On App  ${test_app}
     ...    schedule_call_in  ${delay}  ${function}  @{args}  &{kwargs}
 
 Schedule Call At
@@ -101,7 +116,7 @@ Schedule Call At
 Schedule Call At Date Time
     [Arguments]  ${date}  ${function}  @{args}  &{kwargs}
     ${date_time} =  Convert Date  ${date}  result_format=datetime
-    Call Method  ${test_app}
+    Call On App  ${test_app}
     ...    schedule_call_at  ${date_time}  ${function}  @{args}  &{kwargs}
 
 Wait For State Change
@@ -117,7 +132,7 @@ Wait For State Change
     ELSE
         ${date_time} =  Set Variable  ${None}
     END
-    Call Method  ${app_manager}  wait_for_state_change
+    Call On App  ${app_manager}  wait_for_state_change
     ...    ${entity}  ${date_time}  ${appdaemon_interval}  &{kwargs}
 
 State Should Not Change For
