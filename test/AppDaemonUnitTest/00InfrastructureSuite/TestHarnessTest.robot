@@ -77,59 +77,54 @@ Schedule State Change At Some Time
     State Should Be  ${test_sensor}  ${test_sensor_value}
     Step
     State Should Be  ${test_sensor}  ${new_sensor_value}
-#
-#Schedule State Change At Exact Time
-#    Schedule Call At Date Time  2018-01-01 01:10:00
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Unblock Until  01:09:50
-#    State Should Be  ${test_sensor}  ${test_sensor_value}
-#    Unblock For  ${appdaemon_interval}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#
-#Schedule State Change At Sunrise
-#    [Setup]  Initialize  ${before_sunrise}
-#    Schedule Call At Sunrise  set_sensor_state
-#    ...    ${test_sensor}  ${new_sensor_value}  delay=10 sec
-#    Unblock Until Sunrise
-#    State Should Be  ${test_sensor}  ${test_sensor_value}
-#    Unblock For  10 sec
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#
-#Schedule State Change At Sunset
-#    [Setup]  Initialize  ${before_sunset}
-#    Schedule Call At Sunset  set_sensor_state
-#    ...    ${test_sensor}  ${new_sensor_value}  delay=-10 sec
-#    Unblock Until Sunset  -20 sec
-#    State Should Be  ${test_sensor}  ${test_sensor_value}
-#    Unblock For  10 sec
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#
-#Unblock Until State Change
-#    ${change_time} =  Set Variable  01:00:10
-#    Schedule Call At  ${change_time}
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Unblock Until State Change  ${test_sensor}
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#    Current Time Should Be  ${change_time}
-#
-#Unblock Until Later State Change
-#    ${change_time1} =  Set Variable  01:00:10
-#    ${change_time2} =  Set Variable  01:00:30
-#    Schedule Call At  ${change_time1}
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Schedule Call At  ${change_time2}
-#    ...    set_sensor_state  ${test_sensor2}  ${new_sensor_value}
-#    Unblock Until State Change  ${test_sensor2}
-#    State Should Be  ${test_sensor2}  ${new_sensor_value}
-#    Current Time Should Be  ${change_time2}
-#
-#Unblock Until State Change With Timeout
-#    Schedule Call In  20 sec
-#    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}
-#    Unblock Until State Change  ${test_sensor}  timeout=30 sec
-#    State Should Be  ${test_sensor}  ${new_sensor_value}
-#    Current Time Should Be  01:00:20
-#
+
+Schedule State Change At Exact Time
+    Schedule Call At Date Time  2018-01-01 01:10:00
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Advance Time To  01:09:50
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Step
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+
+Wait For State Change
+    ${change_time} =  Set Variable  01:02:10
+    Schedule Call At  ${change_time}
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Wait For State Change  ${test_sensor}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  ${change_time}
+
+Wait For Later State Change
+    ${change_time1} =  Set Variable  01:01:10
+    ${change_time2} =  Set Variable  01:01:30
+    Schedule Call At  ${change_time1}
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Schedule Call At  ${change_time2}
+    ...    set_state  ${test_sensor2}  ${new_sensor_value}
+    Wait For State Change  ${test_sensor2}
+    State Should Be  ${test_sensor2}  ${new_sensor_value}
+    Current Time Should Be  ${change_time2}
+
+Wait For State Change With Timeout
+    Schedule Call In  1:50
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Wait For State Change  ${test_sensor}  timeout=1 min
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Current Time Should Be  01:01:00
+    Wait For State Change  ${test_sensor}  timeout=1 min
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  01:01:50
+
+Wait For State Change With Deadline
+    Schedule Call At  01:01:50
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    Wait For State Change  ${test_sensor}  deadline=01:01:00
+    State Should Be  ${test_sensor}  ${test_sensor_value}
+    Current Time Should Be  01:01:00
+    Wait For State Change  ${test_sensor}  deadline=01:02:00
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Time Should Be  01:01:50
+
 #Unblock Until State Change With Deadline
 #    Schedule Call At  01:00:20
 #    ...    set_sensor_state  ${test_sensor}  ${new_sensor_value}

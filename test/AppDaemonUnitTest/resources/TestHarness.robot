@@ -95,7 +95,12 @@ Schedule Call In
 
 Schedule Call At
     [Arguments]  ${time}  ${function}  @{args}  &{kwargs}
-    ${date_time} =  Add Time To Date  ${start_date}  ${time}  result_format=datetime
+    ${date} =  Add Time To Date  ${start_date}  ${time}
+    Schedule Call At Date Time  ${date}  ${function}  @{args}  &{kwargs}
+
+Schedule Call At Date Time
+    [Arguments]  ${date}  ${function}  @{args}  &{kwargs}
+    ${date_time} =  Convert Date  ${date}  result_format=datetime
     Call Method  ${test_app}
     ...    schedule_call_at  ${date_time}  ${function}  @{args}  &{kwargs}
 
@@ -105,7 +110,11 @@ Wait For State Change
     ...          ${deadline}=${None}
     IF  ${{$timeout is not None}}
         ${now} =  Get Current Time
-        ${deadline} =  Add Time To Date  ${now}  ${timeout}  result_format=datetime
+        ${date_time} =  Add Time To Date  ${now}  ${timeout}  result_format=datetime
+    ELSE IF  ${{$deadline is not None}}
+        ${date_time} =  Add Time To Date  ${start_date}  ${deadline}  result_format=datetime
+    ELSE
+        ${date_time} =  Set Variable  ${None}
     END
     Call Method  ${app_manager}
-    ...    wait_for_state_change  ${entity}  ${deadline}  ${appdaemon_interval}
+    ...    wait_for_state_change  ${entity}  ${date_time}  ${appdaemon_interval}
