@@ -32,6 +32,11 @@ class TestApp(hass.Hass):
         f = getattr(self, func)
         _ = self.run_at(lambda _: f(*args, **kwargs), when)
 
+    def call_on_app(
+        self, app: Any, method: str, *args: Any, **kwargs: Any
+    ) -> None:
+        getattr(app, method)(*args, **kwargs)
+
     def get_state_as(
         self,
         entity: str,

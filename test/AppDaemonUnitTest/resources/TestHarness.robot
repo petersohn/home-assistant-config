@@ -3,6 +3,7 @@
 Library    apps/mutex_graph.py
 Library    libraries/config.py
 Library    DateTime
+Resource   resources/DateTime.robot
 
 *** Variables ***
 

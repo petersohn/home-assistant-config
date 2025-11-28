@@ -1,6 +1,6 @@
 from __future__ import annotations
 from copy import deepcopy
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date, time
 from inspect import Traceback
 from typing import Any, Callable, Literal, NamedTuple
 from traceback import format_exception
@@ -369,6 +369,12 @@ class Hass:
         assert self.__manager is not None
         return self.__manager.datetime()
 
+    def date(self) -> date:
+        return self.datetime().date()
+
+    def time(self) -> time:
+        return self.datetime().time()
+
     def get_state(
         self, entity_id: str, attribute: str | None = None
     ) -> str | dict[str, str] | None:
@@ -452,6 +458,20 @@ class Hass:
                 time=when,
                 callback=callback,
                 repeat=timedelta(seconds=repeat),
+            )
+        )
+
+    def run_daily(self, callback: SchedulerChallback, when: time) -> int:
+        assert self.__manager is not None
+        next = datetime.combine(self.date(), when)
+        if next < self.datetime():
+            next += timedelta(days=1)
+        return self.__manager.schedule_task(
+            ScheduledTask(
+                app=self.__name,
+                time=next,
+                callback=callback,
+                repeat=timedelta(days=1),
             )
         )
 
