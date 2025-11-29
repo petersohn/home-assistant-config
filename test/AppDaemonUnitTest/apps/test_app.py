@@ -1,5 +1,5 @@
 import hass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from typing import Any, Callable
 
 
@@ -48,3 +48,9 @@ class TestApp(hass.Hass):
         if type is None:
             return value
         return convert(value, type)
+
+    def get_next_time_of_day(self, time_of_day: timedelta) -> datetime:
+        value = datetime.combine(self.date(), time()) + time_of_day
+        if value < self.datetime():
+            value += timedelta(days=1)
+        return value

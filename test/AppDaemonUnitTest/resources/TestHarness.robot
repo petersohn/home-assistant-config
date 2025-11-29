@@ -55,8 +55,14 @@ Advance Time
 
 Advance Time To
     [Arguments]  ${target}
-    ${target_date} =  Add Time To Date  ${start_date}  ${target}
+    ${target_date} =  Get Date From Time  ${target}
     Advance Time To Date Time  ${target_date}
+
+Get Date From Time
+    [Arguments]  ${time}
+    ${timedelta} =  Convert Time  ${time}  result_format=timedelta
+    ${result} =  Call Method  ${test_app}  get_next_time_of_day  ${timedelta}
+    RETURN  ${result}
 
 Advance Time To Date Time
     [Arguments]  ${target}
@@ -113,7 +119,7 @@ Schedule Call In
 
 Schedule Call At
     [Arguments]  ${time}  ${function}  @{args}  &{kwargs}
-    ${date} =  Add Time To Date  ${start_date}  ${time}
+    ${date} =  Get Date From Time  ${time}
     Schedule Call At Date Time  ${date}  ${function}  @{args}  &{kwargs}
 
 Schedule Call At Date Time
@@ -126,12 +132,15 @@ Wait For State Change
     [Arguments]  ${entity}
     ...          ${timeout}=${None}
     ...          ${deadline}=${None}
+    ...          ${deadline_datetime}=${None}
     ...          &{kwargs}
     IF  ${{$timeout is not None}}
         ${now} =  Get Current Time
         ${date_time} =  Add Time To Date  ${now}  ${timeout}  result_format=datetime
     ELSE IF  ${{$deadline is not None}}
-        ${date_time} =  Add Time To Date  ${start_date}  ${deadline}  result_format=datetime
+        ${date_time} =  Get Date From Time  ${deadline}
+    ELSE IF  ${{$deadline_datetime is not None}}
+        ${date_time} =  Convert Date  ${deadline_datetime}  result_format=datetime
     ELSE
         ${date_time} =  Set Variable  ${None}
     END
@@ -149,20 +158,30 @@ State Should Not Change For
     ${expected_difference} =  Convert Time  ${time}
     Should Be Equal  ${time_difference}  ${expected_difference}
 
+State Should Not Change Until Date Time
+    [Arguments]  ${entity}  ${date_time}
+    ${old_state} =  Get State  ${entity}
+    Wait For State Change  ${entity}  deadline_datetime=${date_time}
+    State Should Be  ${entity}  ${old_state}
+    Current Date Time Should Be  ${date_time}
+
 State Should Not Change Until
     [Arguments]  ${entity}  ${time}
-    ${old_state} =  Get State  ${entity}
-    Wait For State Change  ${entity}  deadline=${time}
-    State Should Be  ${entity}  ${old_state}
-    Current Time Should Be  ${time}
+    ${date_time} =  Get Date From Time  ${time}
+    State Should Not Change Until Date Time  ${entity}  ${date_time}
+
+State Should Change At Date Time
+    [Arguments]  ${entity}  ${value}  ${date_time}
+    ${deadline} =  Subtract Time From Date  ${date_time}  ${appdaemon_interval}
+    State Should Not Be  ${entity}  ${value}
+    State Should Not Change Until Date Time  ${entity}  ${deadline}
+    Step
+    State Should Be  ${entity}  ${value}
 
 State Should Change At
     [Arguments]  ${entity}  ${value}  ${time}
-    ${deadline} =  Subtract Time From Time  ${time}  ${appdaemon_interval}
-    State Should Not Be  ${entity}  ${value}
-    State Should Not Change Until  ${entity}  ${deadline}
-    Step
-    State Should Be  ${entity}  ${value}
+    ${date_time} =  Get Date From Time  ${time}
+    State Should Change At Date Time  ${entity}  ${value}  ${date_time}
 
 State Should Change In
     [Arguments]  ${entity}  ${value}  ${time}

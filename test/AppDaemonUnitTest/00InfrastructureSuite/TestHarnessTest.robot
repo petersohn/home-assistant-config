@@ -3,7 +3,7 @@
 Library         DateTime
 Resource        resources/TestHarness.robot
 Resource        resources/DateTime.robot
-Test Setup      Initialize
+Test Setup      Initialize  ${start_time}
 Test Teardown   Cleanup Test Harness
 
 
@@ -15,7 +15,7 @@ ${test_sensor_value} =           sensor state
 ${intermediate_sensor_value} =   intermediate sensor state
 ${new_sensor_value} =            new sensor state
 ${start_time} =                  01:00:00
-${alternate_start_time} =        10:11:20
+${alternate_start_time} =        21:30:00
 
 
 *** Test Cases ***
@@ -24,7 +24,7 @@ Start Time
     Current Time Should Be  ${start_time}
 
 Different Start Time
-    [Setup]  Create Test Harness  start_time=${alternate_start_time}
+    [Setup]  Initialize  ${alternate_start_time}
     Current Time Should Be  ${alternate_start_time}
 
 Set State
@@ -168,6 +168,15 @@ State Should Change At Some Time
     State Should Be  ${test_sensor}  ${new_sensor_value}
     Current Time Should Be  ${time}
 
+State Should Change Next Day
+    [Setup]  Initialize  ${alternate_start_time}  10 min
+    ${time} =  Set Variable  01:00:00
+    Schedule Call At  ${time}
+    ...    set_state  ${test_sensor}  ${new_sensor_value}
+    State Should Change At  ${test_sensor}  ${new_sensor_value}  ${time}
+    State Should Be  ${test_sensor}  ${new_sensor_value}
+    Current Date Time Should Be  2018-01-02 ${time}
+
 State Should Change In One Time Frame
     ${time} =  Set Variable  ${appdaemon_interval}
     Schedule Call In  ${time}
@@ -210,5 +219,6 @@ Converted State Expectations
 *** Keywords ***
 
 Initialize
-    Create Test Harness  start_time=${start_time}
+    [Arguments]  ${start_time}  ${interval}=10 s
+    Create Test Harness  start_time=${start_time}  interval=${interval}
     Set State  ${test_sensor}  ${test_sensor_value}
