@@ -100,11 +100,7 @@ Delayed Enabler
     &{delay} =  Create Dictionary  minutes=${1}
     ${enabler} =  Create App  enabler  ScriptEnabler  test_enabler
     ...    initial=${False}  delay=${delay}
-    ${switch} =  Create App  auto_switch  AutoSwitch  test_switch
-    ...    target=${test_switch}
-    @{targets} =  Create List  test_switch
-    ${enabled_switch} =  Create App  enabled_switch  EnabledSwitch
-    ...    test_enabled_switch  enabler=test_enabler  targets=${targets}
+    ${enabled_switch} =  Create Enabled Switch  switch  test_enabler  ${test_switch}
 
     Schedule Call At  40 sec  call_on_app  ${enabler}  enable
     Schedule Call At  3 min  call_on_app  ${enabler}  disable
@@ -119,6 +115,46 @@ Delayed Enabler
     State Should Change At  ${test_switch}  off   4 min
     State Should Change At  ${test_switch}  on    9 min
     State Should Change At  ${test_switch}  off   13 min
+
+
+Value Enabler Changes
+    [Setup]  Create Test Harness
+    [Teardown]  Cleanup Test Harness
+
+    Set State  ${test_input}  ${Empty}
+    ${enabler} =  Create App  enabler  ValueEnabler  enabler
+    ...    entity=${test_input}  value=foo
+    ${enabled_switch} =  Create Enabled Switch  switch  enabler  ${test_switch}
+    Enabled State Should Be  ${enabler}  ${False}
+    State Should Be  ${test_switch}  off
+
+    Set State  ${test_input}  foo
+    Enabled State Should Be  ${enabler}  ${True}
+    State Should Be  ${test_switch}  on
+
+    Set State  ${test_input}  bar
+    Enabled State Should Be  ${enabler}  ${False}
+    State Should Be  ${test_switch}  off
+
+
+Range Enabler Changes
+    [Setup]  Create Test Harness
+    [Teardown]  Cleanup Test Harness
+
+    Set State  ${test_input}  0
+    ${enabler} =  Create App  enabler  RangeEnabler  enabler
+    ...    entity=${test_input}  min=${10}  max=${20}
+    ${enabled_switch} =  Create Enabled Switch  switch  enabler  ${test_switch}
+    Enabled State Should Be  ${enabler}  ${False}
+    State Should Be  ${test_switch}  off
+
+    Set State  ${test_input}  15
+    Enabled State Should Be  ${enabler}  ${True}
+    State Should Be  ${test_switch}  on
+
+    Set State  ${test_input}  -15
+    Enabled State Should Be  ${enabler}  ${False}
+    State Should Be  ${test_switch}  off
 
 
 *** Keywords ***
@@ -170,3 +206,13 @@ Test Multi Enabler
     END
     ${enabler} =  Create App  enabler  MultiEnabler  enabler  enablers=${names}
     Enabled State Should Be  ${enabler}  ${expected_state}
+
+Create Enabled Switch
+    [Arguments]  ${name}  ${enabler_name}  ${target}
+    ${switch_name} =  Catenate  ${name}  _switch
+    ${switch} =  Create App  auto_switch  AutoSwitch  ${switch_name}
+    ...    target=${target}
+    @{targets} =  Create List  ${switch_name}
+    ${enabled_switch} =  Create App  enabled_switch  EnabledSwitch
+    ...    ${name}  enabler=${enabler_name}  targets=${targets}
+    RETURN  ${enabled_switch}
