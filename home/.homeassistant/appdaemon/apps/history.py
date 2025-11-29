@@ -1,22 +1,19 @@
 import hass
 import datetime
 from dateutil import tz
-from urllib import request
-import http.client
-import json
 from collections import namedtuple, deque
 import re
 import traceback
 
 
-HistoryElement = namedtuple('HistoryElement', ['time', 'value'])
+HistoryElement = namedtuple("HistoryElement", ["time", "value"])
 
 
 def make_history_element(time, value):
     try:
-        if value is None or value == 'off':
+        if value is None or value == "off":
             real_value = 0.0
-        elif value == 'on':
+        elif value == "on":
             real_value = 1.0
         else:
             real_value = float(value)
@@ -26,70 +23,57 @@ def make_history_element(time, value):
 
 
 def get_date(s):
-    s = re.sub(r'([-+][0-9]{2}):([0-9]{2})$', '', s)
+    s = re.sub(r"([-+][0-9]{2}):([0-9]{2})$", "", s)
     try:
-        time = datetime.datetime.strptime(
-            s, '%Y-%m-%dT%H:%M:%S.%f')
+        time = datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%S.%f")
     except ValueError:
-        time = datetime.datetime.strptime(
-            s, '%Y-%m-%dT%H:%M:%S')
-    return time.replace(tzinfo=tz.tzutc()). \
-        astimezone(tz.tzlocal()).replace(tzinfo=None)
+        time = datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%S")
+    return time.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal()).replace(tzinfo=None)
 
 
 class HistoryManagerBase(hass.Hass):
     def initialize(self):
         self.hass_config = [
-            config for config in self.config['plugins'].values()
-            if config['type'] == 'hass'][0]
+            config
+            for config in self.config["plugins"].values()
+            if config["type"] == "hass"
+        ][0]
         self.changed_callbacks = {}
         self.callback_id = 0
         self.loaded = False
-        self.mutex = self.get_app('locker').get_mutex('HistoryManagerBase')
+        self.mutex = self.get_app("locker").get_mutex("HistoryManagerBase")
         self.load_config()
 
     def add_callback(self, callback):
-        with self.mutex.lock('add_callback'):
+        with self.mutex.lock("add_callback"):
             id = self.callback_id
             self.callback_id += 1
             self.changed_callbacks[id] = callback
             return id
 
     def remove_callback(self, id):
-        with self.mutex.lock('add_callback'):
+        with self.mutex.lock("add_callback"):
             del self.changed_callbacks[id]
 
     def changed(self):
-        self.log('callbacks={}'.format(len(self.changed_callbacks)))
+        self.log("callbacks={}".format(len(self.changed_callbacks)))
         for callback in self.changed_callbacks.values():
             callback()
 
     def is_loaded(self):
         return self.loaded
 
-    def api_request(self, path):
-        url = '{}/api/{}'.format(self.hass_config['ha_url'], path)
-        self.log('Calling API: ' + url)
-        with request.urlopen(request.Request(
-                url,
-                headers={'Authorization':
-                         'Bearer ' + self.hass_config['token']})) \
-                as result:
-            if result.status >= 300:
-                raise http.client.HTTPException(result.reason)
-            return json.loads(result.read().decode())
-
     def load_config_inner(self):
         raise NotImplementedError()
 
     def load_config(self, *args, **kwargs):
-        with self.mutex.lock('load_config'):
-            self.log('Loading history...')
+        with self.mutex.lock("load_config"):
+            self.log("Loading history...")
             try:
                 self.load_config_inner()
             except:
-                self.error('Failed to load.', level='WARNING')
-                self.error(traceback.format_exc(), level='WARNING')
+                self.error("Failed to load.", level="WARNING")
+                self.error(traceback.format_exc(), level="WARNING")
                 self.run_in(self.load_config, 2)
                 raise
             self.loaded = True
@@ -98,8 +82,9 @@ class HistoryManagerBase(hass.Hass):
 class HistoryManager(HistoryManagerBase):
     def initialize(self):
         self.max_interval = datetime.timedelta(
-            **self.args.get('max_interval', {'days': 1}))
-        self.entity_id = self.args['entity']
+            **self.args.get("max_interval", {"days": 1})
+        )
+        self.entity_id = self.args["entity"]
         self.history = []
         super(HistoryManager, self).initialize()
 
@@ -109,79 +94,70 @@ class HistoryManager(HistoryManagerBase):
             self.history.popleft()
 
     def get_history(self):
-        with self.mutex.lock('get_history'):
+        with self.mutex.lock("get_history"):
             self.__filter()
             return self.history
 
     def load_config_inner(self, *args, **kwargs):
-        self.log('Loading history...')
-        now = datetime.datetime.now()
-        begin_timestamp = (
-            now - self.max_interval).strftime(
-                '%Y-%m-%dT%H:%M:%S')
-        end_timestamp = now.strftime('%Y-%m-%dT%H:%M:%S')
-        path = 'history/period/{}?filter_entity_id={}&end_time={}' \
-            .format(
-                begin_timestamp,
-                self.entity_id,
-                end_timestamp)
-        self.log('Calling API: ' + path)
-        loaded_history = self.api_request(path)
+        self.log("Loading history...")
+        loaded_history = self.load_history(self.entity_id, self.max_interval)
         now = self.datetime()
-        self.history = deque(filter(
-            lambda element:
-                element.time <= now and element.value is not None,
-            (make_history_element(
-                get_date(change['last_changed']),
-                change['state'])
-             for changes in loaded_history for change in changes)))
-        self.log('Total loaded history size: {}'.format(len(self.history)))
+        self.history = deque(
+            filter(
+                lambda element: element.time <= now and element.value is not None,
+                (
+                    make_history_element(
+                        get_date(change["last_changed"]), change["state"]
+                    )
+                    for changes in loaded_history
+                    for change in changes
+                ),
+            )
+        )
+        self.log("Total loaded history size: {}".format(len(self.history)))
         self.__filter()
-        self.log('Filtered history size: {}'.format(len(self.history)))
-        self.listen_state(
-            self.on_changed, entity=self.entity_id)
-        self.log('History loaded.')
+        self.log("Filtered history size: {}".format(len(self.history)))
+        self.listen_state(self.on_changed, entity=self.entity_id)
+        self.log("History loaded.")
 
     def on_changed(self, entity, attribute, old, new, kwargs):
-        with self.mutex.lock('on_changed'):
+        with self.mutex.lock("on_changed"):
             if new == old:
                 return
             self.__filter()
-            self.history.append(make_history_element(
-                self.datetime(), new))
+            self.history.append(make_history_element(self.datetime(), new))
             self.changed()
 
 
 class ChangeTracker(HistoryManagerBase):
     def initialize(self):
-        self.entity_id = self.args['entity']
+        self.entity_id = self.args["entity"]
         self.changed_time = None
         self.updated_time = None
         super(ChangeTracker, self).initialize()
 
     def load_config_inner(self):
-        self.log('Loading last change...')
-        result = self.api_request('states/{}'.format(self.entity_id))
-        self.changed_time = get_date(result['last_changed'])
-        self.updated_time = get_date(result['last_updated'])
-        self.listen_state(
-            self.on_changed, entity=self.entity_id, attribute='all')
-        self.log('Last change loaded.')
+        self.log("Loading last change...")
+        result = self.load_states(self.entity_id)
+        self.changed_time = get_date(result["last_changed"])
+        self.updated_time = get_date(result["last_updated"])
+        self.listen_state(self.on_changed, entity=self.entity_id, attribute="all")
+        self.log("Last change loaded.")
 
     def last_changed(self):
-        with self.mutex.lock('last_changed'):
+        with self.mutex.lock("last_changed"):
             return self.changed_time
 
     def last_updated(self):
-        with self.mutex.lock('last_updated'):
+        with self.mutex.lock("last_updated"):
             return self.updated_time
 
     def on_changed(self, entity, attribute, old, new, kwargs):
-        with self.mutex.lock('on_changed'):
-            self.log('changed')
+        with self.mutex.lock("on_changed"):
+            self.log("changed")
             now = self.datetime()
             self.updated_time = now
-            if old['state'] != new['state']:
+            if old["state"] != new["state"]:
                 self.changed_time = now
             self.changed()
 
@@ -212,8 +188,7 @@ class LimitedHistoryAggregatum(Aggregatum):
             self.removed(removed_element)
         if self.history[0].time < minimum_time:
             old_element = self.history[0]
-            self.history[0] = HistoryElement(
-                minimum_time, self.history[0].value)
+            self.history[0] = HistoryElement(minimum_time, self.history[0].value)
             self.trimmed(old_element)
 
     def adding(self, element):
@@ -251,6 +226,7 @@ class Minmax(LimitedHistoryAggregatum):
         if self.value is None:
             raise ValueError
         return self.value
+
 
 class Sum(LimitedHistoryAggregatum):
     def __init__(self, app, interval):
@@ -349,8 +325,8 @@ class Anglemean(IntervalAggragatum):
     def get(self):
         if self.time == 0.0:
             raise ValueError
-        varsum180 = self.sum180_2 - (self.sum180 ** 2) / self.time
-        varsum360 = self.sum360_2 - (self.sum360 ** 2) / self.time
+        varsum180 = self.sum180_2 - (self.sum180**2) / self.time
+        varsum360 = self.sum360_2 - (self.sum360**2) / self.time
         if varsum180 < varsum360:
             result = self.sum180 / self.time
             if result < 0:
@@ -364,9 +340,9 @@ class Anglemean(IntervalAggragatum):
         value180 = value - 360 if value > 180 else value
         seconds = interval.total_seconds()
         self.sum180 += value180 * seconds
-        self.sum180_2 += (value180 ** 2) * seconds
+        self.sum180_2 += (value180**2) * seconds
         self.sum360 += value360 * seconds
-        self.sum360_2 += (value360 ** 2) * seconds
+        self.sum360_2 += (value360**2) * seconds
         self.time += seconds
 
     def remove_interval(self, interval, value):
@@ -374,9 +350,9 @@ class Anglemean(IntervalAggragatum):
         value180 = value - 360 if value > 180 else value
         seconds = interval.total_seconds()
         self.sum180 -= value180 * seconds
-        self.sum180_2 -= (value180 ** 2) * seconds
+        self.sum180_2 -= (value180**2) * seconds
         self.sum360 -= value360 * seconds
-        self.sum360_2 -= (value360 ** 2) * seconds
+        self.sum360_2 -= (value360**2) * seconds
         self.time -= seconds
 
 
@@ -408,41 +384,44 @@ class DecaySum(Aggregatum):
 
 class Aggregator:
     def __init__(self, app, callback):
-        self.mutex = app.get_app('locker').get_mutex('Aggregator')
+        self.mutex = app.get_app("locker").get_mutex("Aggregator")
         self.app = app
         self.base_interval = datetime.timedelta(
-            **app.args.get('base_interval', {'minutes': 1}))
-        self.aggregatum = self.get_aggregatum(app.args['aggregator'])
+            **app.args.get("base_interval", {"minutes": 1})
+        )
+        self.aggregatum = self.get_aggregatum(app.args["aggregator"])
         self.callback = callback
         self.timer = None
 
-        self.manager = app.get_app(app.args['manager'])
+        self.manager = app.get_app(app.args["manager"])
         history = self.manager.get_history()
         for element in history:
             self.aggregatum.add(element)
         if not history:
             element = make_history_element(
-                self.app.datetime(), self.app.get_state(self.manager.entity_id))
+                self.app.datetime(), self.app.get_state(self.manager.entity_id)
+            )
             self.aggregatum.add(element)
 
         app.listen_state(self.on_change, self.manager.entity_id)
-        with self.mutex.lock('init'):
+        with self.mutex.lock("init"):
             self.__start_timer()
             self.__set_state()
 
     def get_aggregatum(self, name):
         def get_interval():
-            return datetime.timedelta(**self.app.args['interval'])
+            return datetime.timedelta(**self.app.args["interval"])
+
         aggregators = {
             "min": lambda: Minmax(self.app, get_interval(), min),
             "max": lambda: Minmax(self.app, get_interval(), max),
             "sum": lambda: Sum(self.app, get_interval()),
-            "integral": lambda: Integral(
-                self.app, get_interval(), self.base_interval),
+            "integral": lambda: Integral(self.app, get_interval(), self.base_interval),
             "mean": lambda: Mean(self.app, get_interval()),
             "anglemean": lambda: Anglemean(self.app, get_interval()),
             "decay_sum": lambda: DecaySum(
-                self.app, get_interval(), self.app.args['fraction']),
+                self.app, get_interval(), self.app.args["fraction"]
+            ),
         }
         return aggregators[name]()
 
@@ -458,10 +437,11 @@ class Aggregator:
         self.timer = self.app.run_every(
             self.on_interval,
             self.app.datetime() + self.base_interval,
-            self.base_interval.total_seconds())
+            self.base_interval.total_seconds(),
+        )
 
     def on_change(self, entity, attribute, old, new, kwargs):
-        with self.mutex.lock('on_change'):
+        with self.mutex.lock("on_change"):
             element = make_history_element(self.app.datetime(), new)
             self.aggregatum.add(element)
             self.app.cancel_timer(self.timer)
@@ -470,17 +450,18 @@ class Aggregator:
             self.__start_timer()
 
     def on_interval(self, kwargs):
-        with self.mutex.lock('on_interval'):
+        with self.mutex.lock("on_interval"):
             element = make_history_element(
-                self.app.datetime(), self.app.get_state(self.manager.entity_id))
+                self.app.datetime(), self.app.get_state(self.manager.entity_id)
+            )
             self.aggregatum.add(element)
             self.__set_state()
 
 
 class AggregatedValue(hass.Hass):
     def initialize(self):
-        self.target = self.args['target']
-        self.attributes = self.args.get('attributes', {})
+        self.target = self.args["target"]
+        self.attributes = self.args.get("attributes", {})
         self.aggregator_app = Aggregator(self, self.__set_state)
 
     def __set_state(self, value):
