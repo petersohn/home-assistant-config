@@ -162,6 +162,7 @@ Range Enabler Changes
 
 Date Enabler Changes
     [Setup]  Create Test Harness  start_date=2018-02-01  start_time=12:00:00  interval=1h
+    [Teardown]  Cleanup Test Harness
     ${enabler} =  Create App  enabler  DateEnabler  enabler  begin=02-03  end=02-04
     ${enabled_switch} =  Create Enabled Switch  switch  enabler  ${test_switch}
     Enabled State Should Be  ${enabler}  ${False}
@@ -175,6 +176,7 @@ Date Enabler Changes
 
 Date Enabler Exact Change Time
     [Setup]  Create Test Harness  start_time=23:59:30  interval=1s
+    [Teardown]  Cleanup Test Harness
     ${enabler} =  Create App  enabler  DateEnabler  enabler  begin=01-02  end=01-02
     ${enabled_switch} =  Create Enabled Switch  switch  enabler  ${test_switch}
     Enabled State Should Be  ${enabler}  ${False}
@@ -182,6 +184,25 @@ Date Enabler Exact Change Time
 
     State Should Change At  ${test_switch}  on  00:00:01
     Enabled State Should Be  ${enabler}  ${True}
+
+
+Multi Enabler Changes
+    [Setup]  Create Test Harness
+    [Teardown]  Cleanup Test Harness
+    ${enabler1} =  Create App  enabler  ScriptEnabler  enabler1  initial=${False}
+    ${enabler2} =  Create App  enabler  ScriptEnabler  enabler2  initial=${False}
+    @{enablers} =  Create List  enabler1  enabler2
+    ${enabler} =  Create App  enabler  MultiEnabler  enabler  enablers=${enablers}
+    ${enabled_switch} =  Create Enabled Switch  switch  enabler  ${test_switch}
+    Enabled State Should Be  ${enabler}  ${False}
+    State Should Be  ${test_switch}  off
+    Set Enabled State  ${enabler1}  enable
+    Enabled State Should Be  ${enabler}  ${False}
+    State Should Be  ${test_switch}  off
+    Set Enabled State  ${enabler2}  enable
+    Enabled State Should Be  ${enabler}  ${True}
+    State Should Be  ${test_switch}  on
+
 
 
 *** Keywords ***
