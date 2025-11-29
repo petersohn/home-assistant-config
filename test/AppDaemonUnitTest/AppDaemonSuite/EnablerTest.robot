@@ -81,6 +81,9 @@ Date Enabler
     2018-06-20      ${True}        begin=06-20  end=04-30
     2018-06-21      ${True}        begin=06-20  end=04-30
     2018-12-31      ${True}        begin=06-20  end=04-30
+    2018-09-01      ${False}       begin=09-02  end=09-02
+    2018-09-02      ${True}        begin=09-02  end=09-02
+    2018-09-03      ${False}       begin=09-02  end=09-02
 
 Multi Enabler
     [Template]  Test Multi Enabler
@@ -155,6 +158,30 @@ Range Enabler Changes
     Set State  ${test_input}  -15
     Enabled State Should Be  ${enabler}  ${False}
     State Should Be  ${test_switch}  off
+
+
+Date Enabler Changes
+    [Setup]  Create Test Harness  start_date=2018-02-01  start_time=12:00:00  interval=1h
+    ${enabler} =  Create App  enabler  DateEnabler  enabler  begin=02-03  end=02-04
+    ${enabled_switch} =  Create Enabled Switch  switch  enabler  ${test_switch}
+    Enabled State Should Be  ${enabler}  ${False}
+    State Should Be  ${test_switch}  off
+
+    State Should Change At Date Time  ${test_switch}  on  2018-02-03 01:00:00
+    Enabled State Should Be  ${enabler}  ${True}
+    State Should Change At Date Time  ${test_switch}  off  2018-02-05 01:00:00
+    Enabled State Should Be  ${enabler}  ${False}
+
+
+Date Enabler Exact Change Time
+    [Setup]  Create Test Harness  start_time=23:59:30  interval=1s
+    ${enabler} =  Create App  enabler  DateEnabler  enabler  begin=01-02  end=01-02
+    ${enabled_switch} =  Create Enabled Switch  switch  enabler  ${test_switch}
+    Enabled State Should Be  ${enabler}  ${False}
+    State Should Be  ${test_switch}  off
+
+    State Should Change At  ${test_switch}  on  00:00:01
+    Enabled State Should Be  ${enabler}  ${True}
 
 
 *** Keywords ***
