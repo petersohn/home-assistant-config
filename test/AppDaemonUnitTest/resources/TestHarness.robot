@@ -10,9 +10,11 @@ Resource   resources/DateTime.robot
 *** Keywords ***
 
 Create Test Harness
-    [Arguments]  ${start_date}=${default_start_date}  ${start_time}=00:00:00
+    [Arguments]  ${start_date}=${default_start_date}  ${start_time}=00:00:00  ${interval}=10s
     Set Test Variable  ${start_date}
     ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}  result_format=datetime
+    ${appdaemon_interval} =  Convert Time  ${interval}  result_format=timedelta
+    Set Test Variable  ${appdaemon_interval}
     ${app_manager} =  Create App Manager  ${start_datetime}  logs/${SUITE_NAME}/${TEST_NAME}.log
     Set Test Variable  ${app_manager}
     ${locker} =  Create App  locker  Locker  locker  enable_logging=${True}
