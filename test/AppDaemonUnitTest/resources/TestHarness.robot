@@ -181,7 +181,7 @@ State Should Change At Date Time
 State Should Change At
     [Arguments]  ${entity}  ${value}  ${time}
     ${date_time} =  Get Date From Time  ${time}
-    State Should Change At Date Time  ${entity}  ${value}  ${date_time}
+    State Should Change At Date Time  ${entity}  ${date_time}
 
 State Should Change In
     [Arguments]  ${entity}  ${value}  ${time}
