@@ -49,8 +49,10 @@ class TestApp(hass.Hass):
             return value
         return convert(value, type)
 
-    def get_next_time_of_day(self, time_of_day: timedelta) -> datetime:
+    def get_next_time_of_day(
+        self, time_of_day: timedelta, future: bool
+    ) -> datetime:
         value = datetime.combine(self.date(), time()) + time_of_day
-        if value < self.datetime():
+        if future and value < self.datetime():
             value += timedelta(days=1)
         return value

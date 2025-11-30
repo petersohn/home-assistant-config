@@ -55,13 +55,14 @@ Advance Time
 
 Advance Time To
     [Arguments]  ${target}
-    ${target_date} =  Get Date From Time  ${target}
+    ${target_date} =  Get Date From Time  ${target}  future=${True}
     Advance Time To Date Time  ${target_date}
 
 Get Date From Time
-    [Arguments]  ${time}
+    [Arguments]  ${time}  ${future}
     ${timedelta} =  Convert Time  ${time}  result_format=timedelta
-    ${result} =  Call Method  ${test_app}  get_next_time_of_day  ${timedelta}
+    ${result} =  Call Method  ${test_app}
+    ...    get_next_time_of_day  ${timedelta}  ${future}
     RETURN  ${result}
 
 Advance Time To Date Time
@@ -119,7 +120,7 @@ Schedule Call In
 
 Schedule Call At
     [Arguments]  ${time}  ${function}  @{args}  &{kwargs}
-    ${date} =  Get Date From Time  ${time}
+    ${date} =  Get Date From Time  ${time}  future=${True}
     Schedule Call At Date Time  ${date}  ${function}  @{args}  &{kwargs}
 
 Schedule Call At Date Time
@@ -138,7 +139,7 @@ Wait For State Change
         ${now} =  Get Current Time
         ${date_time} =  Add Time To Date  ${now}  ${timeout}  result_format=datetime
     ELSE IF  ${{$deadline is not None}}
-        ${date_time} =  Get Date From Time  ${deadline}
+        ${date_time} =  Get Date From Time  ${deadline}  future=${True}
     ELSE IF  ${{$deadline_datetime is not None}}
         ${date_time} =  Convert Date  ${deadline_datetime}  result_format=datetime
     ELSE
@@ -167,7 +168,7 @@ State Should Not Change Until Date Time
 
 State Should Not Change Until
     [Arguments]  ${entity}  ${time}
-    ${date_time} =  Get Date From Time  ${time}
+    ${date_time} =  Get Date From Time  ${time}  future=${True}
     State Should Not Change Until Date Time  ${entity}  ${date_time}
 
 State Should Change At Date Time
@@ -180,8 +181,8 @@ State Should Change At Date Time
 
 State Should Change At
     [Arguments]  ${entity}  ${value}  ${time}
-    ${date_time} =  Get Date From Time  ${time}
-    State Should Change At Date Time  ${entity}  ${date_time}
+    ${date_time} =  Get Date From Time  ${time}  future=${True}
+    State Should Change At Date Time  ${entity}  ${value}  ${date_time}
 
 State Should Change In
     [Arguments]  ${entity}  ${value}  ${time}

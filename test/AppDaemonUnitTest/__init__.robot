@@ -13,7 +13,6 @@ Suite Teardown  Run Keywords
 *** Keywords ***
 
 Initialize Variables
-    Seut Suite Variable  ${appdaemon_interval}  children=true
     Set Suite Variable  ${default_start_date}  2018-01-01 00:00:00  children=true
 
     ${global_mutex_graph} =  Create Dictionary

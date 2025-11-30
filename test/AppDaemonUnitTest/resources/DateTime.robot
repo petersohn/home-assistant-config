@@ -8,7 +8,7 @@ Resource  resources/TestHarness.robot
 
 Times Should Match
     [Arguments]  ${actual}  ${expected}
-    ${expected_date} =  Get Date From Time  ${expected}
+    ${expected_date} =  Get Date From Time  ${expected}  future=${False}
     ${actual_date} =  Convert Date  ${actual}  result_format=datetime
     Should Be Equal  ${actual_date}  ${expected_date}
 

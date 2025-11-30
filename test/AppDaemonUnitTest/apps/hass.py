@@ -147,11 +147,12 @@ class AppManager:
         data = self.__states.setdefault(name, State())
         old = data.to_map()
         data.state = None if state is None else str(state)
-        new = data.to_map()
-        self.__debug("Set state {} by {}: {}".format(name, app, new))
 
         if attributes is not None:
             data.attributes.update(attributes)
+
+        new = data.to_map()
+        self.__debug("Set state {} by {}: {}".format(name, app, new))
 
         for id, callback in self.__state_callbacks.items():
             if callback.entity != name:
@@ -237,7 +238,8 @@ class AppManager:
         return id
 
     def cancel_listen_state(self, id: int) -> None:
-        del self.__state_callbacks[id]
+        if id in self.__state_callbacks:
+            del self.__state_callbacks[id]
 
     def __calculate_scheduled_task_order(self):
         self.__scheduled_task_order = list(self.__scheduled_tasks.keys())
@@ -245,17 +247,24 @@ class AppManager:
             key=lambda i: self.__scheduled_tasks[i].time, reverse=True
         )
 
-    def schedule_task(self, task: ScheduledTask) -> int:
-        id = self.__get_id()
+    def __schedule_task(self, id: int, task: ScheduledTask) -> None:
         self.__debug(
             "schedule task {} at {}".format(id, task.time.strftime("%H:%M:%S"))
         )
         self.__scheduled_tasks[id] = task
         self.__calculate_scheduled_task_order()
+
+    def schedule_task(self, task: ScheduledTask) -> int:
+        id = self.__get_id()
+        self.__schedule_task(id, task)
         return id
 
     def cancel_timer(self, id: int) -> None:
-        del self.__scheduled_tasks[id]
+        self.__debug("Cancel timer {}".format(id))
+        if id in self.__scheduled_tasks:
+            del self.__scheduled_tasks[id]
+        else:
+            self.__debug("No such timer.")
         self.__calculate_scheduled_task_order()
 
     def datetime(self) -> datetime:
@@ -279,7 +288,6 @@ class AppManager:
 
     def step(self, delta: timedelta) -> None:
         self.__datetime += delta
-        self.__debug("step")
         self.call_pending_callbacks()
 
     def call_pending_callbacks(self):
@@ -293,17 +301,19 @@ class AppManager:
             with ErrorHandler(self, task.app):
                 task.callback({})
 
-            del self.__scheduled_tasks[id]
-            self.__calculate_scheduled_task_order()
             if task.repeat is not None:
-                _ = self.schedule_task(
+                self.__schedule_task(
+                    id,
                     ScheduledTask(
                         app=task.app,
                         time=task.time + task.repeat,
                         callback=task.callback,
                         repeat=task.repeat,
-                    )
+                    ),
                 )
+            else:
+                del self.__scheduled_tasks[id]
+                self.__calculate_scheduled_task_order()
 
     def advance_time_to(self, target: datetime, delta: timedelta) -> None:
         while self.__datetime < target:
@@ -321,13 +331,17 @@ class AppManager:
         new: str | None = None,
     ) -> None:
         current_state = self.get_state(entity)
+        self.__debug("Wait for state change current={}".format(current_state))
 
         step_count = 0
         while not deadline or self.__datetime < deadline:
             self.step(delta)
 
             state = self.get_state(entity)
-            self.__debug("{}: {} -> {}".format(entity, current_state, state))
+            if state != current_state:
+                self.__debug(
+                    "{}: {} -> {}".format(entity, current_state, state)
+                )
             if (
                 state != current_state
                 and (old is None or current_state == old)
@@ -486,3 +500,19 @@ class Hass:
     def error(self, msg: str, level: LogLevel = "ERROR") -> None:
         assert self.__manager is not None
         self.__manager.log(self.__name, msg, level)
+
+    def load_history(self, _entity_id: str, _max_interval: timedelta) -> Any:
+        return {}
+
+    def load_states(self, entity_id: str) -> dict[str, Any]:
+        state = self.get_state(entity_id, attribute="all")
+        if state is None:
+            raise RuntimeError("Entity not found: {}".format(entity_id))
+        assert type(state) is dict
+
+        now = self.datetime().strftime("%Y-%m-%dT%H:%M:%S")
+        state["entity_id"] = entity_id
+        state["last_changed"] = now
+        state["last_reported"] = now
+        state["last_updated"] = now
+        return state

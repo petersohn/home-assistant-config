@@ -33,11 +33,6 @@ def get_date(s):
 
 class HistoryManagerBase(hass.Hass):
     def initialize(self):
-        self.hass_config = [
-            config
-            for config in self.config["plugins"].values()
-            if config["type"] == "hass"
-        ][0]
         self.changed_callbacks = {}
         self.callback_id = 0
         self.loaded = False
