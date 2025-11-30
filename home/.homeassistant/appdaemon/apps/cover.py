@@ -13,17 +13,21 @@ class CoverController(hass.Hass):
         self.target = self.args['target']
         self.mutex = self.get_app('locker').get_mutex('CoverController')
 
-        self.expression = expression.ExpressionEvaluator(
-            self, self.args['expr'], self.on_expression_change)
-        self.value = self.expression.get()
-        self.expected_value = None
-
-        delay = self.args.get('delay')
-        self.delay = datetime.timedelta(**delay) if delay is not None else None
-        self.timer = None
-
         with self.mutex.lock('initialize'):
+            self.is_available = False
+            self.expected_value = None
+            self.value = None
+            self.timer = None
+
+            delay = self.args.get('delay')
+            self.delay = datetime.timedelta(**delay) if delay is not None else None
+
             self.mode_switch = self.args.get('mode_switch')
+
+            self.expression = expression.ExpressionEvaluator(
+                self, self.args['expr'], self.on_expression_change)
+            self.value = self.expression.get()
+
             if self.mode_switch is not None:
                 mode = self.get_state(self.mode_switch)
                 if mode == 'stable':
