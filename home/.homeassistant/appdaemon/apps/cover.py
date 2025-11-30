@@ -28,21 +28,22 @@ class CoverController(hass.Hass):
                 self, self.args['expr'], self.on_expression_change)
             self.value = self.expression.get()
 
-            if self.mode_switch is not None:
-                mode = self.get_state(self.mode_switch)
-                if mode == 'stable':
-                    self._set_mode(self.Mode.AUTO)
-                else:
-                    self._set_mode_from_str(mode)
-                self.listen_state(self.on_mode_change, entity=self.mode_switch)
-            else:
-                self.mode = self.Mode.AUTO
-
             state = self.get_state(self.target)
             self.is_available = state is not None and state != 'unavailable'
             self.listen_state(
                 self.on_state_change, entity=self.target, attribute='all')
             self._reset_target()
+
+            if self.mode_switch is not None:
+                self.listen_state(self.on_mode_change, entity=self.mode_switch)
+                mode = self.get_state(self.mode_switch)
+                if mode == 'stable':
+                    self._set_mode(self.Mode.AUTO)
+                else:
+                    self._set_mode_from_str(mode)
+            else:
+                self.mode = self.Mode.AUTO
+
             if self.is_available and \
                     self.mode == self.Mode.AUTO \
                     and self.value is not None:
