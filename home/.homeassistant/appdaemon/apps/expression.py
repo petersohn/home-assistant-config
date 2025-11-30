@@ -115,7 +115,7 @@ class ExpressionEvaluator:
             self.app.listen_state(self._on_entity_change, entity=entity)
             self.entities.add(entity)
         value = self.app.get_state(entity)
-        return value != 'unknown' and value != 'unavailable'
+        return value is not None and value != '' and value != 'unknown' and value != 'unavailable'
 
     def _get_app(self, name):
         app = self.app.get_app(name)
