@@ -27,7 +27,7 @@ Cleanup Test Harness
 
 Create App
     [Arguments]  ${module}  ${class}  ${name}  &{args}
-    ${app} =  Call Method  ${app_manager}  create_app  ${module}  ${class}  ${name}  &{args}
+    ${app} =  Call On App  ${app_manager}  create_app  ${module}  ${class}  ${name}  &{args}
     RETURN  ${app}
 
 Append And Check Mutex Graph
