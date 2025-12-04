@@ -5,6 +5,7 @@ Library        libraries/HistoryUtil.py
 Library        Collections
 Resource       resources/TestHarness.robot
 Resource       resources/DateTime.robot
+Resource       resources/History.robot
 Test Setup     Create Test Harness
 Test Teardown  Cleanup Test Harness
 
@@ -22,7 +23,7 @@ ${enabler} =  input_boolean.test_switch2
 *** Test Cases ***
 
 Get History
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     Set State  ${entity}  3
     ${date1} =  Get Current Time
     Advance Time  1 min
@@ -42,7 +43,7 @@ Get History
 
 
 Old History Elements Are Removed
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     Set State  ${entity}  20
     Advance Time  20 min
     Set State  ${entity}  13
@@ -64,7 +65,7 @@ Old History Elements Are Removed
 
 
 Nothing Happens For A Long Time
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     Set State  ${entity}  42
     ${date1} =  Get Current Time
     Advance Time  2 h
@@ -80,7 +81,7 @@ Nothing Happens For A Long Time
 
 History Enabler
     Set State  ${enabler}  off
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     &{interval} =  Create Dictionary  minutes=${5}
     &{base_interval} =  Create Dictionary  minutes=${1}
     ${history_enabler} =  Create App  enabler  HistoryEnabler  history_enabler
@@ -104,7 +105,7 @@ History Enabler
 
 
 Aggregated Value
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     &{interval} =  Create Dictionary  minutes=${3}
     ${aggregated_value} =  Create App  history  AggregatedValue  aggregated_value
     ...    manager=history_manager
@@ -143,7 +144,7 @@ Aggregated Value
 
 
 Aggregated Value With Base Interval
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     &{interval} =  Create Dictionary  minutes=${3}
     &{base_interval} =  Create Dictionary  seconds=${10}
     ${aggregated_value} =  Create App  history  AggregatedValue  aggregated_value
@@ -189,7 +190,7 @@ Aggregated Value With Base Interval
 
 
 Mean Value
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     &{interval} =  Create Dictionary  minutes=${3}
     ${aggregated_value} =  Create App  history  AggregatedValue  aggregated_value
     ...    manager=history_manager
@@ -208,7 +209,7 @@ Mean Value
 
 
 Mean Value Irregular Intervals
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     &{interval} =  Create Dictionary  minutes=${3}
     ${aggregated_value} =  Create App  history  AggregatedValue  aggregated_value
     ...    manager=history_manager
@@ -230,7 +231,7 @@ Mean Value Irregular Intervals
 
 
 Anglemean
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     &{interval} =  Create Dictionary  minutes=${4}
     ${aggregated_value} =  Create App  history  AggregatedValue  aggregated_value
     ...    manager=history_manager
@@ -271,7 +272,7 @@ Anglemean
 
 
 Min Max Sum Values
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     &{interval} =  Create Dictionary  minutes=${5}
     ${sum_value} =  Create App  history  AggregatedValue  sum_value
     ...    manager=history_manager
@@ -342,7 +343,7 @@ Min Max Sum Values
 
 
 Decaying Sum Value
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     &{interval} =  Create Dictionary  minutes=${1}
     ${aggregated_value} =  Create App  history  AggregatedValue  aggregated_value
     ...    manager=history_manager
@@ -368,7 +369,7 @@ Decaying Sum Value
 
 
 Binary Input
-    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    ${history_manager} =  Initialize History Manager
     &{interval} =  Create Dictionary  minutes=${5}
     ${sum_value} =  Create App  history  AggregatedValue  sum_value
     ...    manager=history_manager
@@ -439,25 +440,15 @@ Change Tracker
 
 *** Keywords ***
 
-Create History Manager
-    [Arguments]  ${name}  ${entity}
+Initialize History Manager
     Set State  ${entity}  0
-    &{max_interval} =  Create Dictionary  hours=${1}
-    ${history_manager} =  Create App  history  HistoryManager  ${name}
-    ...    entity=${entity}  max_interval=${max_interval}
+    ${history_manager} =  Create History Manager  history_manager  ${entity}
     RETURN  ${history_manager}
 
 Should Be Loaded
     [Arguments]  ${app}
     ${result} =  Call On App  ${app}  is_loaded
     Should Be True  ${result}
-
-History Should Be
-    [Arguments]  ${app}  @{expected_values}
-    ${converted_expected_values} =  Convert History Input  ${expected_values}
-    ${values} =  Call On App  ${app}  get_history
-    ${converted_values} =  Convert History Output  ${values}
-    Lists Should Be Equal  ${converted_values}  ${converted_expected_values}
 
 Check Date Updates
     [Arguments]  ${change_tracker}  ${expected_changed}  ${expected_updated}
