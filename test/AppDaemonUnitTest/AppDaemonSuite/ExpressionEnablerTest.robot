@@ -2,7 +2,6 @@
 
 Resource       resources/TestHarness.robot
 Resource       resources/Enabler.robot
-Test Teardown  Cleanup Test Harness
 
 
 *** Variables ***

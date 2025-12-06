@@ -24,6 +24,11 @@ Create Test Harness
 
 Cleanup Test Harness
     Append And Check Mutex Graph
+    Call On App  ${app_manager}  remove_all_apps
+    Check Error
+    Set Test Variable  ${test_app}  ${None}
+    Set Test Variable  ${locker}  ${None}
+    Set Test Variable  ${app_manager}  ${None}
 
 Create App
     [Arguments]  ${module}  ${class}  ${name}  &{args}
@@ -43,20 +48,27 @@ Append And Check Mutex Graph
     ${deadlock} =  Find Cycle  ${mutex_graph}
     Should Be Equal  ${deadlock}  ${False}
 
+Check Error
+    ${has_error} =  Call Method  ${app_manager}  has_error
+    Should Be Equal  ${has_error}  ${False}
+
 Call On App
     [Arguments]  ${app}  ${method}  @{args}  &{kwargs}
     ${result} =  Call Method  ${app}  ${method}  @{args}  &{kwargs}
     Call Method  ${app_manager}  call_pending_callbacks
+    Check Error
     RETURN  ${result}
 
 Step
     Call Method  ${app_manager}  step  ${appdaemon_interval}
+    Check Error
 
 Advance Time
     [Arguments]  ${amount}
     ${amount_timedelta} =  Convert Time  ${amount}  result_format=timedelta
     Call Method  ${app_manager}  advance_time
     ...    ${amount_timedelta}  ${appdaemon_interval}
+    Check Error
 
 Advance Time To
     [Arguments]  ${target}
@@ -75,6 +87,7 @@ Advance Time To Date Time
     ${target_datetime} =  Convert Date  ${target}  result_format=datetime
     Call Method  ${app_manager}  advance_time_to
     ...    ${target_datetime}  ${appdaemon_interval}
+    Check Error
 
 Get Current Time
     ${result} =  Call Method  ${app_manager}  datetime

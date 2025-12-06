@@ -279,12 +279,12 @@ Min Max Sum Values
     ...    target=${sum_entity}
     ...    interval=${interval}
     ...    aggregator=sum
-    ${min_value} =  Create App  history  AggregatedValue  sum_value
+    ${min_value} =  Create App  history  AggregatedValue  min_value
     ...    manager=history_manager
     ...    target=${min_entity}
     ...    interval=${interval}
     ...    aggregator=min
-    ${max_value} =  Create App  history  AggregatedValue  sum_value
+    ${max_value} =  Create App  history  AggregatedValue  max_value
     ...    manager=history_manager
     ...    target=${max_entity}
     ...    interval=${interval}

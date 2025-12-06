@@ -74,6 +74,7 @@ class ErrorHandler:
 class AppManager:
     def __init__(self, begin_time: datetime, log_filename: str):
         self.__apps: dict[str, Hass] = {}
+        self.__app_order: list[str] = []
         self.__states: dict[str, State] = {}
         self.__state_callbacks: dict[int, StateCallbackRecord] = {}
         self.__state_callback_id = 0
@@ -101,26 +102,36 @@ class AppManager:
         return obj
 
     def add_app(self, name: str, app: Hass, args: dict[str, Any]) -> None:
+        if name in self.__apps:
+            raise RuntimeError("App already exists: {}".format(name))
         app.init_app(self, name, args)
         self.__apps[name] = app
+        self.__app_order.append(name)
 
     def remove_app(self, name: str) -> None:
+        self.__debug("Remove app: {}".format(name))
         app = self.__apps[name]
         del self.__apps[name]
-        for id in (
+        self.__app_order = list(filter(lambda a: a != name, self.__app_order))
+        for id in [
             key
             for key, value in self.__state_callbacks.items()
             if value.app == name
-        ):
+        ]:
             self.cancel_listen_state(id)
-        for id in (
+        for id in [
             key
             for key, value in self.__scheduled_tasks.items()
             if value.app == name
-        ):
+        ]:
             self.cancel_timer(id)
         with ErrorHandler(self, name):
             app.terminate()
+
+    def remove_all_apps(self) -> None:
+        while len(self.__app_order) != 0:
+            self.remove_app(self.__app_order[-1])
+        assert len(self.__apps) == 0
 
     def get_app(self, name: str) -> Hass | None:
         return self.__apps.get(name)
