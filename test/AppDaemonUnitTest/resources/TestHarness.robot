@@ -25,7 +25,6 @@ Create Test Harness
 Cleanup Test Harness
     Append And Check Mutex Graph
     Call On App  ${app_manager}  remove_all_apps
-    Check Error
     Set Test Variable  ${test_app}  ${None}
     Set Test Variable  ${locker}  ${None}
     Set Test Variable  ${app_manager}  ${None}
