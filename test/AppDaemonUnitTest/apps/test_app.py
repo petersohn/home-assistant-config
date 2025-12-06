@@ -10,6 +10,7 @@ def convert(value: str | dict[str, str] | None, type_: str) -> Any:
         return {k: convert(v, type_) for k, v in value.items()}
 
     converters: dict[str, Callable[[str], Any]] = {
+        "str": lambda val: val,
         "int": lambda val: int(float(val)),
         "float": lambda val: float(val),
         "percent": lambda val: int(float(val) * 100.0),
