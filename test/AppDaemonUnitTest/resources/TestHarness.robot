@@ -30,6 +30,11 @@ Create App
     ${app} =  Call On App  ${app_manager}  create_app  ${module}  ${class}  ${name}  &{args}
     RETURN  ${app}
 
+Get App
+    [Arguments]  ${name}
+    ${app} =  Call Method  ${app_manager}  get_app  ${name}
+    RETURN  ${app}
+
 Append And Check Mutex Graph
     ${mutex_graph} =  Call Method  ${locker}  get_global_graph
     Append Graph  ${global_mutex_graph}  ${mutex_graph}
