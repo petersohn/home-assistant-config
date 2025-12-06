@@ -101,6 +101,22 @@ Enabler And Binary Sensor
     ${True}  on
     ...    enabler_and_binary_and=${True}   enabler_and_binary_or=${True}
 
+Changes
+    [Setup]  Create Test Harness
+    [Teardown]  Cleanup Test Harness
+    Set State  ${input_binary1}  off
+    Set State  ${input_binary2}  off
+    Create Expression Enabler  enabler1  v.${input_binary1}
+    Create Expression Enabler  enabler2  not v.${input_binary2}
+    ${enabler} =  Create Expression Enabler  enabler  e.enabler1 and e.enabler2
+
+    Enabled State Should Be  ${enabler}  ${False}
+    Set State  ${input_binary1}  on
+    Enabled State Should Be  ${enabler}  ${True}
+    Set State  ${input_binary2}  on
+    Enabled State Should Be  ${enabler}  ${False}
+
+
 *** Keywords ***
 
 Create Expression Enabler
