@@ -135,6 +135,7 @@ Test Enablers
     [Arguments]  ${enabler1_state}  ${enabler2_state}  &{expected_states}
     [Teardown]  Cleanup Test Harness
     Create Test Harness
+    ...    suffix=${enabler1_state}_${enabler2_state}
     Create App  enabler  ScriptEnabler  enabler1
     ...    initial=${enabler1_state}
     Create App  enabler  ScriptEnabler  enabler2
@@ -149,7 +150,7 @@ Test Enablers
 Test Sensors
     [Arguments]  ${sensor1}  ${sensor2}  &{expected_states}
     [Teardown]  Cleanup Test Harness
-    Create Test Harness
+    Create Test Harness  suffix=${sensor1}_${sensor2}
     Set State  ${input_sensor1}  ${sensor1}
     Set State  ${input_sensor2}  ${sensor2}
     Create Expression Enabler  value_less  v.${input_sensor1} < v.${input_sensor2}
@@ -160,7 +161,7 @@ Test Sensors
 Test Binary Sensors
     [Arguments]  ${sensor1}  ${sensor2}  &{expected_states}
     [Teardown]  Cleanup Test Harness
-    Create Test Harness
+    Create Test Harness  suffix=${sensor1}_${sensor2}
     Set State  ${input_binary1}  ${sensor1}
     Set State  ${input_binary2}  ${sensor2}
     Create Expression Enabler  binary_and  v.${input_binary1} and v.${input_binary2}
@@ -171,7 +172,7 @@ Test Binary Sensors
 Test Enabler And Binary Sensor
     [Arguments]  ${enabler}  ${sensor}  &{expected_states}
     [Teardown]  Cleanup Test Harness
-    Create Test Harness
+    Create Test Harness  suffix=${enabler}_${sensor}
     Create App  enabler  ScriptEnabler  enabler
     ...    initial=${enabler}
     Set State  ${input_binary1}  ${sensor}

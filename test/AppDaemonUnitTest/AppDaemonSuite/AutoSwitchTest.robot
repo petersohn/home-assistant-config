@@ -108,6 +108,7 @@ Switch On And Off
     ...    ${expected_off}  ${expected_on}
     [Teardown]  Cleanup Test Harness
     Initialize  ${type}  ${initial_switch_state}  ${initial_target_state}
+    ...    suffix=${type}_${initial_switch_state}_${initial_target_state}
     State Should Be  ${target}  ${expected_off}
     Turn On Auto Switch
     State Should Be  ${target}  ${expected_on}
@@ -123,6 +124,7 @@ Switch On And Off With Enabler
     ...    ${enabler_state}  ${expected_off}  ${expected_on}
     [Teardown]  Cleanup Test Harness
     Initialize  ${type}  ${initial_switch_state}  ${initial_target_state}
+    ...    suffix=${type}_${initial_switch_state}_${initial_target_state}_${enabler_state}
     Set Enabled State  ${enabler}  ${enabler_state}
     State Should Be  ${target}  ${expected_off}
     Turn On Auto Switch
@@ -138,6 +140,7 @@ Change Manual Switch State
     [Arguments]  ${initial}  ${auto_switch_state}  ${changed}  ${expected}
     [Teardown]  Cleanup Test Harness
     Initialize  Switched  ${initial}  ${target}
+    ...    suffix=${initial}_${auto_switch_state}_${changed}
     Turn On Or Off Auto Switch  ${auto_switch_state}
     Set State  ${switch}  ${changed}
     State Should Be  ${target}  ${expected}
@@ -170,10 +173,12 @@ Turn On Or Off Auto Switch
     END
 
 Initialize
-    [Arguments]  ${type}  ${initial_switch_state}=auto
+    [Arguments]  ${type}
+    ...    ${initial_switch_state}=auto
     ...    ${initial_target_state}=off
+    ...    ${suffix}=${None}
 
-    Create Test Harness
+    Create Test Harness  suffix=${suffix}
     Set State  ${target}  ${initial_target_state}
     Set State  ${switch}  ${initial_switch_state}
 

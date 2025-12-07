@@ -210,7 +210,9 @@ Multi Enabler Changes
 Test Value Enabler
     [Teardown]  Cleanup Test Harness
     [Arguments]  ${class}  ${entity_value}  ${expected_state}  &{args}
+    ${arg_keys} =  Catenate  @{args.keys()}  SEPARATOR=_
     Create Test Harness  start_time=00:00:00
+    ...    suffix=${class}_${entity_value}_${arg_keys}
     Set State  ${test_input}  ${entity_value}
     ${enabler} =  Create App  enabler  ${class}  enabler
     ...    entity=${test_input}  &{args}
@@ -235,15 +237,18 @@ Test Script Enabler
 
 Test Date Enabler
     [Teardown]  Cleanup Test Harness
-    [Arguments]  ${start_date}  ${expected_state}  &{args}
+    [Arguments]  ${start_date}  ${expected_state}  ${begin}  ${end}
 
     Create Test Harness  start_date=${start_date}  start_time=10:00:00
-    ${enabler} =  Create App  enabler  DateEnabler  enabler  &{args}
+    ...    suffix=${begin}_${end}_${start_date}
+    ${enabler} =  Create App  enabler  DateEnabler  enabler
+    ...    begin=${begin}  end=${end}
     Enabled State Should Be  ${enabler}  ${expected_state}
 
 Test Multi Enabler
     [Arguments]  ${expected_state}  @{values}
-    Create Test Harness  start_time=00:00:00
+    ${suffix} =  Catenate  @{values}  SEPARATOR=_
+    Create Test Harness  start_time=00:00:00  suffix=${suffix}
     @{names} =  Create List
     ${i} =  Set Variable  ${0}
     FOR  ${value}  IN  @{values}
