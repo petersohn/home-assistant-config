@@ -169,7 +169,7 @@ Should Have History
 Alarm Text Should Be
     [Arguments]  @{lines}
     ${expected_text} =  Catenate  SEPARATOR=\n  @{lines}
-    Attribute Should Be  ${alert_sensor}  text  ${expected_text}
+    State Should Be  ${alert_sensor}  ${expected_text}  attribute=text
 
 State Should Cycle At
     [Arguments]  ${entity}  ${time}

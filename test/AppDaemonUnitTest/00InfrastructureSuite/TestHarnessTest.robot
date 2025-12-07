@@ -34,8 +34,8 @@ Set State
 Set Attribute
     Set State  ${test_sensor}  foobar  a=attr1  b=attr2
     State Should Be  ${test_sensor}  foobar
-    Attribute Should Be  ${test_sensor}  a  attr1
-    Attribute Should Be  ${test_sensor}  b  attr2
+    State Should Be  ${test_sensor}  attr1  attribute=a
+    State Should Be  ${test_sensor}  attr2  attribute=b
 
 Step
     Step

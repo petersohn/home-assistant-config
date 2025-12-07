@@ -98,23 +98,18 @@ Get State
     RETURN  ${value}
 
 State Should Be
-    [Arguments]  ${entity_id}  ${expected_value}
-    ${value} =  Get State  ${entity_id}
-    Should Be Equal  ${value}  ${expected_value}
-
-Attribute Should Be
-    [Arguments]  ${entity_id}  ${attribute}  ${expected_value}
+    [Arguments]  ${entity_id}  ${expected_value}  ${attribute}=${None}
     ${value} =  Get State  ${entity_id}  attribute=${attribute}
     Should Be Equal  ${value}  ${expected_value}
 
 State Should Not Be
-    [Arguments]  ${entity_id}  ${not_expected_value}
-    ${value} =  Get State  ${entity_id}
+    [Arguments]  ${entity_id}  ${not_expected_value}  ${attribute}=${None}
+    ${value} =  Get State  ${entity_id}  attribute=${attribute}
     Should Not Be Equal  ${value}  ${not_expected_value}
 
 State Should Be As
-    [Arguments]  ${entity_id}  ${type}  ${expected_value}
-    ${value} =  Get State  ${entity_id}  type=${type}
+    [Arguments]  ${entity_id}  ${type}  ${expected_value}  ${attribute}=${None}
+    ${value} =  Get State  ${entity_id}  type=${type}  attribute=${attribute}
     Should Be Equal  ${value}  ${expected_value}
 
 Set State
