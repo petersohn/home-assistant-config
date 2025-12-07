@@ -21,7 +21,7 @@ jobs:
             - store_artifacts:
                 path: test/AppDaemonUnitTest/output
             - store_test_results:
-                path: test/AppDaemonUnitTest/output
+                path: test/AppDaemonUnitTest/output/robot.xml
     test-appdaemon:
         environment:
             - HASS_PATH: /homeassistant
