@@ -48,7 +48,14 @@ ScheduledTask = NamedTuple(
         ("time", datetime),
         ("callback", SchedulerChallback),
         ("repeat", timedelta | None),
+        ("kwargs", dict[str, Any]),
     ],
+)
+
+ServiceKey = NamedTuple("ServiceKey", [("service", str), ("entity_id", str)])
+ServiceCallback = Callable[[dict[str, Any]], None]
+ServiceData = NamedTuple(
+    "ServiceData", [("app", str), ("callback", ServiceCallback)]
 )
 
 LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
@@ -83,6 +90,8 @@ class AppManager:
         self.__scheduled_task_order: list[int] = []
         self.__has_error = False
         self.__log_filename = log_filename
+        self.__services: dict[ServiceKey, ServiceData] = {}
+
         if os.path.exists(log_filename):
             os.remove(log_filename)
         else:
@@ -113,18 +122,26 @@ class AppManager:
         app = self.__apps[name]
         del self.__apps[name]
         self.__app_order = list(filter(lambda a: a != name, self.__app_order))
+
         for id in [
             key
             for key, value in self.__state_callbacks.items()
             if value.app == name
         ]:
             self.cancel_listen_state(id)
+
         for id in [
             key
             for key, value in self.__scheduled_tasks.items()
             if value.app == name
         ]:
             self.cancel_timer(id)
+
+        for key in [
+            key for key, value in self.__services.items() if value.app == name
+        ]:
+            self.unregister_service(key)
+
         with ErrorHandler(self, name):
             app.terminate()
 
@@ -145,7 +162,7 @@ class AppManager:
         if attribute is None:
             return data.state
         if attribute == "all":
-            return deepcopy(data.attributes)
+            return data.to_map()
         return data.attributes.get(attribute)
 
     def set_state(
@@ -178,8 +195,6 @@ class AppManager:
             ):
                 f(name, attribute, old, new, {})
 
-            func: SchedulerChallback | None = None
-
             def schedule_call(
                 f: StateCallback,
                 attribute: str | None,
@@ -197,6 +212,7 @@ class AppManager:
                             f, name, attribute, old, new
                         ),
                         repeat=None,
+                        kwargs={},
                     )
                 )
 
@@ -308,9 +324,9 @@ class AppManager:
             if task.time > self.__datetime:
                 break
 
-            self.__debug("Execute scheduled task {}".format(id))
-            with ErrorHandler(self, task.app):
-                task.callback({})
+            self.__debug(
+                "Execute scheduled task {} for {}".format(id, task.app)
+            )
 
             if task.repeat is not None:
                 self.__schedule_task(
@@ -320,11 +336,15 @@ class AppManager:
                         time=task.time + task.repeat,
                         callback=task.callback,
                         repeat=task.repeat,
+                        kwargs=task.kwargs,
                     ),
                 )
             else:
                 del self.__scheduled_tasks[id]
                 self.__calculate_scheduled_task_order()
+
+            with ErrorHandler(self, task.app):
+                task.callback(task.kwargs)
 
     def advance_time_to(self, target: datetime, delta: timedelta) -> None:
         while self.__datetime < target:
@@ -364,6 +384,24 @@ class AppManager:
             step_count += 1
             if step_count >= 10000:
                 raise RuntimeError("State did not change in time")
+
+    def register_service(
+        self, app: str, key: ServiceKey, callback: ServiceCallback
+    ) -> None:
+        if key in self.__services:
+            raise RuntimeError("Service already registered: {}".format(key))
+        self.__services[key] = ServiceData(app=app, callback=callback)
+
+    def unregister_service(self, key: ServiceKey) -> None:
+        if key not in self.__services:
+            raise RuntimeError("Service not registered: {}".format(key))
+        del self.__services[key]
+
+    def call_service(
+        self, _app: str, key: ServiceKey, data: dict[str, Any]
+    ) -> None:
+        service = self.__services[key]
+        service.callback(data)
 
 
 class Hass:
@@ -451,7 +489,9 @@ class Hass:
         assert self.__manager is not None
         self.__manager.cancel_listen_state(id)
 
-    def run_in(self, callback: SchedulerChallback, delay: int) -> int:
+    def run_in(
+        self, callback: SchedulerChallback, delay: int, **kwargs: Any
+    ) -> int:
         assert self.__manager is not None
         return self.__manager.schedule_task(
             ScheduledTask(
@@ -459,10 +499,13 @@ class Hass:
                 time=self.datetime() + timedelta(seconds=delay),
                 callback=callback,
                 repeat=None,
+                kwargs=kwargs,
             )
         )
 
-    def run_at(self, callback: SchedulerChallback, when: datetime) -> int:
+    def run_at(
+        self, callback: SchedulerChallback, when: datetime, **kwargs: Any
+    ) -> int:
         assert self.__manager is not None
         return self.__manager.schedule_task(
             ScheduledTask(
@@ -470,11 +513,16 @@ class Hass:
                 time=when,
                 callback=callback,
                 repeat=None,
+                kwargs=kwargs,
             )
         )
 
     def run_every(
-        self, callback: SchedulerChallback, when: datetime, repeat: int
+        self,
+        callback: SchedulerChallback,
+        when: datetime,
+        repeat: int,
+        **kwargs: Any,
     ) -> int:
         assert self.__manager is not None
         return self.__manager.schedule_task(
@@ -483,10 +531,13 @@ class Hass:
                 time=when,
                 callback=callback,
                 repeat=timedelta(seconds=repeat),
+                kwargs=kwargs,
             )
         )
 
-    def run_daily(self, callback: SchedulerChallback, when: time) -> int:
+    def run_daily(
+        self, callback: SchedulerChallback, when: time, **kwargs: Any
+    ) -> int:
         assert self.__manager is not None
         next = datetime.combine(self.date(), when)
         if next < self.datetime():
@@ -497,6 +548,7 @@ class Hass:
                 time=next,
                 callback=callback,
                 repeat=timedelta(days=1),
+                kwargs=kwargs,
             )
         )
 
@@ -527,3 +579,21 @@ class Hass:
         state["last_reported"] = now
         state["last_updated"] = now
         return state
+
+    def _register_service(
+        self, service: str, entity_id: str, callback: ServiceCallback
+    ) -> None:
+        assert self.__manager is not None
+        self.__manager.register_service(
+            self.__name,
+            ServiceKey(service=service, entity_id=entity_id),
+            callback,
+        )
+
+    def call_service(self, service: str, entity_id: str, **kwargs: Any) -> None:
+        assert self.__manager is not None
+        self.__manager.call_service(
+            self.__name,
+            ServiceKey(service=service, entity_id=entity_id),
+            kwargs,
+        )
