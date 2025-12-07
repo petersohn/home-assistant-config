@@ -52,7 +52,7 @@ jobs:
             - store_artifacts:
                 path: test/AppDaemonTest/output
             - store_test_results:
-                path: test/AppDaemonTest/output
+                path: test/AppDaemonTest/output/2/robot.xml
 workflows:
     version: 2
     test:
