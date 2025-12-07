@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
+set -e
+
 script_dir=$(readlink -e "$(dirname "$0")")
 cd "$script_dir"
 export PYTHONPATH="${script_dir}:${script_dir}/apps:${PYTHONPATH}"
-exec python -m robot "$@" .
+output_dir="${PWD}/output"
+mkdir -p "${output_dir}"
+exec python -m robot --outputdir="${output_dir}" --variable "base_output_directory:${output_dir}" "$@" .

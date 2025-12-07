@@ -15,7 +15,7 @@ Create Test Harness
     ${start_datetime} =  Add Time To Date  ${start_date}  ${start_time}  result_format=datetime
     ${appdaemon_interval} =  Convert Time  ${interval}  result_format=timedelta
     Set Test Variable  ${appdaemon_interval}
-    ${app_manager} =  Create App Manager  ${start_datetime}  logs/${SUITE_NAME}/${TEST_NAME}.log
+    ${app_manager} =  Create App Manager  ${start_datetime}  ${base_output_directory}/logs/${SUITE_NAME}/${TEST_NAME}.log
     Set Test Variable  ${app_manager}
     ${locker} =  Create App  locker  Locker  locker  enable_logging=${True}
     Set Test Variable  ${locker}
