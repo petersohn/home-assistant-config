@@ -8,6 +8,7 @@ Suite Setup     Run Keywords
 ...             Initialize Variables
 Suite Teardown  Run Keywords
 ...             Check Global Mutex Graph
+Test Timeout    10s
 
 
 *** Keywords ***
