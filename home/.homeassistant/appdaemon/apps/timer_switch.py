@@ -12,18 +12,22 @@ class Trigger:
         self.sensor = None
         self.source_state = None
         self.target_state = None
-        self.mutex = self.app.get_app('locker').get_mutex('Trigger')
+        self.mutex = self.app.get_app("locker").get_mutex("Trigger")
         if expr is not None:
             import expression
+
             self.expression = expression.ExpressionEvaluator(
-                self.app, expr, self.on_expression_change)
+                self.app, expr, self.on_expression_change
+            )
             self.saved_state = self.expression.get() is True
         else:
             self.sensor = sensor
             self.source_state = source_state
             self.target_state = target_state
-            self.saved_state = self.source_state is None and \
-                self.app.get_state(self.sensor) == self.target_state
+            self.saved_state = (
+                self.source_state is None
+                and self.app.get_state(self.sensor) == self.target_state
+            )
             self.app.listen_state(self.on_state_change, entity=self.sensor)
 
     def cleanup(self):
@@ -39,14 +43,19 @@ class Trigger:
             self.callback(new_on)
 
     def on_state_change(self, entity, attribute, old, new, kwargs):
-        self.app.log('state changed: {} -> {} target={} -> {}'.format(
-            old, new, self.source_state, self.target_state))
-        with self.mutex.lock('on_state_change'):
-            self._on_change(new == self.target_state and (
-                self.source_state is None or old == self.source_state))
+        self.app.log(
+            "state changed: {} -> {} target={} -> {}".format(
+                old, new, self.source_state, self.target_state
+            )
+        )
+        with self.mutex.lock("on_state_change"):
+            self._on_change(
+                new == self.target_state
+                and (self.source_state is None or old == self.source_state)
+            )
 
     def on_expression_change(self, value):
-        with self.mutex.lock('on_expression_change'):
+        with self.mutex.lock("on_expression_change"):
             self._on_change(value is True)
 
 
@@ -59,18 +68,18 @@ class Timer:
             self.time = time
         self.callback = callback
         self.timer = None
-        self.mutex = self.app.get_app('locker').get_mutex('Timer')
+        self.mutex = self.app.get_app("locker").get_mutex("Timer")
 
     def stop(self):
-        with self.mutex.lock('stop'):
-            self.app.log('Stop timer')
+        with self.mutex.lock("stop"):
+            self.app.log("Stop timer")
             if self.timer is not None:
                 self.app.cancel_timer(self.timer)
                 self.timer = None
 
     def start(self):
-        with self.mutex.lock('start'):
-            self.app.log('Start timer')
+        with self.mutex.lock("start"):
+            self.app.log("Start timer")
             if type(self.time) is float:
                 time = self.time
             else:
@@ -82,11 +91,11 @@ class Timer:
             self.timer = self.app.run_in(self.on_timeout, time)
 
     def is_running(self):
-        with self.mutex.lock('is_running'):
+        with self.mutex.lock("is_running"):
             return self.timer is not None
 
     def on_timeout(self, kwargs):
-        with self.mutex.lock('on_timeout'):
+        with self.mutex.lock("on_timeout"):
             self.timer = None
         self.callback()
 
@@ -95,13 +104,14 @@ class TimerSwitch(hass.Hass):
     def initialize(self):
         self.trigger = Trigger(
             app=self,
-            expr=self.args.get('expr'),
-            sensor=self.args.get('sensor'),
+            expr=self.args.get("expr"),
+            sensor=self.args.get("sensor"),
             source_state=None,
-            target_state=self.args.get('target_state', 'on'),
-            callback=self.on_change)
-        self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
-        enabler = self.args.get('enabler')
+            target_state=self.args.get("target_state", "on"),
+            callback=self.on_change,
+        )
+        self.targets = auto_switch.MultiSwitcher(self, self.args["targets"])
+        enabler = self.args.get("enabler")
         if enabler is not None:
             self.enabler = self.get_app(enabler)
             self.enabler_id = self.enabler.add_callback(self.on_enabled_changed)
@@ -109,7 +119,7 @@ class TimerSwitch(hass.Hass):
             self.enabler = None
             self.enabler_id = None
 
-        delay = self.args.get('delay')
+        delay = self.args.get("delay")
         if delay is not None:
             self.delay = float(delay)
         else:
@@ -117,9 +127,9 @@ class TimerSwitch(hass.Hass):
 
         self.delay_timer = None
 
-        self.mutex = self.get_app('locker').get_mutex('TimerSwitch')
-        with self.mutex.lock('initialize'):
-            self.timer = Timer(self, self.args['time'], self.on_timeout)
+        self.mutex = self.get_app("locker").get_mutex("TimerSwitch")
+        with self.mutex.lock("initialize"):
+            self.timer = Timer(self, self.args["time"], self.on_timeout)
             self.was_enabled = None
             self.is_on = self.trigger.is_on()
             self.run_in(lambda _: self.on_enabled_changed(), 0)
@@ -131,14 +141,14 @@ class TimerSwitch(hass.Hass):
             self.enabler.remove_callback(self.enabler_id)
 
     def on_enabled_changed(self):
-        with self.mutex.lock('on_enabled_changed'):
+        with self.mutex.lock("on_enabled_changed"):
             self._set_enabled()
 
     def _set_enabled(self):
         enabled = self.enabler is None or self.enabler.is_enabled()
         if self.was_enabled != enabled:
             self.was_enabled = enabled
-            self.log('enabled changed to {}'.format(enabled))
+            self.log("enabled changed to {}".format(enabled))
             if enabled:
                 if self.is_on:
                     self.__start()
@@ -158,21 +168,21 @@ class TimerSwitch(hass.Hass):
             self.__handle_stop()
 
     def on_change(self, value):
-        with self.mutex.lock('on_change'):
-            self.log('on_change: {}'.format(value))
+        with self.mutex.lock("on_change"):
+            self.log("on_change: {}".format(value))
             if self.delay is None:
                 self._handle_change(value)
                 return
 
             if self.delay_timer is not None:
                 if value:
-                    self.error('Timer should not be running')
-                self.log('stop delay')
+                    self.error("Timer should not be running")
+                self.log("stop delay")
                 self.cancel_timer(self.delay_timer)
                 self.delay_timer = None
 
             if self.is_on == value:
-                self.log('no change')
+                self.log("no change")
                 return
 
             if value:
@@ -181,7 +191,7 @@ class TimerSwitch(hass.Hass):
                 self._handle_change(False)
 
     def on_delay(self, kwargs):
-        with self.mutex.lock('on_delay'):
+        with self.mutex.lock("on_delay"):
             if self.delay_timer is not None:
                 self._handle_change(True)
                 self.delay_timer = None
@@ -192,12 +202,12 @@ class TimerSwitch(hass.Hass):
 
     def __start(self):
         self.timer.stop()
-        self.log('Turn on')
+        self.log("Turn on")
         self.targets.turn_on()
 
     def on_timeout(self):
-        with self.mutex.lock('on_timeout'):
-            self.log('Turn off')
+        with self.mutex.lock("on_timeout"):
+            self.log("Turn off")
             self.targets.turn_off()
 
 
@@ -209,20 +219,24 @@ class SequenceElement:
 
 class TimerSequence(hass.Hass):
     def initialize(self):
-        self.sequence = [SequenceElement(
-            Timer(self, element['time'], self.on_timeout),
-            auto_switch.MultiSwitcher(self, element['targets']))
-            for element in self.args['sequence']]
+        self.sequence = [
+            SequenceElement(
+                Timer(self, element["time"], self.on_timeout),
+                auto_switch.MultiSwitcher(self, element["targets"]),
+            )
+            for element in self.args["sequence"]
+        ]
 
         self.trigger = Trigger(
             app=self,
-            expr=self.args.get('expr'),
-            sensor=self.args.get('sensor'),
-            source_state=self.args.get('source_state'),
-            target_state=self.args.get('target_state', 'on'),
-            callback=self.on_change)
+            expr=self.args.get("expr"),
+            sensor=self.args.get("sensor"),
+            source_state=self.args.get("source_state"),
+            target_state=self.args.get("target_state", "on"),
+            callback=self.on_change,
+        )
 
-        enabler = self.args.get('enabler')
+        enabler = self.args.get("enabler")
         if enabler is not None:
             self.enabler = self.get_app(enabler)
             self.enabler_id = self.enabler.add_callback(self.on_enabled_changed)
@@ -231,7 +245,7 @@ class TimerSequence(hass.Hass):
             self.enabler_id = None
 
         self.current_index = None
-        self.mutex = self.get_app('locker').get_mutex('TimerSwitch')
+        self.mutex = self.get_app("locker").get_mutex("TimerSwitch")
 
     def terminate(self):
         self.trigger.cleanup()
@@ -241,9 +255,8 @@ class TimerSequence(hass.Hass):
             self.enabler.remove_callback(self.enabler_id)
 
     def on_enabled_changed(self):
-        with self.mutex.lock('on_enabled_changed'):
-            if not self.enabler.is_enabled() \
-                    and self.current_index is not None:
+        with self.mutex.lock("on_enabled_changed"):
+            if not self.enabler.is_enabled() and self.current_index is not None:
                 element = self.sequence[self.current_index]
                 element.timer.stop()
                 element.targets.turn_off()
@@ -253,9 +266,10 @@ class TimerSequence(hass.Hass):
         if not value:
             return
 
-        with self.mutex.lock('on_change'):
-            if (self.enabler is None or self.enabler.is_enabled()) \
-                    and self.current_index is None:
+        with self.mutex.lock("on_change"):
+            if (
+                self.enabler is None or self.enabler.is_enabled()
+            ) and self.current_index is None:
                 self.current_index = 0
                 self.__start()
 
@@ -269,7 +283,7 @@ class TimerSequence(hass.Hass):
         element.timer.start()
 
     def on_timeout(self):
-        with self.mutex.lock('on_timeout'):
+        with self.mutex.lock("on_timeout"):
             if self.current_index is None:
                 return
             self.sequence[self.current_index].targets.turn_off()

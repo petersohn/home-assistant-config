@@ -1,9 +1,0 @@
-test_cover:
-    class: CoverController
-    module: cover
-    target: cover.test_cover
-    expr: v.sensor.test_cover_position
-    dependencies:
-        - locker
-    global_dependencies:
-        - expression

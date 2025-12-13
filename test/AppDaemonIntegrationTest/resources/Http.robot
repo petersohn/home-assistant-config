@@ -1,0 +1,27 @@
+*** Settings ***
+
+Library    HttpLibrary.HTTP
+
+
+*** Keywords ***
+
+Run And Restore Http Context
+    [Arguments]  ${keyword}  @{args}  &{kwargs}
+    [Teardown]   Restore Http Context
+    ${result} =  Run Keyword  ${keyword}   @{args}  &{kwargs}
+    RETURN  ${result}
+
+Run In Http Context
+    [Arguments]  ${host}  ${keyword}  @{args}  &{kwargs}
+    Create Http Context  ${host}
+    ${result} =  Run And Restore Http Context  ${keyword}  @{args}  &{kwargs}
+    RETURN  ${result}
+
+Ask For Connection Keepalive
+    Set Request Header  Connection  keep-alive
+
+Set Request Body To Dictionary
+    [Arguments]  &{kwargs}
+    ${content} =  Create Dictionary  &{kwargs}
+    ${body} =  Stringify Json  ${content}
+    Set Request Body  ${body}

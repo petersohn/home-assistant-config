@@ -1,8 +1,0 @@
-test_history_manager:
-    class: HistoryManager
-    module: history
-    entity: sensor.test_sensor
-    max_interval:
-        hours: 1
-    dependencies: locker
-

@@ -1,7 +1,0 @@
-expression_attribute:
-    module: expression
-    class: Expression
-    dependencies:
-        - locker
-    expr: 'a.sensor.test_input1.attr1 + a["sensor.test_input1"]["attr2"]'
-    target: sensor.test_output

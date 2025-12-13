@@ -9,20 +9,9 @@
             "type": "output",
             "name": "relay",
             "commandTopic": "home/switches/lights/gate_reflector/set",
-            "pin": 0,
+            "pin": 3,
             "invert": true,
             "default": 0
-        },
-        {
-            "type": "input",
-            "name": "motion_sensor",
-            "pin": 3
-        },
-        {
-            "type": "dht",
-            "name": "dht",
-            "interval": 60,
-            "pin": 2
         }
     ],
     "actions": [

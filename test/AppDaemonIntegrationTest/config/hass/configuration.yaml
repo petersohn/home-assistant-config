@@ -1,0 +1,99 @@
+homeassistant:
+  name: test
+  latitude: 47.498358
+  longitude: 19.040419
+  elevation: 100
+  time_zone: Europe/Budapest
+  auth_providers:
+    - type: homeassistant
+
+http:
+  server_port: 18123
+
+api:
+
+websocket_api:
+
+input_boolean:
+  control_switch:
+  test_switch1:
+  test_switch2:
+  test_switch3:
+  test_switch4:
+  temperature_controller_pump:
+  cover_available:
+  cover_moving:
+    initial: false
+
+input_select:
+  test_input_select:
+    options:
+      - "one"
+      - "two"
+      - "three"
+      - "four"
+  test_auto_switch_switch:
+    options:
+      - "auto"
+      - "on"
+      - "off"
+  test_cover_mode:
+    options:
+      - "auto"
+      - "stable"
+      - "manual"
+
+input_text:
+  test_text_1:
+  test_text_2:
+
+input_number:
+  cover_position:
+    min: 0
+    max: 100
+    initial: 0
+
+cover:
+  - platform: template
+    covers:
+      test_cover:
+        position_template: "{{ states('input_number.cover_position') }}"
+        value_template: >
+          {{
+            'opening' if states('input_boolean.cover_moving') == 'on'
+            else states('input_number.cover_position') != 0
+          }}
+        availability_template: "{{ states('sensor.cover_available') }}"
+        open_cover:
+          service: script.set_cover_position
+          data:
+            position: 100
+        close_cover:
+          service: script.set_cover_position
+          data:
+            position: 0
+        set_cover_position:
+          service: script.set_cover_position
+          data:
+            position: "{{ position }}"
+
+script:
+  set_cover_position:
+    fields:
+      position:
+        name: position
+    sequence:
+      - service: input_boolean.turn_on
+        data:
+          entity_id: input_boolean.cover_moving
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.cover_position
+          value: "{{ position }}"
+      - service: input_boolean.turn_off
+        data:
+          entity_id: input_boolean.cover_moving
+
+history:
+
+recorder:

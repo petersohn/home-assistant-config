@@ -40,11 +40,13 @@ class Mutex:
 
 class Locker(hass.Hass):
     def initialize(self):
+        self.log("Init locker")
         self.enable_logging = self.args.get("enable_logging", False)
         self.current_graph = {}
         self.global_graph = {}
         self.current_stack = {}
         self.lock = threading.Lock()
+        self.log("Inited locker")
 
     def get_mutex(self, name):
         return Mutex(self, name)

@@ -1,0 +1,17 @@
+timer_switch_control:
+  module: timer_switch
+  class: TimerSwitch
+  dependencies:
+    - locker
+    - control_switch
+  sensor: binary_sensor.start
+  targets:
+    - control_switch
+  time: 0.2
+
+control_switch:
+  module: auto_switch
+  class: AutoSwitch
+  dependencies: locker
+  target: input_boolean.control_switch
+  reentrant: true
