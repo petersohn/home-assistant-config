@@ -7,7 +7,7 @@ timer_switch_control:
   sensor: binary_sensor.start
   targets:
     - control_switch
-  time: 0.2
+  time: 0.25
 
 control_switch:
   module: auto_switch

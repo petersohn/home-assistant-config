@@ -45,12 +45,24 @@ Load Apps Configs
     [Arguments]  @{configs}
     ${loaded_apps} =  Create AppDaemon Apps Config  ${appdaemon_directory}
     ...    TestApp  @{configs}
-    Set Test Variable  ${loaded_apps}
-    Create Http Context  ${app_daemon_host}
     Wait Until Keyword Succeeds  30s  0.1s
     ...    Apps Should Be Loaded  @{loaded_apps}
+    RETURN  ${loaded_apps}
 
-Unoad Apps Configs
+Initialize Apps Configs
+    [Arguments]  @{configs}
+    Create Http Context  ${app_daemon_host}
+    ${loaded_apps} =  Load Apps Configs  @{configs}
+    Set Test Variable  ${loaded_apps}
+    Log To AppDaemon  ----------------------------------------------
+    Log To AppDaemon  Begin test case: ${SUITE_NAME}.${TEST_NAME}
+    Log To AppDaemon  ----------------------------------------------
+
+Cleanup Apps Configs
+    Log To AppDaemon  ----------------------------------------------
+    Log To AppDaemon  End test case: ${SUITE_NAME}.${TEST_NAME}
+    Log To AppDaemon  ----------------------------------------------
+    Unwatch Entities
     Create AppDaemon Apps Config  ${appdaemon_directory}  TestApp
     Wait Until Keyword Succeeds  30s  0.1s
     ...    Apps Should Be Unoaded  @{loaded_apps}

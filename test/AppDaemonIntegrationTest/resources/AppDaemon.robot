@@ -56,6 +56,10 @@ Call Function
     ${result} =  Parse Json  ${response}
     RETURN  ${result}
 
+Log To AppDaemon
+    [Arguments]  ${message}
+    Call Function  log  ${message}
+
 Get State
     [Arguments]  ${entity_id}  &{kwargs}
     ${value} =  Call Function  get_state  ${entity_id}  &{kwargs}
@@ -113,8 +117,7 @@ Watch Entities
     Call Function  watch_entities  ${entities}
 
 Unwatch Entities
-    [Arguments]  @{entities}
-    Call Function  unwatch_entities  ${entities}
+    Call Function  unwatch_entities
 
 Get History
     ${result} =  Call Function  get_history

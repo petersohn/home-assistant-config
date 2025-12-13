@@ -69,14 +69,16 @@ class TestApp(hass.Hass):
             return try_to_convert(value)
 
         function = data["function"]
-        self.log(
-            "Calling function: "
-            + function
-            + " "
-            + str(args)
-            + " "
-            + str(kwargs)
-        )
+        do_log = function != "log"
+        if do_log:
+            self.log(
+                "Calling function: "
+                + function
+                + " "
+                + str(args)
+                + " "
+                + str(kwargs)
+            )
 
         if arg_types:
             args = [convert(t, v) for t, v in zip_longest(arg_types, args)]
@@ -84,7 +86,8 @@ class TestApp(hass.Hass):
             kwargs[name] = convert(kwarg_type, kwargs[name])
         result = getattr(self, function)(*args, **kwargs)
 
-        self.log("Function returns: " + function + " = " + str(result))
+        if do_log:
+            self.log("Function returns: " + function + " = " + str(result))
         return convert_output(result)
 
     def api_callback(self, data):
@@ -116,11 +119,12 @@ class TestApp(hass.Hass):
                     self._on_change, entity
                 )
 
-    def unwatch_entities(self, entities):
+    def unwatch_entities(self):
         with self.mutex.lock("unwatch_entities"):
-            for entity in entities:
-                self.cancel_listen_state(self.watches[entity])
-                del self.watches[entity]
+            for watch in self.watches.values():
+                self.cancel_listen_state(watch)
+            self.watches = {}
+            self.state_history = []
 
     def _on_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock("on_change"):
@@ -133,12 +137,6 @@ class TestApp(hass.Hass):
             return result
 
     def has_history(self, history):
-        import pprint
-
-        self.log("Expected history")
-        self.log(pprint.pformat(history))
-        self.log("Actual history")
-        self.log(pprint.pformat(self.state_history))
         assert len(history) != 0
         with self.mutex.lock("get_history"):
             i = 0
