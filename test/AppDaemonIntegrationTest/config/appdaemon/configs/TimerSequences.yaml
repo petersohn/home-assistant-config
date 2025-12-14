@@ -1,18 +1,20 @@
 global_modules:
   - expression
 
-timer_switch_1:
+timer_sequence_1:
   module: timer_switch
-  class: TimerSwitch
+  class: TimerSequence
   dependencies:
     - locker
     - enabler1
     - switch1
   sensor: binary_sensor.start
-  targets:
-    - switch1
-  delay: 0.1
-  time: 0.1
+  enabler: enabler1
+  sequence:
+    - time: 0.1
+    - time: 0.1
+      targets:
+        - switch1
 
 switch1:
   module: auto_switch
@@ -31,18 +33,20 @@ enabler1:
     - expression
   expr: e.switch_enabler
 
-timer_switch_2:
+timer_sequence_2:
   module: timer_switch
-  class: TimerSwitch
+  class: TimerSequence
   dependencies:
     - locker
     - enabler2
     - switch2
   sensor: binary_sensor.start
-  targets:
-    - switch2
-  delay: 0.05
-  time: 0.1
+  enabler: enabler2
+  sequence:
+    - time: 0.05
+    - time: 0.1
+      targets:
+        - switch2
 
 switch2:
   module: auto_switch

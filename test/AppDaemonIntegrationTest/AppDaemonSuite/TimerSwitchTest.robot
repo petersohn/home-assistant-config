@@ -26,36 +26,38 @@ Control
     ...    ${control_switch}  off
 
 Reload Because Of Dependency
-    [Setup]  Initialize  TimerSwitchControl  TimerSwitches  SwitchEnabler1
+    [Setup]  Initialize  TimerSwitchControl  TimerSequences  SwitchEnabler1
     Watch Entities  ${control_switch}  ${switch1}  ${switch2}
     Start Control And Wait
     Check History
     ...    ${control_switch}  on
-    ...    ${switch1}  on
-    ...    ${switch1}  off
-    ...    ${control_switch}  off
-    Set State  ${enabler_switch}  on
-    Start Control And Wait
-    Check History
-    ...    ${control_switch}  on
     ...    ${switch2}  on
     ...    ${switch2}  off
     ...    ${control_switch}  off
-    Set State  ${enabler_switch}  off
-    Load Apps Configs  TimerSwitchControl  TimerSwitches  SwitchEnabler2
-    Start Control And Wait
-    Check History
-    ...    ${control_switch}  on
-    ...    ${switch2}  on
-    ...    ${switch2}  off
-    ...    ${control_switch}  off
-    Set State  ${enabler_switch}  off
     Set State  ${enabler_switch}  on
+    Sleep  1
     Start Control And Wait
     Check History
     ...    ${control_switch}  on
     ...    ${switch1}  on
     ...    ${switch1}  off
+    ...    ${control_switch}  off
+    Set State  ${enabler_switch}  off
+    Sleep  1
+    Load Apps Configs  TimerSwitchControl  TimerSequences  SwitchEnabler2  dummy1
+    Start Control And Wait
+    Check History
+    ...    ${control_switch}  on
+    ...    ${switch1}  on
+    ...    ${switch1}  off
+    ...    ${control_switch}  off
+    Set State  ${enabler_switch}  on
+    Sleep  1
+    Start Control And Wait
+    Check History
+    ...    ${control_switch}  on
+    ...    ${switch2}  on
+    ...    ${switch2}  off
     ...    ${control_switch}  off
     Set State  ${enabler_switch}  off
 

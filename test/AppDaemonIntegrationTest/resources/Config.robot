@@ -54,14 +54,18 @@ Initialize Apps Configs
     Create Http Context  ${app_daemon_host}
     ${loaded_apps} =  Load Apps Configs  @{configs}
     Set Test Variable  ${loaded_apps}
-    Log To AppDaemon  ----------------------------------------------
-    Log To AppDaemon  Begin test case: ${SUITE_NAME}.${TEST_NAME}
-    Log To AppDaemon  ----------------------------------------------
+    ${msg} =  Catenate  SEPARATOR=\n  ${{' '}}
+    ...    ----------------------------------------------
+    ...    Begin test case: ${SUITE_NAME}.${TEST_NAME}
+    ...    ----------------------------------------------
+    Log To AppDaemon  ${msg}
 
 Cleanup Apps Configs
-    Log To AppDaemon  ----------------------------------------------
-    Log To AppDaemon  End test case: ${SUITE_NAME}.${TEST_NAME}
-    Log To AppDaemon  ----------------------------------------------
+    ${msg} =  Catenate  SEPARATOR=\n  ${{' '}}
+    ...    ----------------------------------------------
+    ...    End test case: ${SUITE_NAME}.${TEST_NAME}
+    ...    ----------------------------------------------
+    Log To AppDaemon  ${msg}
     Unwatch Entities
     Create AppDaemon Apps Config  ${appdaemon_directory}  TestApp
     Wait Until Keyword Succeeds  30s  0.1s

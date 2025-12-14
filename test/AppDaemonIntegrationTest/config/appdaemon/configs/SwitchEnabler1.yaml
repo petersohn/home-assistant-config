@@ -4,4 +4,4 @@ switch_enabler:
   dependencies:
     - locker
   entity: binary_sensor.enabler_switch
-  value: on
+  value: 'on'
