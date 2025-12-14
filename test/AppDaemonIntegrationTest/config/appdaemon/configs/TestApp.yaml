@@ -11,7 +11,7 @@ locker:
     enable_logging: true
 
 test:
-    module: TestApp
+    module: test_app
     class: TestApp
     dependencies:
       - locker
