@@ -15,6 +15,7 @@ ${motion_detector} =   binary_sensor.motion_detector
 ${sensor} =            sensor.test_sensor
 ${switch} =            input_boolean.test_switch
 ${switch2} =           input_boolean.test_switch2
+${switch3} =           input_boolean.test_switch3
 ${time_entity} =       sensor.timer_switch_time
 
 
@@ -116,7 +117,8 @@ Timer Sequence
 Multi Timer Sequence
     Create Auto Switch  auto_switch1  ${switch}
     Create Auto Switch  auto_switch2  ${switch2}
-    @{targets1} =  Create List  auto_switch1
+    Create Auto Switch  auto_switch3  ${switch3}
+    @{targets1} =  Create List  auto_switch1  auto_switch3
     &{item1} =  Create Dictionary  targets=${targets1}  time=1
     &{item2} =  Create Dictionary  time=3
     @{targets2} =  Create List  auto_switch2
@@ -128,6 +130,7 @@ Multi Timer Sequence
 
     ${switch1_history} =  Create History Manager  history1  ${switch}
     ${switch2_history} =  Create History Manager  history2  ${switch2}
+    ${switch3_history} =  Create History Manager  history3  ${switch3}
 
     Schedule Call At  20 sec
     ...    set_state  ${motion_detector}  on
@@ -161,6 +164,13 @@ Multi Timer Sequence
     ...    2018-01-01 00:11:30  ${0}
     ...    2018-01-01 00:16:00  ${1}
     ...    2018-01-01 00:18:00  ${0}
+    History Should Be  ${switch3_history}
+    ...    2018-01-01 00:00:20  ${1}
+    ...    2018-01-01 00:01:20  ${0}
+    ...    2018-01-01 00:07:00  ${1}
+    ...    2018-01-01 00:08:00  ${0}
+    ...    2018-01-01 00:12:00  ${1}
+    ...    2018-01-01 00:13:00  ${0}
 
 Other Target State
     Set State  ${motion_detector}  on
