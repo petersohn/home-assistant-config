@@ -3,6 +3,7 @@
 Resource  resources/AppDaemon.robot
 Resource  resources/HomeAssistant.robot
 Resource  resources/Config.robot
+Resource  resources/HistoryWatcher.robot
 Test Teardown  Cleanup Apps Configs
 
 
@@ -14,21 +15,20 @@ ${control_switch}  input_boolean.control_switch
 ${switch1}         input_boolean.test_switch1
 ${switch2}         input_boolean.test_switch2
 ${switch3}         input_boolean.test_switch3
+@{base_configs}    TimerSwitchControl  HistoryWatcher
 
 
 *** Test Cases ***
 
 Control
-    [Setup]  Initialize  TimerSwitchControl
-    Watch Entities  ${control_switch}
+    [Setup]  Initialize  @{base_configs}
     Start Control And Wait
     Check History
     ...    ${control_switch}  on
     ...    ${control_switch}  off
 
 Reload Because Of Dependency
-    [Setup]  Initialize  TimerSwitchControl  TimerSequences  SwitchEnabler1
-    Watch Entities  ${control_switch}  ${switch1}  ${switch2}
+    [Setup]  Initialize  @{base_configs}  TimerSequences  SwitchEnabler1
     Start Control And Wait
     Check History
     ...    ${control_switch}  on
@@ -45,7 +45,7 @@ Reload Because Of Dependency
     ...    ${control_switch}  off
     Set State  ${enabler_switch}  off
     Sleep  1
-    Load Apps Configs  TimerSwitchControl  TimerSequences  SwitchEnabler2  dummy1
+    Load Apps Configs  @{base_configs}  TimerSequences  SwitchEnabler2  dummy1
     Start Control And Wait
     Check History
     ...    ${control_switch}  on
@@ -63,12 +63,11 @@ Reload Because Of Dependency
     Set State  ${enabler_switch}  off
 
 Only Reload Changed Apps
-    [Setup]  Initialize  TimerSwitchControl  TimerSequenceNoEnabler1_1
+    [Setup]  Initialize  @{base_configs}  TimerSequenceNoEnabler1_1
     ...  TimerSequenceNoEnabler2
-    Watch Entities  ${control_switch}  ${switch1}  ${switch2}  ${switch3}
     Start Control
     Wait For History  ${switch1}  on
-    Load Apps Configs  TimerSwitchControl  TimerSequenceNoEnabler1_2
+    Load Apps Configs  @{base_configs}  TimerSequenceNoEnabler1_2
     ...  TimerSequenceNoEnabler2  dummy1
     Wait For Control
     Check History

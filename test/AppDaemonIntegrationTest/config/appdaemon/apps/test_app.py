@@ -8,9 +8,6 @@ import traceback
 class TestApp(hass.Hass):
     def initialize(self):
         self.log("********** INIT ***********")
-        self.state_history = []
-        self.watches = {}
-        self.mutex = self.get_app("locker").get_mutex("TestApp")
         self.register_endpoint(self.api_callback, "TestApp")
 
     def __call(self, data):
@@ -110,39 +107,3 @@ class TestApp(hass.Hass):
 
     def is_all_apps_unloaded(self, apps):
         return all(self.get_app(app) is None for app in apps)
-
-    def watch_entities(self, entities):
-        with self.mutex.lock("watch_entities"):
-            for entity in entities:
-                assert entity not in self.watches
-                self.watches[entity] = self.listen_state(
-                    self._on_change, entity
-                )
-
-    def unwatch_entities(self):
-        with self.mutex.lock("unwatch_entities"):
-            for watch in self.watches.values():
-                self.cancel_listen_state(watch)
-            self.watches = {}
-            self.state_history = []
-
-    def _on_change(self, entity, attribute, old, new, kwargs):
-        with self.mutex.lock("on_change"):
-            self.state_history.append((entity, new))
-
-    def get_history(self):
-        with self.mutex.lock("get_history"):
-            result = self.state_history
-            self.state_history = []
-            return result
-
-    def has_history(self, history):
-        assert len(history) != 0
-        with self.mutex.lock("get_history"):
-            i = 0
-            for item in self.state_history:
-                if item == tuple(history[i]):
-                    i += 1
-                    if i == len(history):
-                        return True
-            return False

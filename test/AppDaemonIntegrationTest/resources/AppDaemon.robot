@@ -112,42 +112,6 @@ Turn On Or Off
     ...    ELSE
     ...    Turn Off  ${entity_id}
 
-Watch Entities
-    [Arguments]  @{entities}
-    Call Function  watch_entities  ${entities}
-
-Unwatch Entities
-    Call Function  unwatch_entities
-
-Get History
-    ${result} =  Call Function  get_history
-    RETURN  ${result}
-
-Convert Expected History
-    [Arguments]  @{expected}
-    @{expected_pairs} =  Create List
-    FOR  ${entity}  ${value}  IN  @{expected}
-        @{pair} =  Create List  ${entity}  ${value}
-        Append To List  ${expected_pairs}  ${pair}
-    END
-    RETURN  ${expected_pairs}
-
-Check History
-    [Arguments]  @{expected}
-    ${expected_pairs} =  Convert Expected History  @{expected}
-    ${actual} =  Get History
-    Lists Should Be Equal  ${actual}  ${expected_pairs}
-
-Should Have History
-    [Arguments]  @{expected}
-    ${expected_pairs} =  Convert Expected History  @{expected}
-    ${result} =  Call Function  has_history  ${expected_pairs}
-    Should Be True  ${result}
-
-Wait For History
-    [Arguments]  @{expected}
-    Wait Until Keyword Succeeds  2 min  0.2 s
-    ...    Should Have History  @{expected}
 
 Check AppDaemon
     Critical Check  AppDaemon process failed to start

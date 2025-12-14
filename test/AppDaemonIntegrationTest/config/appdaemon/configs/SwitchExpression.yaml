@@ -1,0 +1,7 @@
+enabler:
+  module: enabler
+  class: ValueEnabler
+  dependencies:
+    - locker
+  entity: binary_sensor.enable_switch
+  value: on

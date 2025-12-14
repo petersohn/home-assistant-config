@@ -1,0 +1,9 @@
+history_watcher:
+  module: history_watcher
+  class: HistoryWatcher
+  entities:
+    - input_boolean.control_switch
+    - input_boolean.test_switch1
+    - input_boolean.test_switch2
+    - input_boolean.test_switch3
+    - input_boolean.test_switch4

@@ -66,7 +66,6 @@ Cleanup Apps Configs
     ...    End test case: ${SUITE_NAME}.${TEST_NAME}
     ...    ----------------------------------------------
     Log To AppDaemon  ${msg}
-    Unwatch Entities
     Create AppDaemon Apps Config  ${appdaemon_directory}  TestApp
     Wait Until Keyword Succeeds  30s  0.1s
     ...    Apps Should Be Unoaded  @{loaded_apps}
