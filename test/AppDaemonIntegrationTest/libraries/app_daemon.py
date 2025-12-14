@@ -1,6 +1,6 @@
 import os
 import yaml
-import Directories
+import directories
 from typing import Any
 
 
@@ -13,7 +13,7 @@ def create_appdaemon_configuration(
     appdaemon_yaml = os.path.join(target_directory, "appdaemon.yaml")
 
     source_appdaemon_yaml = os.path.join(
-        Directories.appdaemon_config_path, "appdaemon.yaml"
+        directories.appdaemon_config_path, "appdaemon.yaml"
     )
 
     os.symlink(source_appdaemon_yaml, appdaemon_yaml)
@@ -42,7 +42,7 @@ def create_appdaemon_apps_config(
     global_modules: set[str] = set()
     for config in app_configs:
         source_file = os.path.join(
-            Directories.appdaemon_config_path, "configs", config + ".yaml"
+            directories.appdaemon_config_path, "configs", config + ".yaml"
         )
         with open(source_file, "r") as source:
             content.update(yaml.safe_load(source))
@@ -70,7 +70,7 @@ def create_appdaemon_apps_config(
         if not file_name in modules:
             os.remove(os.path.join(apps_dir, file_name))
 
-    apps_path = os.path.join(Directories.appdaemon_config_path, "apps")
+    apps_path = os.path.join(directories.appdaemon_config_path, "apps")
     for file_name in modules:
         target_file = os.path.join(apps_dir, file_name)
         if os.path.exists(target_file):

@@ -3,9 +3,9 @@
 Library    HttpLibrary.HTTP
 Library    Process
 Library    OperatingSystem
-Library    libraries/HomeAssistant.py
+Library    libraries/home_assistant.py
 Resource   resources/Http.robot
-Variables  libraries/Directories.py
+Variables  libraries/directories.py
 
 
 *** Variables ***

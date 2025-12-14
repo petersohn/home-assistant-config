@@ -3,10 +3,10 @@
 Library    HttpLibrary.HTTP
 Library    Process
 Library    Collections
-Library    libraries/TypeUtil.py
+Library    libraries/type_util.py
 Resource   resources/ErrorHandling.robot
 Resource   resources/Http.robot
-Variables  libraries/Directories.py
+Variables  libraries/directories.py
 
 
 *** Variables ***

@@ -1,6 +1,6 @@
 *** Settings ***
 
-Library        libraries/HistoryUtil.py
+Library        libraries/history_util.py
 Library        Collections
 
 

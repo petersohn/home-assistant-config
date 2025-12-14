@@ -1,7 +1,7 @@
 *** Settings ***
 
 Library   OperatingSystem
-Library   libraries/AppDaemon.py
+Library   libraries/app_daemon.py
 Library   libraries/mutex_graph.py
 Resource  resources/HomeAssistant.robot
 Resource  resources/AppDaemon.robot

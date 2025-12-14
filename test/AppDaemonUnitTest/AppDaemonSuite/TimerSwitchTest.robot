@@ -4,7 +4,7 @@ Resource       resources/TestHarness.robot
 Resource       resources/Enabler.robot
 Resource       resources/History.robot
 Library        DateTime
-Library        libraries/DateTimeUtil.py
+Library        libraries/date_time_util.py
 Test Setup     Create Test Harness
 Test Teardown  Cleanup Test Harness
 

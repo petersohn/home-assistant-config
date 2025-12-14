@@ -1,12 +1,12 @@
 # import json
 import os
 import yaml
-import Directories
+import directories
 
 
 def create_home_assistant_configuration(target_directory, port):
     source_file = os.path.join(
-        Directories.hass_config_path, "configuration.yaml"
+        directories.hass_config_path, "configuration.yaml"
     )
     with open(source_file) as source:
         content = yaml.safe_load(source)

@@ -1,7 +1,7 @@
 *** Settings ***
 
-Library        libraries/TypeUtil.py
-Library        libraries/HistoryUtil.py
+Library        libraries/type_util.py
+Library        libraries/history_util.py
 Library        Collections
 Resource       resources/TestHarness.robot
 Resource       resources/DateTime.robot

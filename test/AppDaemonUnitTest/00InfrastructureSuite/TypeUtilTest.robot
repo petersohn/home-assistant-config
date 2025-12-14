@@ -1,6 +1,6 @@
 *** Settings ***
 
-Library  libraries/TypeUtil.py
+Library  libraries/type_util.py
 Library  Collections
 
 
