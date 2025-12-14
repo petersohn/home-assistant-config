@@ -146,7 +146,7 @@ Should Have History
 
 Wait For History
     [Arguments]  @{expected}
-    Wait Until Keyword Succeeds  2 min  0.5 s
+    Wait Until Keyword Succeeds  2 min  0.2 s
     ...    Should Have History  @{expected}
 
 Check AppDaemon
@@ -185,3 +185,8 @@ Apps Should Be Unoaded
     [Arguments]  @{apps}
     ${result} =  Call Function  is_all_apps_unloaded  ${apps}
     Should Be True  ${result}
+
+Schedule Call At State Change
+    [Arguments]  ${entity}  ${value}  ${function}  @{args}  &{kwargs}
+    Call Function  schedule_call_at_state_change
+    ...    ${entity}  ${value}  ${function}  @{args}  &{kwargs}

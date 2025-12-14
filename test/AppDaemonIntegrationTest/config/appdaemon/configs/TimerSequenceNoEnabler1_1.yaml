@@ -1,0 +1,22 @@
+global_modules:
+  - expression
+
+timer_sequence1:
+  module: timer_switch
+  class: TimerSequence
+  dependencies:
+    - locker
+    - switch1
+  sensor: binary_sensor.start
+  sequence:
+    - time: 0.1
+    - time: 0.1
+      targets:
+        - switch1
+
+switch1:
+  module: auto_switch
+  class: AutoSwitch
+  dependencies: locker
+  target: input_boolean.test_switch1
+  reentrant: true

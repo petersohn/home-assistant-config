@@ -14,6 +14,7 @@ Suite Teardown  Run Keywords
 ...             Cleanup Home Assistant
 ...             Check Global Mutex Graph
 Variables       libraries/Directories.py
+Test Timeout    3 min
 
 
 *** Keywords ***
