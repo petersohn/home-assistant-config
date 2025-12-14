@@ -118,9 +118,10 @@ Multi Timer Sequence
     Create Auto Switch  auto_switch2  ${switch2}
     @{targets1} =  Create List  auto_switch1
     &{item1} =  Create Dictionary  targets=${targets1}  time=1
+    &{item2} =  Create Dictionary  time=3
     @{targets2} =  Create List  auto_switch2
-    &{item2} =  Create Dictionary  targets=${targets2}  time=2
-    @{sequence} =  Create List  ${item1}  ${item2}
+    &{item3} =  Create Dictionary  targets=${targets2}  time=2
+    @{sequence} =  Create List  ${item1}  ${item2}  ${item3}
     ${enabler} =  Create Timer Sequence
     ...    sensor=${motion_detector}  sequence=${sequence}
 
@@ -132,34 +133,34 @@ Multi Timer Sequence
     ...    set_state  ${motion_detector}  on
     Schedule Call At  30 sec
     ...    set_state  ${motion_detector}  off
-    Schedule Call At  4 min
+    Schedule Call At  7 min
     ...    set_state  ${motion_detector}  on
-    Schedule Call At  4 min 10 sec
+    Schedule Call At  7 min 10 sec
     ...    set_state  ${motion_detector}  off
-    Schedule Call At  5 min 30 sec
+    Schedule Call At  11 min 30 sec
     ...    call_on_app  ${enabler}  disable
-    Schedule Call At  5 min 40 sec
+    Schedule Call At  11 min 40 sec
     ...    call_on_app  ${enabler}  enable
-    Schedule Call At  6 min
+    Schedule Call At  12 min
     ...    set_state  ${motion_detector}  on
-    Schedule Call At  6 min 10 sec
+    Schedule Call At  12 min 10 sec
     ...    set_state  ${motion_detector}  off
 
-    Advance Time To  9 min
+    Advance Time To  19 min
     History Should Be  ${switch1_history}
     ...    2018-01-01 00:00:20  ${1}
     ...    2018-01-01 00:01:20  ${0}
-    ...    2018-01-01 00:04:00  ${1}
-    ...    2018-01-01 00:05:00  ${0}
-    ...    2018-01-01 00:06:00  ${1}
-    ...    2018-01-01 00:07:00  ${0}
-    History Should Be  ${switch2_history}
-    ...    2018-01-01 00:01:20  ${1}
-    ...    2018-01-01 00:03:20  ${0}
-    ...    2018-01-01 00:05:00  ${1}
-    ...    2018-01-01 00:05:30  ${0}
     ...    2018-01-01 00:07:00  ${1}
-    ...    2018-01-01 00:09:00  ${0}
+    ...    2018-01-01 00:08:00  ${0}
+    ...    2018-01-01 00:12:00  ${1}
+    ...    2018-01-01 00:13:00  ${0}
+    History Should Be  ${switch2_history}
+    ...    2018-01-01 00:04:20  ${1}
+    ...    2018-01-01 00:06:20  ${0}
+    ...    2018-01-01 00:11:00  ${1}
+    ...    2018-01-01 00:11:30  ${0}
+    ...    2018-01-01 00:16:00  ${1}
+    ...    2018-01-01 00:18:00  ${0}
 
 Other Target State
     Set State  ${motion_detector}  on

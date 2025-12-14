@@ -222,7 +222,11 @@ class TimerSequence(hass.Hass):
         self.sequence = [
             SequenceElement(
                 Timer(self, element["time"], self.on_timeout),
-                auto_switch.MultiSwitcher(self, element["targets"]),
+                (
+                    auto_switch.MultiSwitcher(self, element["targets"])
+                    if "targets" in element
+                    else None
+                ),
             )
             for element in self.args["sequence"]
         ]
@@ -250,7 +254,8 @@ class TimerSequence(hass.Hass):
     def terminate(self):
         self.trigger.cleanup()
         for element in self.sequence:
-            element.targets.turn_off()
+            if element.targets is not None:
+                element.targets.turn_off()
         if self.enabler is not None:
             self.enabler.remove_callback(self.enabler_id)
 
@@ -259,7 +264,8 @@ class TimerSequence(hass.Hass):
             if not self.enabler.is_enabled() and self.current_index is not None:
                 element = self.sequence[self.current_index]
                 element.timer.stop()
-                element.targets.turn_off()
+                if element.targets is not None:
+                    element.targets.turn_off()
                 self.current_index = None
 
     def on_change(self, value):
@@ -279,13 +285,16 @@ class TimerSequence(hass.Hass):
             return
 
         element = self.sequence[self.current_index]
-        element.targets.turn_on()
+        if element.targets is not None:
+            element.targets.turn_on()
         element.timer.start()
 
     def on_timeout(self):
         with self.mutex.lock("on_timeout"):
             if self.current_index is None:
                 return
-            self.sequence[self.current_index].targets.turn_off()
+            element = self.sequence[self.current_index]
+            if element.targets is not None:
+                element.targets.turn_off()
             self.current_index += 1
             self.__start()
