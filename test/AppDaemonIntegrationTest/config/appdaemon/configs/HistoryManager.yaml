@@ -1,0 +1,6 @@
+test_history_manager:
+  module: history
+  class: HistoryManager
+  entity: sensor.history_test
+  max_interval:
+    hours: 1

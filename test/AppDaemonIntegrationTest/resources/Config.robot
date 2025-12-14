@@ -47,13 +47,12 @@ Load Apps Configs
     ...    TestApp  @{configs}
     Wait Until Keyword Succeeds  30s  0.1s
     ...    Apps Should Be Loaded  @{loaded_apps}
-    RETURN  ${loaded_apps}
+    Set Test Variable  ${loaded_apps}
 
 Initialize Apps Configs
     [Arguments]  @{configs}
     Create Http Context  ${app_daemon_host}
-    ${loaded_apps} =  Load Apps Configs  @{configs}
-    Set Test Variable  ${loaded_apps}
+    Load Apps Configs  @{configs}
     ${msg} =  Catenate  SEPARATOR=\n  ${{' '}}
     ...    ----------------------------------------------
     ...    Begin test case: ${SUITE_NAME}.${TEST_NAME}

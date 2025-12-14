@@ -3,6 +3,7 @@ import hass
 import datetime
 from itertools import zip_longest
 import traceback
+from robot.libraries import DateTime
 
 
 class TestApp(hass.Hass):
