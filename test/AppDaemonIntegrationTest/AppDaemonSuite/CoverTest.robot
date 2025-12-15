@@ -47,6 +47,27 @@ Simple State Changes
     ...    ${mode_switch}  stable
 
 
+Reload While Stable
+    Set State  ${input_entity1}  60
+    Set State  ${input_entity2}  40
+    Wait For History
+    ...    ${mode_switch}  auto
+    ...    ${mode_switch}  stable
+    Check History
+    ...    ${mode_switch}  auto
+    ...    ${output_entity}  60.0
+    ...    ${mode_switch}  stable
+    Load Apps Configs  HistoryWatcher  Cover2  dummy1
+
+
+Reload While Manual
+    Select Option  ${mode_switch}  manual
+    Set State  ${input_entity2}  40
+    Load Apps Configs  HistoryWatcher  Cover2  dummy1
+    Sleep  3
+    State Should Be  ${output_entity}  0.0
+
+
 *** Keywords ***
 
 Initialize Services
