@@ -39,7 +39,7 @@ class Mutex:
 
 
 class Locker(hass.Hass):
-    def initialize(self):
+    def do_initialize(self):
         self.log("Init locker")
         self.enable_logging = self.args.get("enable_logging", False)
         self.current_graph = {}

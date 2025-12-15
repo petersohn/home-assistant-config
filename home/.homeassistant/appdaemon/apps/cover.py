@@ -10,7 +10,8 @@ class CoverController(hass.Hass):
         MANUAL = 1
         STABLE = 2
 
-    def initialize(self):
+    def do_initialize(self):
+        self.log("Initialize cover")
         self.target = self.args["target"]
         self.mutex = self.get_app("locker").get_mutex("CoverController")
 
@@ -32,11 +33,12 @@ class CoverController(hass.Hass):
 
             state = self.get_state(self.target)
             self.is_available = state is not None and state != "unavailable"
-            self.listen_state(self.on_state_change, entity=self.target, attribute="all")
+            self.log("state={} is_available={}".format(state, self.is_available))
+            self.listen_state(self.on_state_change, self.target, attribute="all")
             self._reset_target()
 
             if self.mode_switch is not None:
-                self.listen_state(self.on_mode_change, entity=self.mode_switch)
+                self.listen_state(self.on_mode_change, self.mode_switch)
                 mode = self.get_state(self.mode_switch)
                 if mode == "stable":
                     self._set_mode(self.Mode.AUTO)
@@ -54,7 +56,7 @@ class CoverController(hass.Hass):
             else:
                 self.expected_value = self.value
 
-    def terminate(self):
+    def do_terminate(self):
         self.expression.cleanup()
 
     def _set_mode(self, state):

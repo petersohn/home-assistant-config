@@ -13,7 +13,7 @@ class TestCover(hass.Hass):
         self.process_id: int | None = None
 
     @override
-    def initialize(self) -> None:
+    def do_initialize(self) -> None:
         self.entity = self.args["entity"]
         self.available_entity = self.args["available_entity"]
         self.position_entity = self.args["position_entity"]

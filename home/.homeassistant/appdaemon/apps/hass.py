@@ -6,6 +6,23 @@ import datetime
 
 
 class Hass(appdaemon.plugins.hass.hassapi.Hass):
+    def initialize(self):
+        self.do_initialize()
+        self.is_loaded = True
+        self.log("App loaded")
+
+    def terminate(self):
+        try:
+            self.do_terminate()
+        finally:
+            self.is_loaded = False
+
+    def do_initialize(self):
+        pass
+
+    def do_terminate(self):
+        pass
+
     def _api_request(self, path):
         hass_config = [
             config

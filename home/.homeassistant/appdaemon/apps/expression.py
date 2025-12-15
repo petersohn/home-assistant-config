@@ -76,9 +76,7 @@ class ExpressionEvaluator:
     def _get_attribute(self, entity, attribute):
         key = (entity, attribute)
         if self.callback is not None and key not in self.attributes:
-            self.app.listen_state(
-                self._on_entity_change, entity=entity, attribute=attribute
-            )
+            self.app.listen_state(self._on_entity_change, entity, attribute=attribute)
             self.attributes.add(key)
 
         value = self.app.get_state(entity, attribute=attribute)
@@ -94,7 +92,7 @@ class ExpressionEvaluator:
             return Evaluator(self._get_value, entity + ".")
 
         if self.callback is not None and entity not in self.entities:
-            self.app.listen_state(self._on_entity_change, entity=entity)
+            self.app.listen_state(self._on_entity_change, entity)
             self.entities.add(entity)
         value = self.app.get_state(entity)
         if value is None or value == "unknown" or value == "unavailable":
@@ -113,7 +111,7 @@ class ExpressionEvaluator:
             return Evaluator(self._get_ok, entity + ".")
 
         if self.callback is not None and entity not in self.entities:
-            self.app.listen_state(self._on_entity_change, entity=entity)
+            self.app.listen_state(self._on_entity_change, entity)
             self.entities.add(entity)
         value = self.app.get_state(entity)
         return (
@@ -169,13 +167,13 @@ class ExpressionEvaluator:
 
 
 class Expression(hass.Hass):
-    def initialize(self):
+    def do_initialize(self):
         self.target = self.args["target"]
         self.attributes = self.args.get("attributes", {})
         self.evaluator = ExpressionEvaluator(self, self.args["expr"], self._set)
         self._set(self.evaluator.get())
 
-    def terminate(self):
+    def do_terminate(self):
         self.evaluator.cleanup()
 
     def _set(self, value):

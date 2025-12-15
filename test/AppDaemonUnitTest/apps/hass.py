@@ -143,7 +143,7 @@ class AppManager:
             self.unregister_service(key)
 
         with ErrorHandler(self, name):
-            app.terminate()
+            app.do_terminate()
 
     def remove_all_apps(self) -> None:
         while len(self.__app_order) != 0:
@@ -410,10 +410,10 @@ class Hass:
         self.__name = ""
         self.args: dict[str, Any] = {}
 
-    def initialize(self):
+    def do_initialize(self):
         pass
 
-    def terminate(self):
+    def do_terminate(self):
         pass
 
     def init_app(
@@ -422,7 +422,7 @@ class Hass:
         self.__manager = manager
         self.__name = name
         self.args = args
-        self.initialize()
+        self.do_initialize()
 
     def get_app(self, name: str) -> Hass | None:
         assert self.__manager is not None
@@ -468,7 +468,7 @@ class Hass:
     def listen_state(
         self,
         callback: StateCallback,
-        entity: str,
+        entity_id: str,
         attribute: str | None = None,
         old: str | None = None,
         new: str | None = None,
@@ -478,7 +478,7 @@ class Hass:
             StateCallbackRecord(
                 app=self.__name,
                 callback=callback,
-                entity=entity,
+                entity=entity_id,
                 attribute=attribute,
                 old=old,
                 new=new,

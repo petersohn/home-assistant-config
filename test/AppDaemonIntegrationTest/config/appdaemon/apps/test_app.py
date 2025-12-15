@@ -103,8 +103,15 @@ class TestApp(hass.Hass):
     def call_on_app(self, app, function, *args, **kwargs):
         return getattr(self.get_app(app), function)(*args, **kwargs)
 
+    def is_loaded(self, name):
+        app = self.get_app(name)
+        loaded = app is not None and hasattr(app, "is_loaded") and app.is_loaded
+        self.log("{} -> {} loaded={}".format(name, app, loaded))
+        return loaded
+
     def is_all_apps_loaded(self, apps):
-        return all(self.get_app(app) is not None for app in apps)
+        self.log(apps)
+        return all(self.is_loaded(app) for app in apps)
 
     def is_all_apps_unloaded(self, apps):
-        return all(self.get_app(app) is None for app in apps)
+        return all(not self.is_loaded(app) for app in apps)

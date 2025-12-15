@@ -2,7 +2,7 @@
 
 
 class AutoSwitch(hass.Hass):
-    def initialize(self):
+    def do_initialize(self):
         self.target = self.args["target"]
         self.switch = self.args.get("switch")
         self.reentrant = self.args.get("reentrant", False)
@@ -12,10 +12,10 @@ class AutoSwitch(hass.Hass):
         self.mutex = self.get_app("locker").get_mutex("AutoSwitch")
 
         with self.mutex.lock("initialize"):
-            self.listen_state(self.on_target_change, entity=self.target)
+            self.listen_state(self.on_target_change, self.target)
             if self.switch:
                 self.run_in(self.initialize_state, 0)
-                self.listen_state(self.on_switch_change, entity=self.switch)
+                self.listen_state(self.on_switch_change, self.switch)
             self.state = None
             self.run_in(lambda _: self.init(), 0)
 
@@ -27,7 +27,7 @@ class AutoSwitch(hass.Hass):
                 self.enabler = None
                 self.enabler_id = None
 
-    def terminate(self):
+    def do_terminate(self):
         if self.enabler is not None:
             self.enabler.remove_callback(self.enabler_id)
 

@@ -2,7 +2,7 @@ import hass
 
 
 class HistoryWatcher(hass.Hass):
-    def initialize(self):
+    def do_initialize(self):
         self.state_history = []
         self.entities = self.args.get("entities")
         self.mutex = self.get_app("locker").get_mutex("TestApp")

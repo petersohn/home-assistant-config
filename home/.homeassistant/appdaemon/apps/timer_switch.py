@@ -28,7 +28,7 @@ class Trigger:
                 self.source_state is None
                 and self.app.get_state(self.sensor) == self.target_state
             )
-            self.app.listen_state(self.on_state_change, entity=self.sensor)
+            self.app.listen_state(self.on_state_change, self.sensor)
 
     def cleanup(self):
         if self.expression is not None:
@@ -101,7 +101,7 @@ class Timer:
 
 
 class TimerSwitch(hass.Hass):
-    def initialize(self):
+    def do_initialize(self):
         self.trigger = Trigger(
             app=self,
             expr=self.args.get("expr"),
@@ -134,7 +134,7 @@ class TimerSwitch(hass.Hass):
             self.is_on = self.trigger.is_on()
             self.run_in(lambda _: self.on_enabled_changed(), 0)
 
-    def terminate(self):
+    def do_terminate(self):
         self.trigger.cleanup()
         self.targets.turn_off()
         if self.enabler is not None:
@@ -218,7 +218,7 @@ class SequenceElement:
 
 
 class TimerSequence(hass.Hass):
-    def initialize(self):
+    def do_initialize(self):
         self.sequence = [
             SequenceElement(
                 Timer(self, element["time"], self.on_timeout),
@@ -251,7 +251,7 @@ class TimerSequence(hass.Hass):
         self.current_index = None
         self.mutex = self.get_app("locker").get_mutex("TimerSwitch")
 
-    def terminate(self):
+    def do_terminate(self):
         self.trigger.cleanup()
         for element in self.sequence:
             if element.targets is not None:

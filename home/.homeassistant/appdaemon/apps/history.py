@@ -32,7 +32,7 @@ def get_date(s):
 
 
 class HistoryManagerBase(hass.Hass):
-    def initialize(self):
+    def do_initialize(self):
         self.changed_callbacks = {}
         self.callback_id = 0
         self.loaded = False
@@ -75,13 +75,13 @@ class HistoryManagerBase(hass.Hass):
 
 
 class HistoryManager(HistoryManagerBase):
-    def initialize(self):
+    def do_initialize(self):
         self.max_interval = datetime.timedelta(
             **self.args.get("max_interval", {"days": 1})
         )
         self.entity_id = self.args["entity"]
         self.history = []
-        super(HistoryManager, self).initialize()
+        super(HistoryManager, self).do_initialize()
 
     def __filter(self):
         min_time = self.datetime() - self.max_interval
@@ -112,7 +112,7 @@ class HistoryManager(HistoryManagerBase):
         self.log("Total loaded history size: {}".format(len(self.history)))
         self.__filter()
         self.log("Filtered history size: {}".format(len(self.history)))
-        self.listen_state(self.on_changed, entity=self.entity_id)
+        self.listen_state(self.on_changed, self.entity_id)
         self.log("History loaded.")
 
     def on_changed(self, entity, attribute, old, new, kwargs):
@@ -125,18 +125,18 @@ class HistoryManager(HistoryManagerBase):
 
 
 class ChangeTracker(HistoryManagerBase):
-    def initialize(self):
+    def do_initialize(self):
         self.entity_id = self.args["entity"]
         self.changed_time = None
         self.updated_time = None
-        super(ChangeTracker, self).initialize()
+        super(ChangeTracker, self).do_initialize()
 
     def load_config_inner(self):
         self.log("Loading last change...")
         result = self.load_states(self.entity_id)
         self.changed_time = get_date(result["last_changed"])
         self.updated_time = get_date(result["last_updated"])
-        self.listen_state(self.on_changed, entity=self.entity_id, attribute="all")
+        self.listen_state(self.on_changed, self.entity_id, attribute="all")
         self.log("Last change loaded.")
 
     def last_changed(self):
@@ -454,7 +454,7 @@ class Aggregator:
 
 
 class AggregatedValue(hass.Hass):
-    def initialize(self):
+    def do_initialize(self):
         self.target = self.args["target"]
         self.attributes = self.args.get("attributes", {})
         self.aggregator_app = Aggregator(self, self.__set_state)

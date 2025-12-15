@@ -4,10 +4,10 @@ import auto_switch
 
 
 class EnabledSwitch(hass.Hass):
-    def initialize(self):
-        self.mutex = self.get_app('locker').get_mutex('EnabledSwitch')
-        self.enabler = self.get_app(self.args['enabler'])
-        self.targets = auto_switch.MultiSwitcher(self, self.args['targets'])
+    def do_initialize(self):
+        self.mutex = self.get_app("locker").get_mutex("EnabledSwitch")
+        self.enabler = self.get_app(self.args["enabler"])
+        self.targets = auto_switch.MultiSwitcher(self, self.args["targets"])
         self.enabler_id = self.enabler.add_callback(self.set_state)
 
         def init_guard(arg):
@@ -18,13 +18,13 @@ class EnabledSwitch(hass.Hass):
             enabler_id = enabler.add_callback(self.set_state)
             return (enabler, enabler_id)
 
-        (self.on_guard, self.on_guard_id) = init_guard('on_guard')
-        (self.off_guard, self.off_guard_id) = init_guard('off_guard')
+        (self.on_guard, self.on_guard_id) = init_guard("on_guard")
+        (self.off_guard, self.off_guard_id) = init_guard("off_guard")
 
         if self.enabler.is_enabled():
             self.run_in(lambda _: self.targets.turn_on(), 0)
 
-    def terminate(self):
+    def do_terminate(self):
         self.enabler.remove_callback(self.enabler_id)
         if self.on_guard is not None:
             self.on_guard.remove_callback(self.on_guard_id)
@@ -38,12 +38,15 @@ class EnabledSwitch(hass.Hass):
         return guard.is_enabled()
 
     def set_state(self):
-        with self.mutex.lock('set_state'):
+        with self.mutex.lock("set_state"):
             enabled = self.enabler.is_enabled()
             on_guard_on = self._is_guard_on(self.on_guard)
             off_guard_on = self._is_guard_on(self.off_guard)
-            self.log('enabled={} on_guard={} off_guard={}'.format(
-                enabled, on_guard_on, off_guard_on))
+            self.log(
+                "enabled={} on_guard={} off_guard={}".format(
+                    enabled, on_guard_on, off_guard_on
+                )
+            )
             if enabled:
                 if on_guard_on:
                     self.targets.turn_on()
