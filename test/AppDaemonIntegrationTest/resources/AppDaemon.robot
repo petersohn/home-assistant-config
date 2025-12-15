@@ -112,6 +112,9 @@ Turn On Or Off
     ...    ELSE
     ...    Turn Off  ${entity_id}
 
+Call Service
+    [Arguments]  ${service}  &{kwargs}
+    Call Function  call_service  ${service}  &{kwargs}
 
 Check AppDaemon
     Critical Check  AppDaemon process failed to start

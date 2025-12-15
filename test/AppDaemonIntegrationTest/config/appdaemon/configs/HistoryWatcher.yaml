@@ -6,4 +6,5 @@ history_watcher:
     - input_boolean.test_switch1
     - input_boolean.test_switch2
     - input_boolean.test_switch3
-    - input_boolean.test_switch4
+    - input_number.cover_position
+    - input_select.test_cover_mode

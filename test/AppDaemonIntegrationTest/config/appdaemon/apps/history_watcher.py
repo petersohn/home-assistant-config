@@ -12,6 +12,7 @@ class HistoryWatcher(hass.Hass):
 
     def on_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock("on_change"):
+            self.log("{} = {}".format(entity, new))
             self.state_history.append((entity, new))
 
     def get_history(self):

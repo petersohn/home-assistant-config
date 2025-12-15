@@ -37,5 +37,5 @@ Should Have History
 
 Wait For History
     [Arguments]  @{expected}
-    Wait Until Keyword Succeeds  2 min  0.2 s
+    Wait Until Keyword Succeeds  30s  0.2s
     ...    Should Have History  @{expected}
