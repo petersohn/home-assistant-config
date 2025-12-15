@@ -1,12 +1,22 @@
-log:
-    logfile: !secret logfile
-    errorfile: !secret errorfile
+logs:
+  main_log:
+    filename: !secret logfile
+  error_log:
+    filename: !secret errorfile
 
 appdaemon:
-    threads: 1
-    api_port: !secret api_port
-    plugins:
-        HASS:
-            type: hass
-            ha_url: !secret url
-            token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkY2U3MDgwNDIwYmI0Mjg3OWIyYjQ1MjQ4OTQzNjI4YiIsImlhdCI6MTU0NjI1MDYyNiwiZXhwIjoxODYxNjEwNjI2fQ.1YmZVaw3EH2bu0jExU2Q6mIyrD1Qf0cPPJmt877mNC0
+  threads: 1
+  latitude: 47.498358
+  longitude: 19.040419
+  elevation: 100
+  time_zone: Europe/Budapest
+  plugins:
+    HASS:
+      type: hass
+      ha_url: !secret hass_url
+      token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkY2U3MDgwNDIwYmI0Mjg3OWIyYjQ1MjQ4OTQzNjI4YiIsImlhdCI6MTU0NjI1MDYyNiwiZXhwIjoxODYxNjEwNjI2fQ.1YmZVaw3EH2bu0jExU2Q6mIyrD1Qf0cPPJmt877mNC0
+
+http:
+  url: !secret api_url
+
+api:

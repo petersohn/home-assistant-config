@@ -23,8 +23,8 @@ def create_appdaemon_configuration(
             {
                 "logfile": log_file,
                 "errorfile": error_file,
-                "url": "http://" + hass_host,
-                "api_port": api_port,
+                "hass_url": "http://" + hass_host,
+                "api_url": "http://127.0.0.1:{}".format(api_port),
             },
             secrets,
         )

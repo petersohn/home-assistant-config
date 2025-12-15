@@ -88,7 +88,7 @@ class TestApp(hass.Hass):
             self.log("Function returns: " + function + " = " + str(result))
         return convert_output(result)
 
-    def api_callback(self, data):
+    def api_callback(self, data, kwargs):
         try:
             result = self.__call(data)
             return result, 200
