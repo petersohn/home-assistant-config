@@ -4,7 +4,7 @@ locker:
     global_dependencies:
       - mutex_graph
       - hass
-    enable_logging: true
+    enable_logging: false
 
 test:
     module: test_app
