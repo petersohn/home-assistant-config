@@ -5,7 +5,6 @@ logs:
     filename: !secret errorfile
 
 appdaemon:
-  threads: 1
   latitude: 47.498358
   longitude: 19.040419
   elevation: 100

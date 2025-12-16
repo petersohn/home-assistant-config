@@ -1,6 +1,3 @@
-global_modules:
-  - expression
-
 timer_sequence2:
   module: timer_switch
   class: TimerSequence

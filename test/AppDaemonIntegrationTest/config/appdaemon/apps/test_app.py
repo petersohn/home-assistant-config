@@ -110,7 +110,6 @@ class TestApp(hass.Hass):
         return loaded
 
     def is_all_apps_loaded(self, apps):
-        self.log(apps)
         return all(self.is_loaded(app) for app in apps)
 
     def is_all_apps_unloaded(self, apps):

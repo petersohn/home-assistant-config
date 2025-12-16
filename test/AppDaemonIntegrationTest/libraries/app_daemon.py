@@ -39,30 +39,35 @@ def create_appdaemon_apps_config(
     os.makedirs(apps_dir, exist_ok=True)
 
     content: dict[str, Any] = {}
-    global_modules: set[str] = set()
     for config in app_configs:
         source_file = os.path.join(
             directories.appdaemon_config_path, "configs", config + ".yaml"
         )
         with open(source_file, "r") as source:
             content.update(yaml.safe_load(source))
-        current_global = content.get("global_modules", [])
-        if type(current_global) is list:
-            for module in current_global:
-                global_modules.add(module)
-        else:
-            global_modules.add(current_global)
 
-    content["global_modules"] = list(global_modules)
+    modules: set[str] = set()
 
-    modules: set[str] = set(m + ".py" for m in global_modules)
+    def add_module(name: str) -> None:
+        nonlocal modules
+
+        assert type(name) == str
+        modules.add(name + ".py")
+
     for data in content.values():
         if type(data) is not dict:
             continue
+
+        global_dependencies = data.get("global_dependencies", [])
+        if type(global_dependencies) is list:
+            for module in global_dependencies:
+                add_module(module)
+        else:
+            add_module(global_dependencies)
+
         module = data.get("module")
         if module is not None:
-            assert type(module) == str
-            modules.add(module + ".py")
+            add_module(module)
 
     for file_name in os.listdir(apps_dir):
         if not file_name.endswith(".py"):
@@ -79,9 +84,7 @@ def create_appdaemon_apps_config(
         os.symlink(source_file, target_file)
 
     all_apps = [
-        name
-        for name in content.keys()
-        if name not in ["test", "locker", "global_modules"]
+        name for name in content.keys() if name not in ["test", "locker"]
     ]
 
     with open(apps_yaml, "w") as target:
