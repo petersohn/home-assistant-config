@@ -29,6 +29,19 @@ def create_appdaemon_configuration(
             secrets,
         )
 
+    apps_target_dir = os.path.join(target_directory, "apps")
+    apps_source_dir = os.path.join(directories.appdaemon_config_path, "apps")
+    os.makedirs(apps_target_dir, exist_ok=True)
+    for file_name in os.listdir(apps_source_dir):
+        if not file_name.endswith(".py"):
+            continue
+
+        target_file = os.path.join(apps_target_dir, file_name)
+        source_file = os.path.join(apps_source_dir, file_name)
+        if os.path.exists(target_file):
+            os.remove(target_file)
+        os.symlink(source_file, target_file)
+
 
 def create_appdaemon_apps_config(
     target_directory: str, *app_configs: str
@@ -45,43 +58,6 @@ def create_appdaemon_apps_config(
         )
         with open(source_file, "r") as source:
             content.update(yaml.safe_load(source))
-
-    modules: set[str] = set()
-
-    def add_module(name: str) -> None:
-        nonlocal modules
-
-        assert type(name) == str
-        modules.add(name + ".py")
-
-    for data in content.values():
-        if type(data) is not dict:
-            continue
-
-        global_dependencies = data.get("global_dependencies", [])
-        if type(global_dependencies) is list:
-            for module in global_dependencies:
-                add_module(module)
-        else:
-            add_module(global_dependencies)
-
-        module = data.get("module")
-        if module is not None:
-            add_module(module)
-
-    for file_name in os.listdir(apps_dir):
-        if not file_name.endswith(".py"):
-            continue
-        if not file_name in modules:
-            os.remove(os.path.join(apps_dir, file_name))
-
-    apps_path = os.path.join(directories.appdaemon_config_path, "apps")
-    for file_name in modules:
-        target_file = os.path.join(apps_dir, file_name)
-        if os.path.exists(target_file):
-            continue
-        source_file = os.path.join(apps_path, file_name)
-        os.symlink(source_file, target_file)
 
     all_apps = [
         name for name in content.keys() if name not in ["test", "locker"]

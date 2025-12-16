@@ -19,7 +19,7 @@ Load History
     Set State  ${sensor}  3
     Set State  ${sensor}  91
     Set State  ${sensor}  -32
-    Sleep  3
+    Sleep  5
     Load Apps Configs  HistoryManager
     Set State  ${sensor}  23
     Set State  ${sensor}  99

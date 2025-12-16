@@ -33,7 +33,10 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
         self.log("Calling API: " + url)
         with request.urlopen(
             request.Request(
-                url, headers={"Authorization": "Bearer " + hass_config["token"]}
+                url,
+                headers={
+                    "Authorization": "Bearer " + hass_config["token"].get_secret_value()
+                },
             )
         ) as result:
             if result.status >= 300:
