@@ -92,6 +92,8 @@ Only Reload Changed Apps
 
 Start Control
     Set State  ${start_sensor}  on
+    Wait Until Keyword Succeeds  10s  0.1s
+    ...    State Should Be  ${control_switch}  on
     Set State  ${start_sensor}  off
     State Should Be  ${control_switch}  on
 
