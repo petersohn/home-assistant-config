@@ -2,7 +2,7 @@ version: 2
 jobs:
   appdaemon-unit-test:
     docker:
-    - image: ppodgorsek/robot-framework:latest
+      - image: ppodgorsek/robot-framework:latest
     steps:
       - checkout
       - run:
@@ -25,7 +25,10 @@ jobs:
 
   appdaemon-integration-test:
     docker:
-    - image: kangirigungi/home-assistant-config-test:latest
+      - image: kangirigungi/home-assistant-config-test:latest
+    environment:
+      - HASS_PATH: /homeassistant
+      - APPDAEMON_PATH: /appdaemon
     steps:
       - checkout
       - run:
