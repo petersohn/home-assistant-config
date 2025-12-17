@@ -74,10 +74,8 @@ Reload While Manual
 Initialize Services
     Call Service  cover/close_cover  entity_id=${cover}
     Select Option  ${mode_switch}  stable
-    Wait Until Keyword Succeeds  20s  0.1s
-    ...    State Should Be  ${output_entity}  0.0
-    Wait Until Keyword Succeeds  20s  0.1s
-    ...    State Should Be  ${cover}  closed
+    Wait For State  ${output_entity}  0.0
+    Wait For State  ${cover}  closed
 
 Initialize
     [Arguments]  @{configs}

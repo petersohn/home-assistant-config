@@ -25,7 +25,34 @@ Initial State
     auto  ${False}  off
     auto  ${True}   on
 
-
+State Changes
+    [Setup]  Initialize  off  ${False}
+    Select Option  ${input_switch}  on
+    Wait For State  ${output_switch}  on
+    Select Option  ${input_switch}  auto
+    Wait For State  ${output_switch}  off
+    Enable
+    Wait For State  ${output_switch}  on
+    Disable
+    Wait For State  ${output_switch}  off
+    Select Option  ${input_switch}  on
+    Wait For State  ${output_switch}  on
+    Enable
+    Select Option  ${input_switch}  off
+    Wait For State  ${output_switch}  off
+    Select Option  ${input_switch}  auto
+    Wait For State  ${output_switch}  on
+    Select Option  ${input_switch}  off
+    Wait For State  ${output_switch}  off
+    Check History
+    ...    ${output_switch}  on
+    ...    ${output_switch}  off
+    ...    ${output_switch}  on
+    ...    ${output_switch}  off
+    ...    ${output_switch}  on
+    ...    ${output_switch}  off
+    ...    ${output_switch}  on
+    ...    ${output_switch}  off
 
 *** Keywords ***
 
@@ -34,8 +61,7 @@ Test Initial State
     [Arguments]  ${initial_state}  ${initial_enabled_state}  ${expected_state}
     Set Test Variable  ${TEST_SUFFIX}  ${initial_state}_${initial_enabled_state}
     Initialize  ${initial_state}  ${initial_enabled_state}
-    Wait Until Keyword Succeeds  10s  0.1s
-    ...  State Should Be  ${output_switch}  ${expected_state}
+    Wait For State  ${output_switch}  ${expected_state}
     @{expected_history} =  Create List
     IF  '${expected_state}' == 'on'
         Append To List  ${expected_history}  ${output_switch}  on
@@ -44,10 +70,10 @@ Test Initial State
 
 
 Enable
-    Call On App  ${enabler}  enable
+    Call Function  call_on_app  ${enabler}  enable
 
 Disable
-    Call On App  ${enabler}  disable
+    Call Function  call_on_app  ${enabler}  disable
 
 Initialize
     [Arguments]  ${initial_state}  ${initial_enabled_state}

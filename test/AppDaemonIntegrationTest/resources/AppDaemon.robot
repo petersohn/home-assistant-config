@@ -70,6 +70,11 @@ State Should Be
     ${value} =  Get State  ${entity_id}
     Should Be Equal  ${value}  ${expected_value}
 
+Wait For State
+    [Arguments]  ${entity_id}  ${expected_value}
+    Wait Until Keyword Succeeds  10s  0.1s
+    ...    State Should Be  ${entity_id}  ${expected_value}
+
 Attribute Should Be
     [Arguments]  ${entity_id}  ${attribute}  ${expected_value}
     ${value} =  Get State  ${entity_id}  attribute=${attribute}
