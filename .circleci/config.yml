@@ -6,10 +6,10 @@ jobs:
     steps:
       - checkout
       - run:
-        name: run tests
-        command: |
-          ./test/AppDaemonUnitTest/run-test --loglevel=trace \
-              --xunit=robot.xml
+          name: run tests
+          command: |
+            ./test/AppDaemonUnitTest/run-test --loglevel=trace \
+                --xunit=robot.xml
       - run:
           name: Clean up unneeded files
           command: |
@@ -44,9 +44,9 @@ jobs:
                 -type d -exec rm -r '{}' ';'
           when: always
       - store_artifacts:
-          path: test/AppDaemonUnitTest/output
+          path: test/AppDaemonIntegrationTest/output
       - store_test_results:
-          path: test/AppDaemonUnitTest/output/robot.xml
+          path: test/AppDaemonIntegrationTest/output/robot.xml
 
 workflows:
   version: 2
