@@ -53,4 +53,4 @@ workflows:
   test:
     jobs:
       - appdaemon-unit-test
-      - appdaemon-integration-test-test
+      - appdaemon-integration-test
