@@ -28,13 +28,13 @@ jobs:
     - image: kangirigungi/home-assistant-config-test:latest
     steps:
       - checkout
-        - run: |
-            git submodule update --init --recursive
         - run:
-          name: run tests
-          command: |
-            ./test/AppDaemonTest/run-test --loglevel=trace \
-                --xunit=robot.xml --removekeywords WUKS
+            command: git submodule update --init --recursive
+        - run:
+            name: run tests
+            command: |
+              ./test/AppDaemonTest/run-test --loglevel=trace \
+                  --xunit=robot.xml --removekeywords WUKS
         - run:
             name: Clean up unneeded files
             command: |
