@@ -28,7 +28,8 @@ jobs:
     - image: kangirigungi/home-assistant-config-test:latest
     steps:
       - checkout
-        - run: git submodule update --init --recursive
+        - run: |
+            git submodule update --init --recursive
         - run:
           name: run tests
           command: |
