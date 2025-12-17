@@ -1,29 +1,55 @@
 version: 2
 jobs:
-    appdaemon-unit-test:
-        docker:
-          - image: ppodgorsek/robot-framework:latest
-        steps:
-            - checkout
-            - run:
-                name: run tests
-                command: |
-                    ./test/AppDaemonUnitTest/run-test --loglevel=trace \
-                        --xunit=robot.xml
-            - run:
-                name: Clean up unneeded files
-                command: |
-                    find test/AppDaemonUnitTest/output -depth -name pabot_results \
-                        -type d -exec rm -r '{}' ';'
-                    find test/AppDaemonUnitTest/output -depth -name __pycache__ \
-                        -type d -exec rm -r '{}' ';'
-                when: always
-            - store_artifacts:
-                path: test/AppDaemonUnitTest/output
-            - store_test_results:
-                path: test/AppDaemonUnitTest/output/robot.xml
+  appdaemon-unit-test:
+    docker:
+    - image: ppodgorsek/robot-framework:latest
+    steps:
+      - checkout
+      - run:
+        name: run tests
+        command: |
+          ./test/AppDaemonUnitTest/run-test --loglevel=trace \
+              --xunit=robot.xml
+      - run:
+          name: Clean up unneeded files
+          command: |
+            find test/AppDaemonUnitTest/output -depth -name pabot_results \
+                -type d -exec rm -r '{}' ';'
+            find test/AppDaemonUnitTest/output -depth -name __pycache__ \
+                -type d -exec rm -r '{}' ';'
+          when: always
+      - store_artifacts:
+          path: test/AppDaemonUnitTest/output
+      - store_test_results:
+          path: test/AppDaemonUnitTest/output/robot.xml
+
+  appdaemon-integration-test:
+    docker:
+    - image: kangirigungi/home-assistant-config-test:latest
+    steps:
+      - checkout
+        - run: git submodule update --init --recursive
+        - run:
+          name: run tests
+          command: |
+            ./test/AppDaemonTest/run-test --loglevel=trace \
+                --xunit=robot.xml --removekeywords WUKS
+        - run:
+            name: Clean up unneeded files
+            command: |
+              find test/AppDaemonTest/output -depth -name pabot_results \
+                  -type d -exec rm -r '{}' ';'
+              find test/AppDaemonTest/output -depth -name __pycache__ \
+                  -type d -exec rm -r '{}' ';'
+            when: always
+      - store_artifacts:
+          path: test/AppDaemonUnitTest/output
+      - store_test_results:
+          path: test/AppDaemonUnitTest/output/robot.xml
+
 workflows:
-    version: 2
-    test:
-        jobs:
-            - appdaemon-unit-test
+  version: 2
+  test:
+    jobs:
+      - appdaemon-unit-test
+      - appdaemon-integration-test-test
