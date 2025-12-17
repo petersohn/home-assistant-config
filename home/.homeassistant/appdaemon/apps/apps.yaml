@@ -1484,7 +1484,7 @@ auto_switch_climate_living_room:
     dependencies: locker
     target: switch.climate_living_room
     switch: input_select.climate_living_room
-    reentrant: true
+    reentrant: false
 
 climate_enabler:
     module: enabler
@@ -1511,7 +1511,7 @@ auto_switch_climate_bedroom:
     dependencies: locker
     target: switch.climate_bedroom
     switch: input_select.climate_bedroom
-    reentrant: true
+    reentrant: false
 
 climate_bedroom_switch:
     class: EnabledSwitch
@@ -1560,7 +1560,7 @@ auto_switch_water_heater:
     dependencies: locker
     target: switch.water_heater
     switch: input_select.water_heater
-    reentrant: true
+    reentrant: false
 
 water_heater_switch:
     class: EnabledSwitch
@@ -1581,7 +1581,7 @@ auto_switch_camera1_ir:
     dependencies: locker
     target: light.camera1_ir
     switch: input_select.camera1_ir
-    reentrant: true
+    reentrant: false
 
 camera1_ir_enabler:
     module: enabler
@@ -1608,7 +1608,7 @@ auto_switch_camera2_ir:
     dependencies: locker
     target: light.camera2_ir
     switch: input_select.camera2_ir
-    reentrant: true
+    reentrant: false
 
 camera2_ir_enabler:
     module: enabler
@@ -1635,7 +1635,7 @@ auto_switch_camera1_alarm:
     dependencies: locker
     target: switch.camera1_alarm
     switch: input_select.camera1_alarm
-    reentrant: true
+    reentrant: false
 
 camera1_alarm_enabler:
     module: enabler
@@ -1662,7 +1662,7 @@ auto_switch_camera2_alarm:
     dependencies: locker
     target: switch.camera2_alarm
     switch: input_select.camera2_alarm
-    reentrant: true
+    reentrant: false
 
 camera2_alarm_enabler:
     module: enabler

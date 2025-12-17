@@ -1,0 +1,9 @@
+test_enabled_switch:
+  module: enabled_switch
+  class: EnabledSwitch
+  enabler: test_enabler
+  targets:
+    - test_auto_switch
+  dependencies:
+    - test_enabler
+    - test_auto_switch

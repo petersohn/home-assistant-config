@@ -101,10 +101,11 @@ Do Clean States
 
 Do Initialize State
     [Arguments]  ${entity}  ${state}
-    Set Request Body To Dictionary  state=${state}
+    ${service}  ${data} =  Create Service Data  ${entity}  ${state}
+    Set Request Body  ${data}
     Ask For Connection Keepalive
     Authenticate
-    POST  /api/states/${entity}
+    POST  /api/${service}
 
 Do Initialize States
     [Arguments]  &{states}

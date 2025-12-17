@@ -34,6 +34,7 @@ class AutoSwitch(hass.Hass):
     def init(self):
         with self.mutex.lock("init"):
             try:
+                self.log("init")
                 if self.state is None:
                     self.__update(0)
             except:
@@ -171,6 +172,18 @@ class MultiSwitcher:
     def __init__(self, app, targets):
         self.app = app
         self.targets = [Switcher(app.get_app(target)) for target in targets]
+
+    def init(self, value):
+        for target in self.targets:
+            if value:
+                target.turn_on()
+            elif target.auto_switch.reentrant:
+                target.turn_off()
+
+    def deinit(self):
+        for target in self.targets:
+            if target.auto_switch.reentrant:
+                target.turn_off()
 
     def turn_on(self):
         for target in self.targets:

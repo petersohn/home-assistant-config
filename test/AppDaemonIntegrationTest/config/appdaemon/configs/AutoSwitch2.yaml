@@ -1,0 +1,7 @@
+test_auto_switch:
+  module: auto_switch
+  class: AutoSwitch
+  target: input_boolean.test_switch1
+  switch: input_select.test_auto_switch_switch2
+  reentrant: false
+  dependencies: history_watcher

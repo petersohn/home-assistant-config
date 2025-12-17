@@ -30,7 +30,12 @@ input_select:
       - "two"
       - "three"
       - "four"
-  test_auto_switch_switch:
+  test_auto_switch_switch1:
+    options:
+      - "auto"
+      - "on"
+      - "off"
+  test_auto_switch_switch2:
     options:
       - "auto"
       - "on"
