@@ -111,4 +111,8 @@ Initialize
     Initialize States
     ...    ${start_sensor}=off
     ...    ${enabler_switch}=off
+    ...    ${switch1}=off
+    ...    ${switch2}=off
+    ...    ${switch3}=off
+    ...    ${control_switch}=off
     Initialize Apps Configs  @{configs}
