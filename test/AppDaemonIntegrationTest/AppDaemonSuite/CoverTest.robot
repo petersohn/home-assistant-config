@@ -65,6 +65,7 @@ Reload While Manual
     Set State  ${input_entity2}  40
     Load Apps Configs  HistoryWatcher  Cover2  dummy1
     Sleep  3
+    State Should Be  ${mode_switch}  manual
     State Should Be  ${output_entity}  0.0
 
 
