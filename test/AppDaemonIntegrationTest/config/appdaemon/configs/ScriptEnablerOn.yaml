@@ -1,0 +1,4 @@
+test_enabler:
+  module: enabler
+  class: ScriptEnabler
+  initial: true

@@ -262,7 +262,7 @@ Test Multi Enabler
 
 Create Enabled Switch
     [Arguments]  ${name}  ${enabler_name}  ${target}
-    ${switch_name} =  Catenate  ${name}  _switch
+    ${switch_name} =  Set Variable  ${name}_switch
     ${switch} =  Create App  auto_switch  AutoSwitch  ${switch_name}
     ...    target=${target}
     @{targets} =  Create List  ${switch_name}

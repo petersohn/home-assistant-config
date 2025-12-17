@@ -17,7 +17,7 @@ class AutoSwitch(hass.Hass):
                 self.run_in(self.initialize_state, 0)
                 self.listen_state(self.on_switch_change, entity=self.switch)
             self.state = None
-            self.run_in(lambda _: self.init(), 0)
+            self.run_in(lambda _: self.init(), 1 if self.switch else 0)
 
             enabler = self.args.get("enabler")
             if enabler is not None:

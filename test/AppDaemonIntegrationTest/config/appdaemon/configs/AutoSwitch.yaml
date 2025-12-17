@@ -1,0 +1,17 @@
+test_auto_switch:
+  module: auto_switch
+  class: AutoSwitch
+  target: input_boolean.test_switch1
+  switch: input_select.test_auto_switch_switch
+  reentrant: true
+  dependencies: history_watcher
+
+test_enabled_switch:
+  module: enabled_switch
+  class: EnabledSwitch
+  enabler: test_enabler
+  targets:
+    - test_auto_switch
+  dependencies:
+    - test_enabler
+    - test_auto_switch

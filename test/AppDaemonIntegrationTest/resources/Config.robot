@@ -50,20 +50,30 @@ Load Apps Configs
     ...    Apps Should Be Loaded  @{loaded_apps}
     Set Test Variable  ${loaded_apps}
 
+Get Test Name
+    ${result} =  Set Variable  ${SUITE_NAME}.${TEST_NAME}
+    ${suffix} =  Get Variable Value  $TEST_SUFFIX  ${Empty}
+    IF  ${{ $suffix != '' }}
+        ${suffix} =  Set Variable  .${suffix}
+    END
+    RETURN  ${result}${suffix}
+
 Initialize Apps Configs
     [Arguments]  @{configs}
     Create Http Context  ${app_daemon_host}
     Load Apps Configs  @{configs}
+    ${name} =  Get Test Name
     ${msg} =  Catenate  SEPARATOR=\n  ${{' '}}
     ...    ----------------------------------------------
-    ...    Begin test case: ${SUITE_NAME}.${TEST_NAME}
+    ...    Begin test case: ${name}
     ...    ----------------------------------------------
     Log To AppDaemon  ${msg}
 
 Cleanup Apps Configs
+    ${name} =  Get Test Name
     ${msg} =  Catenate  SEPARATOR=\n  ${{' '}}
     ...    ----------------------------------------------
-    ...    End test case: ${SUITE_NAME}.${TEST_NAME}
+    ...    End test case: ${name}
     ...    ----------------------------------------------
     Log To AppDaemon  ${msg}
     Create AppDaemon Apps Config  ${appdaemon_directory}  TestApp
