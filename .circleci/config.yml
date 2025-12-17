@@ -25,7 +25,7 @@ jobs:
 
   appdaemon-integration-test:
     docker:
-      - image: kangirigungi/home-assistant-config-test:latest
+      - image: kangirigungi/home-assistant-config:latest
     environment:
       - HASS_PATH: /homeassistant
       - APPDAEMON_PATH: /appdaemon

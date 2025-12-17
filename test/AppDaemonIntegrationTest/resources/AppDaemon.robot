@@ -25,7 +25,7 @@ Start AppDaemon
 #     ...    --debug       DEBUG
     ...    stdout=${appdaemon_directory}/appdaemon.stdout
     ...    stderr=${appdaemon_directory}/appdaemon.stderr
-    Set Test Variable    ${app_daemon_process}
+    Set Suite Variable    ${app_daemon_process}
 
 Create Call Data
     [Arguments]  ${function}  ${result_type}  ${arg_types}  ${kwarg_types}

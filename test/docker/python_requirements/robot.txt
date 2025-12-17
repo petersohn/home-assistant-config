@@ -1,0 +1,6 @@
+robotframework
+robotframework-pabot
+robotframework-httplibrary
+virtualenv
+pyyaml
+six

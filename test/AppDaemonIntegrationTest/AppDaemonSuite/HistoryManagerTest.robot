@@ -34,14 +34,16 @@ Load History
 Change Tracker
     Set State  ${sensor1}  6  foo=1
     Set State  ${sensor2}  6  foo=1
-    Sleep  0.1
+    Sleep  0.5
     Set State  ${sensor1}  8  foo=2
     Set State  ${sensor2}  6  foo=2
     Load Apps Configs  ChangeTrackers
     Last Changed And Last Updated Should Be The Same  tracker1
     Should Be Updated After Changed  tracker2
+    Sleep  0.5
     Set State  ${sensor1}  8  foo=3
     Set State  ${sensor2}  8  foo=3
+    Sleep  1
     Should Be Updated After Changed  tracker1
     Last Changed And Last Updated Should Be The Same  tracker2
 
