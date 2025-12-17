@@ -5,18 +5,20 @@ Library   libraries/history_util.py
 Resource  resources/AppDaemon.robot
 Resource  resources/Config.robot
 Resource  resources/Http.robot
+Test Setup  Initialize
 Test Teardown  Cleanup Apps Configs
 
 
 *** Variables ***
 
 ${sensor}    sensor.history_test
+${sensor1}   sensor.test_sensor1
+${sensor2}   sensor.test_sensor2
 
 
 *** Test Cases ***
 
 Load History
-    [Setup]  Initialize
     Set State  ${sensor}  12
     Set State  ${sensor}  3
     Set State  ${sensor}  91
@@ -29,6 +31,19 @@ Load History
     History Should Be  test_history_manager
     ...    ${0.0}  ${12.0}  ${3.0}  ${91.0}  ${-32.0}  ${23.0}  ${99.0}
 
+Change Tracker
+    Set State  ${sensor1}  6  foo=1
+    Set State  ${sensor2}  6  foo=1
+    Sleep  0.1
+    Set State  ${sensor1}  8  foo=2
+    Set State  ${sensor2}  6  foo=2
+    Load Apps Configs  ChangeTrackers
+    Last Changed And Last Updated Should Be The Same  tracker1
+    Should Be Updated After Changed  tracker2
+    Set State  ${sensor1}  8  foo=3
+    Set State  ${sensor2}  8  foo=3
+    Should Be Updated After Changed  tracker1
+    Last Changed And Last Updated Should Be The Same  tracker2
 
 *** Keywords ***
 
@@ -62,6 +77,33 @@ History Should Be
     ${actual} =  Convert History Output  ${history}
     Lists Should Be Equal  ${actual}  ${expected}
 
+Get Last Changed
+    [Arguments]  ${app}
+    ${result} =  Call Function  call_on_app  ${app}  last_changed
+    ...    result_type=datestr
+    RETURN  ${result}
+
+Get Last Updated
+    [Arguments]  ${app}
+    ${result} =  Call Function  call_on_app  ${app}  last_updated
+    ...    result_type=datestr
+    RETURN  ${result}
+
+Last Changed And Last Updated Should Be The Same
+    [Arguments]  ${app}
+    ${last_changed} =  Get Last Changed  ${app}
+    ${last_updated} =  Get Last Updated  ${app}
+    Should Be Equal  ${last_changed}  ${last_updated}
+
+Should Be Updated After Changed
+    [Arguments]  ${app}
+    ${last_changed} =  Get Last Changed  ${app}
+    ${last_updated} =  Get Last Updated  ${app}
+    ${difference} =  Subtract Date From Date  ${last_updated}  ${last_changed}
+    ...    result_format=number
+    Should Be True  ${difference} > 0
+
+
 Initialize
-    Initialize States  ${sensor}=0
+    Initialize States  ${sensor}=0  ${sensor1}=0  ${sensor2}=0
     Initialize Apps Configs

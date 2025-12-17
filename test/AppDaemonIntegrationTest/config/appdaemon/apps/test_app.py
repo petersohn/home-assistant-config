@@ -23,9 +23,8 @@ class TestApp(hass.Hass):
                 wrapper = eval(
                     target_type,
                     {
-                        "convert_date": self.__convert_date,
-                        "convert_time": self.__convert_time,
-                        "convert_timedelta": self.__convert_timedelta,
+                        "datetime": self.__to_datetime,
+                        "datestr": self.__to_datestr,
                         "Int": lambda val: int(float(val)),
                         "percent": lambda val: int(float(val) * 100.0),
                     },
@@ -87,6 +86,12 @@ class TestApp(hass.Hass):
         if do_log:
             self.log("Function returns: " + function + " = " + str(result))
         return convert_output(result)
+
+    def __to_datetime(self, value):
+        return DateTime.convert_date(date, result_format="datetime")
+
+    def __to_datestr(self, value):
+        return DateTime.convert_date(date, result_format="timestamp")
 
     def api_callback(self, data):
         try:

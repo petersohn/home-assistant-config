@@ -1,0 +1,9 @@
+tracker1:
+  module: history
+  class: ChangeTracker
+  entity: sensor.test_sensor1
+
+tracker2:
+  module: history
+  class: ChangeTracker
+  entity: sensor.test_sensor2
