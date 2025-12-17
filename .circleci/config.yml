@@ -33,14 +33,14 @@ jobs:
       - run:
           name: run tests
           command: |
-            ./test/AppDaemonTest/run-test --loglevel=trace \
+            ./test/AppDaemonIntegrationTest/run-test --loglevel=trace \
                 --xunit=robot.xml --removekeywords WUKS
       - run:
           name: Clean up unneeded files
           command: |
-            find test/AppDaemonTest/output -depth -name pabot_results \
+            find test/AppDaemonIntegrationTest/output -depth -name pabot_results \
                 -type d -exec rm -r '{}' ';'
-            find test/AppDaemonTest/output -depth -name __pycache__ \
+            find test/AppDaemonIntegrationTest/output -depth -name __pycache__ \
                 -type d -exec rm -r '{}' ';'
           when: always
       - store_artifacts:
