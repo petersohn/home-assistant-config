@@ -1003,9 +1003,9 @@ availability_alerts:
     target: binary_sensor.availability_alert
     trigger_expr: >
       v.input_select.presence_mode != 'sleep' and
-      not v['input_boolean.' + name + '_maintenance'] and (
-      not ok['binary_sensor.' + name + '_available'] or
-      not v['binary_sensor.' + name + '_available'])
+      not v['input_boolean.' + name + '_maintenance'] and
+      ok['binary_sensor.' + name + '_available'] and
+      not v['binary_sensor.' + name + '_available']
     text_expr: a['binary_sensor.' + name + '_available'].friendly_name
     timeout:
         hours: 1
@@ -1028,9 +1028,9 @@ availability_alerts_critical:
     class: AlertAggregator
     target: binary_sensor.availability_alert_critical
     trigger_expr: >
-      not v['input_boolean.' + name + '_maintenance'] and (
-      not ok['binary_sensor.' + name + '_available'] or
-      not v['binary_sensor.' + name + '_available'])
+      not v['input_boolean.' + name + '_maintenance'] and
+      ok['binary_sensor.' + name + '_available'] and
+      not v['binary_sensor.' + name + '_available']
     text_expr: a['binary_sensor.' + name + '_available'].friendly_name
     timeout:
         minutes: 5
