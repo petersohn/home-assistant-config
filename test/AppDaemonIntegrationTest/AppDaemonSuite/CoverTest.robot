@@ -82,6 +82,14 @@ Initialize
     Initialize States
     ...    ${input_entity1}=0
     ...    ${input_entity2}=0
+    ...    ${output_entity}=0
     ...    ${availablility_entity}=on
+    ...    ${mode_switch}=stable
     Run In Http Context  ${app_daemon_host}  Initialize Services
     Initialize Apps Configs  HistoryWatcher  @{configs}
+    Wait For History
+    ...    ${mode_switch}  auto
+    ...    ${mode_switch}  stable
+    Check History
+    ...    ${mode_switch}  auto
+    ...    ${mode_switch}  stable

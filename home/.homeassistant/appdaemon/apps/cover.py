@@ -22,7 +22,6 @@ class CoverController(hass.Hass):
         with self.mutex.lock("initialize"):
             self.is_available = False
             self.expected_value = None
-            self.value = None
             self.timer = None
 
             delay = self.args.get("delay")
