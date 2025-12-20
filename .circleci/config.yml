@@ -1,27 +1,36 @@
-version: 2
+version: 2.1
+commands:
+  robot:
+    parameters:
+      directory:
+        type: string
+    steps:
+      - run:
+          name: run tests
+          command: |
+            <<parameters.directory>>/run-test --loglevel=trace \
+                --xunit=robot.xml --removekeywords WUKS
+      - run:
+          name: Clean up unneeded files
+          command: |
+            find <<parameters.directory>>/output -depth -name pabot_results \
+                -type d -exec rm -r '{}' ';'
+            find <<parameters.directory>>/output -depth -name __pycache__ \
+                -type d -exec rm -r '{}' ';'
+          when: always
+      - store_artifacts:
+          path: <<parameters.directory>>/output
+      - store_test_results:
+          path: <<parameters.directory>>/output/robot.xml
+
 jobs:
   appdaemon-unit-test:
     docker:
       - image: ppodgorsek/robot-framework:latest
     steps:
       - checkout
-      - run:
-          name: run tests
-          command: |
-            ./test/AppDaemonUnitTest/run-test --loglevel=trace \
-                --xunit=robot.xml
-      - run:
-          name: Clean up unneeded files
-          command: |
-            find test/AppDaemonUnitTest/output -depth -name pabot_results \
-                -type d -exec rm -r '{}' ';'
-            find test/AppDaemonUnitTest/output -depth -name __pycache__ \
-                -type d -exec rm -r '{}' ';'
-          when: always
-      - store_artifacts:
-          path: test/AppDaemonUnitTest/output
-      - store_test_results:
-          path: test/AppDaemonUnitTest/output/robot.xml
+      - robot:
+        directory: test/AppDaemonUnitTest
 
   appdaemon-integration-test:
     docker:
@@ -33,23 +42,8 @@ jobs:
       - checkout
       - run:
           command: git submodule update --init --recursive
-      - run:
-          name: run tests
-          command: |
-            ./test/AppDaemonIntegrationTest/run-test --loglevel=trace \
-                --xunit=robot.xml --removekeywords WUKS
-      - run:
-          name: Clean up unneeded files
-          command: |
-            find test/AppDaemonIntegrationTest/output -depth -name pabot_results \
-                -type d -exec rm -r '{}' ';'
-            find test/AppDaemonIntegrationTest/output -depth -name __pycache__ \
-                -type d -exec rm -r '{}' ';'
-          when: always
-      - store_artifacts:
-          path: test/AppDaemonIntegrationTest/output
-      - store_test_results:
-          path: test/AppDaemonIntegrationTest/output/robot.xml
+      - robot:
+        directory: test/AppDaemonIntegrationTest
 
 workflows:
   version: 2
