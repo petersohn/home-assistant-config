@@ -30,7 +30,7 @@ jobs:
     steps:
       - checkout
       - robot:
-        directory: test/AppDaemonUnitTest
+          directory: test/AppDaemonUnitTest
 
   appdaemon-integration-test:
     docker:
@@ -43,7 +43,7 @@ jobs:
       - run:
           command: git submodule update --init --recursive
       - robot:
-        directory: test/AppDaemonIntegrationTest
+          directory: test/AppDaemonIntegrationTest
 
 workflows:
   version: 2
