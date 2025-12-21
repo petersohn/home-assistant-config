@@ -72,7 +72,7 @@ script: !include script.yaml
 command_line:
   - sensor:
       name: cpu_temperature
-      command: "cat /sys/class/thermal/thermal_zone0/temp"
+      command: "ssh homeassistant@192.168.1.35 cat /sys/class/thermal/thermal_zone0/temp"
       # If errors occur, make sure configuration file is encoded as UTF-8
       unit_of_measurement: "°C"
       value_template: "{{ value | multiply(0.001) }}"
@@ -80,18 +80,18 @@ command_line:
       device_class: temperature
   - sensor:
       name: free_space
-      command: "df -B 1 / | tail -n1 | awk '{print $4}'"
+      command: "ssh homeassistant@192.168.1.35 df -B 1 / | tail -n1 | awk '{print $4}'"
       unit_of_measurement: "B"
       scan_interval: 60
       device_class: data_size
   - sensor:
       name: free_space_data
-      command: "df -B 1 /data | tail -n1 | awk '{print $4}'"
+      command: "ssh homeassistant@192.168.1.35 df -B 1 /data | tail -n1 | awk '{print $4}'"
       unit_of_measurement: "B"
       scan_interval: 60
       device_class: data_size
   - binary_sensor:
-      command: 'timeout 2 nc localhost 6131 </dev/null && echo ON || echo OFF'
+      command: 'timeout 2 ssh homeassistant@192.168.1.35 nc localhost 6131 </dev/null && echo ON || echo OFF'
       name: ssh_tunnel_available
   - binary_sensor:
       command: !secret printer_command
