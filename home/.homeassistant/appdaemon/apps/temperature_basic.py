@@ -15,13 +15,26 @@ class TemperatureBasic(hass.Hass):
         self.listen_state(self.on_change, self.sensor_in)
         self.listen_state(self.on_change, self.sensor_out)
 
+
+    def __get_value_or_none(self, entity_id):
+        value = self.get_state(entity_id)
+        if value == "unavailable" or value == "unknown" or value == "" or value is None:
+            self.log("Cannot evaluate {}: value is {}".format(entity_id, repr(value)))
+            return None
+        return float(value)
+
     def __get_value(self):
-        value_out = float(self.get_state(self.sensor_out))
+        value_out = self.__get_value_or_none(self.sensor_out)
+        if value_out is None:
+            return None
+        value_in = self.__get_value_or_none(self.sensor_in)
+        if value_out is None:
+            return None
+
         if value_out < self.minimum_out:
             return False
         if value_out >= self.maximum_out:
             return True
-        value_in = float(self.get_state(self.sensor_in))
         diff = value_out - value_in
         current_value = self.get_state(self.target)
         if current_value == 'on':
@@ -31,7 +44,10 @@ class TemperatureBasic(hass.Hass):
 
     def on_change(self, entity, attribute, old, new, kwargs):
         with self.mutex.lock('on_change'):
-            if self.__get_value():
+            value = self.__get_value()
+            if value is None:
+                return
+            if value:
                 self.turn_on(self.target)
             else:
                 self.turn_off(self.target)

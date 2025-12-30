@@ -1365,7 +1365,7 @@ cellar_sprinkler_switcher:
     sequence:
         - targets:
               - auto_switch_sprinkler_cellar
-          time: 15
+          time: 10
 
 pump_icon:
     class: CustomIcon
