@@ -17,6 +17,9 @@ storage_window_blind_open:
 desktop_player_pause:
   name: Szünet
   icon: mdi:pause-circle
+laptop_player_pause:
+  name: Szünet laptop
+  icon: mdi:pause-circle-outline
 
 furnace_temperature_maintenance:
   name: Furnace Temperature

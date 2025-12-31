@@ -550,6 +550,10 @@ switch.desktop_player:
   friendly_name: Zene lejátszás
   icon: mdi:play-circle
 
+switch.laptop_player:
+  friendly_name: Zene lejátszás laptop
+  icon: mdi:play-circle-outline
+
 climate.daikin_living_room:
   friendly_name: Klíma nappali
   icon: mdi:heat-pump

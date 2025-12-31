@@ -1087,9 +1087,17 @@ switch:
     state_topic: home/switches/desktop_player/state
     payload_on: 1
     payload_off: 0
-    # availability_topic: home/devices/desktop_player/available
-    # payload_available: 1
-    # payload_not_available: 0
+    availability_topic: home/devices/desktop_player/available
+    payload_available: 1
+    payload_not_available: 0
+  - name: laptop_player
+    command_topic: home/switches/laptop_player/set
+    state_topic: home/switches/laptop_player/state
+    payload_on: 1
+    payload_off: 0
+    availability_topic: home/devices/laptop_player/available
+    payload_available: 1
+    payload_not_available: 0
   - name: climate_living_room
     command_topic: home/climate_living_room/cmnd/POWER
     state_topic: home/climate_living_room/stat/POWER

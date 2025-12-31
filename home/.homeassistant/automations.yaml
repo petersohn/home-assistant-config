@@ -430,6 +430,40 @@
       data:
         entity_id: input_boolean.desktop_player_pause
 
+- alias: szünet be laptop
+  trigger:
+    platform: state
+    entity_id: input_boolean.laptop_player_pause
+    to: 'on'
+  action:
+    - service: homeassistant.turn_off
+      data:
+        entity_id: switch.laptop_player
+
+- alias: szünet ki laptop
+  trigger:
+    platform: state
+    entity_id: input_boolean.laptop_player_pause
+    to: 'on'
+    for: '00:07:00'
+  action:
+    - service: homeassistant.turn_on
+      data:
+        entity_id: switch.laptop_player
+    - service: homeassistant.turn_off
+      data:
+        entity_id: input_boolean.laptop_player_pause
+
+- alias: szünet leállítás laptop
+  trigger:
+    platform: state
+    entity_id: switch.laptop_player
+    to: 'on'
+  action:
+    - service: homeassistant.turn_off
+      data:
+        entity_id: input_boolean.laptop_player_pause
+
 - alias: cupsd restart
   trigger:
     platform: state
