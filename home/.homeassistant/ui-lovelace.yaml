@@ -914,6 +914,8 @@ views:
           - sensor.battery_voltage_avg
           - sensor.battery_voltage_max
           - switch.battery_charging
+          - sensor.battery_current_avg
+          - sensor.battery_current_max
         show_header_toggle: false
   - path: alerts
     title: Riasztások
