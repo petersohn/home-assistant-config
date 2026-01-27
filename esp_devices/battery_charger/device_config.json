@@ -1,8 +1,9 @@
 {
     "debug": true,
     "name": "battery_charger",
-    "availabilityTopic": "home/battery_charger/available",
-    "statusTopic": "home/battery_charger/status",
+    "availabilityTopic": "home/devices/battery_charger/available",
+    "statusTopic": "home/devices/battery_charger/status",
+    "debugTopic": "home/devices/battery_charger/debug",
     "analogInputs": [
         {
             "name": "mcp",
@@ -19,8 +20,19 @@
             "name": "voltage",
             "intervalMs": 500,
             "input": "mcp.0",
-            "max": 20,
+            "max": 18.1,
             "precision": 1,
+            "aggregateTime": 200
+        },
+        {
+            "type": "analog",
+            "name": "current",
+            "intervalMs": 500,
+            "input": "mcp.1",
+            "max": 40,
+            "valueOffset": 20,
+            "cutoff": 0.1,
+            "precision": 2,
             "aggregateTime": 200
         },
         {
@@ -55,6 +67,24 @@
             "template": "%2",
             "minimumSendInterval": 60000,
             "sendDiff": 0.5,
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "current",
+            "topic": "home/battery_charger/current/avg",
+            "template": "%1",
+            "minimumSendInterval": 60000,
+            "sendDiff": 0.1,
+            "retain": false
+        },
+        {
+            "type": "publish",
+            "interface": "current",
+            "topic": "home/battery_charger/current/max",
+            "template": "%2",
+            "minimumSendInterval": 60000,
+            "sendDiff": 0.1,
             "retain": false
         },
         {
