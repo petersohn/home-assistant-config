@@ -322,7 +322,7 @@ sensor:
     icon: mdi:battery
   - state_topic: home/battery_charger/current/avg
     name: battery_current_avg
-    unit_of_measurement: "V"
+    unit_of_measurement: "A"
     expire_after: 120
     availability_topic: home/devices/battery_charger/available
     payload_available: 1
@@ -330,7 +330,7 @@ sensor:
     icon: mdi:battery-plus-variant
   - state_topic: home/battery_charger/current/max
     name: battery_current_max
-    unit_of_measurement: "V"
+    unit_of_measurement: "A"
     expire_after: 120
     availability_topic: home/devices/battery_charger/available
     payload_available: 1
@@ -669,7 +669,7 @@ binary_sensor:
     name: motion_sensor_driveway_upper
     payload_on: 1
     payload_off: 0
-    availability_topic: home/devices/driveway2/available
+    availability_topic: home/devices/gate_reflector/available
     payload_available: 1
     payload_not_available: 0
   - state_topic: home/sensors/motion/driveway_lower
