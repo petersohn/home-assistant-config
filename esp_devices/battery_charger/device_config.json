@@ -29,10 +29,10 @@
             "name": "current",
             "intervalMs": 500,
             "input": "mcp.1",
-            "max": 40,
-            "valueOffset": 20,
-            "cutoff": 0.1,
-            "precision": 2,
+            "max": 50,
+            "valueOffset": 25,
+            "cutoff": 0.11,
+            "precision": 1,
             "aggregateTime": 200
         },
         {
@@ -102,7 +102,7 @@
                         },
                         {
                             "type": "<",
-                            "ops": [{"type": "value", "index": 1}, 12.5]
+                            "ops": [{"type": "value", "index": 1}, 12.3]
                         }
                     ]
                 },
@@ -118,7 +118,7 @@
                             },
                             {
                                 "type": ">",
-                                "ops": [{"type": "value", "index": 1}, 15.5]
+                                "ops": [{"type": "value", "index": 1}, 14.5]
                             }
                         ]
                     },

@@ -9,9 +9,14 @@
             "type": "output",
             "name": "relay",
             "commandTopic": "home/switches/lights/gate_reflector/set",
-            "pin": 3,
+            "pin": 0,
             "invert": true,
             "default": 0
+        },
+        {
+            "type": "input",
+            "name": "motion",
+            "pin": 3
         }
     ],
     "actions": [
@@ -20,6 +25,12 @@
             "interface": "relay",
             "topic": "home/switches/lights/gate_reflector/state",
             "retain": true
+        },
+        {
+            "type": "publish",
+            "interface": "motion",
+            "topic": "home/sensors/motion/driveway_upper",
+            "retain": false
         }
     ]
 }
