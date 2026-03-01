@@ -18,11 +18,12 @@
         {
             "type": "analog",
             "name": "voltage",
-            "intervalMs": 500,
+            "intervalMs": 1000,
             "input": "mcp.0",
             "max": 18.1,
             "precision": 1,
-            "aggregateTime": 200
+            "aggregateTime": 200,
+            "aggregateDelay": 100
         },
         {
             "type": "analog",
@@ -33,7 +34,8 @@
             "valueOffset": 25,
             "cutoff": 0.11,
             "precision": 1,
-            "aggregateTime": 200
+            "aggregateTime": 200,
+            "aggregateDelay": 100
         },
         {
             "type": "output",

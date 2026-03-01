@@ -43,6 +43,7 @@ jobs:
       - checkout
       - run:
           command: git submodule update --init --recursive
+          when: on_fail
       - robot:
           directory: test/AppDaemonIntegrationTest
 
