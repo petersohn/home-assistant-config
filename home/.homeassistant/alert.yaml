@@ -1,8 +1,7 @@
 availability:
   name: Availability Noncritical
+  title: Néhány nem kritikus ESP nem működik.
   message: |
-    Néhány nem kritikus ESP nem működik.
-
     ```
     {{state_attr('binary_sensor.availability_alert', 'text')}}
     ```
@@ -17,9 +16,8 @@ availability:
 
 availability_critical:
   name: Availability Critical
+  title: Néhány kritikus ESP nem működik.
   message: |
-    Néhány kritikus ESP nem működik.
-
     ```
     {{state_attr('binary_sensor.availability_alert_critical', 'text')}}
     ```
@@ -34,9 +32,8 @@ availability_critical:
 
 window_open:
   name: Ablak nyitva
+  title: Valami nyitva maradt.
   message: |
-    Valami nyitva maradt.
-
     ```
     {{state_attr('binary_sensor.window_alert', 'text')}}
     ```
@@ -53,9 +50,8 @@ window_open:
 
 freeze:
   name: Fagyás
+  title: Fagyás
   message: |
-    Fagyás.
-
     ```
     {{state_attr('binary_sensor.freeze_alert', 'text')}}
     ```
@@ -70,9 +66,8 @@ freeze:
 
 window_open_sleep:
   name: Ablak nyitva
+  title: Valami nyitva maradt.
   message: |
-    Valami nyitva maradt.
-
     ```
     {{state_attr('binary_sensor.window_alert', 'text')}}
     ```
@@ -101,6 +96,7 @@ window_open_sleep:
 
 furnace_overheat:
   name: Kazán túlmelegedés
+  title: Kazán túlmelegedés
   message: >
     Kazán túlmelegedés: {{states('sensor.temperature_furnace_wood')}} °C
   entity_id: binary_sensor.furnace_overheat
@@ -115,6 +111,7 @@ furnace_overheat:
 
 no_hot_water:
   name: Nincs melegvíz
+  title: Nincs melegvíz
   message: Nincs melegvíz
   entity_id: binary_sensor.no_hot_water
   state: 'on'
@@ -131,6 +128,7 @@ test:
   name: Teszt riasztás
   message: >
     Teszt riaszás
+  title: Alert
   entity_id: input_boolean.test_alert
   state: 'on'
   repeat:
@@ -141,9 +139,8 @@ test:
 
 air_quality:
   name: Levegő minőség
+  title: Rossz a levegő, csukd be az ablakot.
   message: |
-    Rossz a levegő, csukd be az ablakot.
-
     ```
     {{state_attr('binary_sensor.air_quality_alert', 'text')}}
     ```
@@ -158,6 +155,7 @@ air_quality:
 
 low_space:
   name: Kevés a szabad hely a root meghajtóban
+  title: Kevés a szabad hely a root meghajtóban
   message: >
     {% set value = (states('sensor.free_space') | float) / 1024 / 1024 / 1024 %}
     Kevés a szabad hely: {{ "%.3f" | format(value) }} GB
@@ -172,6 +170,7 @@ low_space:
 
 low_space_data:
   name: Kevés a szabad hely a data meghajtóban
+  title: Kevés a szabad hely a data meghajtóban
   message: >
     {% set value = (states('sensor.free_space_data') | float) / 1024 / 1024 / 1024 %}
     Kevés a szabad hely: {{ "%.3f" | format(value) }} GB

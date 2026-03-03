@@ -229,8 +229,8 @@ influxdb:
 
 notify:
   - name: telegram_alert
-    platform: telegram
-    chat_id: !secret telegram_chat_id
+    platform: apprise
+    url: !secret telegram_url
 
 stream:
   ll_hls: true
