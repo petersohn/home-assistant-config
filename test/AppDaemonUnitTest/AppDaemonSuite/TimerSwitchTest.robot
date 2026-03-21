@@ -282,7 +282,7 @@ Timer Sequence Restart
     @{targets2} =  Create List  auto_switch2
     &{item2} =  Create Dictionary  targets=${targets2}  time=2
     @{sequence} =  Create List  ${item1}  ${item2}
-    ${enabler} =  Create Timer Sequence
+    Create Timer Sequence
     ...    sensor=${motion_detector}
     ...    sequence=${sequence}
     ...    restart_on_trigger=${True}
@@ -314,6 +314,78 @@ Timer Sequence Restart
     ...    2018-01-01 00:03:30  ${0}
     ...    2018-01-01 00:04:30  ${1}
     ...    2018-01-01 00:06:30  ${0}
+
+Timer Sequence Rising Edge
+    Create Auto Switch  auto_switch1  ${switch}
+    @{targets} =  Create List  auto_switch1
+    &{item} =  Create Dictionary  targets=${targets}  time=1
+    @{sequence} =  Create List  ${item}
+    Create Timer Sequence
+    ...    sensor=${motion_detector}
+    ...    sequence=${sequence}
+    ...    rising_edge=${True}
+    ...    falling_edge=${False}
+
+    ${history} =  Create History Manager  history  ${switch}
+
+    Schedule Call At  1 min
+    ...    set_state  ${motion_detector}  on
+    Schedule Call At  3 min
+    ...    set_state  ${motion_detector}  off
+
+    Advance Time To  5 min
+    History Should Be  ${history}
+    ...    2018-01-01 00:01:00  ${1}
+    ...    2018-01-01 00:02:00  ${0}
+
+Timer Sequence Falling Edge
+    Create Auto Switch  auto_switch1  ${switch}
+    @{targets} =  Create List  auto_switch1
+    &{item} =  Create Dictionary  targets=${targets}  time=1
+    @{sequence} =  Create List  ${item}
+    Create Timer Sequence
+    ...    sensor=${motion_detector}
+    ...    sequence=${sequence}
+    ...    rising_edge=${False}
+    ...    falling_edge=${True}
+
+    ${history} =  Create History Manager  history  ${switch}
+
+    Schedule Call At  1 min
+    ...    set_state  ${motion_detector}  on
+    Schedule Call At  3 min
+    ...    set_state  ${motion_detector}  off
+
+    Advance Time To  5 min
+    History Should Be  ${history}
+    ...    2018-01-01 00:03:00  ${1}
+    ...    2018-01-01 00:04:00  ${0}
+
+Timer Sequence Both Edges
+    Create Auto Switch  auto_switch1  ${switch}
+    @{targets} =  Create List  auto_switch1
+    &{item} =  Create Dictionary  targets=${targets}  time=1
+    @{sequence} =  Create List  ${item}
+    Create Timer Sequence
+    ...    sensor=${motion_detector}
+    ...    sequence=${sequence}
+    ...    rising_edge=${True}
+    ...    falling_edge=${True}
+
+    ${history} =  Create History Manager  history  ${switch}
+
+    Schedule Call At  1 min
+    ...    set_state  ${motion_detector}  on
+    Schedule Call At  3 min
+    ...    set_state  ${motion_detector}  off
+
+    Advance Time To  5 min
+    History Should Be  ${history}
+    ...    2018-01-01 00:01:00  ${1}
+    ...    2018-01-01 00:02:00  ${0}
+    ...    2018-01-01 00:03:00  ${1}
+    ...    2018-01-01 00:04:00  ${0}
+
 
 *** Keywords ***
 

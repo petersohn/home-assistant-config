@@ -249,6 +249,8 @@ class TimerSequence(hass.Hass):
             self.enabler_id = None
 
         self.restart_on_trigger = self.args.get("restart_on_trigger", False)
+        self.rising_edge = self.args.get("rising_edge", True)
+        self.falling_edge = self.args.get("falling_edge", False)
 
         self.current_index = None
         self.mutex = self.get_app("locker").get_mutex("TimerSwitch")
@@ -267,7 +269,7 @@ class TimerSequence(hass.Hass):
                 self.__stop()
 
     def on_change(self, value):
-        if not value:
+        if not ((self.rising_edge and value) or (self.falling_edge and not value)):
             return
 
         with self.mutex.lock("on_change"):
