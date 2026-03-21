@@ -809,27 +809,11 @@ views:
         - type: horizontal-stack
           cards:
             - type: button
-              entity: binary_sensor.motion_sensor_driveway_uppest
-            - type: gauge
-              entity: sensor.motion_sensor_driveway_uppest_average
-              min: 0.0
-              max: 1.0
-        - type: horizontal-stack
-          cards:
-            - type: button
               entity: binary_sensor.motion_sensor_driveway_upper
-            - type: gauge
-              entity: sensor.motion_sensor_driveway_upper_average
-              min: 0.0
-              max: 1.0
         - type: horizontal-stack
           cards:
             - type: button
               entity: binary_sensor.motion_sensor_driveway_lower
-            - type: gauge
-              entity: sensor.motion_sensor_driveway_lower_average
-              min: 0.0
-              max: 1.0
         - type: horizontal-stack
           cards:
             - type: button
