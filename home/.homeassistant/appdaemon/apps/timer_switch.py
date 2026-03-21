@@ -248,6 +248,8 @@ class TimerSequence(hass.Hass):
             self.enabler = None
             self.enabler_id = None
 
+        self.restart_on_trigger = self.args.get("restart_on_trigger", False)
+
         self.current_index = None
         self.mutex = self.get_app("locker").get_mutex("TimerSwitch")
 
@@ -261,23 +263,25 @@ class TimerSequence(hass.Hass):
 
     def on_enabled_changed(self):
         with self.mutex.lock("on_enabled_changed"):
-            if not self.enabler.is_enabled() and self.current_index is not None:
-                element = self.sequence[self.current_index]
-                element.timer.stop()
-                if element.targets is not None:
-                    element.targets.turn_off()
-                self.current_index = None
+            if not self.enabler.is_enabled():
+                self.__stop()
 
     def on_change(self, value):
         if not value:
             return
 
         with self.mutex.lock("on_change"):
-            if (
-                self.enabler is None or self.enabler.is_enabled()
-            ) and self.current_index is None:
-                self.current_index = 0
-                self.__start()
+            if self.enabler is None or self.enabler.is_enabled():
+                if self.restart_on_trigger:
+                    if self.current_index == 0:
+                        element = self.sequence[0]
+                        element.timer.stop()
+                        element.timer.start()
+                    else:
+                        self.__stop()
+                if self.current_index is None:
+                    self.current_index = 0
+                    self.__start()
 
     def __start(self):
         if self.current_index == len(self.sequence):
@@ -288,6 +292,14 @@ class TimerSequence(hass.Hass):
         if element.targets is not None:
             element.targets.turn_on()
         element.timer.start()
+
+    def __stop(self):
+        if self.current_index is not None:
+            element = self.sequence[self.current_index]
+            element.timer.stop()
+            if element.targets is not None:
+                element.targets.turn_off()
+            self.current_index = None
 
     def on_timeout(self):
         with self.mutex.lock("on_timeout"):

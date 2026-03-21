@@ -274,6 +274,47 @@ Source State
     State Should Change At  ${switch}  on   17 min
     State Should Change At  ${switch}  off  18 min
 
+Timer Sequence Restart
+    Create Auto Switch  auto_switch1  ${switch}
+    Create Auto Switch  auto_switch2  ${switch2}
+    @{targets1} =  Create List  auto_switch1
+    &{item1} =  Create Dictionary  targets=${targets1}  time=1
+    @{targets2} =  Create List  auto_switch2
+    &{item2} =  Create Dictionary  targets=${targets2}  time=2
+    @{sequence} =  Create List  ${item1}  ${item2}
+    ${enabler} =  Create Timer Sequence
+    ...    sensor=${motion_detector}
+    ...    sequence=${sequence}
+    ...    restart_on_trigger=${True}
+
+    ${switch1_history} =  Create History Manager  history1  ${switch}
+    ${switch2_history} =  Create History Manager  history2  ${switch2}
+
+    Schedule Call At  1 min
+    ...    set_state  ${motion_detector}  on
+    Schedule Call At  1 min 10 sec
+    ...    set_state  ${motion_detector}  off
+    Schedule Call At  1 min 30 sec
+    ...    set_state  ${motion_detector}  on
+    Schedule Call At  1 min 40 sec
+    ...    set_state  ${motion_detector}  off
+    Schedule Call At  3 min 30 sec
+    ...    set_state  ${motion_detector}  on
+    Schedule Call At  3 min 40 sec
+    ...    set_state  ${motion_detector}  off
+
+    Advance Time To  8 min
+    History Should Be  ${switch1_history}
+    ...    2018-01-01 00:01:00  ${1}
+    ...    2018-01-01 00:02:30  ${0}
+    ...    2018-01-01 00:03:30  ${1}
+    ...    2018-01-01 00:04:30  ${0}
+    History Should Be  ${switch2_history}
+    ...    2018-01-01 00:02:30  ${1}
+    ...    2018-01-01 00:03:30  ${0}
+    ...    2018-01-01 00:04:30  ${1}
+    ...    2018-01-01 00:06:30  ${0}
+
 *** Keywords ***
 
 Create Auto Switch
