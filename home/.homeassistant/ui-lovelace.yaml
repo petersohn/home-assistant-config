@@ -935,6 +935,7 @@ views:
           - binary_sensor.gateway_available
           - binary_sensor.ssh_tunnel_available
           - binary_sensor.cups_available
+          - binary_sensor.tresorit_running
         title: Hálózat
         state_color: true
         show_header_toggle: false

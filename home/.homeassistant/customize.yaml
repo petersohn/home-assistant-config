@@ -47,6 +47,11 @@ binary_sensor.cups_available:
   icon: mdi:printer
   device_class: connectivity
 
+binary_sensor.tresorit_running:
+  friendly_name: Tresorit
+  icon: mdi:cloud-sync
+  device_class: connectivity
+
 binary_sensor.mosquitto_bridge_available:
   friendly_name: Mosquitto Bridge
   icon: mdi:bridge
