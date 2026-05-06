@@ -106,7 +106,7 @@ binary_sensor.gate_reflector_available:
   device_class: plug
 
 binary_sensor.gate_controller_available:
-  friendly_name: Gate Reflector
+  friendly_name: Gate Controller
   device_class: plug
 
 binary_sensor.attic_lower_available:
