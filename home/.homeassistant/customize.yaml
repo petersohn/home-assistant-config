@@ -105,6 +105,10 @@ binary_sensor.gate_reflector_available:
   friendly_name: Gate Reflector
   device_class: plug
 
+binary_sensor.gate_controller_available:
+  friendly_name: Gate Reflector
+  device_class: plug
+
 binary_sensor.attic_lower_available:
   friendly_name: Attic Lower
   device_class: plug
@@ -538,6 +542,9 @@ cover.storage_2:
 
 cover.living_room:
   friendly_name: Nappali
+
+cover.gate:
+  friendly_name: Kapu
 
 sensor.pm1_outside:
   friendly_name: "PM1 kint"

@@ -498,6 +498,18 @@ binary_sensor:
     name: gate_reflector_available
     payload_on: 1
     payload_off: 0
+  - state_topic: home/devices/gate_controller/available
+    json_attributes_topic: home/devices/gate_controller/status
+    json_attributes_template: >
+        {% set temp = {
+            'free_memory': value_json.freeMemory,
+            'uptime': value_json.uptime,
+            'restarted': value_json.restarted,
+        } %}
+        {{ temp | to_json }}
+    name: gate_controller_available
+    payload_on: 1
+    payload_off: 0
   - state_topic: home/devices/attic_lower/available
     json_attributes_topic: home/devices/attic_lower/status
     json_attributes_template: >
@@ -878,6 +890,21 @@ cover:
     position_open: 100
     position_closed: 0
     availability_topic: home/devices/storage_window_2/available
+    payload_available: 1
+    payload_not_available: 0
+  - command_topic: "home/gate/main/set"
+    set_position_topic: "home/gate/main/set"
+    device_class: gate
+    name: gate
+    state_topic: "home/gate/main/state"
+    state_opening: OPENING
+    state_closing: CLOSING
+    state_open: OPEN
+    state_closed: CLOSED
+    position_topic: "home/gate/main/position"
+    position_open: 100
+    position_closed: 0
+    availability_topic: home/devices/gate_controller/available
     payload_available: 1
     payload_not_available: 0
 

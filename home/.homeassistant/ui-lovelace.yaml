@@ -82,6 +82,9 @@ views:
               entity: input_boolean.laptop_player_pause
       - type: entities
         entities:
+          - cover.gate
+      - type: entities
+        entities:
           - cover.dining_room
           - input_select.dining_room_window_blind_1
           - cover.dining_room_2
@@ -956,6 +959,7 @@ views:
           - binary_sensor.driveway2_available
           - binary_sensor.furnace_temperature_available
           - binary_sensor.garage_controller_available
+          - binary_sensor.gate_controller_available
           - binary_sensor.gate_reflector_available
           - binary_sensor.living_room_temperature_available
           - binary_sensor.living_room_window_available
