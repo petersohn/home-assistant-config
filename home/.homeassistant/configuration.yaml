@@ -99,9 +99,6 @@ command_line:
       scan_interval: 60
       device_class: data_size
   - binary_sensor:
-      command: 'timeout 2 ssh homeassistant@192.168.1.35 nc localhost 6131 </dev/null && echo ON || echo OFF'
-      name: ssh_tunnel_available
-  - binary_sensor:
       command: !secret printer_command
       name: cups_available
   - binary_sensor:

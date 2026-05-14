@@ -936,7 +936,6 @@ views:
           - binary_sensor.desktop_available
           - binary_sensor.internet_available
           - binary_sensor.gateway_available
-          - binary_sensor.ssh_tunnel_available
           - binary_sensor.cups_available
           - binary_sensor.tresorit_running
         title: Hálózat
