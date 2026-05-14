@@ -104,6 +104,9 @@ command_line:
   - binary_sensor:
       command: !secret tresorit_status_command
       name: tresorit_running
+  - binary_sensor:
+      command: curl --fail https://home.kangirigungi.com >/dev/null && echo ON || echo OFF
+      name: gateway_available
   - notify:
       name: restart_cups
       command: !secret restart_cups_command
