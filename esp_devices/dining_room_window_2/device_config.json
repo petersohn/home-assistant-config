@@ -68,21 +68,21 @@
             "type": "command",
             "interface": "up_switch",
             "target": "blind",
-            "command": "OPEN",
+            "command": "'OPEN'",
             "value": "0"
         },
         {
             "type": "command",
             "interface": "down_switch",
             "target": "blind",
-            "command": "CLOSE",
+            "command": "'CLOSE'",
             "value": "0"
         },
         {
             "type": "command",
             "interface": "stop_switch",
             "target": "blind",
-            "command": "STOP",
+            "command": "'STOP'",
             "value": "1"
         },
         {

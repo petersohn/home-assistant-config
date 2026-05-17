@@ -34,55 +34,21 @@
                     "invert": true
                 }
             ]
-        },
+        }
     ],
     "actions": [
         {
             "type": "publish",
-            "interface": "light1",
-            "topic": "home/switches/lights/outside/1/state",
+            "interface": "gate",
+            "topic": "home/gate/main/position",
+            "template": "%2",
             "retain": true
         },
         {
             "type": "publish",
-            "interface": "light2",
-            "topic": "home/switches/lights/outside/2/state",
-            "retain": true
-        },
-        {
-            "type": "publish",
-            "interface": "light3",
-            "topic": "home/switches/lights/outside/3/state",
-            "retain": true
-        },
-        {
-            "type": "publish",
-            "interface": "light4",
-            "topic": "home/switches/lights/outside/4/state",
-            "retain": true
-        },
-        {
-            "type": "publish",
-            "interface": "light_sensor",
-            "topic": "home/sensors/light/sunlight",
-            "retain": true
-        },
-        {
-            "type": "publish",
-            "interface": "door",
-            "topic": "home/sensors/door/main_entrance",
-            "retain": true
-        },
-        {
-            "type": "publish",
-            "interface": "window1",
-            "topic": "home/sensors/window/entrance",
-            "retain": true
-        },
-        {
-            "type": "publish",
-            "interface": "window2",
-            "topic": "home/sensors/window/bedroom",
+            "interface": "gate",
+            "topic": "home/gate/main/state",
+            "template": "%1",
             "retain": true
         }
     ]
