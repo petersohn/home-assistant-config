@@ -27,6 +27,7 @@ http:
     use_x_forwarded_for: true
     trusted_proxies:
       - 127.0.0.1
+      - 172.30.0.0/16
       - ::1
 
 lovelace:
@@ -224,11 +225,6 @@ mqtt_statestream:
       - switch
 
 influxdb:
-  host: localhost
-  port: 8086
-  username: !secret influxdb_username
-  password: !secret influxdb_password
-  database: !secret influxdb_database
 
 notify:
   - name: telegram_alert
