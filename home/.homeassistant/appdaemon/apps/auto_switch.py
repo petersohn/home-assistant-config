@@ -1,4 +1,4 @@
-﻿import hass
+import hass
 
 
 class AutoSwitch(hass.Hass):
