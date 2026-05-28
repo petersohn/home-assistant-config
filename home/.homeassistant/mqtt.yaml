@@ -276,8 +276,8 @@ sensor:
     availability:
       topic: instar/camera1/status/connection
       value_template: '{{ value_json.val }}'
-      payload_available: 1
-      payload_not_available: 0
+      payload_available: "1"
+      payload_not_available: "0"
   - state_topic: instar/camera2/status/features/nightvision/currentbrightness
     unit_of_measurement: "%"
     name: light_camera2

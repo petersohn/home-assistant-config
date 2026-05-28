@@ -198,7 +198,6 @@ views:
         state_color: true
         entities:
           - input_number.heater_temperature_normal
-          - input_number.heater_temperature_wood_heating
           - input_boolean.wood_heating
           - climate.heater
           - input_select.climate_mode

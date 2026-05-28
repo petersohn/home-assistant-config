@@ -69,7 +69,7 @@ window_open_sleep:
   title: Valami nyitva maradt.
   message: |
     ```
-    {{state_attr('binary_sensor.window_alert', 'text')}}
+    {{state_attr('binary_sensor.window_alert_sleep', 'text')}}
     ```
   entity_id: binary_sensor.window_alert_sleep
   state: 'on'
