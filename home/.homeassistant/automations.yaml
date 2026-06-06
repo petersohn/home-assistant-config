@@ -513,3 +513,14 @@
       target:
         entity_id: button.camera2_record
       data: {}
+
+- alias: kapu zárás
+  triggers:
+    - trigger: state
+      entity_id: input_select.presence_mode
+      from: 'home'
+  actions:
+    - action: cover.close_cover
+      target:
+        entity_id: cover.gate
+      data: {}
