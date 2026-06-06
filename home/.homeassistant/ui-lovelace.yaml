@@ -385,14 +385,16 @@ views:
         title: Kapu
         show_header_toggle: false
         entities:
-          - camera.camera1
-          - sensor.light_camera1
-          - light.camera1_ir
-          - input_select.camera1_ir
-          - switch.camera1_alarm
-          - input_select.camera1_alarm
-          - binary_sensor.camera1_recording
-          - button.camera1_record
+          - camera.camera_3_high_resolution_channel
+          - select.camera_3_infrared_mode
+          - binary_sensor.camera_3_is_dark
+          - binary_sensor.camera_3_person_detected
+          - binary_sensor.camera_3_vehicle_detected
+          - binary_sensor.camera_3_animal_detected
+          - binary_sensor.camera_3_car_alarm_detected
+          - binary_sensor.camera_3_car_horn_detected
+          - binary_sensor.camera_3_glass_break_detected
+          - binary_sensor.camera_3_siren_detected
       - type: entities
         state_color: true
         title: Bejáró
@@ -979,7 +981,6 @@ views:
           - binary_sensor.balcony_controller_available
           - binary_sensor.battery_charger_available
           - binary_sensor.bedroom_temperature_available
-          - binary_sensor.camera1_available
           - binary_sensor.camera2_available
           - binary_sensor.christmas_tree_switcher_available
           - binary_sensor.dining_room_window_available
@@ -1010,7 +1011,6 @@ views:
           - input_boolean.attic_lower_maintenance
           - input_boolean.balcony_controller_maintenance
           - input_boolean.bedroom_temperature_maintenance
-          - input_boolean.camera1_maintenance
           - input_boolean.camera2_maintenance
           - input_boolean.dining_room_window_maintenance
           - input_boolean.dining_room_window_2_maintenance

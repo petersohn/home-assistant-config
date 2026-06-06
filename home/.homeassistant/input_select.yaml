@@ -165,13 +165,6 @@ christmas_tree:
         - "on"
         - "off"
     icon: mdi:pine-tree
-camera1_ir:
-    name: Kamera kapu IR LED
-    options:
-        - "auto"
-        - "on"
-        - "off"
-    icon: mdi:track-light
 camera2_ir:
     name: Kamera bejáró IR LED
     options:
@@ -179,13 +172,6 @@ camera2_ir:
         - "on"
         - "off"
     icon: mdi:track-light
-camera1_alarm:
-    name: Kamera kapu alarm
-    options:
-        - "auto"
-        - "on"
-        - "off"
-    icon: mdi:cctv
 camera2_alarm:
     name: Kamera bejáró alarm
     options:

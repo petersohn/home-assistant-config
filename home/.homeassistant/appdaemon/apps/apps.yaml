@@ -925,7 +925,6 @@ availability_alerts_critical:
         - storage_window_1
         - storage_window_2
         - gate_controller
-        - camera1
         - camera2
 
 window_alerts:
@@ -1293,7 +1292,6 @@ cctv_icon:
     off_icon: mdi:cctv-off
     on_icon: mdi:cctv
     entities:
-      - switch.camera1_alarm
       - switch.camera2_alarm
 
 track_light_icon:
@@ -1304,7 +1302,6 @@ track_light_icon:
     off_icon: mdi:track-light-off
     on_icon: mdi:track-light
     entities:
-      - light.camera1_ir
       - light.camera2_ir
 
 heater_check:
@@ -1450,33 +1447,6 @@ water_heater_switch:
     targets:
         - auto_switch_water_heater
 
-auto_switch_camera1_ir:
-    module: auto_switch
-    class: AutoSwitch
-    dependencies: locker
-    target: light.camera1_ir
-    switch: input_select.camera1_ir
-    reentrant: false
-
-camera1_ir_enabler:
-    module: enabler
-    class: ExpressionEnabler
-    dependencies:
-        - locker
-    expr: >
-        True
-
-camera1_ir_switch:
-    class: EnabledSwitch
-    module: enabled_switch
-    dependencies:
-        - auto_switch_camera1_ir
-        - camera1_ir_enabler
-        - locker
-    enabler: camera1_ir_enabler
-    targets:
-        - auto_switch_camera1_ir
-
 auto_switch_camera2_ir:
     module: auto_switch
     class: AutoSwitch
@@ -1503,33 +1473,6 @@ camera2_ir_switch:
     enabler: camera2_ir_enabler
     targets:
         - auto_switch_camera2_ir
-
-auto_switch_camera1_alarm:
-    module: auto_switch
-    class: AutoSwitch
-    dependencies: locker
-    target: switch.camera1_alarm
-    switch: input_select.camera1_alarm
-    reentrant: false
-
-camera1_alarm_enabler:
-    module: enabler
-    class: ExpressionEnabler
-    dependencies:
-        - locker
-    expr: >
-        True
-
-camera1_alarm_switch:
-    class: EnabledSwitch
-    module: enabled_switch
-    dependencies:
-        - auto_switch_camera1_alarm
-        - camera1_alarm_enabler
-        - locker
-    enabler: camera1_alarm_enabler
-    targets:
-        - auto_switch_camera1_alarm
 
 auto_switch_camera2_alarm:
     module: auto_switch

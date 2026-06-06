@@ -81,9 +81,6 @@ balcony_controller_maintenance:
 gate_controller_maintenance:
   name: Gate Controller
   icon: mdi:wrench
-camera1_maintenance:
-  name: Kamera kapu
-  icon: mdi:wrench
 camera2_maintenance:
   name: Kamera bejáró
   icon: mdi:wrench
