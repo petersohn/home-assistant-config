@@ -80,23 +80,38 @@ views:
               entity: switch.laptop_player
             - type: button
               entity: input_boolean.laptop_player_pause
-      - type: entities
-        entities:
-          - cover.gate
-      - type: entities
-        entities:
-          - cover.dining_room
-          - input_select.dining_room_window_blind_1
-          - cover.dining_room_2
-          - input_select.dining_room_window_blind_2
-          - cover.living_room
-          - input_select.living_room_window_blind
-          - cover.storage_1
-          - input_select.storage_window_blind_1
-          - cover.storage_2
-          - input_select.storage_window_blind_2
-        title: Redőny
-        state_color: true
+      - type: vertical-stack
+        cards:
+          - type: entities
+            entities:
+              - cover.gate
+          - type: horizontal-stack
+            cards:
+            - type: button
+              name: Nyitás
+              icon: mdi:gate-open
+              tap_action:
+                action: call-service
+                service: cover.open_cover
+                service_data:
+                  entity_id: cover.gate
+            - type: button
+              name: Nyitás gyalogos
+              icon: mdi:walk
+              tap_action:
+                action: call-service
+                service: cover.set_cover_position
+                service_data:
+                  entity_id: cover.gate
+                  position: 40
+            - type: button
+              name: Zárás
+              icon: mdi:gate
+              tap_action:
+                action: call-service
+                service: cover.close_cover
+                service_data:
+                  entity_id: cover.gate
       - type: vertical-stack
         cards:
           - type: horizontal-stack
@@ -170,6 +185,12 @@ views:
               - climate.daikin_bedroom
         show_header_toggle: false
         title: Fűtés
+
+    icon: 'mdi:home'
+  - path: window_door
+    title: 'Nyílászárók'
+    icon: 'mdi:window'
+    cards:
       - type: entities
         state_color: true
         entities:
@@ -188,8 +209,20 @@ views:
           - alert.window_open_sleep
         title: Ajtók
         show_header_toggle: false
-
-    icon: 'mdi:home'
+      - type: entities
+        entities:
+          - cover.dining_room
+          - input_select.dining_room_window_blind_1
+          - cover.dining_room_2
+          - input_select.dining_room_window_blind_2
+          - cover.living_room
+          - input_select.living_room_window_blind
+          - cover.storage_1
+          - input_select.storage_window_blind_1
+          - cover.storage_2
+          - input_select.storage_window_blind_2
+        title: Redőny
+        state_color: true
   - path: temperature-inside
     title: 'Benti hőmérséklet'
     icon: 'mdi:home-thermometer'
