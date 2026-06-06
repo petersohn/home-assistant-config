@@ -924,6 +924,7 @@ availability_alerts_critical:
         - balcony_controller
         - storage_window_1
         - storage_window_2
+        - gate_controller
         - camera1
         - camera2
 

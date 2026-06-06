@@ -78,6 +78,9 @@ living_room_window_maintenance:
 balcony_controller_maintenance:
   name: Balcony Controller
   icon: mdi:wrench
+gate_controller_maintenance:
+  name: Gate Controller
+  icon: mdi:wrench
 camera1_maintenance:
   name: Kamera kapu
   icon: mdi:wrench
