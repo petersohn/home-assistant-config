@@ -314,8 +314,8 @@ gate_opening:
         - auto_switch_light_driveway
         - auto_switch_light_gate_reflector
         - locker
-    sensor: binary_sensor.kapu_vehicle_detected
-    target_state: Opening
+    sensor: cover.gate
+    target_state: opening
     sequence:
         - targets:
             - auto_switch_light_driveway
@@ -325,20 +325,32 @@ gate_opening:
     restart_on_trigger: true
 
 gate_vehicle_detected:
-    class: TimerSequence
+    class: TimerSwitch
     module: timer_switch
     dependencies:
         - auto_switch_light_driveway
         - auto_switch_light_gate_reflector
+        - sun_enabler_night
         - locker
     sensor: binary_sensor.kapu_vehicle_detected
-    sequence:
-        - targets:
-            - auto_switch_light_driveway
-            - auto_switch_light_gate_reflector
-          time: 3
+    targets:
+        - auto_switch_light_driveway
+        - auto_switch_light_gate_reflector
     enabler: sun_enabler_night
-    restart_on_trigger: true
+    time: 2
+
+driveway_vehicle_detected:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_driveway
+        - sun_enabler_night
+        - locker
+    sensor: binary_sensor.bejaro_vehicle_detected
+    targets:
+        - auto_switch_light_driveway
+    enabler: sun_enabler_night
+    time: 2
 
 gate_person_detected:
     class: TimerSwitch
