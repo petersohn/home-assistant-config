@@ -754,7 +754,7 @@ sprinkler_run_time_2:
         - locker
     target: sensor.sprinkler_run_time_2
     expr: >
-        0.8 * v.sensor.maximum_temperature_last_day - 7
+        0.5 * v.sensor.maximum_temperature_last_day
     attributes:
         unit_of_measurement: min
         friendly_name: "Locsolás idő 2"
@@ -925,7 +925,6 @@ availability_alerts_critical:
         - storage_window_1
         - storage_window_2
         - gate_controller
-        - camera2
 
 window_alerts:
     module: alert
@@ -1284,26 +1283,6 @@ play_icon:
     entities:
       - switch.desktop_player
 
-cctv_icon:
-    class: CustomIcon
-    module: custom_icon
-    dependencies:
-        - locker
-    off_icon: mdi:cctv-off
-    on_icon: mdi:cctv
-    entities:
-      - switch.camera2_alarm
-
-track_light_icon:
-    class: CustomIcon
-    module: custom_icon
-    dependencies:
-        - locker
-    off_icon: mdi:track-light-off
-    on_icon: mdi:track-light
-    entities:
-      - light.camera2_ir
-
 heater_check:
     module: expression
     class: Expression
@@ -1446,60 +1425,6 @@ water_heater_switch:
     off_guard: is_water_heater_stopped
     targets:
         - auto_switch_water_heater
-
-auto_switch_camera2_ir:
-    module: auto_switch
-    class: AutoSwitch
-    dependencies: locker
-    target: light.camera2_ir
-    switch: input_select.camera2_ir
-    reentrant: false
-
-camera2_ir_enabler:
-    module: enabler
-    class: ExpressionEnabler
-    dependencies:
-        - locker
-    expr: >
-      not v.switch.light_driveway or not v.switch.light_outside_4 or not v.switch.light_outside_5
-
-camera2_ir_switch:
-    class: EnabledSwitch
-    module: enabled_switch
-    dependencies:
-        - auto_switch_camera2_ir
-        - camera2_ir_enabler
-        - locker
-    enabler: camera2_ir_enabler
-    targets:
-        - auto_switch_camera2_ir
-
-auto_switch_camera2_alarm:
-    module: auto_switch
-    class: AutoSwitch
-    dependencies: locker
-    target: switch.camera2_alarm
-    switch: input_select.camera2_alarm
-    reentrant: false
-
-camera2_alarm_enabler:
-    module: enabler
-    class: ExpressionEnabler
-    dependencies:
-        - locker
-    expr: >
-      v.input_select.presence_mode != 'home'
-
-camera2_alarm_switch:
-    class: EnabledSwitch
-    module: enabled_switch
-    dependencies:
-        - auto_switch_camera2_alarm
-        - camera2_alarm_enabler
-        - locker
-    enabler: camera2_alarm_enabler
-    targets:
-        - auto_switch_camera2_alarm
 
 #
 # target_climate_mode:

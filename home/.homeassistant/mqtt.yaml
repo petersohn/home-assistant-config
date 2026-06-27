@@ -268,16 +268,6 @@ sensor:
             'total': value_json.ENERGY.Total,
         } %}
         {{ temp | to_json }}
-  - state_topic: instar/camera2/status/features/nightvision/currentbrightness
-    unit_of_measurement: "%"
-    name: light_camera2
-    value_template: "{{ 100.0 - (value_json.val | float) / 2.55 }}"
-    expire_after: 60
-    availability:
-      topic: instar/camera2/status/connection
-      value_template: '{{ value_json.val }}'
-      payload_available: 1
-      payload_not_available: 0
   - state_topic: home/devices/driveway/temperature
     name: driveway_device_temperature
     unit_of_measurement: "°C"
@@ -649,11 +639,6 @@ binary_sensor:
     name: water_heater_available
     payload_on: 'Online'
     payload_off: 'Offline'
-  - state_topic: instar/camera2/status/connection
-    name: camera2_available
-    payload_on: 1
-    payload_off: 0
-    value_template: '{{ value_json.val }}'
 
   - state_topic: home/sensors/motion/gate_reflector
     name: motion_sensor_driveway_uppest
@@ -778,17 +763,6 @@ binary_sensor:
     name: mosquitto_bridge_available
     payload_on: 1
     payload_off: 0
-  - state_topic: instar/camera2/status/task/video/rec/status
-    name: camera2_recording
-    payload_on: 1
-    payload_off: 0
-    value_template: >
-      {% if value_json.val | int == 0 %}0{%else%}1{%endif%}
-    availability:
-      topic: instar/camera2/status/connection
-      value_template: '{{ value_json.val }}'
-      payload_available: 1
-      payload_not_available: 0
 
 cover:
   - command_topic: "home/blind/dining_room/set"
@@ -1138,18 +1112,6 @@ switch:
     availability_topic: home/devices/christmas_tree_switch/available
     payload_available: 1
     payload_not_available: 0
-  - name: camera2_alarm
-    state_topic: instar/camera2/status/alarm/actions/enable
-    value_template: '{{ value_json.val }}'
-    state_off: 0
-    state_on: 1
-    command_topic: instar/camera2/alarm/actions/enable
-    payload_off: '{"val":"0"}'
-    payload_on: '{"val":"1"}'
-    optimistic: false
-    availability:
-      topic: instar/camera2/status/connection
-      value_template: '{{ value_json.val }}'
   - state_topic: home/battery_charger/state
     command_topic: home/battery_charger/set
     name: battery_charging

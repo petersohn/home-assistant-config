@@ -385,29 +385,31 @@ views:
         title: Kapu
         show_header_toggle: false
         entities:
-          - camera.camera_3_high_resolution_channel
-          - select.camera_3_infrared_mode
-          - binary_sensor.camera_3_is_dark
-          - binary_sensor.camera_3_person_detected
-          - binary_sensor.camera_3_vehicle_detected
-          - binary_sensor.camera_3_animal_detected
-          - binary_sensor.camera_3_car_alarm_detected
-          - binary_sensor.camera_3_car_horn_detected
-          - binary_sensor.camera_3_glass_break_detected
-          - binary_sensor.camera_3_siren_detected
+          - camera.kapu_high_resolution_channel
+          - select.kapu_infrared_mode
+          - binary_sensor.kapu_is_dark
+          - binary_sensor.kapu_person_detected
+          - binary_sensor.kapu_vehicle_detected
+          - binary_sensor.kapu_animal_detected
+          - binary_sensor.kapu_car_alarm_detected
+          - binary_sensor.kapu_car_horn_detected
+          - binary_sensor.kapu_glass_break_detected
+          - binary_sensor.kapu_siren_detected
       - type: entities
         state_color: true
         title: Bejáró
         show_header_toggle: false
         entities:
-          - camera.camera2
-          - sensor.light_camera2
-          - light.camera2_ir
-          - input_select.camera2_ir
-          - switch.camera2_alarm
-          - input_select.camera2_alarm
-          - binary_sensor.camera2_recording
-          - button.camera2_record
+          - camera.bejaro_high_resolution_channel
+          - select.bejaro_infrared_mode
+          - binary_sensor.bejaro_is_dark
+          - binary_sensor.bejaro_person_detected
+          - binary_sensor.bejaro_vehicle_detected
+          - binary_sensor.bejaro_animal_detected
+          - binary_sensor.bejaro_car_alarm_detected
+          - binary_sensor.bejaro_car_horn_detected
+          - binary_sensor.bejaro_glass_break_detected
+          - binary_sensor.bejaro_siren_detected
   - path: garden
     title: 'Kert'
     icon: 'mdi:tree'
