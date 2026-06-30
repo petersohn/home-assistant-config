@@ -182,3 +182,13 @@ low_space_data:
   can_acknowledge: true
   notifiers:
     - telegram_alert
+
+camera_detection:
+  name: Kamera mászkálást észlel
+  title: Valaki mászkál a kertben
+  entity_id: binary_sensor.camera_detection_alert
+  state: 'on'
+  repeat:
+    - 5
+  notifiers:
+    - telegram_alert

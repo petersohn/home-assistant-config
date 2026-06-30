@@ -410,6 +410,13 @@ views:
           - binary_sensor.bejaro_car_horn_detected
           - binary_sensor.bejaro_glass_break_detected
           - binary_sensor.bejaro_siren_detected
+      - type: entities
+        state_color: true
+        title: Riasztás
+        show_header_toggle: false
+        entities:
+          - binary_sensor.camera_detection_alert
+          - alert.camera_detection
   - path: garden
     title: 'Kert'
     icon: 'mdi:tree'
@@ -957,6 +964,7 @@ views:
           - alert.no_hot_water
           - alert.air_quality
           - alert.low_space
+          - alert.camera_detection
         title: Riasztások
       - type: entities
         entities:

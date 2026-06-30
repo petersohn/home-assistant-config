@@ -55,7 +55,6 @@ auto_switch_light_driveway:
     dependencies: locker
     target: switch.light_driveway
     switch: input_select.light_driveway
-    enabler: is_not_sleeping
     reentrant: true
 
 auto_switch_light_well:
@@ -330,12 +329,20 @@ gate_vehicle_detected:
     dependencies:
         - auto_switch_light_driveway
         - auto_switch_light_gate_reflector
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
         - sun_enabler_night
         - locker
     sensor: binary_sensor.kapu_vehicle_detected
     targets:
         - auto_switch_light_driveway
         - auto_switch_light_gate_reflector
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
     enabler: sun_enabler_night
     time: 2
 
@@ -345,10 +352,18 @@ driveway_vehicle_detected:
     dependencies:
         - auto_switch_light_driveway
         - sun_enabler_night
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
         - locker
     sensor: binary_sensor.bejaro_vehicle_detected
     targets:
         - auto_switch_light_driveway
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
     enabler: sun_enabler_night
     time: 2
 
@@ -358,12 +373,20 @@ gate_person_detected:
     dependencies:
         - auto_switch_light_driveway
         - auto_switch_light_gate_reflector
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
         - sun_enabler_night
         - locker
     sensor: binary_sensor.kapu_person_detected
     targets:
         - auto_switch_light_driveway
         - auto_switch_light_gate_reflector
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
     enabler: sun_enabler_night
     time: 2
 
@@ -372,11 +395,19 @@ driveway_person_detected:
     module: timer_switch
     dependencies:
         - auto_switch_light_driveway
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
         - sun_enabler_night
         - locker
     sensor: binary_sensor.bejaro_person_detected
     targets:
         - auto_switch_light_driveway
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
     enabler: sun_enabler_night
     time: 2
 
@@ -719,6 +750,34 @@ no_hot_water:
         ok.sensor.temperature_hot_water and
         v.sensor.temperature_hot_water < 40
     target: binary_sensor.no_hot_water
+
+camera_detection_alert:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+        (v.input_select.presence_mode == "sleep"
+        or
+        v.input_select.presence_mode == "away"
+        and
+        (v.sensor.time >= "22:00" or v.sensor.time <= "07:00"))
+        and
+        ((ok.binary_sensor.kapu_person_detected and
+        v.binary_sensor.kapu_person_detected)
+        or
+        (ok.binary_sensor.kapu_vehicle_detected and
+        v.binary_sensor.kapu_vehicle_detected)
+        or
+        (ok.binary_sensor.bejaro_person_detected and
+        v.binary_sensor.bejaro_person_detected)
+        or
+        (ok.binary_sensor.bejaro_vehicle_detected and
+        v.binary_sensor.bejaro_vehicle_detected))
+    target: binary_sensor.camera_detection_alert
+    attributes:
+        friendly_name: "Kamera riasztás"
+        icon: mdi:alarm-bell
 
 rain_history:
     module: history
