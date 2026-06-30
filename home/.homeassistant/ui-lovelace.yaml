@@ -991,7 +991,6 @@ views:
           - binary_sensor.balcony_controller_available
           - binary_sensor.battery_charger_available
           - binary_sensor.bedroom_temperature_available
-          - binary_sensor.camera2_available
           - binary_sensor.christmas_tree_switcher_available
           - binary_sensor.dining_room_window_available
           - binary_sensor.dining_room_window_2_available
@@ -1021,7 +1020,6 @@ views:
           - input_boolean.attic_lower_maintenance
           - input_boolean.balcony_controller_maintenance
           - input_boolean.bedroom_temperature_maintenance
-          - input_boolean.camera2_maintenance
           - input_boolean.dining_room_window_maintenance
           - input_boolean.dining_room_window_2_maintenance
           - input_boolean.cellar_controller_maintenance

@@ -146,29 +146,9 @@ binary_sensor.christmas_tree_switcher_available:
   friendly_name: Christmas Tree Switch
   device_class: plug
 
-binary_sensor.camera2_available:
-  friendly_name: Kamera bejáró
-  device_class: plug
-
 binary_sensor.battery_charger_available:
   friendly_name: Battery Charger
   device_class: plug
-
-light.camera2_ir:
-  friendly_name: Kamera bejáró IR LED
-  icon: mdi:track-light
-
-switch.camera2_alarm:
-  friendly_name: Kamera bejáró alarm
-  icon: mdi:cctv
-
-binary_sensor.camera2_recording:
-  friendly_name: Kamera bejáró felvétel
-  icon: mdi:record-rec
-
-button.camera2_record:
-  friendly_name: Kamera bejáró felvétel start
-  icon: mdi:record-rec
 
 sensor.temperature_outside:
   friendly_name: "Kinti hőmérséklet"
@@ -492,10 +472,6 @@ sensor.light_shadow:
 
 sensor.light_sunlight:
   friendly_name: "Fény napfény"
-  icon: mdi:weather-sunny
-
-sensor.light_camera2:
-  friendly_name: "Fény bejáró"
   icon: mdi:weather-sunny
 
 switch.heater:

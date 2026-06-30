@@ -165,20 +165,6 @@ christmas_tree:
         - "on"
         - "off"
     icon: mdi:pine-tree
-camera2_ir:
-    name: Kamera bejáró IR LED
-    options:
-        - "auto"
-        - "on"
-        - "off"
-    icon: mdi:track-light
-camera2_alarm:
-    name: Kamera bejáró alarm
-    options:
-        - "auto"
-        - "on"
-        - "off"
-    icon: mdi:cctv
 
 living_room_window_blind:
     name: Nappali redőny mód
