@@ -82,36 +82,53 @@ views:
               entity: input_boolean.laptop_player_pause
       - type: vertical-stack
         cards:
-          - type: entities
-            entities:
-              - cover.gate
-          - type: horizontal-stack
+          - type: vertical-stack
+            title: Kapu
             cards:
-            - type: button
-              name: Nyitás
-              icon: mdi:gate-open
-              tap_action:
-                action: call-service
-                service: cover.open_cover
-                service_data:
-                  entity_id: cover.gate
-            - type: button
-              name: Nyitás gyalogos
-              icon: mdi:walk
-              tap_action:
-                action: call-service
-                service: cover.set_cover_position
-                service_data:
-                  entity_id: cover.gate
-                  position: 40
-            - type: button
-              name: Zárás
-              icon: mdi:gate
-              tap_action:
-                action: call-service
-                service: cover.close_cover
-                service_data:
-                  entity_id: cover.gate
+              - type: horizontal-stack
+                cards:
+                  - type: entity
+                    entity: cover.gate
+                  - type: entity
+                    entity: cover.gate
+                    attribute: current_position
+                    name: Pozíció
+                    icon: mdi:percent
+                  - type: button
+                    name: Stop
+                    icon: mdi:gate-alert
+                    tap_action:
+                      action: call-service
+                      service: cover.stop_cover
+                      service_data:
+                        entity_id: cover.gate
+              - type: horizontal-stack
+                cards:
+                  - type: button
+                    name: Nyitás
+                    icon: mdi:gate-open
+                    tap_action:
+                      action: call-service
+                      service: cover.open_cover
+                      service_data:
+                        entity_id: cover.gate
+                  - type: button
+                    name: Nyitás gyalogos
+                    icon: mdi:walk
+                    tap_action:
+                      action: call-service
+                      service: cover.set_cover_position
+                      service_data:
+                        entity_id: cover.gate
+                        position: 40
+                  - type: button
+                    name: Zárás
+                    icon: mdi:gate
+                    tap_action:
+                      action: call-service
+                      service: cover.close_cover
+                      service_data:
+                        entity_id: cover.gate
       - type: vertical-stack
         cards:
           - type: horizontal-stack
