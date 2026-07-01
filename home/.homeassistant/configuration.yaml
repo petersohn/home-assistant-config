@@ -193,6 +193,14 @@ template:
     - name: low_free_space_data
       state: >
         {{ (states('sensor.free_space_data') | float) < 10 * 1024 * 1024 * 1024 }}
+  - binary_sensor:
+    - name: gate_opening
+      state: >
+        {{ is_state('cover.gate', 'opening') }}
+  - binary_sensor:
+    - name: gate_closing
+      state: >
+        {{ is_state('cover.gate', 'closing') }}
 
 
 input_number:

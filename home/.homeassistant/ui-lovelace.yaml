@@ -107,6 +107,7 @@ views:
                   - type: button
                     name: Nyitás
                     icon: mdi:gate-open
+                    entity: binary_sensor.gate_opening
                     tap_action:
                       action: call-service
                       service: cover.open_cover
@@ -124,6 +125,7 @@ views:
                   - type: button
                     name: Zárás
                     icon: mdi:gate
+                    entity: binary_sensor.gate_closing
                     tap_action:
                       action: call-service
                       service: cover.close_cover
