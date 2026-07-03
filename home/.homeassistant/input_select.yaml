@@ -4,7 +4,7 @@ light_driveway:
         - "auto"
         - "on"
         - "off"
-    icon: mdi:outdoor-lamp
+    icon: mdi:post-lamp
 light_well:
     name: Kút világítás
     options:

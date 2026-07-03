@@ -326,7 +326,7 @@ switch.balcony_sprinkler:
 
 switch.light_driveway:
   friendly_name: "Bejáró"
-  icon: mdi:outdoor-lamp
+  icon: mdi:post-lamp
 
 switch.light_well:
   friendly_name: "Kút"
