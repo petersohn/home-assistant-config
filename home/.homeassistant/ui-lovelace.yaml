@@ -999,7 +999,7 @@ views:
           - alert.availability
           - alert.availability_critical
           - alert.freeze
-          - alert.tracker_update
+          #- alert.tracker_update
           - alert.furnace_overheat
           - alert.window_open
           - alert.window_open_sleep
@@ -1119,7 +1119,7 @@ views:
           - sensor.tracker_last_updated
           - person.peti
           - sensor.pixel_10_pro_battery_level
-          - sensor.pixel_10_pro_wifi_connection
+          - sensor.pixel_10_pro_wi_fi_connection
       - type: entities
         entities:
           - sensor.date
