@@ -146,15 +146,37 @@ views:
                     entity_id: input_select.climate_mode
                     option: 'off'
               - type: button
-                entity: binary_sensor.climate_auto
-                name: Auto
-                icon: mdi:thermometer-auto
+                entity: binary_sensor.climate_cool
+                name: Hűtés
+                icon: mdi:snowflake-thermometer
                 tap_action:
                   action: call-service
                   service: input_select.select_option
                   service_data:
                     entity_id: input_select.climate_mode
-                    option: 'auto'
+                    option: 'cool'
+              - type: button
+                entity: binary_sensor.climate_dry
+                name: Párátlanítás
+                icon: mdi:water-percent
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'dry'
+          - type: horizontal-stack
+            cards:
+              - type: button
+                entity: binary_sensor.climate_heat
+                name: Fűtés
+                icon: mdi:sun-thermometer-outline
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'heat'
               - type: button
                 entity: binary_sensor.climate_heat_up
                 name: Felfűtés
@@ -249,7 +271,8 @@ views:
         state_color: true
         entities:
           - input_select.season_mode
-          - input_number.heater_temperature_normal
+          - input_number.heater_temperature
+          - input_number.cooler_temperature
           - input_boolean.wood_heating
           - climate.heater
           - input_select.climate_mode

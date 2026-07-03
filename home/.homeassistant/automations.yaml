@@ -282,14 +282,15 @@
       data:
         hvac_mode: "off"
 
-- alias: klíma auto
+- alias: klíma
   trigger:
     platform: state
     entity_id: input_select.climate_mode
     to:
-      - 'auto'
-      - 'heat_up'
-      - 'keep_warm'
+      - heat
+      - heat_up
+      - keep_warm
+      - cool
   action:
     - service: climate.set_temperature
       target:
@@ -297,14 +298,21 @@
           - climate.daikin_living_room
           - climate.daikin_bedroom
       data:
-        hvac_mode: heat
+        hvac_mode: >
+          {% if is_state('input_select.climate_mode', 'cool') %}
+          cool
+          {% else %}
+          heat
+          {% endif %}
         temperature: >
           {% if is_state('input_select.climate_mode', 'heat_up') %}
-          {{ (states('input_number.heater_temperature_normal') | float(20)) + 1 }}
+          {{ (states('input_number.heater_temperature') | float(20)) + 1 }}
           {% elif is_state('input_select.climate_mode', 'keep_warm') %}
           {{ 15 }}
+          {% elif is_state('input_select.climate_mode', 'cool') %}
+          {{ states('input_number.cooler_temperature') | float(25) }}
           {% else %}
-          {{ states('input_number.heater_temperature_normal') | float(20) }}
+          {{ states('input_number.heater_temperature') | float(20) }}
           {% endif %}
     - service: climate.set_fan_mode
       target:
@@ -320,6 +328,28 @@
           - climate.daikin_bedroom
       data:
         swing_mode: Vertical
+
+- alias: klíma párátlanítás
+  trigger:
+    platform: state
+    entity_id: input_select.climate_mode
+    to:
+      - dry
+  action:
+    - service: climate.set_hvac_mode
+      target:
+        entity_id:
+          - climate.daikin_bedroom
+          - climate.daikin_living_room
+      data:
+        hvac_mode: dry
+    - service: climate.set_swing_mode
+      target:
+        entity_id:
+          - climate.daikin_living_room
+          - climate.daikin_bedroom
+      data:
+        swing_mode: "Off"
 
 - alias: klíma melegen tartás be
   trigger:
@@ -375,7 +405,7 @@
       data:
         option: 'off'
 
-- alias: hazajövés klíma auto
+- alias: hazajövés klíma fűtés
   trigger:
     platform: state
     entity_id: input_select.presence_mode
@@ -394,7 +424,7 @@
       target:
         entity_id: input_select.climate_mode
       data:
-        option: 'auto'
+        option: heat
 
 - alias: szünet be
   trigger:

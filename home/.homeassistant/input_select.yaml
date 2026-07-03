@@ -213,7 +213,9 @@ climate_mode:
     name: Klíma mód
     options:
         - "off"
-        - "auto"
+        - "heat"
+        - "cool"
+        - "dry"
         - "heat_up"
         - "keep_warm"
     icon: mdi:thermostat-auto

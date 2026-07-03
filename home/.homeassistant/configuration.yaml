@@ -166,9 +166,9 @@ template:
       state: >
         {{ is_state('input_select.climate_mode', 'off') }}
   - binary_sensor:
-    - name: climate_auto
+    - name: climate_heat
       state: >
-        {{ is_state('input_select.climate_mode', 'auto') }}
+        {{ is_state('input_select.climate_mode', 'heat') }}
   - binary_sensor:
     - name: climate_heat_up
       state: >
@@ -177,6 +177,14 @@ template:
     - name: climate_keep_warm
       state: >
         {{ is_state('input_select.climate_mode', 'keep_warm') }}
+  - binary_sensor:
+    - name: climate_cool
+      state: >
+        {{ is_state('input_select.climate_mode', 'cool') }}
+  - binary_sensor:
+    - name: climate_dry
+      state: >
+        {{ is_state('input_select.climate_mode', 'dry') }}
   - binary_sensor:
     - name: living_room_climate_silence
       state: >
@@ -209,10 +217,15 @@ input_number:
     min: 0
     max: 28
     icon: mdi:calendar
-  heater_temperature_normal:
+  heater_temperature:
     name: "Fűtés hőmérséklet"
     min: 10
     max: 25
+    icon: mdi:thermostat
+  cooler_temperature:
+    name: "Hűtés hőmérséklet"
+    min: 15
+    max: 30
     icon: mdi:thermostat
 
 mqtt_statestream:
