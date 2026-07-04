@@ -42,7 +42,10 @@ if [[ -n "$robot" ]]; then
 fi
 
 if [[ -n "$hass" ]]; then
-    setup python3.11 AppDaemonIntegrationTest/.hass homeassistant.txt
+    venv_path=AppDaemonIntegrationTest/.hass
+    rm -rf "$venv_path"
+    python3.11 -m virtualenv "$venv_path"
+    "${venv_path}/bin/pip" install --no-deps -r "docker/python_requirements/homeassistant.txt"
 fi
 
 if [[ -n "$appdaemon" ]]; then
