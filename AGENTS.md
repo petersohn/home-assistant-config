@@ -89,6 +89,18 @@ uv lock --upgrade-package <name>
 
 To add or remove a dependency, edit `dependencies` in `pyproject.toml` and run `uv lock`. Then commit the updated `uv.lock` (and `pyproject.toml` if it changed). For `homeassistant`, edit `test/dependencies/homeassistant/requirements.txt` directly (since HASS uses `--no-deps`, there's no resolver to update).
 
+#### Building the CI Docker image
+
+The Dockerfile at `test/docker/Dockerfile` produces the image used by the integration test job in CI (referenced from `.circleci/config.yml`). The deps under `test/dependencies/` live outside the Dockerfile's build context, so the repo root is supplied as a named BuildKit context.
+
+Build it from the repo root with:
+
+```sh
+docker build --build-context deps=. -f test/docker/Dockerfile test/docker/
+```
+
+Tag and push the result to update the image consumed by CircleCI.
+
 #### Running the tests
 
 To run the unit tests, first make sure that the `robot` virtualenv is installed. Then run:
