@@ -101,11 +101,10 @@ Do Clean States
 
 Do Initialize State
     [Arguments]  ${entity}  ${state}
-    ${service}  ${data} =  Create Service Data  ${entity}  ${state}
-    Set Request Body  ${data}
-    Ask For Connection Keepalive
-    Authenticate
-    POST  /api/${service}
+    ${attrs} =  Create Dictionary
+    ${result} =  Call Function  set_state  ${entity}
+    ...    state=${state}
+    ...    attributes=${attrs}
 
 Do Initialize States
     [Arguments]  &{states}
@@ -152,5 +151,5 @@ Clean States And History
 
 Initialize States
     [Arguments]  &{states}
-    Run In Http Context  ${home_assistant_host}
+    Run In Http Context  ${app_daemon_host}
     ...    Do Initialize States  &{states}

@@ -46,5 +46,5 @@ if [[ -n "$hass" ]]; then
 fi
 
 if [[ -n "$appdaemon" ]]; then
-    setup python3.8 AppDaemonIntegrationTest/.appdaemon appdaemon.txt
+    setup python3.12 AppDaemonIntegrationTest/.appdaemon appdaemon.txt
 fi

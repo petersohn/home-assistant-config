@@ -1,6 +1,8 @@
 history_watcher:
   module: history_watcher
   class: HistoryWatcher
+  dependencies:
+    - locker
   entities:
     - input_boolean.control_switch
     - input_boolean.test_switch1

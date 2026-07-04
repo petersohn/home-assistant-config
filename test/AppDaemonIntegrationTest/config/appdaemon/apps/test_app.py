@@ -93,7 +93,7 @@ class TestApp(hass.Hass):
     def __to_datestr(self, value):
         return DateTime.convert_date(date, result_format="timestamp")
 
-    def api_callback(self, data):
+    def api_callback(self, data, **kwargs):
         try:
             result = self.__call(data)
             return result, 200
@@ -108,8 +108,14 @@ class TestApp(hass.Hass):
     def call_on_app(self, app, function, *args, **kwargs):
         return getattr(self.get_app(app), function)(*args, **kwargs)
 
+    def _app_running(self, app):
+        try:
+            return self.AD.app_management.objects.get(app) is not None and self.AD.app_management.objects[app].running
+        except Exception:
+            return False
+
     def is_all_apps_loaded(self, apps):
-        return all(self.get_app(app) is not None for app in apps)
+        return all(self._app_running(app) for app in apps)
 
     def is_all_apps_unloaded(self, apps):
-        return all(self.get_app(app) is None for app in apps)
+        return all(not self._app_running(app) for app in apps)

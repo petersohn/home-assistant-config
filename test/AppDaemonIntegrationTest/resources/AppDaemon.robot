@@ -21,7 +21,6 @@ Start AppDaemon
     ...    children=True
     ${app_daemon_process} =  Start Process   ./appdaemon
     ...    --config      ${appdaemon_directory}
-    ...    --tick        1
 #     ...    --debug       DEBUG
     ...    stdout=${appdaemon_directory}/appdaemon.stdout
     ...    stderr=${appdaemon_directory}/appdaemon.stderr
