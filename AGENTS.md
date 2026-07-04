@@ -53,19 +53,41 @@ There are two levels of testing:
 
 #### Setting up virtual environment
 
-To set up virtual environment to run the tests, use this command:
+To set up virtual environments to run the tests, use this command:
 
 ```sh
 ./test/setup_virtualenv.sh robot|hass|appdaemon|all
 ```
 
-This command removes the virtualenv if it exists, then reinstalls it.
+This command removes each virtualenv if it exists, then reinstalls it using `uv`.
 
-* `robot`: installs Robot Framework and other dependencies needed to run the tests in `./test/.venv`. Tests need to be invoked from this virtualenv.
-* `hass`: installs a Home Assistant into `./test/AppDaemonIntegrationTest/.hass`. It's needed to run Integration tests.
-* `appdaemon`: installs a AppDaemon into `./test/AppDaemonIntegrationTest/.appdaemon`. It's needed to run Integration tests.
+* `robot`: installs Robot Framework and other dependencies for the test runner into `./test/.venv` (Python 3.12). Tests need to be invoked from this virtualenv.
+* `hass`: installs a Home Assistant into `./test/AppDaemonIntegrationTest/.hass` (Python 3.11, `--no-deps`). It's needed to run Integration tests.
+* `appdaemon`: installs an AppDaemon into `./test/AppDaemonIntegrationTest/.appdaemon` (Python 3.12). It's needed to run Integration tests.
 
 Call this script if any of the virtual environments are missing. DO NOT call it if the virtualenv exists unless explicitly asked for.
+
+Requires `uv` to be installed: <https://docs.astral.sh/uv/getting-started/installation/>.
+
+#### Upgrading dependencies
+
+Each test environment is a uv project under `test/dependencies/<env>/` (robot, appdaemon) with a `pyproject.toml` (direct dependencies) and a `uv.lock` (pinned transitives). The `homeassistant` env uses a flat `requirements.txt` (effectively its own lockfile) because HASS is installed with `--no-deps` and its pinned versions are mutually inconsistent with what uv's resolver would produce.
+
+To upgrade all dependencies for one environment to their latest compatible versions:
+
+```sh
+cd test/dependencies/<env>
+uv lock --upgrade
+```
+
+To upgrade a single package:
+
+```sh
+cd test/dependencies/<env>
+uv lock --upgrade-package <name>
+```
+
+To add or remove a dependency, edit `dependencies` in `pyproject.toml` and run `uv lock`. Then commit the updated `uv.lock` (and `pyproject.toml` if it changed). For `homeassistant`, edit `test/dependencies/homeassistant/requirements.txt` directly (since HASS uses `--no-deps`, there's no resolver to update).
 
 #### Running the tests
 
