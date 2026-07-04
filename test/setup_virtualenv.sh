@@ -17,7 +17,7 @@ function setup_sync() {
     uv venv --python "$python" "$venv_path"
     (
         cd "$deps_dir"
-        VIRTUAL_ENV="$script_dir/$venv_path" uv sync --no-install-project
+        VIRTUAL_ENV="$script_dir/$venv_path" uv sync --no-install-project --active
     )
 }
 
