@@ -268,7 +268,8 @@ motion_sensor_well_enabler:
         - locker
     expr: >
         e.sun_enabler_night and
-        v.sensor.motion_sensor_well_average <= 0.2
+        v.sensor.motion_sensor_well_average <= 0.2 and
+        v.input_select.presence_mode != 'sleep'
 
 #driveway_upper_motion_sensor:
 #    class: TimerSequence
