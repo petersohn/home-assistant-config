@@ -63,7 +63,9 @@ This command removes the virtualenv if it exists, then reinstalls it.
 
 * `robot`: installs Robot Framework and other dependencies needed to run the tests in `./test/.venv`. Tests need to be invoked from this virtualenv.
 * `hass`: installs a Home Assistant into `./test/AppDaemonIntegrationTest/.hass`. It's needed to run Integration tests.
-* `appdaemon`: installs a AppDaemon into `./test/AppDaemonIntegrationTest/appdaemon`. It's needed to run Integration tests.
+* `appdaemon`: installs a AppDaemon into `./test/AppDaemonIntegrationTest/.appdaemon`. It's needed to run Integration tests.
+
+Call this script if any of the virtual environments are missing. DO NOT call it if the virtualenv exists unless explicitly asked for.
 
 #### Running the tests
 
