@@ -468,7 +468,7 @@ class Hass:
     def listen_state(
         self,
         callback: StateCallback,
-        entity: str,
+        entity_id: str,
         attribute: str | None = None,
         old: str | None = None,
         new: str | None = None,
@@ -478,7 +478,7 @@ class Hass:
             StateCallbackRecord(
                 app=self.__name,
                 callback=callback,
-                entity=entity,
+                entity=entity_id,
                 attribute=attribute,
                 old=old,
                 new=new,

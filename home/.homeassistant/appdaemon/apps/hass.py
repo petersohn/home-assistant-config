@@ -12,11 +12,14 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
             for config in self.config["plugins"].values()
             if config["type"] == "hass"
         ][0]
+        token = hass_config["token"]
+        if hasattr(token, "get_secret_value"):
+            token = token.get_secret_value()
         url = "{}/api/{}".format(hass_config["ha_url"], path)
         self.log("Calling API: " + url)
         with request.urlopen(
             request.Request(
-                url, headers={"Authorization": "Bearer " + hass_config["token"]}
+                url, headers={"Authorization": "Bearer " + token}
             )
         ) as result:
             if result.status >= 300:

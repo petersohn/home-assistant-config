@@ -96,7 +96,7 @@ class ScriptEnabler(Enabler):
 class EntityEnabler(Enabler):
     def initialize(self):
         self._entity = self.args['entity']
-        self.listen_state(self._on_change, entity=self._entity)
+        self.listen_state(self._on_change, entity_id=self._entity)
         self.mutex = self.get_app('locker').get_mutex('EntityEnabler')
         self._init_enabler(self._get())
 

@@ -112,7 +112,7 @@ class HistoryManager(HistoryManagerBase):
         self.log("Total loaded history size: {}".format(len(self.history)))
         self.__filter()
         self.log("Filtered history size: {}".format(len(self.history)))
-        self.listen_state(self.on_changed, entity=self.entity_id)
+        self.listen_state(self.on_changed, entity_id=self.entity_id)
         self.log("History loaded.")
 
     def on_changed(self, entity, attribute, old, new, kwargs):
@@ -136,7 +136,7 @@ class ChangeTracker(HistoryManagerBase):
         result = self.load_states(self.entity_id)
         self.changed_time = get_date(result["last_changed"])
         self.updated_time = get_date(result["last_updated"])
-        self.listen_state(self.on_changed, entity=self.entity_id, attribute="all")
+        self.listen_state(self.on_changed, entity_id=self.entity_id, attribute="all")
         self.log("Last change loaded.")
 
     def last_changed(self):

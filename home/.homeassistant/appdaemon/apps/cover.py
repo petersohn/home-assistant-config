@@ -31,11 +31,11 @@ class CoverController(hass.Hass):
 
             state = self.get_state(self.target)
             self.is_available = state is not None and state != "unavailable"
-            self.listen_state(self.on_state_change, entity=self.target, attribute="all")
+            self.listen_state(self.on_state_change, entity_id=self.target, attribute="all")
             self._reset_target()
 
             if self.mode_switch is not None:
-                self.listen_state(self.on_mode_change, entity=self.mode_switch)
+                self.listen_state(self.on_mode_change, entity_id=self.mode_switch)
                 mode = self.get_state(self.mode_switch)
                 if mode == "stable":
                     self._set_mode(self.Mode.AUTO)

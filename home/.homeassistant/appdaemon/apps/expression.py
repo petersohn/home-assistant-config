@@ -77,7 +77,7 @@ class ExpressionEvaluator:
         key = (entity, attribute)
         if self.callback is not None and key not in self.attributes:
             self.app.listen_state(
-                self._on_entity_change, entity=entity, attribute=attribute
+                self._on_entity_change, entity_id=entity, attribute=attribute
             )
             self.attributes.add(key)
 
@@ -94,7 +94,7 @@ class ExpressionEvaluator:
             return Evaluator(self._get_value, entity + ".")
 
         if self.callback is not None and entity not in self.entities:
-            self.app.listen_state(self._on_entity_change, entity=entity)
+            self.app.listen_state(self._on_entity_change, entity_id=entity)
             self.entities.add(entity)
         value = self.app.get_state(entity)
         if value is None or value == "unknown" or value == "unavailable":
@@ -113,7 +113,7 @@ class ExpressionEvaluator:
             return Evaluator(self._get_ok, entity + ".")
 
         if self.callback is not None and entity not in self.entities:
-            self.app.listen_state(self._on_entity_change, entity=entity)
+            self.app.listen_state(self._on_entity_change, entity_id=entity)
             self.entities.add(entity)
         value = self.app.get_state(entity)
         return (

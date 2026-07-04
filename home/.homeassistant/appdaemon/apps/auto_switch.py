@@ -12,10 +12,10 @@ class AutoSwitch(hass.Hass):
         self.mutex = self.get_app("locker").get_mutex("AutoSwitch")
 
         with self.mutex.lock("initialize"):
-            self.listen_state(self.on_target_change, entity=self.target)
+            self.listen_state(self.on_target_change, entity_id=self.target)
             if self.switch:
                 self.run_in(self.initialize_state, 0)
-                self.listen_state(self.on_switch_change, entity=self.switch)
+                self.listen_state(self.on_switch_change, entity_id=self.switch)
             self.state = None
             self.run_in(lambda _: self.init(), 1 if self.switch else 0)
 

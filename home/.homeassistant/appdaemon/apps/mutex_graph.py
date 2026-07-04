@@ -17,6 +17,10 @@ def edge_name(edge):
 class DFS:
     def __init__(self, graph):
         self.graph = graph
+        self.enter = {}
+        self.exit = {}
+        self.enter_index = 0
+        self.exit_index = 0
 
     def _search(self, vertex):
         self.enter_index += 1
@@ -29,10 +33,6 @@ class DFS:
         self.exit[vertex] = self.exit_index
 
     def search(self, starting_vertex):
-        self.enter = {}
-        self.exit = {}
-        self.enter_index = 0
-        self.exit_index = 0
         self._search(starting_vertex)
 
 
@@ -41,7 +41,9 @@ base_vertex = ""
 
 def find_cycle(graph):
     search = DFS(graph)
-    search.search(base_vertex)
+    for vertex in graph:
+        if vertex not in search.enter:
+            search.search(vertex)
     for vertex, edges in graph.items():
         for edge in edges:
             target = edge_target(edge)

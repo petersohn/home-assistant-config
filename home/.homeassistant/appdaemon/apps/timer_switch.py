@@ -28,7 +28,7 @@ class Trigger:
                 self.source_state is None
                 and self.app.get_state(self.sensor) == self.target_state
             )
-            self.app.listen_state(self.on_state_change, entity=self.sensor)
+            self.app.listen_state(self.on_state_change, entity_id=self.sensor)
 
     def cleanup(self):
         if self.expression is not None:
