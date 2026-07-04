@@ -4,13 +4,29 @@ set -e
 script_dir=$(readlink -e "$(dirname "$0")")
 cd "$script_dir"
 
-function setup() {
-    python="$1"
-    venv_path="$2"
-    requirements_path="$3"
+if ! command -v uv >/dev/null 2>&1; then
+    echo "uv is not installed. Install from https://docs.astral.sh/uv/getting-started/installation/" >&2
+    exit 1
+fi
+
+function setup_sync() {
+    local python="$1"
+    local venv_path="$2"
+    local deps_dir="$3"
     rm -rf "$venv_path"
-    "$python" -m virtualenv "$venv_path"
-    "${venv_path}/bin/pip" install -r "docker/python_requirements/${requirements_path}"
+    uv venv --python "$python" "$venv_path"
+    (
+        cd "$deps_dir"
+        VIRTUAL_ENV="$script_dir/$venv_path" uv sync --no-install-project
+    )
+}
+
+function setup_hass() {
+    local venv_path="AppDaemonIntegrationTest/.hass"
+    rm -rf "$venv_path"
+    uv venv --python python3.11 "$venv_path"
+    VIRTUAL_ENV="$script_dir/$venv_path" \
+        uv pip install --no-deps -r "$script_dir/dependencies/homeassistant/requirements.txt"
 }
 
 robot=
@@ -38,16 +54,13 @@ else
 fi
 
 if [[ -n "$robot" ]]; then
-    setup python .venv robot.txt
+    setup_sync python3.12 .venv dependencies/robot
 fi
 
 if [[ -n "$hass" ]]; then
-    venv_path=AppDaemonIntegrationTest/.hass
-    rm -rf "$venv_path"
-    python3.11 -m virtualenv "$venv_path"
-    "${venv_path}/bin/pip" install --no-deps -r "docker/python_requirements/homeassistant.txt"
+    setup_hass
 fi
 
 if [[ -n "$appdaemon" ]]; then
-    setup python3.12 AppDaemonIntegrationTest/.appdaemon appdaemon.txt
+    setup_sync python3.12 AppDaemonIntegrationTest/.appdaemon dependencies/appdaemon
 fi
