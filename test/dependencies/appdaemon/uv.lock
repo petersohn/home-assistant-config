@@ -158,7 +158,7 @@ dependencies = [
 requires-dist = [
     { name = "aiohttp", specifier = "==3.11.18" },
     { name = "aiohttp-jinja2", specifier = "==1.6" },
-    { name = "appdaemon", specifier = "==4.5.13" },
+    { name = "appdaemon" },
     { name = "astral", specifier = "==3.2" },
     { name = "bcrypt", specifier = "==4.2.1" },
     { name = "deepdiff", specifier = "==8.2.0" },
@@ -173,7 +173,7 @@ requires-dist = [
     { name = "pytz", specifier = "==2025.1" },
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "requests", specifier = "==2.32.5" },
-    { name = "robotframework", specifier = "==7.4.2" },
+    { name = "robotframework" },
     { name = "sgmllib3k", specifier = "==1.0.0" },
     { name = "urllib3", specifier = "==2.7.0" },
     { name = "uvloop", specifier = "==0.21.0" },

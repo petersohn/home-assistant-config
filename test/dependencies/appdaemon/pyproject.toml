@@ -4,26 +4,6 @@ version = "0.1.0"
 description = "AppDaemon integration test environment"
 requires-python = ">=3.12,<3.14"
 dependencies = [
-    "appdaemon==4.5.13",
-    "aiohttp==3.11.18",
-    "aiohttp-jinja2==1.6",
-    "astral==3.2",
-    "bcrypt==4.2.1",
-    "deepdiff==8.2.0",
-    "feedparser==6.0.12",
-    "iso8601==2.1.0",
-    "Jinja2==3.1.6",
-    "paho-mqtt==2.1.0",
-    "pid==3.0.4",
-    "pydantic==2.10.6",
-    "python-engineio==4.13.3",
-    "python-socketio==5.11.4",
-    "pytz==2025.1",
-    "PyYAML==6.0.3",
-    "requests==2.32.5",
-    "robotframework==7.4.2",
-    "sgmllib3k==1.0.0",
-    "urllib3==2.7.0",
-    "uvloop==0.21.0",
-    "yarl==1.24.2",
+    "appdaemon",
+    "robotframework",
 ]
