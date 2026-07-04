@@ -11,4 +11,6 @@ export TZ=Europe/Budapest
 
 output_dir="${PWD}/output"
 mkdir -p "${output_dir}"
-exec python -m robot --outputdir="${output_dir}" --variable "base_output_directory:${output_dir}" "$@" .
+default_robot_python="${script_dir}/../.venv/bin/python"
+[ -x "${default_robot_python}" ] || default_robot_python="python"
+exec "${ROBOT_PYTHON:-${default_robot_python}}" -m robot --outputdir="${output_dir}" --variable "base_output_directory:${output_dir}" "$@" .

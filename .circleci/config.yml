@@ -39,6 +39,7 @@ jobs:
     environment:
       - HASS_PATH: /homeassistant
       - APPDAEMON_PATH: /appdaemon
+      - ROBOT_PYTHON: /robot/bin/python
     steps:
       - checkout
       - run:
