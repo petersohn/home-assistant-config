@@ -1,11 +1,21 @@
-FROM python:3.11
+FROM python:3.12
 
-COPY python_requirements/robot.txt /python_requirements/robot.txt
-RUN pip3 install -r /python_requirements/robot.txt
-COPY python_requirements/homeassistant.txt /python_requirements/homeassistant.txt
-RUN virtualenv /homeassistant && . /homeassistant/bin/activate && pip install --no-deps -r /python_requirements/homeassistant.txt
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
-COPY python_requirements/appdaemon.txt /python_requirements/appdaemon.txt
-RUN virtualenv /appdaemon && . /appdaemon/bin/activate && pip install -r /python_requirements/appdaemon.txt
+# Robot framework env (system Python 3.12)
+WORKDIR /deps/robot
+COPY test/dependencies/robot/ ./
+RUN uv sync --no-install-project
 
-RUN rm -rf /python_requirements
+# Home Assistant env (Python 3.11, --no-deps)
+WORKDIR /deps/homeassistant
+COPY test/dependencies/homeassistant/ ./
+RUN uv venv /homeassistant --python 3.11 \
+    && VIRTUAL_ENV=/homeassistant uv pip install --no-deps -r requirements.txt
+
+# AppDaemon env (Python 3.12)
+WORKDIR /deps/appdaemon
+COPY test/dependencies/appdaemon/ ./
+RUN uv venv /appdaemon --python 3.12 \
+    && VIRTUAL_ENV=/appdaemon uv sync --no-install-project
