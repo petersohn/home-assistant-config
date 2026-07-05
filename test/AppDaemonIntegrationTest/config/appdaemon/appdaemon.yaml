@@ -13,7 +13,7 @@ http:
     url: http://127.0.0.1:18001
 
 logs:
-    default_log:
+    main_log:
         filename: !secret logfile
     error_log:
         filename: !secret errorfile

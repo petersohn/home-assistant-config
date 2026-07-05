@@ -3,18 +3,21 @@ import datetime
 
 
 class Enabler(hass.Hass):
-    def _init_enabler(self, state):
+    def initialize(self):
         self.callbacks = {}
         self.delay = None
         if 'delay' in self.args:
             self.delay = datetime.timedelta(**self.args['delay'])
         self.callback_id = 0
-        self.state = state
+        self.state = None
         self.change_state = None
         self.change_timer = None
         self.state_mutex = self.get_app('locker').get_mutex('Enabler.State')
         self.callbacks_mutex = self.get_app('locker').get_mutex(
             'Enabler.Callbacks')
+
+    def _init_enabler(self, state):
+        self.state = state
         self.log('Init: {}'.format(self.state))
 
     def terminate(self):
@@ -84,6 +87,7 @@ class Enabler(hass.Hass):
 
 class ScriptEnabler(Enabler):
     def initialize(self):
+        super().initialize()
         self._init_enabler(self.args.get('initial', True))
 
     def enable(self):
@@ -95,6 +99,7 @@ class ScriptEnabler(Enabler):
 
 class EntityEnabler(Enabler):
     def initialize(self):
+        super().initialize()
         self._entity = self.args['entity']
         self.listen_state(self._on_change, entity_id=self._entity)
         self.mutex = self.get_app('locker').get_mutex('EntityEnabler')
@@ -143,6 +148,7 @@ class RangeEnabler(EntityEnabler):
 
 class DateEnabler(Enabler):
     def initialize(self):
+        super().initialize()
         self.begin = datetime.datetime.strptime(
             self.args['begin'], '%m-%d').date()
         self.end = datetime.datetime.strptime(self.args['end'], '%m-%d').date()
@@ -162,6 +168,7 @@ class DateEnabler(Enabler):
 
 class HistoryEnabler(Enabler):
     def initialize(self):
+        super().initialize()
         self._init_enabler(None)
         self.min = self.args.get('min')
         self.max = self.args.get('max')
@@ -175,6 +182,7 @@ class HistoryEnabler(Enabler):
 
 class MultiEnabler(Enabler):
     def initialize(self):
+        super().initialize()
         self.enablers = [
             self.get_app(enabler) for enabler in self.args.get('enablers')]
         self.mutex = self.get_app('locker').get_mutex('MultiEnabler')
@@ -200,6 +208,7 @@ class MultiEnabler(Enabler):
 
 class ExpressionEnabler(Enabler):
     def initialize(self):
+        super().initialize()
         import expression
         self.evaluator = expression.ExpressionEvaluator(
             self, self.args['expr'], self.change)
