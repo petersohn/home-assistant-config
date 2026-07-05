@@ -102,6 +102,9 @@ class HistoryManager(HistoryManagerBase):
         while len(self.history) >= 2 and self.history[1].time < min_time:
             self.history.popleft()
 
+    def get_history(self) -> list[tuple[datetime.datetime, float]]:
+        return [(e.time, e.value) for e in self.get_recorded_history()]
+
     def get_recorded_history(self) -> deque[HistoryElement]:
         with self.mutex.lock("get_recorded_history"):
             self.__filter()
