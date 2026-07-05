@@ -1,29 +1,41 @@
-import hass
-import expression
+from __future__ import annotations
 import datetime
+import expression
+import hass
+from typing import Any
 
 
 class AlertAggregator(hass.Hass):
     class Source:
-        def __init__(self, app, entity, trigger_expr, text_expr):
+        def __init__(
+            self,
+            app: AlertAggregator,
+            entity: str,
+            trigger_expr: str,
+            text_expr: str,
+        ) -> None:
             self.app = app
             self.entity = entity
-            extra_values = {"name": entity}
-            self.trigger_expr = expression.ExpressionEvaluator(
-                app, trigger_expr, self.on_change, extra_values
+            extra_values: dict[str, Any] = {"name": entity}
+            self.trigger_expr: expression.ExpressionEvaluator = (
+                expression.ExpressionEvaluator(
+                    app, trigger_expr, self.on_change, extra_values
+                )
             )
-            self.text_expr = expression.ExpressionEvaluator(
-                app, text_expr, self.on_text_changed, extra_values
+            self.text_expr: expression.ExpressionEvaluator = (
+                expression.ExpressionEvaluator(
+                    app, text_expr, self.on_text_changed, extra_values
+                )
             )
-            self.value = self._calculate_trigger_value()
-            self.text_value = self.text_expr.get()
-            self.timer = None
+            self.value: bool = bool(self._calculate_trigger_value())
+            self.text_value: Any = self.text_expr.get()
+            self.timer: hass.TimerHandle | None = None
 
-        def on_text_changed(self, value):
+        def on_text_changed(self, value: Any) -> None:
             with self.app.mutex.lock("on_text_changed"):
                 self.text_value = value
 
-        def on_change(self, value):
+        def on_change(self, value: bool) -> None:
             with self.app.mutex.lock("on_change"):
                 self.app.log("{}: Change: {}".format(self.entity, value))
                 if value:
@@ -52,41 +64,41 @@ class AlertAggregator(hass.Hass):
                 if value != self.value:
                     self._handle_change(value)
 
-        def handle_change(self, value):
+        def handle_change(self, value: bool) -> None:
             with self.app.mutex.lock("handle_change"):
                 self._handle_change(value)
 
-        def _handle_change(self, value):
+        def _handle_change(self, value: bool) -> None:
             self.timer = None
             self.value = value
             self.app.on_change(self.entity, value)
 
-        def cleanup(self):
+        def cleanup(self) -> None:
             self.trigger_expr.cleanup()
             self.text_expr.cleanup()
             if self.timer is not None:
                 self.app.cancel_timer(self.timer)
                 self.timer = None
 
-        def get_trigger_value(self):
+        def get_trigger_value(self) -> bool:
             return self.value
 
-        def _calculate_trigger_value(self):
-            val = self.trigger_expr.get()
-            return val
+        def _calculate_trigger_value(self) -> bool:
+            val: Any = self.trigger_expr.get()
+            return bool(val)
 
-        def get_text_value(self):
+        def get_text_value(self) -> Any:
             return self.text_value
 
-    def initialize(self):
-        self.target = self.args["target"]
-        trigger_expr = self.args["trigger_expr"]
-        text_expr = self.args["text_expr"]
-        self.timeout = None
+    def initialize(self) -> None:
+        self.target: str = self.args["target"]
+        trigger_expr: str = self.args["trigger_expr"]
+        text_expr: str = self.args["text_expr"]
+        self.timeout: datetime.timedelta | None = None
         timeout = self.args.get("timeout")
         if timeout is not None:
             self.timeout = datetime.timedelta(**timeout)
-        self.sources = [
+        self.sources: list[AlertAggregator.Source] = [
             self.Source(self, entity, trigger_expr, text_expr)
             for entity in self.args["sources"]
         ]
@@ -95,16 +107,19 @@ class AlertAggregator(hass.Hass):
             self.log("Alert is initially on")
             self._turn_on()
 
-        self.mutex = self.get_app("locker").get_mutex("AlertAggregator")
+        import locker
+        locker_app = self.get_app("locker")
+        assert isinstance(locker_app, locker.Locker)
+        self.mutex = locker_app.get_mutex("AlertAggregator")
 
-    def terminate(self):
+    def terminate(self) -> None:
         for source in self.sources:
             source.cleanup()
 
-    def _turn_off(self):
+    def _turn_off(self) -> None:
         self.set_state(self.target, state="off", attributes={"text": ""})
 
-    def _turn_on(self):
+    def _turn_on(self) -> None:
         self.set_state(
             self.target,
             state="on",
@@ -117,7 +132,7 @@ class AlertAggregator(hass.Hass):
             },
         )
 
-    def on_change(self, entity, value):
+    def on_change(self, entity: str, value: bool) -> None:
         if value:
             self.log("Alert turned on for {}".format(entity))
             self._turn_off()
