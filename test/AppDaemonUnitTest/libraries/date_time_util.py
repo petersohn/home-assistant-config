@@ -5,8 +5,10 @@ from typing import Any
 
 
 def to_time(input: str) -> time:
-    total_seconds = DateTime.convert_time(input, result_format="number")
-    seconds, fraction = divmod(total_seconds, 1)
+    raw_seconds = DateTime.convert_time(input, result_format="number")
+    assert isinstance(raw_seconds, (int, float))
+    total_seconds: float = raw_seconds  # type: ignore[assignment]
+    seconds, fraction = divmod(int(total_seconds), 1)
     minutes, second = divmod(seconds, 60)
     hour, minute = divmod(minutes, 60)
     return time(
@@ -18,9 +20,9 @@ def to_time(input: str) -> time:
 
 
 def find_time(start_date: str, new_time: str) -> datetime:
-    start_datetime: datetime = DateTime.convert_date(
-        start_date, result_format="datetime"
-    )
+    raw_date = DateTime.convert_date(start_date, result_format="datetime")
+    assert isinstance(raw_date, datetime)
+    start_datetime: datetime = raw_date
     time = to_time(new_time)
     result = start_datetime.replace(
         hour=time.hour,
@@ -34,6 +36,9 @@ def find_time(start_date: str, new_time: str) -> datetime:
 
 
 def add_times(*times: str, **kwargs: Any) -> datetime:
-    return reduce(
-        lambda lhs, rhs: DateTime.add_time_to_time(lhs, rhs, **kwargs), times
-    )
+    def add_time(lhs: str, rhs: str) -> datetime:
+        result = DateTime.add_time_to_time(lhs, rhs, **kwargs)
+        assert isinstance(result, datetime)
+        return result
+
+    return reduce(add_time, times)  # type: ignore[arg-type, return-value]

@@ -2,7 +2,23 @@
 warn_no_return = true
 disallow_untyped_defs = true
 disallow_untyped_calls = true
-files = ["home/.homeassistant/appdaemon/apps"]
+mypy_path = ["test/AppDaemonUnitTest"]
+files = [
+    "home/.homeassistant/appdaemon/apps",
+    "test/AppDaemonUnitTest/libraries",
+    "test/AppDaemonIntegrationTest/libraries",
+]
+exclude = [
+    "robotframework-httplibrary/",
+    "test/AppDaemonIntegrationTest/.appdaemon/",
+    "test/AppDaemonIntegrationTest/.hass/",
+    "test/AppDaemonIntegrationTest/output/",
+    "test/.venv/",
+]
+
+[[tool.mypy.overrides]]
+module = "apps.hass"
+disable_error_code = ["valid-type"]
 
 [tool.basedpyright]
 reportAny = false

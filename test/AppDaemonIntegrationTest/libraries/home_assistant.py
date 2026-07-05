@@ -1,11 +1,11 @@
 import json
 import os
 import yaml
-import directories
+from . import directories
 from typing import Any
 
 
-def create_home_assistant_configuration(target_directory: str, port: int):
+def create_home_assistant_configuration(target_directory: str, port: int) -> None:
     source_file = os.path.join(
         directories.hass_config_path, "configuration.yaml"
     )

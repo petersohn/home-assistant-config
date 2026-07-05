@@ -8,7 +8,7 @@ import os
 
 
 class State:
-    def __init__(self):
+    def __init__(self) -> None:
         self.state: str | None = None
         self.attributes: dict[str, str] = {}
 
@@ -60,7 +60,7 @@ class ErrorHandler:
         self.__manager = manager
         self.__app = app
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         pass
 
     def __exit__(self, exc_type: type, exc_val: Any, exc_tb: Traceback) -> bool:
@@ -186,7 +186,7 @@ class AppManager:
                 attribute: str | None,
                 old: str | dict[str, Any] | None,
                 new: str | dict[str, Any] | None,
-            ):
+            ) -> None:
                 f(name, attribute, old, new, **{})
 
             def schedule_call(
@@ -194,7 +194,7 @@ class AppManager:
                 attribute: str | None,
                 old: str | dict[str, Any] | None,
                 new: str | dict[str, Any] | None,
-            ):
+            ) -> None:
                 self.__debug(
                     "Schedule state change callback {} for {}".format(id, app)
                 )
@@ -262,7 +262,7 @@ class AppManager:
         if id in self.__state_callbacks:
             del self.__state_callbacks[id]
 
-    def __calculate_scheduled_task_order(self):
+    def __calculate_scheduled_task_order(self) -> None:
         self.__scheduled_task_order = list(self.__scheduled_tasks.keys())
         self.__scheduled_task_order.sort(
             key=lambda i: self.__scheduled_tasks[i].time, reverse=True
@@ -311,7 +311,7 @@ class AppManager:
         self.__datetime += delta
         self.call_pending_callbacks()
 
-    def call_pending_callbacks(self):
+    def call_pending_callbacks(self) -> None:
         while len(self.__scheduled_task_order) != 0:
             id = self.__scheduled_task_order[-1]
             task = self.__scheduled_tasks[id]
@@ -399,15 +399,15 @@ class AppManager:
 
 
 class Hass:
-    def __init__(self):
+    def __init__(self) -> None:
         self.__manager: AppManager | None = None
         self.__name = ""
         self.args: dict[str, Any] = {}
 
-    def initialize(self):
+    def initialize(self) -> None:
         pass
 
-    def terminate(self):
+    def terminate(self) -> None:
         pass
 
     def init_app(

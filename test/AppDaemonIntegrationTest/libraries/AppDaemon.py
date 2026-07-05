@@ -1,6 +1,6 @@
 import os
 import yaml
-import Directories
+from . import directories
 from typing import Any
 
 
