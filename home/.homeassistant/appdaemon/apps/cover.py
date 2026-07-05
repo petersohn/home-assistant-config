@@ -1,7 +1,8 @@
-import hass
+from __future__ import annotations
 import datetime
-
 import expression
+import hass
+from typing import Any
 
 
 class CoverController(hass.Hass):
@@ -10,39 +11,51 @@ class CoverController(hass.Hass):
         MANUAL = 1
         STABLE = 2
 
-    def initialize(self):
-        self.target = self.args["target"]
-        self.mutex = self.get_app("locker").get_mutex("CoverController")
+    def initialize(self) -> None:
+        self.target: str = self.args["target"]
+        import locker
+        locker_app = self.get_app("locker")
+        assert isinstance(locker_app, locker.Locker)
+        self.mutex = locker_app.get_mutex("CoverController")
 
         self.expression = expression.ExpressionEvaluator(
             self, self.args["expr"], self.on_expression_change
         )
-        self.value = self.expression.get()
+        self.value: Any = self.expression.get()
 
         with self.mutex.lock("initialize"):
-            self.is_available = False
-            self.expected_value = None
-            self.timer = None
+            self.is_available: bool = False
+            self.expected_value: Any = None
+            self.timer: hass.TimerHandle | None = None
 
             delay = self.args.get("delay")
-            self.delay = datetime.timedelta(**delay) if delay is not None else None
+            self.delay: datetime.timedelta | None = (
+                datetime.timedelta(**delay) if delay is not None else None
+            )
 
-            self.mode_switch = self.args.get("mode_switch")
+            self.mode_switch: str | None = self.args.get("mode_switch")
 
             state = self.get_state(self.target)
             self.is_available = state is not None and state != "unavailable"
-            self.listen_state(self.on_state_change, entity_id=self.target, attribute="all")
+            self.listen_state(
+                self.on_state_change,
+                entity_id=self.target,
+                attribute="all",
+            )
             self._reset_target()
 
             if self.mode_switch is not None:
-                self.listen_state(self.on_mode_change, entity_id=self.mode_switch)
-                mode = self.get_state(self.mode_switch)
+                self.listen_state(
+                    self.on_mode_change, entity_id=self.mode_switch
+                )
+                mode: Any = self.get_state(self.mode_switch)
                 if mode == "stable":
                     self._set_mode(self.Mode.AUTO)
                 else:
+                    assert isinstance(mode, (str, type(None)))
                     self._set_mode_from_str(mode)
             else:
-                self.mode = self.Mode.AUTO
+                self.mode: int = self.Mode.AUTO
 
             if (
                 self.is_available
@@ -53,10 +66,10 @@ class CoverController(hass.Hass):
             else:
                 self.expected_value = self.value
 
-    def terminate(self):
+    def terminate(self) -> None:
         self.expression.cleanup()
 
-    def _set_mode(self, state):
+    def _set_mode(self, state: int) -> None:
         self.mode = state
 
         if self.mode_switch is None:
@@ -72,7 +85,7 @@ class CoverController(hass.Hass):
             self.error("Invalid state: {}".format(state))
             self.mode = self.Mode.AUTO
 
-    def _set_mode_from_str(self, mode):
+    def _set_mode_from_str(self, mode: str | None) -> None:
         if mode == "auto":
             self.mode = self.Mode.AUTO
         elif mode == "manual":
@@ -83,20 +96,20 @@ class CoverController(hass.Hass):
             self.log("Invalid mode: {}".format(mode))
             self._set_mode(self.Mode.STABLE)
 
-    def _execute(self, service, **kwargs):
+    def _execute(self, service: str, **kwargs: Any) -> None:
         kwargs["entity_id"] = self.target
         self.call_service(service, **kwargs)
 
-    def _reset_value(self):
+    def _reset_value(self) -> None:
         self._set_value(self.expected_value)
 
-    def _set_value_inner(self, value):
+    def _set_value_inner(self, value: Any) -> None:
         self.log("Execute command: {}".format(value))
-        self.arrived_at_target = None
+        self.arrived_at_target: bool | None = None
         if type(value) is float or type(value) is int:
             if value >= 0 and value <= 100:
                 self._execute("cover/set_cover_position", position=int(value))
-                self.target_position = value
+                self.target_position: Any = value
                 return
         elif type(value) is str:
             lower = value.lower()
@@ -111,7 +124,7 @@ class CoverController(hass.Hass):
 
         self.log("Invalid value: {}".format(value))
 
-    def _set_value(self, value):
+    def _set_value(self, value: Any) -> None:
         self.log("Changing to {}".format(value))
 
         if self.expected_value != value and self.mode == self.Mode.STABLE:
@@ -131,10 +144,12 @@ class CoverController(hass.Hass):
         self._set_value_inner(value)
         self._force_check_state()
 
-    def _force_check_state(self):
-        self._check_state(self.get_state(self.target, attribute="all"))
+    def _force_check_state(self) -> None:
+        state = self.get_state(self.target, attribute="all")
+        assert isinstance(state, dict)
+        self._check_state(state)
 
-    def on_expression_change(self, value):
+    def on_expression_change(self, value: Any) -> None:
         with self.mutex.lock("on_expression_change"):
             if self.value == value:
                 self.log("Value unchanged: {}".format(value))
@@ -156,25 +171,34 @@ class CoverController(hass.Hass):
                 self.on_delay, self.delay.total_seconds(), value=value
             )
 
-    def on_delay(self, kwargs):
+    def on_delay(self, kwargs: dict[str, Any]) -> None:
         with self.mutex.lock("on_expression_change"):
             self.log("Time is up")
             self.timer = None
             self._set_value(kwargs["value"])
 
-    def on_state_change(self, entity, attribute, old, new, kwargs):
-        def _get_state(state):
+    def on_state_change(
+        self,
+        entity: str,
+        attribute: str | None,
+        old: dict[str, Any] | None,
+        new: dict[str, Any] | None,
+        **kwargs: Any,
+    ) -> None:
+        def _get_state(state: dict[str, Any] | None) -> str | None:
             return state.get("state") if state is not None else None
 
         with self.mutex.lock("on_state_change"):
             if old is None or new is None or old["state"] != new["state"]:
                 self.log(
-                    "State changed: {} -> {}".format(_get_state(old), _get_state(new))
+                    "State changed: {} -> {}".format(
+                        _get_state(old), _get_state(new)
+                    )
                 )
             if new is not None:
                 self._check_state(new)
 
-    def _check_state(self, states):
+    def _check_state(self, states: dict[str, Any]) -> None:
         # self.log('--> {}'.format(states))
         state = states["state"]
         was_available = self.is_available
@@ -225,7 +249,14 @@ class CoverController(hass.Hass):
         else:
             self.log("Position not yet set")
 
-    def on_mode_change(self, entity, attribute, old, new, kwargs):
+    def on_mode_change(
+        self,
+        entity: str,
+        attribute: str | None,
+        old: str | None,
+        new: str | None,
+        **kwargs: Any,
+    ) -> None:
         with self.mutex.lock("on_mode_change"):
             if old != new:
                 self.log("New mode: {} -> {}".format(old, new))
@@ -236,6 +267,6 @@ class CoverController(hass.Hass):
                 else:
                     self._reset_target()
 
-    def _reset_target(self):
+    def _reset_target(self) -> None:
         self.target_position = None
         self.arrived_at_target = None
