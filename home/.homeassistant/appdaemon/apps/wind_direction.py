@@ -22,7 +22,7 @@ class WindDirection(hass.Hass):
 
     def __set_wind_direction_icon(self):
         wind_direction = self.get_state(
-            entity=self.__entity_name, attribute='all')
+            entity_id=self.__entity_name, attribute='all')
         if wind_direction is None:
             self.log('No wind direction.')
             return
