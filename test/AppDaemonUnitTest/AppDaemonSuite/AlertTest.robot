@@ -160,7 +160,7 @@ Create Alert Aggregator
 Should Have History
     [Arguments]  @{expected_values}
     ${converted_expected_values} =  Convert History Input  ${expected_values}
-    ${values} =  Call On App  ${alert_history}  get_history
+    ${values} =  Call On App  ${alert_history}  get_recorded_history
     ${converted_values} =  Convert History Output  ${values}
     ${is_found} =  Is Expected History Found
     ...    ${converted_expected_values}  ${converted_values}

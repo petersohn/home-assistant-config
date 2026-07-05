@@ -9,7 +9,7 @@ Library        Collections
 History Should Be
     [Arguments]  ${app}  @{expected_values}
     ${converted_expected_values} =  Convert History Input  ${expected_values}
-    ${values} =  Call On App  ${app}  get_history
+    ${values} =  Call On App  ${app}  get_recorded_history
     ${converted_values} =  Convert History Output  ${values}
     Lists Should Be Equal  ${converted_values}  ${converted_expected_values}
 
