@@ -1,7 +1,7 @@
 import json
 import os
 import yaml
-from . import directories
+from libraries import directories
 from typing import Any
 
 

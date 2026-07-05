@@ -2,7 +2,7 @@
 warn_no_return = true
 disallow_untyped_defs = true
 disallow_untyped_calls = true
-mypy_path = ["test/AppDaemonUnitTest"]
+mypy_path = ["test/AppDaemonUnitTest", "test/AppDaemonIntegrationTest/libraries"]
 files = [
     "home/.homeassistant/appdaemon/apps",
     "test/AppDaemonUnitTest/libraries",
