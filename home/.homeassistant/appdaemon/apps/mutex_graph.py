@@ -73,8 +73,8 @@ def format_graph(graph: Graph, name: str) -> str:
     return 'digraph "{}"{{\n{}}}\n'.format(name, result)
 
 
-def _list_to_set(l: list[Any] | set[Any]) -> set[Edge]:
-    return set(tuple(e) for e in l)  # type: ignore[arg-type]
+def _list_to_set(l: list[Edge] | set[Edge]) -> set[Edge]:
+    return set(tuple(e) for e in l)  # type: ignore[misc]
 
 
 def append_graph(graph: dict[str, Any], new: Graph) -> None:
@@ -84,3 +84,10 @@ def append_graph(graph: dict[str, Any], new: Graph) -> None:
             edges = _list_to_set(edges)
             graph[vertex] = edges
         edges |= _list_to_set(new_edges)
+
+
+# Disable Robot Framework's automatic argument type conversion for this
+# keyword.  Without this, Robot resolves the Graph type alias to
+# dict[str, set[tuple[str, str]]] and tries to coerce dict values to
+# sets, which fails when values contain lists (unhashable).
+setattr(append_graph, 'robot_types', None)
