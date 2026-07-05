@@ -11,7 +11,7 @@ from robot.libraries import DateTime
 class TestApp(hass.Hass):
     def initialize(self) -> None:
         self.log("********** INIT ***********")
-        self.register_endpoint(self.api_callback, "TestApp")  # type: ignore[arg-type]
+        self.register_endpoint(self.api_callback, "TestApp")
 
     def __call(self, data: dict[str, Any]) -> Any:
         args = data.get("args", [])
@@ -96,7 +96,7 @@ class TestApp(hass.Hass):
         return DateTime.convert_date(value, result_format="timestamp")
 
     def api_callback(
-        self, data: dict[str, Any], **kwargs: Any
+        self, data: dict[str, Any], _kwargs: dict[str, Any]
     ) -> tuple[Any, int]:
         try:
             result = self.__call(data)

@@ -11,7 +11,7 @@ Call On History Watcher
     RETURN  ${result}
 
 Get History
-    ${result} =  Call On History Watcher  get_history
+    ${result} =  Call On History Watcher  get_state_history
     RETURN  ${result}
 
 Convert Expected History

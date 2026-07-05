@@ -27,8 +27,8 @@ class HistoryWatcher(hass.Hass):
             self.log("{} = {}".format(entity, new))
             self.state_history.append((entity, new))
 
-    def get_history(self) -> list[tuple[str, Any]]:  # type: ignore[override]
-        with self.mutex.lock("get_history"):
+    def get_state_history(self) -> list[tuple[str, Any]]:
+        with self.mutex.lock("get_state_history"):
             result = self.state_history
             self.state_history = []
             return result
