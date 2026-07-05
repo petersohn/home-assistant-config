@@ -13,7 +13,7 @@
 ## Conventions
 
 - All file paths are relative to the repo root: `/home/petersohn/workspace/home-assistant-config`.
-- `mypy` is invoked as a bare command from the repo root. The plan's `pyproject.toml` change makes it pick up `[tool.mypy]` `files` and `mypy_path` automatically. No `--config` flag needed.
+- `mypy` is invoked as `.typecheck-venv/bin/mypy` (not system `mypy`) per Task 1. The plan's `pyproject.toml` change makes it pick up `[tool.mypy]` `files` automatically. No `--config` flag needed.
 - After every change, run the verification block listed in the task. Do not advance while red.
 - App callback signature for `listen_state` becomes:
   ```python
@@ -44,12 +44,12 @@
 
 ---
 
-## Task 1: Configure mypy (pyproject.toml)
+## Task 1: Configure mypy (pyproject.toml) + dedicated typecheck venv
 
 **Files:**
 - Modify: `pyproject.toml`
 
-- [ ] **Step 1: Add `mypy_path` and `files` to `[tool.mypy]`**
+- [ ] **Step 1: Add `files` to `[tool.mypy]`**
 
 Edit `pyproject.toml` so `[tool.mypy]` becomes:
 
@@ -58,30 +58,48 @@ Edit `pyproject.toml` so `[tool.mypy]` becomes:
 warn_no_return = true
 disallow_untyped_defs = true
 disallow_untyped_calls = true
-mypy_path = [
-  "test/AppDaemonIntegrationTest/.appdaemon/lib/python3.12/site-packages",
-  "home/.homeassistant/appdaemon/apps",
-]
 files = ["home/.homeassistant/appdaemon/apps"]
 ```
 
 Leave the `[tool.basedpyright]` and `[tool.black]` blocks unchanged.
 
-- [ ] **Step 2: Verify the integration-test appdaemon path exists**
+- [ ] **Step 2: Create a dedicated typecheck venv (Python 3.12) with appdaemon, dateutil, and mypy installed**
+
+The integration-test appdaemon venv bundles `typing_extensions.py` and
+`appdaemon/types.py` (a submodule named after stdlib `types`), which
+trigger a fatal mypy "top-level module shadowing" error when the system
+`mypy` (Python 3.14) examines it. To run mypy cleanly, install appdaemon
+and dateutil into a small dedicated venv and run mypy from there.
+
+Run:
+
+```sh
+uv venv --python 3.12 .typecheck-venv
+.typecheck-venv/bin/python -m pip install appdaemon python-dateutil mypy
+```
+
+Expected: mypy 2.x installed, no errors.
+
+- [ ] **Step 3: Verify the integration-test appdaemon venv is still present (for reference)**
 
 Run: `ls test/AppDaemonIntegrationTest/.appdaemon/lib/python3.12/site-packages/appdaemon | head`
 Expected: non-empty list (e.g. `__init__.py adapi.py ...`). If missing, run `./test/setup_virtualenv.sh appdaemon` first.
 
-- [ ] **Step 3: Run mypy and confirm the import errors disappear**
+- [ ] **Step 4: Run mypy from the typecheck venv and confirm the import errors disappear**
 
-Run: `mypy 2>&1 | head -30`
-Expected: only `no-untyped-def` and `str-format` errors remain (the apps themselves are untyped). The previous `import-not-found` errors for `appdaemon.plugins.hass.hassapi` and the `import-untyped` error for `dateutil` should be **gone**. The `enabler.py:48` `str-format` error will also still be there — that is what later tasks fix.
+Run: `.typecheck-venv/bin/mypy 2>&1 | head -30`
+Expected: only `no-untyped-def`, `str-format` (enabler.py:48), and `import-untyped` (history.py:3 dateutil) errors remain. The `import-not-found` errors for `appdaemon.*` should be **gone** because appdaemon is on sys.path inside the venv.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Add `.typecheck-venv/` to `.gitignore` (if it isn't already)**
+
+Run: `grep -E "typecheck-venv|\.venv" .gitignore || echo ".typecheck-venv/" >> .gitignore`
+Expected: `.gitignore` now contains `.typecheck-venv/`.
+
+- [ ] **Step 6: Commit**
 
 ```bash
-git add pyproject.toml
-git commit -m "mypy: add mypy_path and files"
+git add pyproject.toml .gitignore
+git commit -m "mypy: scope to apps dir; typecheck venv documented in spec"
 ```
 
 ---
@@ -265,7 +283,7 @@ def append_graph(graph: dict[str, Any], new: Graph) -> None:
 
 - [ ] **Step 2: Run mypy on this file**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/mutex_graph.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/mutex_graph.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Commit**
@@ -387,7 +405,7 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
 
 - [ ] **Step 2: Run mypy on this file**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/hass.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/hass.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Commit**
@@ -511,7 +529,7 @@ Notes:
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/locker.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/locker.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Run unit tests**
@@ -774,7 +792,7 @@ Notes:
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/expression.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/expression.py 2>&1 | tail`
 Expected: no errors. If `__getattr__` triggers a mypy note about implicit Optional, no error — proceed.
 
 - [ ] **Step 3: Run unit tests**
@@ -1070,7 +1088,7 @@ Notes:
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/enabler.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/enabler.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Run unit tests**
@@ -1336,7 +1354,7 @@ Notes:
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/auto_switch.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/auto_switch.py 2>&1 | tail`
 Expected: no errors. If mypy complains about `==` comparisons with `str | None | dict`, add `assert isinstance(..., (str, type(None)))` guards — but it normally doesn't.
 
 - [ ] **Step 3: Run unit tests**
@@ -1438,7 +1456,7 @@ class EnabledSwitch(hass.Hass):
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/enabled_switch.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/enabled_switch.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Run unit tests**
@@ -1847,7 +1865,7 @@ Notes:
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/timer_switch.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/timer_switch.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Run unit tests**
@@ -2158,7 +2176,7 @@ Notes:
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/cover.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/cover.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Run unit tests**
@@ -2756,7 +2774,7 @@ Notes:
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/history.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/history.py 2>&1 | tail`
 Expected: no errors. If mypy flags the `e.value for e in self.history` generator (since `HistoryElement.value` is `float` and `min`/`max` accept `Iterable[SupportsRichComparisonT]`), add `cast(float, ...)` or `# type: ignore[arg-type]` — try without first.
 
 - [ ] **Step 3: Run unit tests**
@@ -2866,7 +2884,7 @@ Note: The original `__get_value` had a bug — it checked `if value_out is None`
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/temperature_basic.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/temperature_basic.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Run unit tests**
@@ -2970,7 +2988,7 @@ class WindDirection(hass.Hass):
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/wind_direction.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/wind_direction.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Run unit tests**
@@ -3042,7 +3060,7 @@ class CustomIcon(hass.Hass):
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/custom_icon.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/custom_icon.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Run unit tests**
@@ -3228,7 +3246,7 @@ class AlertAggregator(hass.Hass):
 
 - [ ] **Step 2: Run mypy**
 
-Run: `mypy home/.homeassistant/appdaemon/apps/alert.py 2>&1 | tail`
+Run: `.typecheck-venv/bin/mypy home/.homeassistant/appdaemon/apps/alert.py 2>&1 | tail`
 Expected: no errors.
 
 - [ ] **Step 3: Run unit tests**
@@ -3254,7 +3272,7 @@ git commit -m "annotate alert"
 
 - [ ] **Step 1: Run mypy on the whole project**
 
-Run: `mypy 2>&1 | tail -20`
+Run: `.typecheck-venv/bin/mypy 2>&1 | tail -20`
 Expected: `Success: no issues found in 14 source files`.
 
 If there are any remaining errors, fix them by adding the minimal annotation or guard at the reported location. Do **not** use `# type: ignore` unless absolutely necessary (the user asked for zero).

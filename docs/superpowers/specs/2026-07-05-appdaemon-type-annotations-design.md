@@ -43,27 +43,28 @@ Extend `[tool.mypy]` in `pyproject.toml`:
 warn_no_return = true
 disallow_untyped_defs = true
 disallow_untyped_calls = true
-mypy_path = [
-  "test/AppDaemonIntegrationTest/.appdaemon/lib/python3.12/site-packages",
-  "home/.homeassistant/appdaemon/apps",
-]
 files = ["home/.homeassistant/appdaemon/apps"]
 ```
 
-`mypy_path` lets mypy resolve:
-
-- `appdaemon` (and its `appdaemon.plugins.hass.hassapi.Hass` base class) and
-  `dateutil` from the integration-test venv.
-- The local app modules (`hass`, `locker`, `expression`, `mutex_graph`,
-  `auto_switch`, `history`, `enabler`) via the apps directory itself.
-
-Run with:
+Type checking must run from a dedicated Python 3.12 virtual environment
+that has `appdaemon` and `python-dateutil` installed, because the
+integration-test appdaemon venv bundles a `typing_extensions.py` (and
+submodules named after stdlib modules, e.g. `appdaemon/types.py`) that
+conflict with the system Python 3.14 `mypy`. Create it once:
 
 ```sh
-mypy
+uv venv --python 3.12 .typecheck-venv
+.typecheck-venv/bin/python -m pip install appdaemon python-dateutil mypy
 ```
 
-(from repo root; respects `files` + `mypy_path`).
+Run mypy from the venv:
+
+```sh
+.typecheck-venv/bin/mypy
+```
+
+When run from the venv, `appdaemon` and `dateutil` are on `sys.path` and
+mypy resolves them with no `mypy_path` needed.
 
 ## Typing decisions
 
