@@ -1170,6 +1170,7 @@ window_blind_shield_1:
         e.is_sunlight_or_true
     dependencies:
         - locker
+        - is_sunlight_or_true
     global_dependencies:
         - expression
 
@@ -1219,6 +1220,7 @@ window_blind_shield_2:
         not e.sun_enabler_night
     dependencies:
         - locker
+        - sun_enabler_night
     global_dependencies:
         - expression
 
@@ -1277,6 +1279,7 @@ storage_window_blind_enabler:
     class: ExpressionEnabler
     dependencies:
         - locker
+        - is_light_enough_to_open_blind
     expr: >
         v.input_select.presence_mode == 'home'
         and e.is_light_enough_to_open_blind
