@@ -124,11 +124,15 @@ class ExpressionEvaluator:
         )
 
     def _get_app(self, name):
-        app = self.app.get_app(name)
-        if self.callback is not None and name not in self.app_callbacks:
-            id = app.add_callback(lambda: self._on_app_change())
-            self.app_callbacks[name] = id
-        return app
+        try:
+            app = self.app.get_app(name)
+            if self.callback is not None and name not in self.app_callbacks:
+                id = app.add_callback(lambda: self._on_app_change())
+                self.app_callbacks[name] = id
+            return app
+        except:
+            self.app.error(f"Can't get app {name}")
+            raise
 
     def _get_enabled(self, name):
         return self._get_app(name).is_enabled()

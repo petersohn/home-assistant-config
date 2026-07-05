@@ -1229,10 +1229,10 @@ dining_room_2_window_blind:
     class: CoverController
     dependencies:
         - locker
-    global_dependencies:
-        - expression
         - is_light_enough_to_open_blind
         - window_blind_shield_2
+    global_dependencies:
+        - expression
     expr: >
         75 if v.input_select.presence_mode == 'home' and e.window_blind_shield_2
         else 'open' if v.input_select.presence_mode == 'home' and (
