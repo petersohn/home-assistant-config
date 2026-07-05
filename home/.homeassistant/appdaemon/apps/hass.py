@@ -13,8 +13,8 @@ TimerHandle = int | str
 
 
 class Hass(appdaemon.plugins.hass.hassapi.Hass):
-    def cancel_timer(self, handle: TimerHandle) -> None:
-        super().cancel_timer(handle)  # type: ignore[arg-type]
+    def cancel_timer(self, handle: TimerHandle) -> bool:
+        return super().cancel_timer(handle)  # type: ignore[arg-type]
 
     def _api_request(self, path: str) -> Any:
         hass_config = [
