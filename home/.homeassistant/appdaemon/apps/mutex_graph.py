@@ -47,7 +47,7 @@ class DFS:
 base_vertex: str = ""
 
 
-def find_cycle(graph: Graph) -> bool:
+def find_cycle(graph: Graph) -> bool:  # type: ignore[misc]
     search = DFS(graph)
     for vertex in graph:
         if vertex not in search.enter:
@@ -90,4 +90,6 @@ def append_graph(graph: dict[str, Any], new: Graph) -> None:
 # keyword.  Without this, Robot resolves the Graph type alias to
 # dict[str, set[tuple[str, str]]] and tries to coerce dict values to
 # sets, which fails when values contain lists (unhashable).
-setattr(append_graph, 'robot_types', None)
+setattr(append_graph, "robot_types", None)
+setattr(find_cycle, "robot_types", None)
+setattr(format_graph, "robot_types", None)
