@@ -17,13 +17,7 @@ class State:
 
 
 StateCallback = Callable[
-    [
-        str,
-        str | None,
-        str | dict[str, Any] | None,
-        str | dict[str, Any] | None,
-        dict[str, Any],
-    ],
+    [str, str | None, str | dict[str, Any] | None, str | dict[str, Any] | None],
     None,
 ]
 
@@ -190,16 +184,16 @@ class AppManager:
                 f: StateCallback,
                 name: str,
                 attribute: str | None,
-                old: str | None,
-                new: str | None,
+                old: str | dict[str, Any] | None,
+                new: str | dict[str, Any] | None,
             ):
-                f(name, attribute, old, new, {})
+                f(name, attribute, old, new)
 
             def schedule_call(
                 f: StateCallback,
                 attribute: str | None,
-                old: str | None,
-                new: str | None,
+                old: str | dict[str, Any] | None,
+                new: str | dict[str, Any] | None,
             ):
                 self.__debug(
                     "Schedule state change callback {} for {}".format(id, app)
