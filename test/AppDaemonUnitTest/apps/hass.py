@@ -52,6 +52,8 @@ ServiceData = NamedTuple(
     "ServiceData", [("app", str), ("callback", ServiceCallback)]
 )
 
+EntityValue = str | dict[str, Any] | None
+
 LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 import datetime
 import expression
 import hass
+from expression import ExpressionResult
 from typing import Any
 
 
@@ -28,15 +29,16 @@ class AlertAggregator(hass.Hass):
                 )
             )
             self.value: bool = bool(self._calculate_trigger_value())
-            self.text_value: Any = self.text_expr.get()
+            self.text_value: ExpressionResult = self.text_expr.get()
             self.timer: str | None = None
 
-        def on_text_changed(self, value: Any) -> None:
+        def on_text_changed(self, value: ExpressionResult) -> None:
             with self.app.mutex.lock("on_text_changed"):
                 self.text_value = value
 
-        def on_change(self, value: bool) -> None:
+        def on_change(self, value: ExpressionResult) -> None:
             with self.app.mutex.lock("on_change"):
+                value = bool(value)
                 self.app.log("{}: Change: {}".format(self.entity, value))
                 if value:
                     if self.app.timeout is not None:
@@ -84,10 +86,10 @@ class AlertAggregator(hass.Hass):
             return self.value
 
         def _calculate_trigger_value(self) -> bool:
-            val: Any = self.trigger_expr.get()
+            val: ExpressionResult = self.trigger_expr.get()
             return bool(val)
 
-        def get_text_value(self) -> Any:
+        def get_text_value(self) -> ExpressionResult:
             return self.text_value
 
     def initialize(self) -> None:
@@ -125,7 +127,7 @@ class AlertAggregator(hass.Hass):
             state="on",
             attributes={
                 "text": "\n".join(
-                    source.get_text_value()
+                    str(source.get_text_value())
                     for source in self.sources
                     if source.get_trigger_value()
                 )

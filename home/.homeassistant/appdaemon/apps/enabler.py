@@ -1,6 +1,7 @@
 from __future__ import annotations
 import datetime
 import hass
+from hass import EntityValue
 from typing import Any, Callable
 
 
@@ -123,8 +124,8 @@ class EntityEnabler(Enabler):
         self,
         entity: str,
         attribute: str | None,
-        old: Any,
-        new: Any,
+        old: EntityValue,
+        new: EntityValue,
         **kwargs: Any,
     ) -> None:
         with self.mutex.lock("_on_change"):
@@ -153,7 +154,7 @@ class ValueEnabler(EntityEnabler):
 
 
 def is_between(
-    value: Any, min_value: float | None, max_value: float | None
+    value: str | float | int, min_value: float | None, max_value: float | None
 ) -> bool:
     if min_value is not None and float(value) < min_value:
         return False
@@ -170,6 +171,13 @@ class RangeEnabler(EntityEnabler):
 
     def _get(self) -> bool:
         value = self.get_state(self._entity)
+        assert isinstance(value, (str, type(None))), (
+            "Expected str or None from get_state({!r}), got {}".format(
+                self._entity, type(value).__name__
+            )
+        )
+        if value is None:
+            return False
         return is_between(value, self.__min, self.__max)
 
 
@@ -250,9 +258,11 @@ class ExpressionEnabler(Enabler):
         super().initialize()
         import expression
         self.evaluator = expression.ExpressionEvaluator(
-            self, self.args["expr"], self.change
+            self,
+            self.args["expr"],
+            lambda value: self.change(bool(value)),
         )
-        self._init_enabler(self.evaluator.get())
+        self._init_enabler(bool(self.evaluator.get()))
 
     def terminate(self) -> None:
         self.evaluator.cleanup()

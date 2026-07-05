@@ -7,6 +7,9 @@ from typing import Any
 from urllib import request
 
 
+EntityValue = str | dict[str, Any] | None
+
+
 class Hass(appdaemon.plugins.hass.hassapi.Hass):
     def _api_request(self, path: str) -> Any:
         hass_config = [

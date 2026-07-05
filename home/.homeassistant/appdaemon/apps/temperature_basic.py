@@ -1,5 +1,6 @@
 from __future__ import annotations
 import hass
+from hass import EntityValue
 from typing import Any
 
 
@@ -59,8 +60,8 @@ class TemperatureBasic(hass.Hass):
         self,
         entity: str,
         attribute: str | None,
-        old: Any,
-        new: Any,
+        old: EntityValue,
+        new: EntityValue,
         **kwargs: Any,
     ) -> None:
         with self.mutex.lock("on_change"):

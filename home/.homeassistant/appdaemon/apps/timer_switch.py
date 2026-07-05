@@ -4,14 +4,16 @@ import datetime
 import enabler
 import expression
 import hass
+import hass
 import traceback
+from hass import EntityValue
 from typing import Any, Callable
 
 
 class Trigger:
     def __init__(
         self,
-        app: Any,
+        app: hass.Hass,
         expr: str | None,
         sensor: str | None,
         source_state: str | None,
@@ -62,8 +64,8 @@ class Trigger:
         self,
         entity: str,
         attribute: str | None,
-        old: Any,
-        new: Any,
+        old: EntityValue,
+        new: EntityValue,
         **kwargs: Any,
     ) -> None:
         self.app.log(
@@ -85,8 +87,8 @@ class Trigger:
 class Timer:
     def __init__(
         self,
-        app: Any,
-        time: Any,
+        app: hass.Hass,
+        time: str,
         callback: Callable[[], None],
     ) -> None:
         self.app = app
@@ -112,10 +114,10 @@ class Timer:
         with self.mutex.lock("start"):
             self.app.log("Start timer")
             if type(self.time) is float:
-                delay: Any = self.time
+                delay: float | str = self.time
             else:
                 try:
-                    delay = float(self.app.get_state(self.time)) * 60
+                    delay = float(self.app.get_state(self.time)) * 60  # type: ignore[arg-type]
                 except Exception:
                     self.app.error(traceback.format_exc())
                     delay = 0

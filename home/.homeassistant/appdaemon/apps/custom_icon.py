@@ -1,5 +1,6 @@
 from __future__ import annotations
 import hass
+from hass import EntityValue
 from typing import Any
 
 
@@ -21,8 +22,8 @@ class CustomIcon(hass.Hass):
         self,
         entity: str,
         attribute: str | None,
-        old: Any,
-        new: Any,
+        old: EntityValue,
+        new: EntityValue,
         **kwargs: Any,
     ) -> None:
         pass

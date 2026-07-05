@@ -2,7 +2,12 @@ from __future__ import annotations
 import datetime
 import hass
 import traceback
+from hass import EntityValue
 from typing import Any, Callable
+
+
+ExpressionResult = str | float | int | bool | None
+Callback = Callable[[ExpressionResult], None]
 
 
 class Evaluator:
@@ -23,13 +28,10 @@ def filter_nums(*args: Any) -> Any:
     return filter(lambda x: type(x) == float, args)
 
 
-Callback = Callable[[Any], None]
-
-
 class ExpressionEvaluator:
     def __init__(
         self,
-        app: Any,
+        app: hass.Hass,
         expr: str,
         callback: Callback | None = None,
         extra_values: dict[str, Any] | None = None,
@@ -48,13 +50,13 @@ class ExpressionEvaluator:
         self.evaluators: dict[str, Any] = self._create_evaluators()
         if extra_values:
             self.evaluators.update(extra_values)
-        self.timer: int | None = None
+        self.timer: str | None = None
         self.get()
 
     def cleanup(self) -> None:
         for name, id in self.app_callbacks.items():
             try:
-                self.app.get_app(name).remove_callback(id)
+                self.app.get_app(name).remove_callback(id)  # type: ignore[attr-defined]
             except Exception:
                 self.app.error(traceback.format_exc())
 
@@ -101,14 +103,19 @@ class ExpressionEvaluator:
         value = self.app.get_state(entity, attribute=attribute)
         if value is None:
             return ""
+        assert isinstance(value, (str, int, float, bool)), (
+            "Expected scalar from get_state({!r}, attribute={!r}), got {}".format(
+                entity, attribute, type(value).__name__
+            )
+        )
         try:
             return float(value)
         except ValueError:
             return value
 
-    def _get_value(self, entity: str) -> Any:
+    def _get_value(self, entity: str) -> str | float | bool:
         if "." not in entity:
-            return Evaluator(self._get_value, entity + ".")
+            return Evaluator(self._get_value, entity + ".")  # type: ignore[return-value]
 
         if self.callback is not None and entity not in self.entities:
             self.app.listen_state(self._on_entity_change, entity_id=entity)
@@ -120,9 +127,19 @@ class ExpressionEvaluator:
             return True
         if value == "off":
             return False
+        assert isinstance(value, (str, int, float, bool)), (
+            "Expected scalar from get_state({!r}), got {}".format(
+                entity, type(value).__name__
+            )
+        )
         try:
             return float(value)
         except ValueError:
+            assert isinstance(value, str), (
+                "Expected str from get_state({!r}), got {}".format(
+                    entity, type(value).__name__
+                )
+            )
             return value
 
     def _get_ok(self, entity: str) -> Any:
@@ -144,7 +161,7 @@ class ExpressionEvaluator:
         try:
             app = self.app.get_app(name)
             if self.callback is not None and name not in self.app_callbacks:
-                id = app.add_callback(lambda: self._on_app_change())
+                id = app.add_callback(lambda: self._on_app_change())  # type: ignore[attr-defined]
                 self.app_callbacks[name] = id
             return app
         except Exception:
@@ -168,23 +185,29 @@ class ExpressionEvaluator:
         self,
         entity: str,
         attribute: str | None,
-        old: Any,
-        new: Any,
+        old: EntityValue,
+        new: EntityValue,
         **kwargs: Any,
     ) -> None:
         self.app.log("state change({}): {} -> {}".format(entity, old, new))
         if new != old:
             self.fire_callback({})
 
-    def _get(self) -> Any:
+    def _get(self) -> ExpressionResult:
         try:
-            return eval(self.expr, self.evaluators)
+            result = eval(self.expr, self.evaluators)
+            assert result is None or isinstance(result, (str, float, int, bool)), (
+                "Expression returned unexpected type {}: {!r}".format(
+                    type(result).__name__, result
+                )
+            )
         except Exception:
             self.app.error(traceback.format_exc())
             self.app.run_in(lambda _: self.get(), 60)
             return None
+        return result
 
-    def get(self) -> Any:
+    def get(self) -> ExpressionResult:
         with self.mutex.lock("get"):
             return self._get()
 
@@ -208,7 +231,7 @@ class Expression(hass.Hass):
     def terminate(self) -> None:
         self.evaluator.cleanup()
 
-    def _set(self, value: Any) -> None:
+    def _set(self, value: ExpressionResult) -> None:
         if type(value) is bool:
             value = "on" if value else "off"
         self.set_state(self.target, state=value, attributes=self.attributes)

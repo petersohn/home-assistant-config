@@ -1,5 +1,6 @@
 from __future__ import annotations
 import hass
+from hass import EntityValue
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -124,8 +125,8 @@ class AutoSwitch(hass.Hass):
         self,
         entity: str,
         attribute: str | None,
-        old: Any,
-        new: Any,
+        old: EntityValue,
+        new: EntityValue,
         **kwargs: Any,
     ) -> None:
         with self.mutex.lock("on_switch_change"):
@@ -147,8 +148,8 @@ class AutoSwitch(hass.Hass):
         self,
         entity: str,
         attribute: str | None,
-        old: Any,
-        new: Any,
+        old: EntityValue,
+        new: EntityValue,
         **kwargs: Any,
     ) -> None:
         with self.mutex.lock("on_target_change"):
@@ -204,10 +205,11 @@ class Switcher:
 
 
 class MultiSwitcher:
-    def __init__(self, app: Any, targets: list[str]) -> None:
+    def __init__(self,         app: hass.Hass, targets: list[str]) -> None:
         self.app = app
         self.targets: list[Switcher] = [
-            Switcher(app.get_app(target)) for target in targets
+            Switcher(app.get_app(target))  # type: ignore[arg-type]
+            for target in targets
         ]
 
     def init(self, value: bool) -> None:

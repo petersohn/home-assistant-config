@@ -2,6 +2,8 @@ from __future__ import annotations
 import datetime
 import expression
 import hass
+from expression import ExpressionResult
+from hass import EntityValue
 from typing import Any
 
 
@@ -21,11 +23,11 @@ class CoverController(hass.Hass):
         self.expression = expression.ExpressionEvaluator(
             self, self.args["expr"], self.on_expression_change
         )
-        self.value: Any = self.expression.get()
+        self.value: ExpressionResult = self.expression.get()
 
         with self.mutex.lock("initialize"):
             self.is_available: bool = False
-            self.expected_value: Any = None
+            self.expected_value: ExpressionResult = None
             self.timer: str | None = None
 
             delay = self.args.get("delay")
@@ -48,7 +50,7 @@ class CoverController(hass.Hass):
                 self.listen_state(
                     self.on_mode_change, entity_id=self.mode_switch
                 )
-                mode: Any = self.get_state(self.mode_switch)
+                mode: EntityValue = self.get_state(self.mode_switch)
                 if mode == "stable":
                     self._set_mode(self.Mode.AUTO)
                 else:
@@ -103,13 +105,13 @@ class CoverController(hass.Hass):
     def _reset_value(self) -> None:
         self._set_value(self.expected_value)
 
-    def _set_value_inner(self, value: Any) -> None:
+    def _set_value_inner(self, value: ExpressionResult) -> None:
         self.log("Execute command: {}".format(value))
         self.arrived_at_target: bool | None = None
         if type(value) is float or type(value) is int:
             if value >= 0 and value <= 100:
                 self._execute("cover/set_cover_position", position=int(value))
-                self.target_position: Any = value
+                self.target_position: float | int | None = value
                 return
         elif type(value) is str:
             lower = value.lower()
@@ -124,7 +126,7 @@ class CoverController(hass.Hass):
 
         self.log("Invalid value: {}".format(value))
 
-    def _set_value(self, value: Any) -> None:
+    def _set_value(self, value: ExpressionResult) -> None:
         self.log("Changing to {}".format(value))
 
         if self.expected_value != value and self.mode == self.Mode.STABLE:
@@ -149,7 +151,7 @@ class CoverController(hass.Hass):
         assert isinstance(state, dict)
         self._check_state(state)
 
-    def on_expression_change(self, value: Any) -> None:
+    def on_expression_change(self, value: ExpressionResult) -> None:
         with self.mutex.lock("on_expression_change"):
             if self.value == value:
                 self.log("Value unchanged: {}".format(value))

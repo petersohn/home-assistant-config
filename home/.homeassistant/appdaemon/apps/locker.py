@@ -1,5 +1,6 @@
 from __future__ import annotations
 from copy import deepcopy
+from types import TracebackType
 from typing import Any
 import hass
 import json
@@ -27,7 +28,12 @@ class Lock:
         self.mutex.locker.push_edge(self.mutex.name, self.name)
         self.mutex._lock.acquire()
 
-    def __exit__(self, *args: Any) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         # self.mutex.locker.log("unlock {}.{}".format(self.mutex.name, self.name))
         self.mutex._lock.release()
         self.mutex.locker.pop_edge(self.mutex.name, self.name)

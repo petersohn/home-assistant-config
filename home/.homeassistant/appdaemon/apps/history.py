@@ -6,6 +6,7 @@ import traceback
 from collections import deque
 from collections.abc import Callable
 from dateutil import tz
+from hass import EntityValue
 from typing import Any, NamedTuple
 
 
@@ -139,8 +140,8 @@ class HistoryManager(HistoryManagerBase):
         self,
         entity: str,
         attribute: str | None,
-        old: Any,
-        new: Any,
+        old: EntityValue,
+        new: EntityValue,
         **kwargs: Any,
     ) -> None:
         with self.mutex.lock("on_changed"):
@@ -197,7 +198,7 @@ class ChangeTracker(HistoryManagerBase):
 
 
 class Aggregatum:
-    def __init__(self, app: Any) -> None:
+    def __init__(self, app: hass.Hass) -> None:
         self.app = app
 
     def add(self, element: HistoryElement) -> None:
@@ -243,7 +244,7 @@ class LimitedHistoryAggregatum(Aggregatum):
 class Minmax(LimitedHistoryAggregatum):
     def __init__(
         self,
-        app: Any,
+        app: hass.Hass,
         interval: datetime.timedelta,
         function: Callable[..., Any],
     ) -> None:
@@ -327,7 +328,7 @@ class IntervalAggragatum(LimitedHistoryAggregatum):
 class Integral(IntervalAggragatum):
     def __init__(
         self,
-        app: Any,
+        app: hass.Hass,
         interval: datetime.timedelta,
         base_interval: datetime.timedelta,
     ) -> None:
@@ -427,7 +428,7 @@ class Anglemean(IntervalAggragatum):
 class DecaySum(Aggregatum):
     def __init__(
         self,
-        app: Any,
+        app: hass.Hass,
         interval: datetime.timedelta,
         fraction: float,
     ) -> None:
@@ -531,8 +532,8 @@ class Aggregator:
         self,
         entity: str,
         attribute: str | None,
-        old: Any,
-        new: Any,
+        old: EntityValue,
+        new: EntityValue,
         **kwargs: Any,
     ) -> None:
         with self.mutex.lock("on_change"):
