@@ -1,12 +1,14 @@
+from __future__ import annotations
 import appdaemon.plugins.hass.hassapi
-from urllib import request
+import datetime
 import http.client
 import json
-import datetime
+from typing import Any
+from urllib import request
 
 
 class Hass(appdaemon.plugins.hass.hassapi.Hass):
-    def _api_request(self, path):
+    def _api_request(self, path: str) -> Any:
         hass_config = [
             config
             for config in self.config["plugins"].values()
@@ -26,7 +28,9 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
                 raise http.client.HTTPException(result.reason)
             return json.loads(result.read().decode())
 
-    def load_history(self, entity_id, max_interval):
+    def load_history(
+        self, entity_id: str, max_interval: datetime.timedelta
+    ) -> Any:
         now = datetime.datetime.now()
         begin_timestamp = (now - max_interval).strftime("%Y-%m-%dT%H:%M:%S")
         end_timestamp = now.strftime("%Y-%m-%dT%H:%M:%S")
@@ -35,5 +39,5 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
         )
         return self._api_request(path)
 
-    def load_states(self, entity_id):
+    def load_states(self, entity_id: str) -> dict[str, Any]:
         return self._api_request("states/{}".format(entity_id))
