@@ -35,10 +35,8 @@ def find_time(start_date: str, new_time: str) -> datetime:
     return result
 
 
-def add_times(*times: str, **kwargs: Any) -> datetime:
-    def add_time(lhs: str, rhs: str) -> datetime:
-        result = DateTime.add_time_to_time(lhs, rhs, **kwargs)
-        assert isinstance(result, datetime)
-        return result
+def add_times(*times: str, **kwargs: Any) -> Any:
+    def add_time(lhs: Any, rhs: Any) -> Any:
+        return DateTime.add_time_to_time(lhs, rhs, **kwargs)
 
-    return reduce(add_time, times)  # type: ignore[arg-type, return-value]
+    return reduce(add_time, times)
