@@ -187,7 +187,7 @@ class AppManager:
                 old: str | dict[str, Any] | None,
                 new: str | dict[str, Any] | None,
             ):
-                f(name, attribute, old, new)
+                f(name, attribute, old, new, **{})
 
             def schedule_call(
                 f: StateCallback,

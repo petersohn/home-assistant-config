@@ -170,6 +170,7 @@ class ExpressionEvaluator:
         attribute: str | None,
         old: Any,
         new: Any,
+        **kwargs: Any,
     ) -> None:
         self.app.log("state change({}): {} -> {}".format(entity, old, new))
         if new != old:

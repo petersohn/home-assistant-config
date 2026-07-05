@@ -110,7 +110,9 @@ class EntityEnabler(Enabler):
     def initialize(self) -> None:
         super().initialize()
         self._entity: str = self.args["entity"]
-        self.listen_state(self._on_change, entity_id=self._entity)
+        self.listen_state(
+            self._on_change, entity_id=self._entity
+        )
         import locker
         locker_app = self.get_app("locker")
         assert isinstance(locker_app, locker.Locker)
