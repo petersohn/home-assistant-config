@@ -1,24 +1,26 @@
+from __future__ import annotations
 import hass
 
 import datetime
 from itertools import zip_longest
 import traceback
+from typing import Any
 from robot.libraries import DateTime
 
 
 class TestApp(hass.Hass):
-    def initialize(self):
+    def initialize(self) -> None:
         self.log("********** INIT ***********")
-        self.register_endpoint(self.api_callback, "TestApp")
+        self.register_endpoint(self.api_callback, "TestApp")  # type: ignore[arg-type]
 
-    def __call(self, data):
+    def __call(self, data: dict[str, Any]) -> Any:
         args = data.get("args", [])
         kwargs = data.get("kwargs", {})
         arg_types = data.get("arg_types") or []
         kwarg_types = data.get("kwarg_types") or {}
         result_type = data.get("result_type")
 
-        def convert(target_type, value):
+        def convert(target_type: Any, value: Any) -> Any:
             if target_type is not None:
                 wrapper = eval(
                     target_type,
@@ -34,7 +36,7 @@ class TestApp(hass.Hass):
             else:
                 return value
 
-        def try_to_convert(value):
+        def try_to_convert(value: Any) -> Any:
             if result_type is not None:
                 try:
                     return convert(result_type, value)
@@ -42,7 +44,7 @@ class TestApp(hass.Hass):
                     pass
             return value
 
-        def convert_output(value):
+        def convert_output(value: Any) -> Any:
             if isinstance(value, str):
                 return try_to_convert(value)
             if isinstance(value, dict):
@@ -87,35 +89,39 @@ class TestApp(hass.Hass):
             self.log("Function returns: " + function + " = " + str(result))
         return convert_output(result)
 
-    def __to_datetime(self, value):
-        return DateTime.convert_date(date, result_format="datetime")
+    def __to_datetime(self, value: Any) -> Any:
+        return DateTime.convert_date(value, result_format="datetime")
 
-    def __to_datestr(self, value):
-        return DateTime.convert_date(date, result_format="timestamp")
+    def __to_datestr(self, value: Any) -> Any:
+        return DateTime.convert_date(value, result_format="timestamp")
 
-    def api_callback(self, data, **kwargs):
+    def api_callback(
+        self, data: dict[str, Any], **kwargs: Any
+    ) -> tuple[Any, int]:
         try:
             result = self.__call(data)
             return result, 200
-        except:
+        except Exception:
             exception_str = traceback.format_exc()
             self.log(exception_str, level="ERROR")
             return exception_str, 500
 
-    def test(self, arg):
+    def test(self, arg: Any) -> Any:
         return arg
 
-    def call_on_app(self, app, function, *args, **kwargs):
+    def call_on_app(
+        self, app: Any, function: str, *args: Any, **kwargs: Any
+    ) -> Any:
         return getattr(self.get_app(app), function)(*args, **kwargs)
 
-    def _app_running(self, app):
+    def _app_running(self, app: str) -> bool:
         try:
             return self.AD.app_management.objects.get(app) is not None and self.AD.app_management.objects[app].running
         except Exception:
             return False
 
-    def is_all_apps_loaded(self, apps):
+    def is_all_apps_loaded(self, apps: list[str]) -> bool:
         return all(self._app_running(app) for app in apps)
 
-    def is_all_apps_unloaded(self, apps):
+    def is_all_apps_unloaded(self, apps: list[str]) -> bool:
         return all(not self._app_running(app) for app in apps)

@@ -75,7 +75,7 @@ Wait For History Size
 
 History Should Be
     [Arguments]  ${app}  @{expected}
-    ${history} =  Call Function  call_on_app  ${app}  get_history
+    ${history} =  Call Function  call_on_app  ${app}  get_value_history
     ${actual} =  Convert History Output  ${history}
     Lists Should Be Equal  ${actual}  ${expected}
 

@@ -7,15 +7,7 @@ from typing import Any
 from urllib import request
 
 
-# Real appdaemon returns str handles from run_in/cancel_timer/etc., but the
-# unit-test mock returns int. Use a union so the apps typecheck against both.
-TimerHandle = int | str
-
-
 class Hass(appdaemon.plugins.hass.hassapi.Hass):
-    def cancel_timer(self, handle: TimerHandle) -> bool:  # type: ignore[override]
-        return super().cancel_timer(str(handle))  # type: ignore[arg-type]
-
     def _api_request(self, path: str) -> Any:
         hass_config = [
             config

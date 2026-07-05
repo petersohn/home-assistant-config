@@ -1,16 +1,17 @@
-import hass
+from __future__ import annotations
+from apps import hass
 from typing import Callable, override
 
 
 class TestCover(hass.Hass):
-    def __init__(self):
+    def __init__(self) -> None:
         super(TestCover, self).__init__()
         self.entity: str = ""
         self.available_entity: str = ""
         self.position_entity: str = ""
         self.position: int = 0
         self.target: int | None = None
-        self.process_id: int | None = None
+        self.process_id: str | None = None
 
     @override
     def initialize(self) -> None:
@@ -49,7 +50,7 @@ class TestCover(hass.Hass):
         self.__set_state()
         self.__do_deferred(lambda: self.__set_position())
 
-    def __set_position(self):
+    def __set_position(self) -> None:
         if self.target is None:
             return
         self.position = self.target
@@ -67,7 +68,7 @@ class TestCover(hass.Hass):
         self.process_id = None
         callback()
 
-    def __set_state(self):
+    def __set_state(self) -> None:
         state = "unknown"
         is_available = self.is_available()
         if not is_available:
@@ -85,10 +86,10 @@ class TestCover(hass.Hass):
         self.log("State={} position={}".format(state, self.position))
         self.set_state(self.entity, state, attributes)
 
-    def __set_availability(self):
+    def __set_availability(self) -> None:
         if not self.is_available():
             self.target = None
         self.__set_state()
 
-    def is_available(self):
+    def is_available(self) -> bool:
         return self.get_state(self.available_entity) == "on"

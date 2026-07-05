@@ -12,7 +12,7 @@ class AutoSwitch(hass.Hass):
         self.switch: str | None = self.args.get("switch")
         self.reentrant: bool = self.args.get("reentrant", False)
         self.intended_state: str | None = None
-        self.timer: hass.TimerHandle | None = None
+        self.timer: str | None = None
 
         import locker
         locker_app = self.get_app("locker")

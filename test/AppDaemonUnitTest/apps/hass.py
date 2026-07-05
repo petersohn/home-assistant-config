@@ -80,8 +80,8 @@ class AppManager:
         self.__state_callbacks: dict[int, StateCallbackRecord] = {}
         self.__state_callback_id = 0
         self.__datetime = begin_time
-        self.__scheduled_tasks: dict[int, ScheduledTask] = {}
-        self.__scheduled_task_order: list[int] = []
+        self.__scheduled_tasks: dict[str, ScheduledTask] = {}
+        self.__scheduled_task_order: list[str] = []
         self.__has_error = False
         self.__log_filename = log_filename
         self.__services: dict[ServiceKey, ServiceData] = {}
@@ -117,19 +117,19 @@ class AppManager:
         del self.__apps[name]
         self.__app_order = list(filter(lambda a: a != name, self.__app_order))
 
-        for id in [
+        for callback_id in [
             key
             for key, value in self.__state_callbacks.items()
             if value.app == name
         ]:
-            self.cancel_listen_state(id)
+            self.cancel_listen_state(callback_id)
 
-        for id in [
+        for timer_id in [
             key
             for key, value in self.__scheduled_tasks.items()
             if value.app == name
         ]:
-            self.cancel_timer(id)
+            self.cancel_timer(timer_id)
 
         for key in [
             key for key, value in self.__services.items() if value.app == name
@@ -268,19 +268,19 @@ class AppManager:
             key=lambda i: self.__scheduled_tasks[i].time, reverse=True
         )
 
-    def __schedule_task(self, id: int, task: ScheduledTask) -> None:
+    def __schedule_task(self, id: str, task: ScheduledTask) -> None:
         self.__debug(
             "schedule task {} at {}".format(id, task.time.strftime("%H:%M:%S"))
         )
         self.__scheduled_tasks[id] = task
         self.__calculate_scheduled_task_order()
 
-    def schedule_task(self, task: ScheduledTask) -> int:
-        id = self.__get_id()
+    def schedule_task(self, task: ScheduledTask) -> str:
+        id = str(self.__get_id())
         self.__schedule_task(id, task)
         return id
 
-    def cancel_timer(self, id: int) -> None:
+    def cancel_timer(self, id: str) -> None:
         self.__debug("Cancel timer {}".format(id))
         if id in self.__scheduled_tasks:
             del self.__scheduled_tasks[id]
@@ -485,7 +485,7 @@ class Hass:
 
     def run_in(
         self, callback: SchedulerChallback, delay: int, **kwargs: Any
-    ) -> int:
+    ) -> str:
         assert self.__manager is not None
         return self.__manager.schedule_task(
             ScheduledTask(
@@ -499,7 +499,7 @@ class Hass:
 
     def run_at(
         self, callback: SchedulerChallback, when: datetime, **kwargs: Any
-    ) -> int:
+    ) -> str:
         assert self.__manager is not None
         return self.__manager.schedule_task(
             ScheduledTask(
@@ -517,7 +517,7 @@ class Hass:
         when: datetime,
         repeat: int,
         **kwargs: Any,
-    ) -> int:
+    ) -> str:
         assert self.__manager is not None
         return self.__manager.schedule_task(
             ScheduledTask(
@@ -531,7 +531,7 @@ class Hass:
 
     def run_daily(
         self, callback: SchedulerChallback, when: time, **kwargs: Any
-    ) -> int:
+    ) -> str:
         assert self.__manager is not None
         next = datetime.combine(self.date(), when)
         if next < self.datetime():
@@ -546,7 +546,7 @@ class Hass:
             )
         )
 
-    def cancel_timer(self, id: int) -> None:
+    def cancel_timer(self, id: str) -> None:
         assert self.__manager is not None
         self.__manager.cancel_timer(id)
 

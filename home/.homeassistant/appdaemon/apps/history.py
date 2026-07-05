@@ -102,7 +102,7 @@ class HistoryManager(HistoryManagerBase):
         while len(self.history) >= 2 and self.history[1].time < min_time:
             self.history.popleft()
 
-    def get_history(self) -> list[tuple[datetime.datetime, float]]:  # type: ignore[override]
+    def get_value_history(self) -> list[tuple[datetime.datetime, float]]:
         return [(e.time, e.value) for e in self.get_recorded_history()]
 
     def get_recorded_history(self) -> deque[HistoryElement]:
@@ -472,7 +472,7 @@ class Aggregator:
             app.args["aggregator"]
         )
         self.callback = callback
-        self.timer: hass.TimerHandle | None = None
+        self.timer: str | None = None
 
         manager = app.get_app(app.args["manager"])
         assert isinstance(manager, HistoryManager)

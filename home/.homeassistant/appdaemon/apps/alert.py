@@ -29,7 +29,7 @@ class AlertAggregator(hass.Hass):
             )
             self.value: bool = bool(self._calculate_trigger_value())
             self.text_value: Any = self.text_expr.get()
-            self.timer: hass.TimerHandle | None = None
+            self.timer: str | None = None
 
         def on_text_changed(self, value: Any) -> None:
             with self.app.mutex.lock("on_text_changed"):

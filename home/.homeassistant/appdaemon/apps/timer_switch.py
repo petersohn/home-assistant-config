@@ -95,7 +95,7 @@ class Timer:
         except ValueError:
             self.time = time  # type: ignore[assignment]
         self.callback = callback
-        self.timer: hass.TimerHandle | None = None
+        self.timer: str | None = None
         import locker
         locker_app = app.get_app("locker")
         assert isinstance(locker_app, locker.Locker)
@@ -161,7 +161,7 @@ class TimerSwitch(hass.Hass):
         else:
             self.delay = None
 
-        self.delay_timer: hass.TimerHandle | None = None
+        self.delay_timer: str | None = None
 
         import locker
         locker_app = self.get_app("locker")

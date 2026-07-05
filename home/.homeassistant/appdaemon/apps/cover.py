@@ -26,7 +26,7 @@ class CoverController(hass.Hass):
         with self.mutex.lock("initialize"):
             self.is_available: bool = False
             self.expected_value: Any = None
-            self.timer: hass.TimerHandle | None = None
+            self.timer: str | None = None
 
             delay = self.args.get("delay")
             self.delay: datetime.timedelta | None = (

@@ -1,4 +1,4 @@
-import hass
+from apps import hass
 from datetime import datetime, timedelta, time
 from typing import Any, Callable
 

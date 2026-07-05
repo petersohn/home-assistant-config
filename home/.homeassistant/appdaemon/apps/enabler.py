@@ -13,7 +13,7 @@ class Enabler(hass.Hass):
         self.callback_id = 0
         self.state: bool | None = None
         self.change_state: bool | None = None
-        self.change_timer: hass.TimerHandle | None = None
+        self.change_timer: str | None = None
         import locker
         locker_app = self.get_app("locker")
         assert isinstance(locker_app, locker.Locker)
@@ -26,7 +26,7 @@ class Enabler(hass.Hass):
 
     def terminate(self) -> None:
         if self.change_timer is not None:
-            self.cancel_timer(self.change_timer)  # type: ignore[arg-type]
+            self.cancel_timer(self.change_timer)
 
     def get_callbacks(self) -> list[Callable[[], None]]:
         with self.callbacks_mutex.lock("get_callbacks"):
@@ -51,7 +51,7 @@ class Enabler(hass.Hass):
                 if self.change_state == state:
                     self.log("no change")
                     return
-                self.cancel_timer(self.change_timer)  # type: ignore[arg-type]
+                self.cancel_timer(self.change_timer)
                 self.change_timer = None
             self.change_state = state
             self.change_timer = self.run_in(
