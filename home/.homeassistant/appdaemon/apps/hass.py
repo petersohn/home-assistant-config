@@ -3,7 +3,7 @@ import appdaemon.plugins.hass.hassapi
 import datetime
 import http.client
 import json
-from typing import Any
+from typing import Any, Callable
 from urllib import request
 
 
@@ -11,6 +11,12 @@ EntityValue = str | dict[str, Any] | None
 
 
 class Hass(appdaemon.plugins.hass.hassapi.Hass):
+    def add_callback(self, func: Callable[[], None]) -> int:
+        raise NotImplementedError
+
+    def remove_callback(self, id: int) -> None:
+        raise NotImplementedError
+
     def _api_request(self, path: str) -> Any:
         hass_config = [
             config

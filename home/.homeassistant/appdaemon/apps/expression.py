@@ -1,6 +1,8 @@
 from __future__ import annotations
 import datetime
+import enabler
 import hass
+import history
 import traceback
 from hass import EntityValue
 from typing import Any, Callable
@@ -56,7 +58,11 @@ class ExpressionEvaluator:
     def cleanup(self) -> None:
         for name, id in self.app_callbacks.items():
             try:
-                self.app.get_app(name).remove_callback(id)  # type: ignore[attr-defined]
+                app = self.app.get_app(name)
+                assert isinstance(
+                    app, (enabler.Enabler, history.HistoryManagerBase)
+                ), "App {!r} does not support remove_callback".format(name)
+                app.remove_callback(id)
             except Exception:
                 self.app.error(traceback.format_exc())
 
@@ -157,11 +163,19 @@ class ExpressionEvaluator:
             and value != "unavailable"
         )
 
-    def _get_app(self, name: str) -> Any:
+    def _get_app(self, name: str) -> hass.Hass:
         try:
             app = self.app.get_app(name)
+            assert isinstance(app, hass.Hass), (
+                "Expected {!r} to be a Hass app, got {}".format(
+                    name, type(app).__name__
+                )
+            )
             if self.callback is not None and name not in self.app_callbacks:
-                id = app.add_callback(lambda: self._on_app_change())  # type: ignore[attr-defined]
+                assert isinstance(
+                    app, (enabler.Enabler, history.HistoryManagerBase)
+                ), "App {!r} does not support add_callback".format(name)
+                id = app.add_callback(lambda: self._on_app_change())
                 self.app_callbacks[name] = id
             return app
         except Exception:
@@ -169,13 +183,31 @@ class ExpressionEvaluator:
             raise
 
     def _get_enabled(self, name: str) -> bool:
-        return self._get_app(name).is_enabled()
+        app = self._get_app(name)
+        assert isinstance(app, enabler.Enabler), (
+            "Expected {!r} to be an Enabler app, got {}".format(
+                name, type(app).__name__
+            )
+        )
+        return app.is_enabled()
 
     def _get_last_changed(self, name: str) -> Any:
-        return self._get_app(name).last_changed()
+        app = self._get_app(name)
+        assert isinstance(app, history.ChangeTracker), (
+            "Expected {!r} to be a ChangeTracker app, got {}".format(
+                name, type(app).__name__
+            )
+        )
+        return app.last_changed()
 
     def _get_last_updated(self, name: str) -> Any:
-        return self._get_app(name).last_updated()
+        app = self._get_app(name)
+        assert isinstance(app, history.ChangeTracker), (
+            "Expected {!r} to be a ChangeTracker app, got {}".format(
+                name, type(app).__name__
+            )
+        )
+        return app.last_updated()
 
     def _on_app_change(self) -> None:
         self.app.log("on_app_change")
