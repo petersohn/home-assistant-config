@@ -34,6 +34,7 @@ reportExplicitAny = false
 reportImplicitRelativeImport = false
 reportUnusedParameter = false
 reportUnusedCallResult = false
+reportUninitializedInstanceVariable = false
 venvPath = "test/AppDaemonIntegrationTest/"
 venv = ".appdaemon"
 
