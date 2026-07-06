@@ -32,6 +32,8 @@ disable_error_code = ["valid-type"]
 reportAny = false
 reportExplicitAny = false
 reportImplicitRelativeImport = false
+venvPath = "test/AppDaemonIntegrationTest/"
+venv = ".appdaemon"
 
 [tool.black]
 line-length = 80
