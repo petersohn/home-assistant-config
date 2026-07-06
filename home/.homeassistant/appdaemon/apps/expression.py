@@ -113,9 +113,9 @@ class ExpressionEvaluator:
         except ValueError:
             return value
 
-    def _get_value(self, entity: str) -> str | float | bool:
+    def _get_value(self, entity: str) -> str | float | bool | Evaluator:
         if "." not in entity:
-            return Evaluator(self._get_value, entity + ".")  # type: ignore[return-value]
+            return Evaluator(self._get_value, entity + ".")
 
         if self.callback is not None and entity not in self.entities:
             self.app.listen_state(self._on_entity_change, entity_id=entity)
