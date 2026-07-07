@@ -55,28 +55,14 @@ def create_appdaemon_apps_config(
 
     content["global_modules"] = list(global_modules)
 
-    modules: set[str] = set(m + ".py" for m in global_modules)
-    for data in content.values():
-        if type(data) is not dict:
-            continue
-        module = data.get("module")
-        if module is not None:
-            assert type(module) == str
-            modules.add(module + ".py")
-
-    for file_name in os.listdir(apps_dir):
+    apps_path = os.path.join(directories.appdaemon_config_path, "apps")
+    for file_name in os.listdir(apps_path):
         if not file_name.endswith(".py"):
             continue
-        if not file_name in modules:
-            os.remove(os.path.join(apps_dir, file_name))
-
-    apps_path = os.path.join(directories.appdaemon_config_path, "apps")
-    for file_name in modules:
         target_file = os.path.join(apps_dir, file_name)
         if os.path.exists(target_file):
-            continue
-        source_file = os.path.join(apps_path, file_name)
-        os.symlink(source_file, target_file)
+            os.remove(target_file)
+        os.symlink(os.path.join(apps_path, file_name), target_file)
 
     all_apps = [
         name
