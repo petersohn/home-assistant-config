@@ -28,3 +28,6 @@ RUN uv venv /appdaemon --python 3.12
 WORKDIR /deps/appdaemon
 COPY --from=deps test/dependencies/appdaemon/ ./
 RUN VIRTUAL_ENV=/appdaemon uv sync --frozen --no-install-project --active
+# Apply patch for AppDaemon's stale-app reinitialization bug; see test/patch_appdaemon.py
+COPY --from=deps test/patch_appdaemon.py /tmp/patch_appdaemon.py
+RUN python3 /tmp/patch_appdaemon.py /appdaemon/lib/python3.12/site-packages/appdaemon/app_management.py
