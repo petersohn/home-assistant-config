@@ -4,7 +4,8 @@ Library    HttpLibrary.HTTP
 Library    Process
 Library    OperatingSystem
 Library    libraries/home_assistant.py
-Resource   resources/Http.robot
+Resource  resources/Http.robot
+Resource  resources/ProcessCheck.robot
 Variables  libraries/directories.py
 
 
@@ -20,6 +21,7 @@ Start Home Assistant
     Set Suite Variable  ${home_assistant_host}  127.0.0.1:${home_assistant_port}
     ...                 children=true
     ${hass_path} =    Set Variable  ${base_output_directory}/hass
+    Check For Leftover Process    hass    hass .*${hass_path}
     Remove Directory    ${hass_path}  recursive=${True}
     Create Home Assistant Configuration  ${hass_path}  ${home_assistant_port}
     Copy File           ${hass_config_path}//auth

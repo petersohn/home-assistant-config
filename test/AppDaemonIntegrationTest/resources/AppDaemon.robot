@@ -6,6 +6,7 @@ Library    Collections
 Library    libraries/type_util.py
 Resource   resources/ErrorHandling.robot
 Resource   resources/Http.robot
+Resource   resources/ProcessCheck.robot
 Variables  libraries/directories.py
 
 
@@ -19,6 +20,7 @@ ${test_arg}         This is a test
 Start AppDaemon
     Set Suite Variable  ${app_daemon_host}  127.0.0.1:${app_daemon_api_port}
     ...    children=True
+    Check For Leftover Process    appdaemon    appdaemon .*${appdaemon_directory}
     ${app_daemon_process} =  Start Process   ./appdaemon
     ...    --config      ${appdaemon_directory}
 #     ...    --debug       DEBUG
