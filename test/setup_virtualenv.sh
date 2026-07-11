@@ -21,15 +21,6 @@ function setup_sync() {
     )
 }
 
-function patch_appdaemon() {
-    local venv_path="$1"
-    local app_management="$venv_path/lib/python3.12/site-packages/appdaemon/app_management.py"
-    if [[ ! -f "$app_management" ]]; then
-        return
-    fi
-    python3 "$script_dir/patch_appdaemon.py" "$app_management"
-}
-
 function setup_hass() {
     local venv_path="AppDaemonIntegrationTest/.hass"
     rm -rf "$venv_path"
@@ -72,5 +63,4 @@ fi
 
 if [[ -n "$appdaemon" ]]; then
     setup_sync python3.12 AppDaemonIntegrationTest/.appdaemon dependencies/appdaemon
-    patch_appdaemon AppDaemonIntegrationTest/.appdaemon
 fi
