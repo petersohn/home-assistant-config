@@ -4,10 +4,17 @@ views:
     title: default_view
     badges: []
     cards:
-      - type: horizontal-stack
-        cards:
+      #- type: entity
+      #  entity: cover.gate
+      - type: heading
+        heading: Jelenlét
+        icon: mdi:home
+        badges:
+          - type: entity
+            entity: input_select.presence_mode
+            tap_action:
+              action: more-info
           - type: button
-            entity: binary_sensor.presence_home
             name: Home
             icon: mdi:home
             tap_action:
@@ -17,7 +24,6 @@ views:
                 entity_id: input_select.presence_mode
                 option: 'home'
           - type: button
-            entity: binary_sensor.presence_sleep
             name: Sleep
             icon: mdi:sleep
             tap_action:
@@ -27,7 +33,6 @@ views:
                 entity_id: input_select.presence_mode
                 option: 'sleep'
           - type: button
-            entity: binary_sensor.presence_away
             name: Away
             icon: mdi:home-export-outline
             tap_action:
@@ -36,108 +41,109 @@ views:
               service_data:
                 entity_id: input_select.presence_mode
                 option: 'away'
-        title: Jelenlét
+      - type: heading
+        heading: Kapu
+        icon: mdi:gate
+        badges:
+          - type: entity
+            entity: cover.gate
+            tap_action:
+              action: more-info
+          - type: button
+            name: Stop
+            icon: mdi:gate-alert
+            tap_action:
+              action: call-service
+              service: cover.stop_cover
+              service_data:
+                entity_id: cover.gate
+          - type: button
+            name: Nyitás
+            icon: mdi:gate-open
+            tap_action:
+              action: call-service
+              service: cover.open_cover
+              service_data:
+                entity_id: cover.gate
+          - type: button
+            name: Nyitás gyalogos
+            icon: mdi:walk
+            tap_action:
+              action: call-service
+              service: cover.set_cover_position
+              service_data:
+                entity_id: cover.gate
+                position: 40
+          - type: button
+            name: Zárás
+            icon: mdi:gate
+            tap_action:
+              action: call-service
+              service: cover.close_cover
+              service_data:
+                entity_id: cover.gate
       - type: vertical-stack
         cards:
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.temperature_living_room_upper
-                graph: line
-              - type: sensor
-                entity: sensor.temperature_bedroom_upper
-                graph: line
-          - type: horizontal-stack
-            cards:
-              - type: sensor
+          - type: heading
+            heading: Hőmérséklet
+            icon: mdi:thermometer
+            badges:
+              - type: entity
                 entity: sensor.temperature_outside
-                graph: line
-              - type: sensor
-                entity: sensor.pm10_outside
-                graph: line
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                entity: sensor.rain_last_day
-                graph: line
-              - type: sensor
-                entity: sensor.rain_last_hour
-                graph: line
-        title: Időjárás
+                icon: mdi:sun-thermometer
+                tap_action:
+                  action: more-info
+              - type: entity
+                entity: sensor.temperature_kitchen
+                icon: mdi:pot-steam
+                tap_action:
+                  action: more-info
+              - type: entity
+                entity: sensor.temperature_living_room_upper
+                icon: mdi:sofa
+                tap_action:
+                  action: more-info
+              - type: entity
+                entity: sensor.temperature_bedroom_upper
+                icon: mdi:bed
+                tap_action:
+                  action: more-info
+          - type: heading
+            heading: Eső
+            icon: mdi:weather-pouring
+            badges:
+              - type: entity
+                entity: sensor.rain_last_day_rounded
+                name: 12h
+                icon: mdi:calendar-clock
+                state_content:
+                  - name
+                  - state
+                tap_action:
+                  action: more-info
+                  entity: sensor.rain_last_day
+              - type: entity
+                entity: sensor.rain_last_hour_rounded
+                name: 1h
+                icon: mdi:clock-time-one
+                state_content:
+                  - name
+                  - state
+                tap_action:
+                  action: more-info
+                  entity: sensor.rain_last_hour
       - type: vertical-stack
         cards:
-          - type: horizontal-stack
-            cards:
-            - type: button
-              entity: switch.desktop_player
-            - type: button
-              entity: input_boolean.desktop_player_pause
-          # - type: media-control
-          #   entity: media_player.desktop
-          - type: horizontal-stack
-            cards:
-            - type: button
-              entity: switch.laptop_player
-            - type: button
-              entity: input_boolean.laptop_player_pause
-      - type: vertical-stack
-        cards:
-          - type: vertical-stack
-            title: Kapu
-            cards:
-              - type: horizontal-stack
-                cards:
-                  - type: entity
-                    entity: cover.gate
-                  - type: entity
-                    entity: cover.gate
-                    attribute: current_position
-                    name: Pozíció
-                    icon: mdi:percent
-                  - type: button
-                    name: Stop
-                    icon: mdi:gate-alert
-                    tap_action:
-                      action: call-service
-                      service: cover.stop_cover
-                      service_data:
-                        entity_id: cover.gate
-              - type: horizontal-stack
-                cards:
-                  - type: button
-                    name: Nyitás
-                    icon: mdi:gate-open
-                    entity: binary_sensor.gate_opening
-                    tap_action:
-                      action: call-service
-                      service: cover.open_cover
-                      service_data:
-                        entity_id: cover.gate
-                  - type: button
-                    name: Nyitás gyalogos
-                    icon: mdi:walk
-                    tap_action:
-                      action: call-service
-                      service: cover.set_cover_position
-                      service_data:
-                        entity_id: cover.gate
-                        position: 40
-                  - type: button
-                    name: Zárás
-                    icon: mdi:gate
-                    entity: binary_sensor.gate_closing
-                    tap_action:
-                      action: call-service
-                      service: cover.close_cover
-                      service_data:
-                        entity_id: cover.gate
-      - type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
+          - type: heading
+            heading: Klíma mód
+            icon: mdi:thermostat-auto
+            badges:
+              - type: entity
+                entity: input_select.climate_mode
+                tap_action:
+                  action: more-info
               - type: button
                 entity: binary_sensor.climate_off
-                name: Ki
                 icon: mdi:thermometer-off
                 tap_action:
                   action: call-service
@@ -147,7 +153,6 @@ views:
                     option: 'off'
               - type: button
                 entity: binary_sensor.climate_cool
-                name: Hűtés
                 icon: mdi:snowflake-thermometer
                 tap_action:
                   action: call-service
@@ -157,7 +162,6 @@ views:
                     option: 'cool'
               - type: button
                 entity: binary_sensor.climate_dry
-                name: Párátlanítás
                 icon: mdi:water-percent
                 tap_action:
                   action: call-service
@@ -165,11 +169,8 @@ views:
                   service_data:
                     entity_id: input_select.climate_mode
                     option: 'dry'
-          - type: horizontal-stack
-            cards:
               - type: button
                 entity: binary_sensor.climate_heat
-                name: Fűtés
                 icon: mdi:sun-thermometer-outline
                 tap_action:
                   action: call-service
@@ -179,7 +180,6 @@ views:
                     option: 'heat'
               - type: button
                 entity: binary_sensor.climate_heat_up
-                name: Felfűtés
                 icon: mdi:thermometer-chevron-up
                 tap_action:
                   action: call-service
@@ -189,7 +189,6 @@ views:
                     option: 'heat_up'
               - type: button
                 entity: binary_sensor.climate_keep_warm
-                name: Melegen tartás
                 icon: mdi:thermometer-lines
                 tap_action:
                   action: call-service
@@ -197,12 +196,13 @@ views:
                   service_data:
                     entity_id: input_select.climate_mode
                     option: 'keep_warm'
-          - type: horizontal-stack
-            cards:
+          - type: heading
+            heading: Klíma csendes
+            icon: mdi:fan-chevron-down
+            badges:
               - type: button
                 entity: binary_sensor.living_room_climate_silence
-                name: Nappali klíma csendes
-                icon: mdi:fan-chevron-down
+                icon: mdi:sofa
                 tap_action:
                   action: call-service
                   service: script.toggle_silence
@@ -210,21 +210,79 @@ views:
                     entity: climate.daikin_living_room
               - type: button
                 entity: binary_sensor.bedroom_climate_silence
-                name: Hálószoba klíma csendes
-                icon: mdi:fan-chevron-down
+                icon: mdi:bed
                 tap_action:
                   action: call-service
                   service: script.toggle_silence
                   service_data:
                     entity: climate.daikin_bedroom
-          - type: entities
-            state_color: true
-            entities:
-              - input_boolean.wood_heating
-              - climate.daikin_living_room
-              - climate.daikin_bedroom
-        show_header_toggle: false
-        title: Fűtés
+          - type: heading
+            heading: Klíma
+            icon: mdi:thermostat
+            badges:
+              - type: entity
+                entity: input_boolean.wood_heating
+                color: state
+                tap_action:
+                  action: toggle
+                double_tap_action:
+                  action: more-info
+              - type: entity
+                entity: climate.daikin_living_room
+                color: state
+                icon: mdi:sofa
+                state_content:
+                  - state
+                  - temperature
+                tap_action:
+                  action: more-info
+              - type: entity
+                entity: climate.daikin_bedroom
+                color: state
+                icon: mdi:bed
+                state_content:
+                  - state
+                  - temperature
+                tap_action:
+                  action: more-info
+      - type: vertical-stack
+        cards:
+          - type: heading
+            heading: Lejátszás desktop
+            icon: mdi:desktop-tower
+            badges:
+              - type: entity
+                entity: switch.desktop_player
+                color: state
+                tap_action:
+                  action: toggle
+                double_tap_action:
+                  action: more-info
+              - type: entity
+                entity: input_boolean.desktop_player_pause
+                color: state
+                tap_action:
+                  action: toggle
+                double_tap_action:
+                  action: more-info
+          - type: heading
+            heading: Lejátszás laptop
+            icon: mdi:laptop
+            badges:
+              - type: entity
+                entity: switch.laptop_player
+                color: state
+                tap_action:
+                  action: toggle
+                double_tap_action:
+                  action: more-info
+              - type: entity
+                entity: input_boolean.laptop_player_pause
+                color: state
+                tap_action:
+                  action: toggle
+                double_tap_action:
+                  action: more-info
 
     icon: 'mdi:home'
   - path: window_door
@@ -1027,61 +1085,352 @@ views:
         title: Hálózat
         state_color: true
         show_header_toggle: false
+      - type: vertical-stack
+        title: device availability
+        cards:
+          - type: heading
+            heading: Nappali
+            icon: mdi:sofa
+            badges:
+              - type: entity
+                entity: binary_sensor.living_room_temperature_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.living_room_temperature_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Hálószoba
+            icon: mdi:bed
+            badges:
+              - type: entity
+                entity: binary_sensor.bedroom_temperature_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.bedroom_temperature_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Konyha
+            icon: mdi:pot-steam
+            badges:
+              - type: entity
+                entity: binary_sensor.dishwasher_sensor_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.dishwasher_sensor_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Karácsonyfa
+            icon: mdi:pine-tree
+            badges:
+              - type: entity
+                entity: binary_sensor.christmas_tree_switcher_available
+                tap_action:
+                  action: more-info
+                color: state
+          - type: heading
+            heading: Étkező ablak hátul
+            icon: mdi:window-shutter
+            badges:
+              - type: entity
+                entity: binary_sensor.dining_room_window_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.dining_room_window_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Étkező ablak elöl
+            icon: mdi:window-shutter
+            badges:
+              - type: entity
+                entity: binary_sensor.dining_room_window_2_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.dining_room_window_2_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Nappali ablak
+            icon: mdi:window-shutter
+            badges:
+              - type: entity
+                entity: binary_sensor.living_room_window_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.living_room_window_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Kamra ablak 1
+            icon: mdi:window-shutter
+            badges:
+              - type: entity
+                entity: binary_sensor.storage_window_1_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.storage_window_1_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Kamra ablak 2
+            icon: mdi:window-shutter
+            badges:
+              - type: entity
+                entity: binary_sensor.storage_window_2_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.storage_window_2_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Terasz
+            icon: mdi:view-comfy
+            badges:
+              - type: entity
+                entity: binary_sensor.balcony_controller_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.balcony_controller_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Garázs
+            icon: mdi:garage
+            badges:
+              - type: entity
+                entity: binary_sensor.garage_controller_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.garage_controller_maintenance
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Akkutöltő
+            icon: mdi:car-battery
+            badges:
+              - type: entity
+                entity: binary_sensor.battery_charger_available
+                tap_action:
+                  action: more-info
+                color: state
+          - type: heading
+            heading: Pince
+            icon: mdi:tools
+            badges:
+              - type: entity
+                entity: binary_sensor.cellar_controller_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.cellar_controller_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Bejáró
+            icon: mdi:post-lamp
+            badges:
+              - type: entity
+                entity: binary_sensor.driveway_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.driveway_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Bejáró 2
+            icon: mdi:post-lamp
+            badges:
+              - type: entity
+                entity: binary_sensor.driveway2_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.driveway2_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Kapu
+            icon: mdi:gate
+            badges:
+              - type: entity
+                entity: binary_sensor.gate_controller_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.gate_controller_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Kapu reflektor
+            icon: mdi:light-flood-down
+            badges:
+              - type: entity
+                entity: binary_sensor.gate_reflector_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.gate_reflector_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Kazánház
+            icon: mdi:water-boiler
+            badges:
+              - type: entity
+                entity: binary_sensor.furnace_temperature_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.furnace_temperature_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Padlás lent
+            icon: mdi:home-roof
+            badges:
+              - type: entity
+                entity: binary_sensor.attic_lower_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.attic_lower_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Padlás 1
+            icon: mdi:home-roof
+            badges:
+              - type: entity
+                entity: binary_sensor.main_controller_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.main_controller_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Padlás 2
+            icon: mdi:home-roof
+            badges:
+              - type: entity
+                entity: binary_sensor.main_controller2_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.main_controller2_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
+          - type: heading
+            heading: Kút
+            icon: mdi:water-well
+            badges:
+              - type: entity
+                entity: binary_sensor.well_controller_available
+                tap_action:
+                  action: more-info
+                color: state
+              - type: entity
+                entity: input_boolean.well_controller_maintenance
+                double_tap_action:
+                  action: more-info
+                color: state
+                tap_action:
+                  action: toggle
       - type: entities
         entities:
-          - binary_sensor.attic_lower_available
-          - binary_sensor.balcony_controller_available
-          - binary_sensor.battery_charger_available
-          - binary_sensor.bedroom_temperature_available
-          - binary_sensor.christmas_tree_switcher_available
-          - binary_sensor.dining_room_window_available
-          - binary_sensor.dining_room_window_2_available
-          - binary_sensor.cellar_controller_available
-          - binary_sensor.dishwasher_sensor_available
-          - binary_sensor.driveway_available
-          - binary_sensor.driveway2_available
-          - binary_sensor.furnace_temperature_available
-          - binary_sensor.garage_controller_available
-          - binary_sensor.gate_controller_available
-          - binary_sensor.gate_reflector_available
-          - binary_sensor.living_room_temperature_available
-          - binary_sensor.living_room_window_available
-          - binary_sensor.main_controller_available
-          - binary_sensor.main_controller2_available
-          - binary_sensor.storage_window_1_available
-          - binary_sensor.storage_window_2_available
-          - binary_sensor.well_controller_available
-          # - binary_sensor.climate_living_room_available
           - alert.availability
           - alert.availability_critical
         title: device availability
         state_color: true
         show_header_toggle: false
-      - type: entities
-        entities:
-          - input_boolean.attic_lower_maintenance
-          - input_boolean.balcony_controller_maintenance
-          - input_boolean.bedroom_temperature_maintenance
-          - input_boolean.dining_room_window_maintenance
-          - input_boolean.dining_room_window_2_maintenance
-          - input_boolean.cellar_controller_maintenance
-          - input_boolean.dishwasher_sensor_maintenance
-          - input_boolean.driveway_maintenance
-          - input_boolean.driveway2_maintenance
-          - input_boolean.furnace_temperature_maintenance
-          - input_boolean.garage_controller_maintenance
-          - input_boolean.gate_controller_maintenance
-          - input_boolean.gate_reflector_maintenance
-          - input_boolean.living_room_temperature_maintenance
-          - input_boolean.living_room_window_maintenance
-          - input_boolean.main_controller_maintenance
-          - input_boolean.main_controller2_maintenance
-          - input_boolean.storage_window_1_maintenance
-          - input_boolean.storage_window_2_maintenance
-          - input_boolean.well_controller_maintenance
-        title: device maintenance
-        state_color: true
-        show_header_toggle: true
       - type: entities
         entities:
           - sensor.driveway_device_temperature

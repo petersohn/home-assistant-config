@@ -285,9 +285,6 @@ sensor.free_space_data:
   friendly_name: "Szabad hely data"
   icon: mdi:harddisk
 
-sensor.solar_panel_pictures_size_command:
-  friendly_name: "Napelem képek adatmennyiség"
-
 switch.heating_pump:
   friendly_name: "Keringető szivattyú"
   icon: mdi:engine

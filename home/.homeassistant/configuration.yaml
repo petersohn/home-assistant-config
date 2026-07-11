@@ -149,19 +149,6 @@ climate:
 
 template:
   - binary_sensor:
-    - name: presence_home
-      state: >
-        {{ is_state('input_select.presence_mode', 'home') }}
-  - binary_sensor:
-    - name: presence_sleep
-      state: >
-        {{ is_state('input_select.presence_mode', 'sleep') }}
-  - binary_sensor:
-    - name: presence_away
-      state: >
-        {{ is_state('input_select.presence_mode', 'away') }}
-
-  - binary_sensor:
     - name: climate_off
       state: >
         {{ is_state('input_select.climate_mode', 'off') }}
@@ -201,14 +188,16 @@ template:
     - name: low_free_space_data
       state: >
         {{ (states('sensor.free_space_data') | float) < 10 * 1024 * 1024 * 1024 }}
-  - binary_sensor:
-    - name: gate_opening
+  - sensor:
+    - name: rain_last_day_rounded
       state: >
-        {{ is_state('cover.gate', 'opening') }}
-  - binary_sensor:
-    - name: gate_closing
+        {{ '%.2f' | format(states('sensor.rain_last_day') | float) }}
+      icon: mdi:weather-pouring
+  - sensor:
+    - name: rain_last_hour_rounded
       state: >
-        {{ is_state('cover.gate', 'closing') }}
+        {{ '%.2f' | format(states('sensor.rain_last_hour') | float) }}
+      icon: mdi:weather-pouring
 
 
 input_number:
