@@ -9,6 +9,9 @@ views:
       - type: heading
         heading: Jelenlét
         icon: mdi:home
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/state
         badges:
           - type: entity
             entity: input_select.presence_mode
@@ -44,6 +47,9 @@ views:
       - type: heading
         heading: Kapu
         icon: mdi:gate
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/window_door
         badges:
           - type: entity
             entity: cover.gate
@@ -85,19 +91,12 @@ views:
       - type: vertical-stack
         cards:
           - type: heading
-            heading: Hőmérséklet
-            icon: mdi:thermometer
+            heading: Hőmérséklet bent
+            icon: mdi:home-thermometer
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/temperature-inside
             badges:
-              - type: entity
-                entity: sensor.temperature_outside
-                icon: mdi:sun-thermometer
-                tap_action:
-                  action: more-info
-              - type: entity
-                entity: sensor.temperature_kitchen
-                icon: mdi:pot-steam
-                tap_action:
-                  action: more-info
               - type: entity
                 entity: sensor.temperature_living_room_upper
                 icon: mdi:sofa
@@ -108,9 +107,46 @@ views:
                 icon: mdi:bed
                 tap_action:
                   action: more-info
+              - type: entity
+                entity: sensor.temperature_kitchen
+                icon: mdi:pot-steam
+                tap_action:
+                  action: more-info
+          - type: heading
+            heading: Hőmérséklet kint
+            icon: mdi:sun-thermometer
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/weather
+            badges:
+              - type: entity
+                entity: sensor.temperature_outside
+                icon: mdi:water-well
+                tap_action:
+                  action: more-info
+          - type: heading
+            heading: Szél
+            icon: mdi:weather-windy
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/weather
+            badges:
+              - type: entity
+                entity: sensor.wind_strength_rounded
+                tap_action:
+                  action: more-info
+                  entity: sensor.wind_strength
+              - type: entity
+                entity: sensor.wind_direction_average_rounded
+                tap_action:
+                  action: more-info
+                  entity: sensor.wind_direction_average
           - type: heading
             heading: Eső
             icon: mdi:weather-pouring
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/weather
             badges:
               - type: entity
                 entity: sensor.rain_last_day_rounded
@@ -283,6 +319,56 @@ views:
                   action: toggle
                 double_tap_action:
                   action: more-info
+      - type: heading
+        heading: Riasztás
+        icon: mdi:alert
+        badges:
+          - type: entity
+            entity: alert.furnace_overheat
+            icon: mdi:water-boiler-alert
+            color: state
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/utilities
+            double_tap_action:
+              action: more-info
+          - type: entity
+            entity: alert.availability_critical
+            icon: mdi:chip
+            color: state
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/state
+            double_tap_action:
+              action: more-info
+          - type: entity
+            entity: alert.availability
+            icon: mdi:chip
+            color: state
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/state
+            double_tap_action:
+              action: more-info
+          - type: entity
+            entity: alert.window_open
+            icon: mdi:window-open
+            color: state
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/window_door
+            double_tap_action:
+              action: more-info
+          - type: entity
+            entity: alert.window_open_sleep
+            icon: mdi:window-open
+            color: state
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/window_door
+            double_tap_action:
+              action: more-info
+
 
     icon: 'mdi:home'
   - path: window_door
@@ -321,6 +407,9 @@ views:
           - input_select.storage_window_blind_2
         title: Redőny
         state_color: true
+      - type: entities
+        entities:
+          - cover.gate
   - path: temperature-inside
     title: 'Benti hőmérséklet'
     icon: 'mdi:home-thermometer'

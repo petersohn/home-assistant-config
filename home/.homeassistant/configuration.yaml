@@ -198,6 +198,18 @@ template:
       state: >
         {{ '%.2f' | format(states('sensor.rain_last_hour') | float) }}
       icon: mdi:weather-pouring
+  - sensor:
+    - name: wind_strength_rounded
+      state: >
+        {{ '%.1f' | format(states('sensor.wind_strength') | float) }}
+      icon: mdi:weather-windy
+      unit_of_measurement: km/h
+  - sensor:
+    - name: wind_direction_average_rounded
+      state: >
+        {{ '%.0f' | format(states('sensor.wind_direction_average') | float) }}
+      icon: mdi:windsock
+      unit_of_measurement: "°"
 
 
 input_number:
