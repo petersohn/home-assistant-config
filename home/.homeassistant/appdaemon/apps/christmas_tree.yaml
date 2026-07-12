@@ -1,0 +1,28 @@
+christmas_tree:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.christmas_tree
+    switch: input_select.christmas_tree
+
+
+christmas_tree_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    expr: >
+        v.input_select.presence_mode == "home"
+    dependencies:
+        - locker
+
+
+christmas_tree_switcher:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - christmas_tree
+        - christmas_tree_enabler
+        - locker
+    enabler: christmas_tree_enabler
+    targets:
+        - christmas_tree
+

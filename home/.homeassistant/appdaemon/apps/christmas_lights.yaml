@@ -1,0 +1,81 @@
+christmas_light_switch_front:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_christmas_front
+    switch: input_select.light_christmas_front
+
+
+christmas_light_switch_tree:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_christmas_tree
+    switch: input_select.light_christmas_tree
+
+
+christmas_light_switch_balcony:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.light_christmas_balcony
+    switch: input_select.light_christmas_balcony
+
+
+christmas_lights_date_enabler:
+    module: enabler
+    class: DateEnabler
+    dependencies: locker
+    begin: 11-15
+    end: 02-28
+
+
+christmas_lights_enabler:
+    module: enabler
+    class: MultiEnabler
+    dependencies:
+        - christmas_lights_date_enabler
+        - sun_enabler_night
+        - locker
+    enablers:
+        - christmas_lights_date_enabler
+        - sun_enabler_night
+
+
+christmas_light_switcher:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - christmas_light_switch_front
+        - christmas_light_switch_tree
+        - christmas_lights_enabler
+        - locker
+    enabler: christmas_lights_enabler
+    targets:
+        - christmas_light_switch_front
+        - christmas_light_switch_tree
+
+
+christmas_light_balcony_enabler:
+    module: enabler
+    class: MultiEnabler
+    dependencies:
+        - christmas_lights_date_enabler
+        - light_outside_2_4_5_6_enabler
+        - locker
+    enablers:
+        - christmas_lights_date_enabler
+        - light_outside_2_4_5_6_enabler
+
+
+christmas_light_balcony_switcher:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - christmas_light_switch_balcony
+        - christmas_light_balcony_enabler
+        - locker
+    enabler: christmas_light_balcony_enabler
+    targets:
+        - christmas_light_switch_balcony
+

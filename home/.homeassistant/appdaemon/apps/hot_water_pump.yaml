@@ -1,0 +1,45 @@
+hot_water_pump_enabler:
+    module: enabler
+    class: ValueEnabler
+    dependencies: locker
+    entity: input_select.presence_mode
+    value: 'home'
+
+
+auto_switch_hot_water_pump:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.hot_water_pump
+    switch: input_select.hot_water_pump
+    reentrant: false
+
+
+hot_water_pump_backend_timer:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_hot_water_pump
+        - hot_water_pump_enabler
+        - locker
+    expr: >
+        v.binary_sensor.cellar_controller_available is not True or
+        not ok.sensor.temperature_hot_water or
+        v.sensor.temperature_hot_water <= 41
+    targets:
+        - auto_switch_hot_water_pump
+    enabler: hot_water_pump_enabler
+    time: 1
+
+
+no_hot_water:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+        v.input_select.presence_mode == "home" and
+        ok.sensor.temperature_hot_water and
+        v.sensor.temperature_hot_water < 40
+    target: binary_sensor.no_hot_water
+

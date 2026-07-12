@@ -1,0 +1,57 @@
+wind_direction:
+    class: WindDirection
+    module: wind_direction
+    entity: sensor.wind_direction
+
+
+wind_direction_average_icon:
+    class: WindDirection
+    module: wind_direction
+    entity: sensor.wind_direction_average
+
+
+wind_short_term:
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: sensor.wind_strength
+
+
+wind_direction_short_term:
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: sensor.wind_direction
+
+
+wind_disabler:
+    module: enabler
+    class: HistoryEnabler
+    dependencies:
+        - wind_short_term
+        - locker
+    manager: wind_short_term
+    aggregator: max
+    max: 50
+    interval:
+        minutes: 10
+    default: 0
+
+
+wind_direction_average:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - wind_direction_short_term
+        - locker
+    manager: wind_direction_short_term
+    target: sensor.wind_direction_average
+    interval:
+        minutes: 10
+    base_interval:
+        seconds: 10
+    aggregator: anglemean
+    attributes:
+        unit_of_measurement: "°"
+        friendly_name: "Szélirány"
+

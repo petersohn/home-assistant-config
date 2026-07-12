@@ -16,7 +16,7 @@ The project is structured so that it can be installed by Homeshick into the home
     - `*.yaml`: Other config files included from `configuration.yaml`.
     - `appdaemon/apps/`: AppDaemon configuration.
       - `*.py`: The AppDaemon apps.
-      - `apps.yaml`: The AppDaemon configuration file.
+      - `*.yaml`: AppDaemon app configuration files. AppDaemon globs every `*.yaml`/`*.toml` in this directory and merges them, so the app definitions are split across multiple files by functionality.
   - `.local/bin/`: script used from inside Home Assistant.
 - `robotframework-httplibrary/`: Third party testing library. Don't modify this.
 - `test/`
@@ -45,7 +45,7 @@ Because the Python modules are loaded dynamically, only modules loaded before th
 
 ### Production apps
 
-Modules under `home/.homeassistant/appdaemon/apps/` (configured via `apps.yaml`):
+Modules under `home/.homeassistant/appdaemon/apps/` (configured via the `*.yaml` files in that directory, split by functionality):
 
 - `hass.py` (`Hass`): Base class for all apps. Extends AppDaemon's `Hass` with REST API helpers (`load_history`, `load_states`) and the abstract `add_callback`/`remove_callback` contract used by enablers and history.
 - `locker.py` (`Locker`): Provides named mutexes with deadlock detection via `mutex_graph`. Nearly every app grabs a mutex from here for thread-safe state updates.

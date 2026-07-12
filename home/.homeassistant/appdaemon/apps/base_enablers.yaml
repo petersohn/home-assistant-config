@@ -1,0 +1,95 @@
+sun_enabler_night:
+    module: enabler
+    class: ValueEnabler
+    dependencies: locker
+    entity: binary_sensor.night
+    value: 'on'
+
+
+lights_should_be_on:
+    module: enabler
+    class: ExpressionEnabler
+    expr: >
+        v.input_select.presence_mode == "home" or (
+        v.input_select.presence_mode == "away" and
+        int(v.sensor.time[0:2]) > 12)
+    dependencies:
+        - locker
+
+
+sunlight:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+        v.sensor.light_sunlight
+        if not v.input_boolean.sunlight_sensor_maintenance
+        else 'unavailable'
+    target: sensor.light_sunlight_adjusted
+    attributes:
+        unit_of_measurement: '%'
+
+
+is_dark:
+    module: enabler
+    class: ExpressionEnabler
+    delay:
+        minutes: 5
+    expr: >
+        ok.sensor.light_sunlight_adjusted and
+        v.sensor.light_sunlight_adjusted <= 50
+    dependencies:
+        - locker
+
+
+is_sunlight_or_false:
+    module: enabler
+    class: ExpressionEnabler
+    delay:
+        minutes: 5
+    expr: >
+        ok.sensor.light_sunlight_adjusted and
+        v.sensor.light_sunlight_adjusted > 90
+    dependencies:
+        - locker
+
+
+is_sunlight_or_true:
+    module: enabler
+    class: ExpressionEnabler
+    delay:
+        minutes: 5
+    expr: >
+        not ok.sensor.light_sunlight_adjusted or
+        v.sensor.light_sunlight_adjusted > 90
+    dependencies:
+        - locker
+
+
+is_night_or_dark:
+    module: enabler
+    class: ExpressionEnabler
+    expr: >
+        e.lights_should_be_on and
+        (e.sun_enabler_night or e.is_dark)
+    dependencies:
+        - sun_enabler_night
+        - lights_should_be_on
+        - is_dark
+        - locker
+
+
+is_light_enough_to_open_blind:
+    module: enabler
+    class: ExpressionEnabler
+    delay:
+        minutes: 5
+    expr: >
+        not e.sun_enabler_night and not (
+        ok.sensor.light_sunlight_adjusted and
+        v.sensor.light_sunlight_adjusted <= 30)
+    dependencies:
+        - sun_enabler_night
+        - locker
+

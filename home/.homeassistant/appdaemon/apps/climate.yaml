@@ -1,0 +1,91 @@
+heater_check:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+      min(nums(
+      v.sensor.temperature_living_room_upper,
+      v.sensor.temperature_bedroom_upper,
+      v.sensor.temperature_kitchen,
+      v.sensor.daikin_bedroom_inside_temperature,
+      v.sensor.daikin_living_room_inside_temperature))
+    target: sensor.heater_check
+
+
+heater_check2:
+    module: expression
+    class: Expression
+    dependencies:
+        - locker
+    expr: >
+      v.sensor.temperature_living_room_upper or
+      v.sensor.temperature_bedroom_upper or
+      v.sensor.temperature_kitchen
+    target: sensor.heater_check2
+    attributes:
+      icon: mdi:home-thermometer-outline
+      unit_of_measurement: "°C"
+
+
+auto_switch_climate_living_room:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.climate_living_room
+    switch: input_select.climate_living_room
+    reentrant: false
+
+
+climate_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    expr: >
+        True
+
+
+climate_living_room_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_climate_living_room
+        - climate_enabler
+        - locker
+    enabler: climate_enabler
+    targets:
+        - auto_switch_climate_living_room
+
+
+auto_switch_climate_bedroom:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.climate_bedroom
+    switch: input_select.climate_bedroom
+    reentrant: false
+
+
+climate_bedroom_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_climate_bedroom
+        - climate_enabler
+        - locker
+    enabler: climate_enabler
+    targets:
+        - auto_switch_climate_bedroom
+
+
+#
+# target_climate_mode:
+#     module: expression
+#     class: Expression
+#     dependencies:
+#         - locker
+#     expr: >
+#     states:
+#       'off': 'off'
+#     target: sensor.target_climate_mode

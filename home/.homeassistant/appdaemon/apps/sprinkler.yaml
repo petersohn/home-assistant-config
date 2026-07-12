@@ -1,0 +1,134 @@
+sprinkler_run_time:
+    class: Expression
+    module: expression
+    dependencies:
+        - locker
+        - rain_decaying
+        - maximum_temperature_last_day
+    target: sensor.sprinkler_run_time
+    expr: >
+        (1.2 * v.sensor.maximum_temperature_last_day - 15.0
+        - 4.0 * v.sensor.rain_decaying) * 0.8
+    attributes:
+        unit_of_measurement: min
+        friendly_name: "Locsolás idő"
+        icon: mdi:timer
+
+
+sprinkler_run_time_2:
+    class: Expression
+    module: expression
+    dependencies:
+        - locker
+    target: sensor.sprinkler_run_time_2
+    expr: >
+        0.5 * v.sensor.maximum_temperature_last_day
+    attributes:
+        unit_of_measurement: min
+        friendly_name: "Locsolás idő 2"
+        icon: mdi:timer
+
+
+sprinkler_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    expr: >
+        v.input_boolean.sprinkler and v.sensor.sprinkler_run_time >= 5.0
+        and v.sensor.rain_last_day < 1.0
+    dependencies:
+        - locker
+        - sprinkler_run_time
+        - rain_last_day
+
+
+auto_switch_sprinkler_1:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.auto_sprinkler1
+    switch: input_select.auto_sprinkler1
+    reentrant: false
+
+
+auto_switch_sprinkler_2:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.auto_sprinkler2
+    switch: input_select.auto_sprinkler2
+    reentrant: false
+
+
+auto_switch_sprinkler_3:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.auto_sprinkler3
+    switch: input_select.auto_sprinkler3
+    reentrant: false
+
+
+auto_switch_sprinkler_cellar:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.auto_sprinkler_cellar
+    switch: input_select.auto_sprinkler_cellar
+    reentrant: false
+
+
+auto_switch_balcony_sprinkler:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.balcony_sprinkler
+    switch: input_select.balcony_sprinkler
+    reentrant: false
+
+
+sprinkler_timer:
+    class: TimerSequence
+    module: timer_switch
+    dependencies:
+        - auto_switch_sprinkler_1
+        - auto_switch_sprinkler_2
+        - auto_switch_sprinkler_3
+        - auto_switch_balcony_sprinkler
+        - sprinkler_enabler
+        - sprinkler_run_time
+        - sprinkler_run_time_2
+        - locker
+    expr: v.sensor.time == '21:00'
+    sequence:
+        - targets:
+              - auto_switch_sprinkler_1
+          time: sensor.sprinkler_run_time
+        - targets:
+              - auto_switch_sprinkler_2
+          time: sensor.sprinkler_run_time
+        - targets:
+              - auto_switch_sprinkler_3
+          time: sensor.sprinkler_run_time
+        - targets:
+              - auto_switch_balcony_sprinkler
+          time: sensor.sprinkler_run_time_2
+    enabler: sprinkler_enabler
+
+
+cellar_sprinkler_switcher:
+    class: TimerSequence
+    module: timer_switch
+    dependencies:
+        - auto_switch_sprinkler_cellar
+        - locker
+    sensor: input_boolean.start_sprinkler_cellar
+    expr: >
+      v.input_boolean.start_sprinkler_cellar or (
+      int(v.sensor.date[-2:]) == int(v.input_number.sprinkler_cellar_day) and
+      v.sensor.time == '12:00')
+    target_state: 'on'
+    sequence:
+        - targets:
+              - auto_switch_sprinkler_cellar
+          time: 10
+

@@ -1,0 +1,317 @@
+motion_sensor_garage_history:
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: binary_sensor.motion_sensor_garage
+
+
+motion_sensor_garage_average:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - motion_sensor_garage_history
+        - locker
+    manager: motion_sensor_garage_history
+    target: sensor.motion_sensor_garage_average
+    interval:
+        hours: 1
+    aggregator: mean
+    attributes:
+        friendly_name: "Garázs"
+        icon: mdi:percent
+
+
+#motion_sensor_garage_enabler:
+#    module: enabler
+#    class: ExpressionEnabler
+#    dependencies:
+#        - sun_enabler_night
+#        - is_dark
+#        - locker
+#    expr: >
+#        e.sun_enabler_night or
+#        (v.input_select.presence_mode == "home" and e.is_dark)
+
+
+motion_sensor_garage2_history:
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: binary_sensor.motion_sensor_garage2
+
+
+motion_sensor_garage2_average:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - motion_sensor_garage2_history
+        - locker
+    manager: motion_sensor_garage2_history
+    target: sensor.motion_sensor_garage2_average
+    interval:
+        hours: 1
+    aggregator: mean
+    attributes:
+        friendly_name: "Garázs 2"
+        icon: mdi:percent
+
+
+motion_sensor_well_history:
+    module: history
+    class: HistoryManager
+    dependencies: locker
+    entity: binary_sensor.motion_sensor_well
+
+
+motion_sensor_well_average:
+    module: history
+    class: AggregatedValue
+    dependencies:
+        - motion_sensor_well_history
+        - locker
+    manager: motion_sensor_well_history
+    target: sensor.motion_sensor_well_average
+    interval:
+        hours: 1
+    aggregator: mean
+    attributes:
+        friendly_name: "Kút"
+        icon: mdi:percent
+
+
+motion_sensor_well_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - sun_enabler_night
+        - locker
+    expr: >
+        e.sun_enabler_night and
+        v.sensor.motion_sensor_well_average <= 0.2 and
+        v.input_select.presence_mode != 'sleep'
+
+
+#driveway_upper_motion_sensor:
+#    class: TimerSequence
+#    module: timer_switch
+#    dependencies:
+#        - auto_switch_light_gate_reflector
+#        - auto_switch_light_driveway
+#        - sun_enabler_night
+#        - locker
+#    sensor: binary_sensor.motion_sensor_driveway_upper
+#    sequence:
+#        - targets:
+#            - auto_switch_light_gate_reflector
+#            - auto_switch_light_driveway
+#          time: 2
+#    enabler: sun_enabler_night
+#    restart_on_trigger: true
+#    rising_edge: true
+#    falling_edge: true
+#
+
+#driveway_lower_motion_sensor:
+#    class: TimerSequence
+#    module: timer_switch
+#    dependencies:
+#        - auto_switch_light_driveway
+#        - sun_enabler_night
+#        - locker
+#    sensor: binary_sensor.motion_sensor_driveway_lower
+#    sequence:
+#        - targets:
+#            - auto_switch_light_driveway
+#          time: 2
+#    enabler: sun_enabler_night
+#    restart_on_trigger: true
+#    rising_edge: true
+#    falling_edge: true
+
+
+gate_opening:
+    class: TimerSequence
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_driveway
+        - auto_switch_light_gate_reflector
+        - locker
+    sensor: cover.gate
+    target_state: opening
+    sequence:
+        - targets:
+            - auto_switch_light_driveway
+            - auto_switch_light_gate_reflector
+          time: 3
+    enabler: sun_enabler_night
+    restart_on_trigger: true
+
+
+gate_vehicle_detected:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_driveway
+        - auto_switch_light_gate_reflector
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+        - sun_enabler_night
+        - locker
+    sensor: binary_sensor.kapu_vehicle_detected
+    targets:
+        - auto_switch_light_driveway
+        - auto_switch_light_gate_reflector
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+    enabler: sun_enabler_night
+    time: 2
+
+
+driveway_vehicle_detected:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_driveway
+        - sun_enabler_night
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+        - locker
+    sensor: binary_sensor.bejaro_vehicle_detected
+    targets:
+        - auto_switch_light_driveway
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+    enabler: sun_enabler_night
+    time: 2
+
+
+gate_person_detected:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_driveway
+        - auto_switch_light_gate_reflector
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+        - sun_enabler_night
+        - locker
+    sensor: binary_sensor.kapu_person_detected
+    targets:
+        - auto_switch_light_driveway
+        - auto_switch_light_gate_reflector
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+    enabler: sun_enabler_night
+    time: 2
+
+
+driveway_person_detected:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_driveway
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+        - sun_enabler_night
+        - locker
+    sensor: binary_sensor.bejaro_person_detected
+    targets:
+        - auto_switch_light_driveway
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+    enabler: sun_enabler_night
+    time: 2
+
+
+garage_driveway_motion_sensor:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_driveway
+        - sun_enabler_night
+        - locker
+    sensor: binary_sensor.motion_sensor_garage
+    targets:
+        - auto_switch_light_driveway
+        - auto_switch_light_outside_5
+        - auto_switch_light_garage
+    enabler: sun_enabler_night
+    time: 2
+
+
+#garage_motion_sensor:
+#    class: TimerSwitch
+#    module: timer_switch
+#    dependencies:
+#        - auto_switch_light_garage
+#        - motion_sensor_garage_enabler
+#        - locker
+#    sensor: binary_sensor.motion_sensor_garage
+#    targets:
+#        - auto_switch_light_garage
+#    enabler: motion_sensor_garage_enabler
+#    time: 1
+
+
+garage2_motion_sensor:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_garage
+        - locker
+    sensor: binary_sensor.motion_sensor_garage2
+    targets:
+        - auto_switch_light_garage
+    time: 1
+
+
+well_motion_sensor:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_well
+        - motion_sensor_well_enabler
+        - locker
+    sensor: binary_sensor.motion_sensor_well
+    targets:
+        - auto_switch_light_well
+        - auto_switch_light_driveway
+    enabler: motion_sensor_well_enabler
+    time: 2
+    delay: 1
+
+
+home_light_switcher:
+    class: TimerSequence
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_gate_reflector
+        - auto_switch_light_driveway
+        - sun_enabler_night
+        - locker
+    sensor: input_select.presence_mode
+    source_state: away
+    target_state: home
+    enabler: sun_enabler_night
+    sequence:
+        - targets:
+              - auto_switch_light_gate_reflector
+              - auto_switch_light_driveway
+          time: 5
+

@@ -1,0 +1,55 @@
+is_attic_warm_enough_for_water_heater:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    delay:
+        minutes: 30
+    expr: >
+        not ok.sensor.temperature_attic or v.sensor.temperature_attic > 3
+
+
+water_heater_enabler:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+        - is_attic_warm_enough_for_water_heater
+    expr: >
+      e.is_attic_warm_enough_for_water_heater
+      or v.sensor.time >= '10:00'
+
+
+is_water_heater_stopped:
+    module: enabler
+    class: ExpressionEnabler
+    dependencies:
+        - locker
+    delay:
+        minutes: 10
+    expr: >
+        not ok.sensor.power_water_heater or v.sensor.power_water_heater < 10
+
+
+auto_switch_water_heater:
+    module: auto_switch
+    class: AutoSwitch
+    dependencies: locker
+    target: switch.water_heater
+    switch: input_select.water_heater
+    reentrant: false
+
+
+water_heater_switch:
+    class: EnabledSwitch
+    module: enabled_switch
+    dependencies:
+        - auto_switch_water_heater
+        - water_heater_enabler
+        - is_water_heater_stopped
+        - locker
+    enabler: water_heater_enabler
+    off_guard: is_water_heater_stopped
+    targets:
+        - auto_switch_water_heater
+

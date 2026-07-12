@@ -1,0 +1,6 @@
+
+locker:
+    module: locker
+    class: Locker
+    enable_logging: false
+
