@@ -1,27 +1,18 @@
-global_modules:
-    - mutex_graph
-    - expression
-    - hass
 
 locker:
     module: locker
     class: Locker
-    global_dependencies:
-      - mutex_graph
-      - hass
     enable_logging: false
 
 wind_direction:
     class: WindDirection
     module: wind_direction
     entity: sensor.wind_direction
-    global_dependencies: hass
 
 wind_direction_average_icon:
     class: WindDirection
     module: wind_direction
     entity: sensor.wind_direction_average
-    global_dependencies: hass
 
 heating_pump:
     class: TemperatureBasic
@@ -507,8 +498,6 @@ christmas_light_switcher:
         - christmas_light_switch_tree
         - christmas_lights_enabler
         - locker
-    global_dependencies:
-        - auto_switch
     enabler: christmas_lights_enabler
     targets:
         - christmas_light_switch_front
@@ -532,8 +521,6 @@ christmas_light_balcony_switcher:
         - christmas_light_switch_balcony
         - christmas_light_balcony_enabler
         - locker
-    global_dependencies:
-        - auto_switch
     enabler: christmas_light_balcony_enabler
     targets:
         - christmas_light_switch_balcony
@@ -545,8 +532,6 @@ light_outside_switcher_0:
         - auto_switch_light_outside_0
         - sun_enabler_night
         - locker
-    global_dependencies:
-        - auto_switch
     enabler: sun_enabler_night
     targets:
         - auto_switch_light_outside_0
@@ -558,8 +543,6 @@ light_outside_switcher_1:
         - auto_switch_light_outside_1
         - sun_enabler_night
         - locker
-    global_dependencies:
-        - auto_switch
     enabler: sun_enabler_night
     targets:
         - auto_switch_light_outside_1
@@ -573,8 +556,6 @@ lights_should_be_on:
         int(v.sensor.time[0:2]) > 12)
     dependencies:
         - locker
-    global_dependencies:
-        - expression
 
 light_outside_2_4_5_6_enabler:
     module: enabler
@@ -585,8 +566,6 @@ light_outside_2_4_5_6_enabler:
         - sun_enabler_night
         - lights_should_be_on
         - locker
-    global_dependencies:
-        - expression
 
 light_outside_switcher_2_4_5_6:
     class: EnabledSwitch
@@ -598,8 +577,6 @@ light_outside_switcher_2_4_5_6:
         - auto_switch_light_outside_6
         - locker
         - light_outside_2_4_5_6_enabler
-    global_dependencies:
-        - auto_switch
     enabler: light_outside_2_4_5_6_enabler
     targets:
         - auto_switch_light_outside_2
@@ -630,8 +607,6 @@ is_dark:
         v.sensor.light_sunlight_adjusted <= 50
     dependencies:
         - locker
-    global_dependencies:
-        - expression
 
 is_sunlight_or_false:
     module: enabler
@@ -643,8 +618,6 @@ is_sunlight_or_false:
         v.sensor.light_sunlight_adjusted > 90
     dependencies:
         - locker
-    global_dependencies:
-        - expression
 
 is_sunlight_or_true:
     module: enabler
@@ -656,8 +629,6 @@ is_sunlight_or_true:
         v.sensor.light_sunlight_adjusted > 90
     dependencies:
         - locker
-    global_dependencies:
-        - expression
 
 is_night_or_dark:
     module: enabler
@@ -670,8 +641,6 @@ is_night_or_dark:
         - lights_should_be_on
         - is_dark
         - locker
-    global_dependencies:
-        - expression
 
 light_outside_switcher_3:
     class: EnabledSwitch
@@ -680,8 +649,6 @@ light_outside_switcher_3:
         - auto_switch_light_outside_3
         - is_night_or_dark
         - locker
-    global_dependencies:
-        - auto_switch
     enabler: is_night_or_dark
     targets:
         - auto_switch_light_outside_3
@@ -894,8 +861,6 @@ sprinkler_enabler:
         - locker
         - sprinkler_run_time
         - rain_last_day
-    global_dependencies:
-        - expression
 
 auto_switch_sprinkler_1:
     module: auto_switch
@@ -979,8 +944,6 @@ christmas_tree_enabler:
         v.input_select.presence_mode == "home"
     dependencies:
         - locker
-    global_dependencies:
-        - expression
 
 christmas_tree_switcher:
     class: EnabledSwitch
@@ -989,8 +952,6 @@ christmas_tree_switcher:
         - christmas_tree
         - christmas_tree_enabler
         - locker
-    global_dependencies:
-        - auto_switch
     enabler: christmas_tree_enabler
     targets:
         - christmas_tree
@@ -1009,8 +970,6 @@ availability_alerts:
         hours: 1
     dependencies:
         - locker
-    global_dependencies:
-        - expression
     sources:
         - driveway
         - driveway2
@@ -1034,8 +993,6 @@ availability_alerts_critical:
         minutes: 5
     dependencies:
         - locker
-    global_dependencies:
-        - expression
     sources:
         - furnace_temperature
         - well_controller
@@ -1058,8 +1015,6 @@ window_alerts:
     text_expr: a[name].friendly_name
     dependencies:
         - locker
-    global_dependencies:
-        - expression
     sources:
         - binary_sensor.window_bedroom
         - binary_sensor.window_living_room
@@ -1081,8 +1036,6 @@ window_alerts_sleep:
     text_expr: a[name].friendly_name
     dependencies:
         - locker
-    global_dependencies:
-        - expression
     sources:
         - binary_sensor.door_attic_hatch
         - binary_sensor.door_furnace_room
@@ -1149,8 +1102,6 @@ freeze_alerts:
     text_expr: name[19:]
     dependencies:
         - locker
-    global_dependencies:
-        - expression
     sources:
         - sensor.temperature_furnace_room
         - sensor.temperature_cellar
@@ -1171,8 +1122,6 @@ window_blind_shield_1:
     dependencies:
         - locker
         - is_sunlight_or_true
-    global_dependencies:
-        - expression
 
 dining_room_window_blind:
     module: cover
@@ -1180,8 +1129,6 @@ dining_room_window_blind:
     dependencies:
         - locker
         - window_blind_shield_1
-    global_dependencies:
-        - expression
     expr: >
         75 if v.input_select.presence_mode == 'home' and e.window_blind_shield_1
         else 'open' if v.input_select.presence_mode == 'home' or (
@@ -1208,8 +1155,6 @@ is_light_enough_to_open_blind:
     dependencies:
         - sun_enabler_night
         - locker
-    global_dependencies:
-        - expression
 
 window_blind_shield_2:
     module: enabler
@@ -1221,8 +1166,6 @@ window_blind_shield_2:
     dependencies:
         - locker
         - sun_enabler_night
-    global_dependencies:
-        - expression
 
 dining_room_2_window_blind:
     module: cover
@@ -1231,8 +1174,6 @@ dining_room_2_window_blind:
         - locker
         - is_light_enough_to_open_blind
         - window_blind_shield_2
-    global_dependencies:
-        - expression
     expr: >
         75 if v.input_select.presence_mode == 'home' and e.window_blind_shield_2
         else 'open' if v.input_select.presence_mode == 'home' and (
@@ -1258,8 +1199,6 @@ storage_window_blind_auto_open_enabler:
     dependencies:
         - is_light_enough_to_open_blind
         - locker
-    global_dependencies:
-        - expression
 
 storage_door_open:
     class: TimerSwitch
@@ -1303,8 +1242,6 @@ storage_window_blind_1:
     dependencies:
         - locker
         - auto_switch_storage_window_blind
-    global_dependencies:
-        - expression
     expr: >
         'open' if
         v.input_boolean.storage_window_blind_open or
@@ -1319,8 +1256,6 @@ storage_window_blind_2:
     dependencies:
         - locker
         - auto_switch_storage_window_blind
-    global_dependencies:
-        - expression
     expr: >
         'open' if
         v.input_boolean.storage_window_blind_open or
@@ -1335,8 +1270,6 @@ living_room_window_blind:
     dependencies:
         - locker
         - is_light_enough_to_open_blind
-    global_dependencies:
-        - expression
     expr: >
         'open' if v.input_select.presence_mode == 'home' and (
         e.is_light_enough_to_open_blind or v.binary_sensor.window_living_room)
@@ -1449,8 +1382,6 @@ air_quality_alert:
     text_expr: a[name].friendly_name
     dependencies:
         - locker
-    global_dependencies:
-        - expression
     sources:
         - binary_sensor.window_bedroom
         - binary_sensor.window_living_room

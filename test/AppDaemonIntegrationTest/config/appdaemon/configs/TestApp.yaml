@@ -1,13 +1,6 @@
-global_modules:
-    - mutex_graph
-    - hass
-
 locker:
     module: locker
     class: Locker
-    global_dependencies:
-      - mutex_graph
-      - hass
     enable_logging: true
 
 test:
@@ -15,4 +8,3 @@ test:
     class: TestApp
     dependencies:
       - locker
-    global_dependencies: mutex_graph

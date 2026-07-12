@@ -38,7 +38,6 @@ app_name:
   module: <module_name>
   class: <class_name>
   dependencies: <other apps used by the app>
-  global_dependencies: <modules used by the app>
   ...arguments
 ```
 

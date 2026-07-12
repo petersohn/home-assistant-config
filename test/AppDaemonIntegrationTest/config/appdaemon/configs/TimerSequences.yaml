@@ -1,6 +1,3 @@
-global_modules:
-  - expression
-
 timer_sequence_1:
   module: timer_switch
   class: TimerSequence
@@ -29,8 +26,6 @@ enabler1:
   dependencies:
     - locker
     - switch_enabler
-  global_dependencies:
-    - expression
   expr: e.switch_enabler
 
 timer_sequence_2:
@@ -61,7 +56,4 @@ enabler2:
   dependencies:
     - locker
     - switch_enabler
-  global_dependencies:
-    - expression
   expr: not e.switch_enabler
-
