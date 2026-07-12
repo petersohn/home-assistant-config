@@ -43,12 +43,40 @@ app_name:
 
 Because the Python modules are loaded dynamically, only modules loaded before the app is reachable. For this reason, dependencies need to be specified.
 
+### Production apps
+
+Modules under `home/.homeassistant/appdaemon/apps/` (configured via `apps.yaml`):
+
+- `hass.py` (`Hass`): Base class for all apps. Extends AppDaemon's `Hass` with REST API helpers (`load_history`, `load_states`) and the abstract `add_callback`/`remove_callback` contract used by enablers and history.
+- `locker.py` (`Locker`): Provides named mutexes with deadlock detection via `mutex_graph`. Nearly every app grabs a mutex from here for thread-safe state updates.
+- `mutex_graph.py`: Graph/DFS utilities used by `locker.py` to detect lock-acquisition cycles and refuse deadlock-prone lock orders.
+- `expression.py` (`ExpressionEvaluator`): Evaluates Python expressions against live entity state, auto-tracks referenced entities/attributes, and fires a callback on change. Core primitive under `enabler`, `cover`, `alert`, and `timer_switch`.
+- `enabler.py` (`Enabler` and subclasses): Boolean conditions with optional debounce delay and change callbacks. Variants: `ValueEnabler` (entity in a value set), `RangeEnabler` (min/max), `DateEnabler` (date range, wraps yearly), `HistoryEnabler` (history aggregate bounds), `MultiEnabler` (logical AND of enablers), `ExpressionEnabler` (expression-based), `ScriptEnabler` (manual enable/disable). Used to gate lights, switches, and covers.
+- `auto_switch.py` (`AutoSwitch`, `MultiSwitcher`): Wraps a switch entity and keeps an `input_select` mode select in sync with its on/off state. Modes: `on`/`off` (always on/off, manual override), `auto` (switched programatically). Foundation that `EnabledSwitch` and `timer_switch` drive.
+- `enabled_switch.py` (`EnabledSwitch`): Turns one or more target `AutoSwitch`es on/off based on an `Enabler`, with optional `on_guard`/`off_guard` enablers that must agree before switching on or off.
+- `timer_switch.py` (`TimerSwitch`, `TimerSequence`):
+  - `TimerSwitch` turns targets on when a sensor/expression triggers and off after a duration (motion lights, vehicle/person-detected lights). Timer starts at input release (1s input hold + 1m timer = 61s total time).
+  - `TimerSequence` runs a possibly multi-step timed sequence of targets (gate opening, sprinkler schedule, arrival lights). Timer starts at input trigger (1s input hold + 1m timer = 1m total time, can shut off while input is still active). Rising and falling edge support.
+- `cover.py` (`CoverController`): Drives a cover/blind position from an expression with `auto`/`manual`/`stable` modes selected via a `mode_switch` `input_select` and an optional settle `delay`. Modes:
+  - `auto`: set to target position, then settle in `stable`.
+  - `stable`: don't move automatically, target position change sets to `auto`.
+  - `manual`: complete manual override, don't try to set position.
+- `alert.py` (`AlertAggregator`): Aggregates many source entities into one alert `binary_sensor`, using per-source `trigger_expr`/`text_expr` and an optional `timeout` before firing. Powers availability, window, freeze, and air-quality alerts.
+- `history.py` (`HistoryManager`, `ChangeTracker`, `AggregatedValue`, `Aggregator`):
+  - `HistoryManager` buffers an entity's recent samples (persisted/restored across restarts).
+  - `ChangeTracker` records state-change timestamps.
+  - `AggregatedValue` publishes a derived sensor (aggregators: `mean`, `max`, `sum`, `Integral`, `Anglemean`, `DecaySum`) over a rolling interval.
+  - `Aggregator` feeds `HistoryEnabler`.
+- `temperature_basic.py` (`TemperatureBasic`): Controls a switch (e.g. heating pump) based on the difference between an outflow and inflow temperature sensor, with min/max outside bounds, a target difference, and hysteresis tolerance.
+- `wind_direction.py` (`WindDirection`): Updates the mdi arrow icon on a wind-direction sensor based on its bearing.
+- `custom_icon.py` (`CustomIcon`): Intended to swap mdi icons on entities based on on/off state; currently inactive (callbacks are stubbed out).
+
 ### Testing
 
 There are two levels of testing:
 
 - **Unit tests**: These use a mocked version of AppDaemon. Fast and deterministic. These test the functionality of the apps, along with exact timing and edge cases.
-- **Integration tests**: These use a real Home Assistant and AppDaemon. Slow and nondeterministic. These test that the apps work in realistic conditions. No exact timing is tested. Basic functionality is tested, plus behavior that rely on AppDaemon's inner logic, such as reloading apps when the configuration changes.
+- **Integration tests**: These use a real Home Assistant and AppDaemon. Slow and nondeterministic. These test that the apps work in realistic conditions. No exact timing is tested. Basic functionality is tested, plus behavior that rely on AppDaemon's inner logic, such as reloading apps when the configuration changes. Integration tests are not necessary for every app, but should be added for more complex functionality, especially cross-app interactions.
 
 #### Setting up virtual environment
 
