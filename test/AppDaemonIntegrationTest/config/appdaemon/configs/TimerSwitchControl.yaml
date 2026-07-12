@@ -4,10 +4,10 @@ timer_switch_control:
   dependencies:
     - locker
     - control_switch
-  sensor: binary_sensor.start
+  sensor: binary_sensor.control_start
   targets:
     - control_switch
-  time: 0.25
+  time: sensor.control_time
 
 control_switch:
   module: auto_switch

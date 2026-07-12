@@ -10,6 +10,8 @@ Test Teardown  Cleanup Apps Configs
 *** Variables ***
 
 ${start_sensor}    binary_sensor.start
+${control_start_sensor}    binary_sensor.control_start
+${control_time}    sensor.control_time
 ${enabler_switch}  binary_sensor.enabler_switch
 ${control_switch}  input_boolean.control_switch
 ${switch1}         input_boolean.test_switch1
@@ -22,6 +24,7 @@ ${switch3}         input_boolean.test_switch3
 
 Control
     [Setup]  Initialize  @{base_configs}
+    Set State  ${control_time}  0.05
     Start Control And Wait
     Check History
     ...    ${control_switch}  on
@@ -92,9 +95,11 @@ Only Reload Changed Apps
 
 Start Control
     Set State  ${start_sensor}  on
+    Set State  ${control_start_sensor}  on
     Wait Until Keyword Succeeds  10s  0.1s
     ...    State Should Be  ${control_switch}  on
     Set State  ${start_sensor}  off
+    Set State  ${control_start_sensor}  off
     State Should Be  ${control_switch}  on
 
 Wait For Control
@@ -110,6 +115,8 @@ Initialize
     [Arguments]  @{configs}
     Initialize States
     ...    ${start_sensor}=off
+    ...    ${control_start_sensor}=off
+    ...    ${control_time}=0.25
     ...    ${enabler_switch}=off
     Initialize Apps Configs  @{configs}
     Turn Off  ${control_switch}
