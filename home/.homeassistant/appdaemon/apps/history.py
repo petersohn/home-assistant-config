@@ -113,13 +113,14 @@ class HistoryManager(HistoryManagerBase):
 
     def load_config_inner(self, *args: Any, **kwargs: Any) -> None:
         self.log("Loading history...")
+        self.listen_state(self.on_changed, entity_id=self.entity_id)
+        subscribe_time = self.datetime()
         loaded_history: Any = self.load_history(
             self.entity_id, self.max_interval
         )
-        now = self.datetime()
         self.history = deque(
             filter(
-                lambda element: element.time <= now
+                lambda element: element.time < subscribe_time
                 and element.value is not None,
                 (
                     make_history_element(
@@ -133,7 +134,6 @@ class HistoryManager(HistoryManagerBase):
         self.log("Total loaded history size: {}".format(len(self.history)))
         self.__filter()
         self.log("Filtered history size: {}".format(len(self.history)))
-        self.listen_state(self.on_changed, entity_id=self.entity_id)
         self.log("History loaded.")
 
     def on_changed(

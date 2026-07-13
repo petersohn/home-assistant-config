@@ -2,6 +2,7 @@
 
 Library        libraries/type_util.py
 Library        libraries/history_util.py
+Library        libraries/race_test_helper.py
 Library        Collections
 Resource       resources/TestHarness.robot
 Resource       resources/DateTime.robot
@@ -438,10 +439,56 @@ Change Tracker
     Check Date Updates  ${change_tracker}  00:02:00  00:03:00
 
 
+State Change During Load Is Not Lost
+    Set State  ${entity}  5
+    ${time0} =  Get Current Time
+    Advance Time  1 min
+    ${item} =  Create List  ${time0}  ${5}
+    ${changes} =  Create List  ${item}
+    ${history} =  Create List  ${changes}
+    ${history_manager} =  Initialize History Manager With Race
+    ...    ${history}  10
+    ${time1} =  Get Current Time
+    Advance Time  1 min
+    Set State  ${entity}  7
+    ${time2} =  Get Current Time
+    History Should Be  ${history_manager}
+    ...    ${time0}  5
+    ...    ${time1}  10
+    ...    ${time2}  7
+
+
+State In Query And Listener Is Not Duplicated
+    Set State  ${entity}  5
+    ${time0} =  Get Current Time
+    Advance Time  1 min
+    ${time1} =  Get Current Time
+    ${item1} =  Create List  ${time0}  ${5}
+    ${item2} =  Create List  ${time1}  ${10}
+    ${changes} =  Create List  ${item1}  ${item2}
+    ${history} =  Create List  ${changes}
+    ${history_manager} =  Initialize History Manager With Race
+    ...    ${history}  10
+    Advance Time  1 min
+    Set State  ${entity}  7
+    ${time2} =  Get Current Time
+    History Should Be  ${history_manager}
+    ...    ${time0}  5
+    ...    ${time1}  10
+    ...    ${time2}  7
+
+
 *** Keywords ***
 
 Initialize History Manager
     Set State  ${entity}  0
+    ${history_manager} =  Create History Manager  history_manager  ${entity}
+    RETURN  ${history_manager}
+
+Initialize History Manager With Race
+    [Arguments]  ${history}  ${race_value}
+    Set State  ${entity}  0
+    Patch Load History  ${app_manager}  ${history}  ${race_value}
     ${history_manager} =  Create History Manager  history_manager  ${entity}
     RETURN  ${history_manager}
 
