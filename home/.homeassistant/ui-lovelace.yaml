@@ -320,6 +320,84 @@ views:
                 double_tap_action:
                   action: more-info
       - type: heading
+        heading: Ajtó
+        icon: mdi:door
+        badges:
+          - type: entity
+            entity: binary_sensor.door_main_entrance
+            icon: mdi:door
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            entity: binary_sensor.door_storage
+            icon: mdi:package
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            entity: binary_sensor.door_cellar
+            icon: mdi:tools
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            entity: binary_sensor.door_furnace_room
+            icon: mdi:water-boiler
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            entity: binary_sensor.door_attic_hatch
+            icon: mdi:ladder
+            color: state
+            tap_action:
+              action: more-info
+      - type: heading
+        heading: Ablak
+        icon: mdi:window-closed
+        badges:
+          - type: entity
+            entity: binary_sensor.window_living_room
+            icon: mdi:sofa
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            entity: binary_sensor.window_bedroom
+            icon: mdi:bed
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            entity: binary_sensor.window_entrance
+            icon: mdi:table-chair
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            entity: binary_sensor.window_dining_room_2
+            icon: mdi:table-chair
+            color: state
+            tap_action:
+              action: more-info
+      - type: heading
+        heading: Ablak
+        icon: mdi:window-closed
+        badges:
+          - type: entity
+            entity: binary_sensor.window_storage_1
+            icon: mdi:package
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            entity: binary_sensor.window_storage_2
+            icon: mdi:package
+            color: state
+            tap_action:
+              action: more-info
+      - type: heading
         heading: Riasztás
         icon: mdi:alert
         badges:
