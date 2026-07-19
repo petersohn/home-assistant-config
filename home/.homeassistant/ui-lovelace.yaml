@@ -679,6 +679,21 @@ views:
           - binary_sensor.bejaro_siren_detected
       - type: entities
         state_color: true
+        title: Kert
+        show_header_toggle: false
+        entities:
+          - camera.kert_high_resolution_channel
+          - select.kert_infrared_mode
+          - binary_sensor.kert_is_dark
+          - binary_sensor.kert_person_detected
+          - binary_sensor.kert_vehicle_detected
+          - binary_sensor.kert_animal_detected
+          - binary_sensor.kert_car_alarm_detected
+          - binary_sensor.kert_car_horn_detected
+          - binary_sensor.kert_glass_break_detected
+          - binary_sensor.kert_siren_detected
+      - type: entities
+        state_color: true
         title: Riasztás
         show_header_toggle: false
         entities:

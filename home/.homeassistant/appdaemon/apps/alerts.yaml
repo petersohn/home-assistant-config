@@ -16,11 +16,18 @@ camera_detection_alert:
         (ok.binary_sensor.kapu_vehicle_detected and
         v.binary_sensor.kapu_vehicle_detected)
         or
+        (ok.binary_sensor.kert_vehicle_detected and
+        v.binary_sensor.kert_vehicle_detected)
+        or
         (ok.binary_sensor.bejaro_person_detected and
         v.binary_sensor.bejaro_person_detected)
         or
         (ok.binary_sensor.bejaro_vehicle_detected and
-        v.binary_sensor.bejaro_vehicle_detected))
+        v.binary_sensor.bejaro_vehicle_detected)
+        or
+        (ok.binary_sensor.kert_person_detected and
+        v.binary_sensor.kert_person_detected)
+        )
     target: binary_sensor.camera_detection_alert
     attributes:
         friendly_name: "Kamera riasztás"

@@ -526,3 +526,22 @@
       target:
         entity_id: cover.gate
       data: {}
+
+- alias: snapshot
+  triggers:
+    - trigger: time
+      at: "11:30:00"
+    - trigger: time
+      at: "11:45:00"
+    - trigger: time
+      at: "12:00:00"
+    - trigger: time
+      at: "12:15:00"
+    - trigger: time
+      at: "12:30:00"
+  actions:
+    - action: camera.snapshot
+      target:
+        entity_id: camera.kert_high_resolution_channel
+      data:
+        filename: /config/www/snapshots/kert_{{ now().strftime('%Y-%m-%d_%H:%M:%S') }}.jpg

@@ -193,6 +193,30 @@ driveway_vehicle_detected:
     time: 2
 
 
+garden_vehicle_detected:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_well
+        - sun_enabler_night
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+        - auto_switch_light_outside_6
+        - locker
+    sensor: binary_sensor.kert_vehicle_detected
+    targets:
+        - auto_switch_light_well
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+        - auto_switch_light_outside_6
+    enabler: sun_enabler_night
+    time: 2
+
+
 gate_person_detected:
     class: TimerSwitch
     module: timer_switch
@@ -235,6 +259,30 @@ driveway_person_detected:
         - auto_switch_light_outside_3
         - auto_switch_light_outside_4
         - auto_switch_light_outside_5
+    enabler: sun_enabler_night
+    time: 2
+
+
+garden_person_detected:
+    class: TimerSwitch
+    module: timer_switch
+    dependencies:
+        - auto_switch_light_well
+        - sun_enabler_night
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+        - auto_switch_light_outside_6
+        - locker
+    sensor: binary_sensor.kert_person_detected
+    targets:
+        - auto_switch_light_well
+        - auto_switch_light_outside_2
+        - auto_switch_light_outside_3
+        - auto_switch_light_outside_4
+        - auto_switch_light_outside_5
+        - auto_switch_light_outside_6
     enabler: sun_enabler_night
     time: 2
 
