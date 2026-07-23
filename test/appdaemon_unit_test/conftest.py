@@ -51,8 +51,8 @@ class Harness:
     def advance_time_to_datetime(self, target: datetime):
         self._manager.advance_time_to(target, self._interval)
 
-    def get_state(self, entity_id: str, attribute: str | None = None):
-        return self.test_app.get_state_as(entity_id, attribute=attribute)
+    def get_state(self, entity_id: str, attribute: str | None = None, type: str | None = None):
+        return self.test_app.get_state_as(entity_id, attribute=attribute, type=type)
 
     def set_state(self, entity_id: str, value, **attributes):
         self.test_app.set_state(entity_id, value, attributes)
@@ -146,7 +146,7 @@ def global_mutex_graph():
 def harness(request, base_output_directory, global_mutex_graph):
     params = getattr(request, "param", {})
     start_date = params.get("start_date", date(2018, 1, 1))
-    start_time = params.get("start_time", time(0, 0, 0))
+    start_time = params.get("start_time", time(1, 0, 0))
     interval = params.get("interval", timedelta(seconds=10))
     safe_name = request.node.name.replace("[", "_").replace("]", "")
     log_dir = os.path.join(base_output_directory, "logs", request.module.__name__)
