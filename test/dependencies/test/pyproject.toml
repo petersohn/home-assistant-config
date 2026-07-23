@@ -1,14 +1,12 @@
 [project]
-name = "robot"
+name = "test"
 version = "0.1.0"
-description = "Robot Framework test runner for home-assistant-config"
+description = "Test runner for home-assistant-config"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "robotframework",
-    "robotframework-pabot",
-    "robotframework-httplibrary",
+    "pytest",
+    "requests",
     "pyyaml",
-    "six",
     "python-dateutil",
     "psutil",
 ]

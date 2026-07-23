@@ -11,11 +11,11 @@ FROM python:3.12
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:0.11 /uv /uvx /usr/local/bin/
 
-# Robot framework env (Python 3.12 venv)
-RUN uv venv /robot --python 3.12
-WORKDIR /deps/robot
-COPY --from=deps test/dependencies/robot/ ./
-RUN VIRTUAL_ENV=/robot uv sync --frozen --no-install-project --active
+# Test env (Python 3.12 venv)
+RUN uv venv /test --python 3.12
+WORKDIR /deps/test
+COPY --from=deps test/dependencies/test/ ./
+RUN VIRTUAL_ENV=/test uv sync --frozen --no-install-project --active
 
 # Home Assistant env (Python 3.11, --no-deps)
 WORKDIR /deps/homeassistant
