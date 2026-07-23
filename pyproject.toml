@@ -3,24 +3,24 @@ warn_no_return = true
 disallow_untyped_defs = true
 disallow_untyped_calls = true
 mypy_path = [
-    "test/AppDaemonUnitTest",
-    "test/AppDaemonIntegrationTest/libraries",
-    "test/AppDaemonIntegrationTest/config/appdaemon",
+    "test/appdaemon_unit_test",
+    "test/appdaemon_integration_test/helpers",
+    "test/appdaemon_integration_test/config/appdaemon",
 ]
 files = [
     "home/.homeassistant/appdaemon/apps",
-    "test/AppDaemonUnitTest/apps",
-    "test/AppDaemonUnitTest/libraries",
-    "test/AppDaemonIntegrationTest/libraries",
-    "test/AppDaemonIntegrationTest/config/appdaemon/apps/dummy.py",
-    "test/AppDaemonIntegrationTest/config/appdaemon/apps/history_watcher.py",
-    "test/AppDaemonIntegrationTest/config/appdaemon/apps/test_app.py",
+    "test/appdaemon_unit_test/apps",
+    "test/appdaemon_unit_test/helpers",
+    "test/appdaemon_integration_test/helpers",
+    "test/appdaemon_integration_test/config/appdaemon/apps/dummy.py",
+    "test/appdaemon_integration_test/config/appdaemon/apps/history_watcher.py",
+    "test/appdaemon_integration_test/config/appdaemon/apps/test_app.py",
 ]
 exclude = [
     "robotframework-httplibrary/",
-    "test/AppDaemonIntegrationTest/.appdaemon/",
-    "test/AppDaemonIntegrationTest/.hass/",
-    "test/AppDaemonIntegrationTest/output/",
+    "test/appdaemon_integration_test/.appdaemon/",
+    "test/appdaemon_integration_test/.hass/",
+    "test/appdaemon_integration_test/output/",
     "test/.venv/",
 ]
 
@@ -35,7 +35,7 @@ reportImplicitRelativeImport = false
 reportUnusedParameter = false
 reportUnusedCallResult = false
 reportUninitializedInstanceVariable = false
-venvPath = "test/AppDaemonIntegrationTest/"
+venvPath = "test/appdaemon_integration_test/"
 venv = ".appdaemon"
 
 [tool.black]
