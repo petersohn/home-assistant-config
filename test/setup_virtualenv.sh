@@ -22,26 +22,26 @@ function setup_sync() {
 }
 
 function setup_hass() {
-    local venv_path="AppDaemonIntegrationTest/.hass"
+    local venv_path="appdaemon_integration_test/.hass"
     rm -rf "$venv_path"
     uv venv --python python3.11 "$venv_path"
     VIRTUAL_ENV="$script_dir/$venv_path" \
         uv pip install --no-deps -r "$script_dir/dependencies/homeassistant/requirements.txt"
 }
 
-robot=
+test=
 hass=
 appdaemon=
 
 if [[ "$1" == all ]]; then
-    robot=1
+    test=1
     hass=1
     appdaemon=1
 else
     for env in "$@"; do
         case "$env" in
-            robot)
-                robot=1
+            test)
+                test=1
                 ;;
             hass)
                 hass=1
@@ -53,8 +53,8 @@ else
     done
 fi
 
-if [[ -n "$robot" ]]; then
-    setup_sync python3.12 .venv dependencies/robot
+if [[ -n "$test" ]]; then
+    setup_sync python3.12 .venv dependencies/test
 fi
 
 if [[ -n "$hass" ]]; then
@@ -62,5 +62,5 @@ if [[ -n "$hass" ]]; then
 fi
 
 if [[ -n "$appdaemon" ]]; then
-    setup_sync python3.12 AppDaemonIntegrationTest/.appdaemon dependencies/appdaemon
+    setup_sync python3.12 appdaemon_integration_test/.appdaemon dependencies/appdaemon
 fi
