@@ -55,7 +55,7 @@ class Harness:
         return self.test_app.get_state_as(entity_id, attribute=attribute, type=type)
 
     def set_state(self, entity_id: str, value, **attributes):
-        self.test_app.set_state(entity_id, value, attributes)
+        self._call_and_check(self.test_app.set_state, entity_id, value, attributes)
 
     def turn_on(self, entity_id: str):
         self.set_state(entity_id, "on")
