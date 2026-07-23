@@ -14,9 +14,6 @@ def _extract_from_dictionary[Key, Value](
     if key in dictionary:
         result = dictionary[key]
         del dictionary[key]
-
-    print(dictionary)
-
     return result
 
 

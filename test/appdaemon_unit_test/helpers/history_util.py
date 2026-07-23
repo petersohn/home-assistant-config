@@ -1,5 +1,5 @@
-from robot.libraries import DateTime
 from datetime import datetime
+from dateutil import parser as date_parser
 from typing import Any
 
 
@@ -11,9 +11,10 @@ def convert_history_input(args: list[str | int]) -> list[tuple[str, int]]:
 
 
 def _convert_timestamp(value: str | int | datetime) -> str:
-    timestamp = DateTime.convert_date(value, result_format="timestamp")
-    assert isinstance(timestamp, str)
-    return timestamp
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d %H:%M:%S")
+    parsed = date_parser.parse(str(value))
+    return parsed.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def convert_history_output(

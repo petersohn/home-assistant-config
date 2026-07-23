@@ -5,7 +5,7 @@ import datetime
 from itertools import zip_longest
 import traceback
 from typing import Any
-from robot.libraries import DateTime
+from dateutil import parser as date_parser
 
 
 class TestApp(hass.Hass):
@@ -61,9 +61,9 @@ class TestApp(hass.Hass):
                 return list(i)
 
             if isinstance(value, datetime.datetime):
-                return DateTime.convert_date(value, result_format="timestamp")
+                return value.isoformat()
             if isinstance(value, datetime.timedelta):
-                return DateTime.convert_time(value, result_format="timer")
+                return str(value)
 
             return try_to_convert(value)
 
@@ -90,10 +90,10 @@ class TestApp(hass.Hass):
         return convert_output(result)
 
     def __to_datetime(self, value: Any) -> Any:
-        return DateTime.convert_date(value, result_format="datetime")
+        return date_parser.parse(str(value))
 
     def __to_datestr(self, value: Any) -> Any:
-        return DateTime.convert_date(value, result_format="timestamp")
+        return date_parser.parse(str(value)).isoformat()
 
     def api_callback(
         self, data: dict[str, Any], _kwargs: dict[str, Any]

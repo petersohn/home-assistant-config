@@ -84,12 +84,3 @@ def append_graph(graph: dict[str, Any], new: Graph) -> None:
             edges = _list_to_set(edges)
             graph[vertex] = edges
         edges |= _list_to_set(new_edges)
-
-
-# Disable Robot Framework's automatic argument type conversion for this
-# keyword.  Without this, Robot resolves the Graph type alias to
-# dict[str, set[tuple[str, str]]] and tries to coerce dict values to
-# sets, which fails when values contain lists (unhashable).
-setattr(append_graph, "robot_types", None)
-setattr(find_cycle, "robot_types", None)
-setattr(format_graph, "robot_types", None)

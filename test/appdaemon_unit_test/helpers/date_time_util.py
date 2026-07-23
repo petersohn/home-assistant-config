@@ -1,42 +1,25 @@
 from datetime import datetime, time, timedelta
-from functools import reduce
-from robot.libraries import DateTime
-from typing import Any
+from dateutil import parser as date_parser
 
 
 def to_time(input: str) -> time:
-    raw_seconds = DateTime.convert_time(input, result_format="number")
-    assert isinstance(raw_seconds, (int, float))
-    total_seconds: float = raw_seconds  # type: ignore[assignment]
-    seconds, fraction = divmod(int(total_seconds), 1)
-    minutes, second = divmod(seconds, 60)
-    hour, minute = divmod(minutes, 60)
-    return time(
-        hour=int(hour),
-        minute=int(minute),
-        second=int(second),
-        microsecond=int(fraction * 1000000),
-    )
+    parsed = date_parser.parse(input)
+    return parsed.time()
 
 
 def find_time(start_date: str, new_time: str) -> datetime:
-    raw_date = DateTime.convert_date(start_date, result_format="datetime")
-    assert isinstance(raw_date, datetime)
-    start_datetime: datetime = raw_date
-    time = to_time(new_time)
+    start_datetime = date_parser.parse(start_date)
+    target_time = to_time(new_time)
     result = start_datetime.replace(
-        hour=time.hour,
-        minute=time.minute,
-        second=time.second,
-        microsecond=time.microsecond,
+        hour=target_time.hour,
+        minute=target_time.minute,
+        second=target_time.second,
+        microsecond=target_time.microsecond,
     )
-    if time < start_datetime.time():
+    if target_time < start_datetime.time():
         result += timedelta(days=1)
     return result
 
 
-def add_times(*times: str, **kwargs: Any) -> Any:
-    def add_time(lhs: Any, rhs: Any) -> Any:
-        return DateTime.add_time_to_time(lhs, rhs, **kwargs)
-
-    return reduce(add_time, times)
+def add_times(*times: timedelta) -> timedelta:
+    return sum(times, timedelta())
