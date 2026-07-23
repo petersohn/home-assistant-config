@@ -1,6 +1,6 @@
 import os
 import yaml
-from libraries import directories
+from helpers import directories
 from typing import Any
 
 
