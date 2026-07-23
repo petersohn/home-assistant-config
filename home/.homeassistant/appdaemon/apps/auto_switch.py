@@ -20,11 +20,17 @@ class AutoSwitch(hass.Hass):
         assert isinstance(locker_app, locker.Locker)
         self.mutex = locker_app.get_mutex("AutoSwitch")
 
+        self.listen_handles: list[str] = []
+
         with self.mutex.lock("initialize"):
-            self.listen_state(self.on_target_change, entity_id=self.target)
+            self.listen_handles.append(
+                self.listen_state(self.on_target_change, entity_id=self.target)
+            )
             if self.switch:
                 self.run_in(self.initialize_state, 0)
-                self.listen_state(self.on_switch_change, entity_id=self.switch)
+                self.listen_handles.append(
+                    self.listen_state(self.on_switch_change, entity_id=self.switch)
+                )
             self.state: int | None = None
             self.run_in(lambda _: self.init(), 10 if self.switch else 0)
 
@@ -42,6 +48,8 @@ class AutoSwitch(hass.Hass):
                 self.enabler_id = None
 
     def terminate(self) -> None:
+        for handle in getattr(self, "listen_handles", []):
+            self.cancel_listen_state(handle)
         if self.enabler is not None:
             assert self.enabler_id is not None
             self.enabler.remove_callback(self.enabler_id)

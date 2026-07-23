@@ -30,9 +30,8 @@ Cleanup AppDaemon
     Append And Check Mutex Graph
     Stop AppDaemon
     Wait For AppDaemon To Stop
-    # TODO: re-enable this once appdaemon 4.x stops emitting warnings on shutdown
-    # File Should Be Empty  ${appdaemon_directory}/appdaemon.stderr
-    # File Should Be Empty  ${appdaemon_directory}/error.log
+    File Should Be Empty  ${appdaemon_directory}/appdaemon.stderr
+    File Should Be Empty  ${appdaemon_directory}/error.log
 
 Initialize Home Assistant
     Start Home Assistant
