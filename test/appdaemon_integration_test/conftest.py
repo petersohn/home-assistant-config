@@ -55,8 +55,9 @@ def home_assistant(clear_output_dir: Any, base_output_directory: str) -> Any:
     config_dir = os.path.join(os.path.dirname(__file__), "config", "hass")
     os.makedirs(os.path.join(hass_path, ".storage"), exist_ok=True)
     sh.copy(os.path.join(config_dir, "auth"), os.path.join(hass_path, ".storage", "auth"))
+    hass_bin = os.path.join(os.path.dirname(__file__), "hass")
     proc = subprocess.Popen(
-        ["./hass", "--verbose", "--config", hass_path, "--log-file", f"{hass_path}/homeassistant.log"],
+        [hass_bin, "--verbose", "--config", hass_path, "--log-file", f"{hass_path}/homeassistant.log"],
         stdout=open(f"{hass_path}/homeassistant.stdout", "w"),
         stderr=open(f"{hass_path}/homeassistant.stderr", "w"),
     )
@@ -89,8 +90,9 @@ def appdaemon(home_assistant: Any, base_output_directory: str) -> Any:
     create_appdaemon_configuration(appdaemon_dir, home_assistant["host"], port)
     from helpers.app_daemon import create_appdaemon_apps_config
     create_appdaemon_apps_config(appdaemon_dir, "TestApp")
+    appdaemon_bin = os.path.join(os.path.dirname(__file__), "appdaemon")
     proc = subprocess.Popen(
-        ["./appdaemon", "--config", appdaemon_dir],
+        [appdaemon_bin, "--config", appdaemon_dir],
         stdout=open(f"{appdaemon_dir}/appdaemon.stdout", "w"),
         stderr=open(f"{appdaemon_dir}/appdaemon.stderr", "w"),
     )
