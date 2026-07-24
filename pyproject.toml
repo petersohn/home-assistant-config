@@ -13,7 +13,6 @@ mypy_path = [
 files = [
     "home/.homeassistant/appdaemon/apps",
     "test/appdaemon_unit_test/apps",
-    "test/appdaemon_unit_test/helpers",
     "test/appdaemon_integration_test/helpers",
     "test/appdaemon_integration_test/config/appdaemon/apps/dummy.py",
     "test/appdaemon_integration_test/config/appdaemon/apps/history_watcher.py",
