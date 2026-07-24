@@ -158,7 +158,7 @@ def test_reload(
 
     appdaemon_client.wait_for_state(output_switch, expected_state1)
 
-    expected = []
+    expected: list[str] = []
     if expected_state1 == "on":
         expected += [output_switch, "on"]
     history_watcher.check_history(*expected)
