@@ -40,9 +40,9 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
     def load_history(
         self, entity_id: str, max_interval: datetime.timedelta
     ) -> Any:
-        now = datetime.datetime.now()
-        begin_timestamp = (now - max_interval).strftime("%Y-%m-%dT%H:%M:%S")
-        end_timestamp = now.strftime("%Y-%m-%dT%H:%M:%S")
+        now = datetime.datetime.now(datetime.timezone.utc)
+        begin_timestamp = (now - max_interval).strftime("%Y-%m-%dT%H:%M:%SZ")
+        end_timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         path = "history/period/{}?filter_entity_id={}&end_time={}".format(
             begin_timestamp, entity_id, end_timestamp
         )
