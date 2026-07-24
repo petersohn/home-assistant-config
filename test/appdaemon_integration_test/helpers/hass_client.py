@@ -43,3 +43,29 @@ class HassClient:
     def clean_states_and_history(self) -> None:
         self.clean_states()
         self.clean_history()
+
+    def get_history_size(self, entity_id: str) -> int:
+        from datetime import datetime, timedelta
+        begin = (datetime.now() - timedelta(hours=1)).strftime(
+            "%Y-%m-%dT%H:%M:%S"
+        )
+        r = self._session.get(
+            f"http://{self._host}/api/history/period/{begin}",
+            params={"filter_entity_id": entity_id},
+        )
+        r.raise_for_status()
+        content = r.json()
+        if not content or not content[0]:
+            return 0
+        return len(content[0])
+
+    def wait_for_history_size(
+        self, entity_id: str, expected: int, timeout: float = 15.0
+    ) -> None:
+        import time
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            if self.get_history_size(entity_id) == expected:
+                return
+            time.sleep(0.2)
+        assert self.get_history_size(entity_id) == expected
