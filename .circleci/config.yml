@@ -1,6 +1,6 @@
 version: 2.1
 commands:
-  robot:
+  pytest:
     parameters:
       directory:
         type: string
@@ -8,29 +8,21 @@ commands:
       - run:
           name: run tests
           command: |
-            <<parameters.directory>>/run-test --loglevel=trace \
-                --xunit=robot.xml --removekeywords WUKS
-      - run:
-          name: Clean up unneeded files
-          command: |
-            find <<parameters.directory>>/output -depth -name pabot_results \
-                -type d -exec rm -r '{}' ';'
-            find <<parameters.directory>>/output -depth -name __pycache__ \
-                -type d -exec rm -r '{}' ';'
-          when: always
+            /test/bin/pytest <<parameters.directory>> -v \
+                --tb=short
       - store_artifacts:
           path: <<parameters.directory>>/output
           when: on_fail
-      - store_test_results:
-          path: <<parameters.directory>>/output/robot.xml
 
 jobs:
   appdaemon-unit-test:
     docker:
-      - image: ppodgorsek/robot-framework:latest
+      - image: kangirigungi/home-assistant-config-test:4
+    environment:
+      - TEST_PYTHON: /test/bin/python
     steps:
       - checkout
-      - robot:
+      - pytest:
           directory: test/appdaemon_unit_test
 
   appdaemon-integration-test:
@@ -39,12 +31,11 @@ jobs:
     environment:
       - HASS_PATH: /homeassistant
       - APPDAEMON_PATH: /appdaemon
-      - ROBOT_PYTHON: /robot/bin/python
     steps:
       - checkout
       - run:
           command: git submodule update --init --recursive
-      - robot:
+      - pytest:
           directory: test/appdaemon_integration_test
 
 workflows:

@@ -1,6 +1,3 @@
 output/
 .HA_VERSION
-.pabotsuitenames
-log.html
-output.xml
-report.html
+.pytest_cache/
