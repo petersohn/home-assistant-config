@@ -30,15 +30,16 @@ def make_history_element(
     return HistoryElement(time, real_value)
 
 
-def get_date(s: str) -> datetime.datetime:
+def get_date(s: str, tzinfo: Any = None) -> datetime.datetime:
     s = re.sub(r"([-+][0-9]{2}):([0-9]{2})$", "", s)
     try:
         time = datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%S.%f")
     except ValueError:
         time = datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%S")
+    target_tz = tzinfo if tzinfo is not None else tz.tzlocal()
     return (
         time.replace(tzinfo=tz.tzutc())
-        .astimezone(tz.tzlocal())
+        .astimezone(target_tz)
         .replace(tzinfo=None)
     )
 
@@ -124,7 +125,7 @@ class HistoryManager(HistoryManagerBase):
                 and element.value is not None,
                 (
                     make_history_element(
-                        get_date(change["last_changed"]), change["state"]
+                        get_date(change["last_changed"], self.get_tz()), change["state"]
                     )
                     for changes in loaded_history
                     for change in changes
@@ -165,8 +166,8 @@ class ChangeTracker(HistoryManagerBase):
         self.log("Loading last change...")
         result = self.load_states(self.entity_id)
         assert isinstance(result, dict)
-        self.changed_time = get_date(result["last_changed"])
-        self.updated_time = get_date(result["last_updated"])
+        self.changed_time = get_date(result["last_changed"], self.get_tz())
+        self.updated_time = get_date(result["last_updated"], self.get_tz())
         self.listen_state(
             self.on_changed, entity_id=self.entity_id, attribute="all"
         )

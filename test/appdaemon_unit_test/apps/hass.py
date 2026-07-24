@@ -428,6 +428,10 @@ class Hass:
         assert self.__manager is not None
         return self.__manager.datetime()
 
+    def get_tz(self) -> Any:
+        from dateutil import tz
+        return tz.tzlocal()
+
     def date(self) -> date:
         return self.datetime().date()
 

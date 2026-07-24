@@ -3,6 +3,7 @@ import appdaemon.plugins.hass.hassapi
 import datetime
 import http.client
 import json
+from dateutil import tz
 from typing import Any, Callable
 from urllib import request
 
@@ -16,6 +17,9 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
 
     def remove_callback(self, id: int) -> None:
         raise NotImplementedError
+
+    def get_tz(self) -> Any:
+        return self.AD.tz
 
     def _api_request(self, path: str) -> Any:
         hass_config = [
