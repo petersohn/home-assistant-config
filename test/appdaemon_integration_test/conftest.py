@@ -56,10 +56,12 @@ def home_assistant(base_output_directory):
     )
     # Wait for HASS to start
     import requests
+    from helpers.hass_client import HASS_TOKEN
+    headers = {"Authorization": f"Bearer {HASS_TOKEN}"}
     deadline = time.time() + 120
     while time.time() < deadline:
         try:
-            r = requests.get(f"http://127.0.0.1:{port}/api/")
+            r = requests.get(f"http://127.0.0.1:{port}/api/", headers=headers)
             if r.status_code == 200 and r.json().get("message") == "API running.":
                 break
         except Exception:
