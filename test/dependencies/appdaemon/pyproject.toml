@@ -5,7 +5,6 @@ description = "AppDaemon integration test environment"
 requires-python = ">=3.12,<3.14"
 dependencies = [
     "appdaemon @ git+https://github.com/petersohn/appdaemon@fix-unload-bug",
-    "robotframework",
     "mypy",
     "types-psutil",
     "types-pyyaml",

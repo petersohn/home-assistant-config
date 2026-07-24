@@ -5,7 +5,7 @@ description: Use when writing or modifying AppDaemon apps under home/.homeassist
 
 # AppDaemon app conventions
 
-Applies to all code under `home/.homeassistant/appdaemon/apps/` and tests under `test/AppDaemonUnitTest/apps/` (unit) and `test/AppDaemonIntegrationTest/` (integration).
+Applies to all code under `home/.homeassistant/appdaemon/apps/` and tests under `test/appdaemon_unit_test/apps/` (unit) and `test/appdaemon_integration_test/` (integration).
 
 ## Base class
 
@@ -100,16 +100,17 @@ Rules (verified across existing apps):
 
 ## Unit tests
 
-- Always write unit tests for new/changed behavior. Tests live in `test/AppDaemonUnitTest/AppDaemonSuite/AppNameTest.robot` (for `app_name.py`).
-- The app source is symlinked in `test/AppDaemonUnitTest/apps`.
-- Other, non-symlink, files in `test/AppDaemonUnitTest/apps` are used in the test harness.
+- Always write unit tests for new/changed behavior. Tests live in `test/appdaemon_unit_test/appdaemon_tests/test_app_name.py` (for `app_name.py`).
+- The app source is symlinked in `test/appdaemon_unit_test/apps`.
+- Other, non-symlink, files in `test/appdaemon_unit_test/apps` are used in the test harness.
   - `hass.py`: Mocked version of the production `hass.py`. Provides the same interface but doesn't use real AppDaemon.
   - `test_app.py`: Basic test harness app. Contains methods the tests use to interact with the mocked AppDaemon.
   - `test_cover.py`: Mocked version of a real Home Assistant Cover (gate, window blind, etc.). Used to test the `Cover` app.
-- Tests use the mocked AppDaemon harness in `test/AppDaemonUnitTest/`; they are fast and deterministic and assert exact timing and edge cases.
+- Tests use the mocked AppDaemon harness in `test/appdaemon_unit_test/`; they are fast and deterministic and assert exact timing and edge cases.
+- Test infrastructure: `conftest.py` provides `harness` and `timing` fixtures. The `Harness` class wraps `AppManager`/`TestApp` with thin methods (`set_state`, `get_state`, `step`, `advance_time`, `create_app`, `schedule_call_at`, etc.). The `Timing` helper provides composite timing assertions (`state_should_change_at`, `state_should_not_change_for`, etc.). Use bare `assert` for state checks; `@pytest.mark.parametrize` for data-driven tests; native `datetime` types (`timedelta`, `time`, `datetime`) for time constants.
 - Run affected suites mid-task, full suite before hand-off:
   ```sh
-  source test/.venv/bin/activate && cd test/AppDaemonUnitTest && rm -rf output && ./run-test -LTRACE [-s <suite> | -t <test>]
+  source test/.venv/bin/activate && cd test/appdaemon_unit_test && PYTHONPATH="${PWD}:${PWD}/apps" pytest -v [-k <test>]
   ```
 - Unit tests must exist for any new/changed behavior. Integration tests (below) run only at the end of a task, once unit tests and `bin/mypy` are green.
 
@@ -117,15 +118,15 @@ Rules (verified across existing apps):
 
 Integration tests use real Home Assistant + AppDaemon instances (started by the test harness), so they exercise AppDaemon's actual lifecycle, state-change dispatch, and app reloading — behavior the unit-test mock can't reproduce. They are slow and nondeterministic; **not needed for every app**, but add them for more complex functionality, especially cross-app interactions.
 
-Architecture (rooted at `test/AppDaemonIntegrationTest/`):
+Architecture (rooted at `test/appdaemon_integration_test/`):
 
-- **Suites**: `AppDaemonSuite/<AppName>Test.robot` — one file per app or interaction under test. Per-test `Test Setup  Initialize Apps Configs <config>...` loads the specific app config snippets; `Test Teardown  Cleanup Apps Configs` unloads them (see `resourcourcces/Config.robot`).
-- **Suite init**: `AppDaemonSuite/__init__.robot` runs once per suite: initializes variables, starts Home Assistant, starts AppDaemon, and after all tests runs `Check Global Mutex Graph` to confirm no deadlocks were introduced.
+- **Tests**: `appdaemon_tests/test_<app_name>.py` — one file per app or interaction under test. Per-test setup calls `appdaemon_client.load_apps(...)` to load specific app config snippets; the autouse `cleanup_apps` fixture unloads them after each test.
+- **Conftest**: `conftest.py` runs once per session: starts Home Assistant and AppDaemon as subprocesses (via `./hass` and `./appdaemon` shell scripts), provides `appdaemon_client`, `hass_client`, and `history_watcher` fixtures, and after all tests checks the global mutex graph for deadlocks.
 - **Real processes**:
   - `./hass` wrapper launches `${HASS_PATH}/bin/hass`; `./appdaemon` wrapper launches `${APPDAEMON_PATH}/bin/appdaemon`. Both venvs must be installed first (see AGENTS.md "Setting up virtual environment").
-  - `resources/HomeAssistant.robot` drives HASS via its REST API (`/api/states`, service calls) to set inputs, poll outputs, clean states and purge history between tests.
-  - `resources/AppDaemon.robot` drives AppDaemon via its REST admin API (`POST /api/appdaemon/TestApp`) through the `TestApp` module to call methods (`get_state`, `set_state`, `select_option`, `turn_on/off`, `call_service`) on the running apps.
-- **Test app modules** under `config/appdaemon/apps/` (symlinked into the per-run `apps/` dir by `libraries/app_daemon.py`):
+  - `helpers/hass_client.py` drives HASS via its REST API (`/api/states`, service calls) to set inputs, poll outputs, clean states and purge history between tests.
+  - `helpers/appdaemon_client.py` drives AppDaemon via its REST admin API (`POST /api/appdaemon/TestApp`) through the `TestApp` module to call methods (`get_state`, `set_state`, `select_option`, `turn_on/off`, `call_service`) on the running apps.
+- **Test app modules** under `config/appdaemon/apps/` (symlinked into the per-run `apps/` dir by `helpers/app_daemon.py`):
   - `test_app.py`: same role as the unit-test `test_app.py` — a `hass.Hass` subclass exposing test-driver methods (`schedule_call_in`, `call_on_app`, `get_state_as`, `get_next_time_of_day`), but reachable over HTTP so Robot can invoke methods on any running app.
   - `dummy.py`, `history_watcher.py`: helpers for side-effect-free targets / change observation.
   - Add new helpers here when a test needs a stand-in entity or a thin observer app.
@@ -141,13 +142,13 @@ Architecture (rooted at `test/AppDaemonIntegrationTest/`):
       - locker
   ```
   Add a new `<Feature>.yaml` for each integration test scenario; declare cooperating apps and `dependencies:` exactly as in production `apps.yaml`.
-- **Outputs** (in `output/`): `hass/homeassistant.log`, `appdaemon/appdaemon.log`, `appdaemon/error.log` (errors here usually indicate a real failure), `log.html`, `report.html`, `output.xml`.
+- **Outputs** (in `output/`): `hass/homeassistant.log`, `appdaemon/appdaemon.log`, `appdaemon/error.log` (errors here usually indicate a real failure).
 
 Run (full or scoped):
 ```sh
-source test/.venv/bin/activate && cd test/AppDaemonIntegrationTest && rm -rf output && APPDAEMON_PATH="$PWD/.appdaemon" HASS_PATH="$PWD/.hass" ./run-test -LTRACE --removekeywords WUKS [-s <suite> | -t <test>]
+source test/.venv/bin/activate && cd test/appdaemon_integration_test && APPDAEMON_PATH="$PWD/.appdaemon" HASS_PATH="$PWD/.hass" PYTHONPATH="${PWD}:${PWD}/helpers" pytest -v [-k <test>]
 ```
-Scope with `-s <suite>` / `-t <test>` when a change is contained to one app; otherwise run the full suite. Exact timing is not asserted — use `Wait Until Keyword Succeeds` / `Wait For State` for nondeterministic waits.
+Scope with `-k <test>` when a change is contained to one app; otherwise run the full suite. Exact timing is not asserted — use `appdaemon_client.wait_for_state()` / `history_watcher.wait_for_history()` for nondeterministic waits.
 
 ## AppDaemon API reference (short)
 
@@ -176,6 +177,6 @@ Prefer expression/history/enabler composition over ad-hoc listeners where the be
 - [ ] Callback-registration APIs paired with removal; `terminate()` unregisters everything and cancels timers.
 - [ ] `self.args` consumed only in `initialize()`, saved to instance attrs.
 - [ ] Current time via `self.datetime()`/`self.date()`, not Python's `now()`/`today()`.
-- [ ] Unit tests written; `./run-test -LTRACE` green for affected suites.
+- [ ] Unit tests written; `pytest` green for affected tests.
 - [ ] `bin/mypy` clean.
 - [ ] Integration tests added/scoped for complex or cross-app behavior; full integration suite green before hand-off.
