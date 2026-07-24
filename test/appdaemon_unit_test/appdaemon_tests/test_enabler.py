@@ -1,13 +1,17 @@
 from __future__ import annotations
 from datetime import date, datetime, time, timedelta
+from typing import Any
+
 import pytest
+from conftest import Harness
+from unit_helpers.timing import Timing
 
 test_input = "sensor.test_input"
 test_switch = "input_boolean.test_switch"
 values = ["foo", "bar"]
 
 
-def _create_enabled_switch(harness, name, enabler_name, target):
+def _create_enabled_switch(harness: Harness, name: str, enabler_name: str, target: str) -> Any:
     switch_name = f"{name}_switch"
     harness.create_app("auto_switch", "AutoSwitch", switch_name, target=target)
     targets = [switch_name]
@@ -22,11 +26,11 @@ def _create_enabled_switch(harness, name, enabler_name, target):
     (True, True),
     (False, False),
 ])
-def test_script_enabler(harness, initial_state_arg, expected_initial_state):
+def test_script_enabler(harness: Harness, initial_state_arg: Any, expected_initial_state: bool) -> None:
     args = {}
     if initial_state_arg is not None:
         args["initial"] = initial_state_arg
-    enabler = harness.create_app("enabler", "ScriptEnabler", "enabler", **args)
+    enabler: Any = harness.create_app("enabler", "ScriptEnabler", "enabler", **args)
     assert enabler.is_enabled() == expected_initial_state
     enabler.disable()
     assert enabler.is_enabled() == False
@@ -65,9 +69,9 @@ def test_script_enabler(harness, initial_state_arg, expected_initial_state):
     ("RangeEnabler", 16, False, {"max": 15}),
     ("RangeEnabler", 100, False, {"max": 15}),
 ])
-def test_value_enabler(harness, class_name, entity_value, expected_state, args):
+def test_value_enabler(harness: Harness, class_name: str, entity_value: Any, expected_state: bool, args: dict[str, Any]) -> None:
     harness.set_state(test_input, entity_value)
-    enabler = harness.create_app(
+    enabler: Any = harness.create_app(
         "enabler", class_name, "enabler", entity=test_input, **args
     )
     assert enabler.is_enabled() == expected_state
@@ -101,8 +105,8 @@ def test_value_enabler(harness, class_name, entity_value, expected_state, args):
     ({"start_date": date(2018, 9, 2), "start_time": time(10, 0, 0)}, True, "09-02", "09-02"),
     ({"start_date": date(2018, 9, 3), "start_time": time(10, 0, 0)}, False, "09-02", "09-02"),
 ], indirect=["harness"])
-def test_date_enabler(harness, expected_state, begin, end):
-    enabler = harness.create_app("enabler", "DateEnabler", "enabler", begin=begin, end=end)
+def test_date_enabler(harness: Harness, expected_state: bool, begin: str, end: str) -> None:
+    enabler: Any = harness.create_app("enabler", "DateEnabler", "enabler", begin=begin, end=end)
     assert enabler.is_enabled() == expected_state
 
 
@@ -116,20 +120,20 @@ def test_date_enabler(harness, expected_state, begin, end):
     (False, [False, True, True, False]),
     (True, [True, True, True, True]),
 ])
-def test_multi_enabler(harness, expected_state, vs):
+def test_multi_enabler(harness: Harness, expected_state: bool, vs: list[bool]) -> None:
     names = []
     for i, value in enumerate(vs):
         name = f"enabler{i}"
         harness.create_app("enabler", "ScriptEnabler", name, initial=value)
         names.append(name)
-    enabler = harness.create_app("enabler", "MultiEnabler", "enabler", enablers=names)
+    enabler: Any = harness.create_app("enabler", "MultiEnabler", "enabler", enablers=names)
     assert enabler.is_enabled() == expected_state
 
 
 @pytest.mark.parametrize("harness", [{"start_time": time(0, 0, 0)}], indirect=True)
-def test_delayed_enabler(harness, timing):
+def test_delayed_enabler(harness: Harness, timing: Timing) -> None:
     delay = {"minutes": 1}
-    enabler = harness.create_app(
+    enabler: Any = harness.create_app(
         "enabler", "ScriptEnabler", "test_enabler", initial=False, delay=delay
     )
     _create_enabled_switch(harness, "switch", "test_enabler", test_switch)
@@ -149,9 +153,9 @@ def test_delayed_enabler(harness, timing):
     timing.state_should_change_at(test_switch, "off", timedelta(minutes=13))
 
 
-def test_value_enabler_changes(harness):
+def test_value_enabler_changes(harness: Harness) -> None:
     harness.set_state(test_input, "")
-    enabler = harness.create_app(
+    enabler: Any = harness.create_app(
         "enabler", "ValueEnabler", "enabler", entity=test_input, value="foo"
     )
     _create_enabled_switch(harness, "switch", "enabler", test_switch)
@@ -165,9 +169,9 @@ def test_value_enabler_changes(harness):
     assert harness.get_state(test_switch) == "off"
 
 
-def test_range_enabler_changes(harness):
+def test_range_enabler_changes(harness: Harness) -> None:
     harness.set_state(test_input, 0)
-    enabler = harness.create_app(
+    enabler: Any = harness.create_app(
         "enabler", "RangeEnabler", "enabler", entity=test_input, min=10, max=20
     )
     _create_enabled_switch(harness, "switch", "enabler", test_switch)
@@ -186,8 +190,8 @@ def test_range_enabler_changes(harness):
     "start_time": time(12, 0, 0),
     "interval": timedelta(hours=1),
 }], indirect=True)
-def test_date_enabler_changes(harness, timing):
-    enabler = harness.create_app("enabler", "DateEnabler", "enabler", begin="02-03", end="02-04")
+def test_date_enabler_changes(harness: Harness, timing: Timing) -> None:
+    enabler: Any = harness.create_app("enabler", "DateEnabler", "enabler", begin="02-03", end="02-04")
     _create_enabled_switch(harness, "switch", "enabler", test_switch)
     assert enabler.is_enabled() == False
     assert harness.get_state(test_switch) == "off"
@@ -201,8 +205,8 @@ def test_date_enabler_changes(harness, timing):
     "start_time": time(23, 59, 30),
     "interval": timedelta(seconds=1),
 }], indirect=True)
-def test_date_enabler_exact_change_time(harness, timing):
-    enabler = harness.create_app("enabler", "DateEnabler", "enabler", begin="01-02", end="01-02")
+def test_date_enabler_exact_change_time(harness: Harness, timing: Timing) -> None:
+    enabler: Any = harness.create_app("enabler", "DateEnabler", "enabler", begin="01-02", end="01-02")
     _create_enabled_switch(harness, "switch", "enabler", test_switch)
     assert enabler.is_enabled() == False
     assert harness.get_state(test_switch) == "off"
@@ -210,10 +214,10 @@ def test_date_enabler_exact_change_time(harness, timing):
     assert enabler.is_enabled() == True
 
 
-def test_multi_enabler_changes(harness):
-    enabler1 = harness.create_app("enabler", "ScriptEnabler", "enabler1", initial=False)
-    enabler2 = harness.create_app("enabler", "ScriptEnabler", "enabler2", initial=False)
-    enabler = harness.create_app(
+def test_multi_enabler_changes(harness: Harness) -> None:
+    enabler1: Any = harness.create_app("enabler", "ScriptEnabler", "enabler1", initial=False)
+    enabler2: Any = harness.create_app("enabler", "ScriptEnabler", "enabler2", initial=False)
+    enabler: Any = harness.create_app(
         "enabler", "MultiEnabler", "enabler", enablers=["enabler1", "enabler2"]
     )
     _create_enabled_switch(harness, "switch", "enabler", test_switch)

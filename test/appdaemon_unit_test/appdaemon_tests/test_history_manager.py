@@ -1,8 +1,12 @@
 from __future__ import annotations
 from datetime import timedelta, time
+from typing import Any
 
-from helpers.history_util import convert_history_input, convert_history_output
-from helpers.race_test_helper import patch_load_history
+from conftest import Harness
+from apps.hass import Hass
+from unit_helpers.timing import Timing
+from unit_helpers.history_util import convert_history_input, convert_history_output
+from unit_helpers.race_test_helper import patch_load_history
 
 # Use 00:00:00 (matching the original Robot harness) so absolute-time
 # assertions (e.g. ChangeTracker Check Date Updates) line up with the
@@ -17,44 +21,49 @@ max_entity = "sensor.test_sensor_max"
 enabler_entity = "input_boolean.test_switch2"
 
 
-def _create_history_manager(harness, name="history_manager"):
+def _create_history_manager(harness: Harness, name: str = "history_manager") -> Hass:
     return harness.create_app(
         "history", "HistoryManager", name,
         entity=entity, max_interval={"hours": 1},
     )
 
 
-def _initialize_history_manager(harness, name="history_manager"):
+def _initialize_history_manager(harness: Harness, name: str = "history_manager") -> Hass:
     harness.set_state(entity, 0)
     return _create_history_manager(harness, name)
 
 
-def _initialize_history_manager_with_race(harness, history, race_value):
+def _initialize_history_manager_with_race(
+    harness: Harness, history: Any, race_value: Any,
+) -> Hass:
     harness.set_state(entity, 0)
     patch_load_history(harness.app_manager, history, race_value)
     return _create_history_manager(harness)
 
 
-def _history_should_be(harness, app, *expected_values):
+def _history_should_be(harness: Harness, app: Hass, *expected_values: Any) -> None:
     converted_expected = convert_history_input(list(expected_values))
     values = harness.call_on_app(app, "get_recorded_history")
     converted_values = convert_history_output(list(values))
     assert converted_values == converted_expected
 
 
-def _times_should_match(harness, actual, expected_time):
+def _times_should_match(harness: Harness, actual: Any, expected_time: time | timedelta) -> None:
     expected = harness.date_from_time(expected_time, future=False)
     assert actual == expected
 
 
-def _check_date_updates(harness, change_tracker, expected_changed, expected_updated):
+def _check_date_updates(
+    harness: Harness, change_tracker: Hass,
+    expected_changed: timedelta, expected_updated: timedelta,
+) -> None:
     actual_changed = harness.call_on_app(change_tracker, "last_changed")
     _times_should_match(harness, actual_changed, expected_changed)
     actual_updated = harness.call_on_app(change_tracker, "last_updated")
     _times_should_match(harness, actual_updated, expected_updated)
 
 
-def test_get_history(harness):
+def test_get_history(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     harness.set_state(entity, 3)
     date1 = harness.datetime
@@ -70,7 +79,7 @@ def test_get_history(harness):
     _history_should_be(harness, history_manager, date1, 3, date2, 2, date3, 3, date4, 0)
 
 
-def test_old_history_elements_are_removed(harness):
+def test_old_history_elements_are_removed(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     harness.set_state(entity, 20)
     harness.advance_time(timedelta(minutes=20))
@@ -88,7 +97,7 @@ def test_old_history_elements_are_removed(harness):
     _history_should_be(harness, history_manager, date1, 13, date2, 1, date3, 6, date4, 54)
 
 
-def test_nothing_happens_for_a_long_time(harness):
+def test_nothing_happens_for_a_long_time(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     harness.set_state(entity, 42)
     date1 = harness.datetime
@@ -101,7 +110,7 @@ def test_nothing_happens_for_a_long_time(harness):
     _history_should_be(harness, history_manager, date2, 10)
 
 
-def test_history_enabler(harness, timing):
+def test_history_enabler(harness: Harness, timing: Timing) -> None:
     harness.set_state(enabler_entity, "off")
     history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 5}
@@ -129,7 +138,7 @@ def test_history_enabler(harness, timing):
     timing.state_should_change_at(enabler_entity, "off", timedelta(minutes=44))
 
 
-def test_aggregated_value(harness):
+def test_aggregated_value(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 3}
     harness.create_app(
@@ -168,7 +177,7 @@ def test_aggregated_value(harness):
     assert harness.get_state(aggregated_entity, type="int") == 9
 
 
-def test_aggregated_value_with_base_interval(harness):
+def test_aggregated_value_with_base_interval(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 3}
     base_interval = {"seconds": 10}
@@ -213,7 +222,7 @@ def test_aggregated_value_with_base_interval(harness):
     assert harness.get_state(aggregated_entity, type="int") == 90
 
 
-def test_mean_value(harness):
+def test_mean_value(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 3}
     harness.create_app(
@@ -231,7 +240,7 @@ def test_mean_value(harness):
     assert harness.get_state(aggregated_entity, type="int") == 10
 
 
-def test_mean_value_irregular_intervals(harness):
+def test_mean_value_irregular_intervals(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 3}
     harness.create_app(
@@ -252,7 +261,7 @@ def test_mean_value_irregular_intervals(harness):
     assert harness.get_state(aggregated_entity, type="int") == 8
 
 
-def test_anglemean(harness):
+def test_anglemean(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 4}
     harness.create_app(
@@ -285,7 +294,7 @@ def test_anglemean(harness):
     assert harness.get_state(aggregated_entity, type="int") == 180
 
 
-def test_min_max_sum_values(harness):
+def test_min_max_sum_values(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 5}
     harness.create_app(
@@ -356,7 +365,7 @@ def test_min_max_sum_values(harness):
     assert harness.get_state(sum_entity, type="int") == 0
 
 
-def test_decaying_sum_value(harness):
+def test_decaying_sum_value(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 1}
     harness.create_app(
@@ -381,7 +390,7 @@ def test_decaying_sum_value(harness):
     assert harness.get_state(aggregated_entity, type="float") == 0.1015625
 
 
-def test_binary_input(harness):
+def test_binary_input(harness: Harness) -> None:
     history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 5}
     harness.create_app(
@@ -421,7 +430,7 @@ def test_binary_input(harness):
     assert harness.get_state(aggregated_entity, type="percent") == 0
 
 
-def test_change_tracker(harness):
+def test_change_tracker(harness: Harness) -> None:
     harness.set_state(entity, 0)
     change_tracker = harness.create_app(
         "history", "ChangeTracker", "change_tracker", entity=entity,
@@ -440,7 +449,7 @@ def test_change_tracker(harness):
     _check_date_updates(harness, change_tracker, timedelta(minutes=2), timedelta(minutes=3))
 
 
-def test_state_change_during_load_is_not_lost(harness):
+def test_state_change_during_load_is_not_lost(harness: Harness) -> None:
     harness.set_state(entity, 5)
     time0 = harness.datetime
     harness.advance_time(timedelta(minutes=1))
@@ -453,7 +462,7 @@ def test_state_change_during_load_is_not_lost(harness):
     _history_should_be(harness, history_manager, time0, 5, time1, 10, time2, 7)
 
 
-def test_state_in_query_and_listener_is_not_duplicated(harness):
+def test_state_in_query_and_listener_is_not_duplicated(harness: Harness) -> None:
     harness.set_state(entity, 5)
     time0 = harness.datetime
     harness.advance_time(timedelta(minutes=1))

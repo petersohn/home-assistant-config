@@ -1,30 +1,47 @@
 from __future__ import annotations
 import os
 import shutil
+import sys
 from datetime import datetime, timedelta, time, date
-from typing import Any
+from typing import Any, Callable, TypeVar, cast
+
+_HERE = os.path.dirname(__file__)
+sys.path.insert(0, _HERE)
+sys.path.insert(0, os.path.join(_HERE, "apps"))
+
 import pytest
-from helpers.config import create_app_manager
-from helpers.timing import Timing
+from unit_helpers.config import create_app_manager
+from unit_helpers.timing import Timing
 from apps.hass import AppManager, Hass
+from apps.locker import Locker
 from apps.mutex_graph import find_cycle, append_graph
+from apps.test_app import TestApp
+
+T = TypeVar("T")
 
 
 class Harness:
+    locker: Locker
+    test_app: TestApp
+
     def __init__(
         self,
         start_date: date,
         start_time: time,
         interval: timedelta,
         log_path: str,
-        global_mutex_graph: dict,
-    ):
+        global_mutex_graph: dict[str, Any],
+    ) -> None:
         start_datetime = datetime.combine(start_date, start_time)
         self._manager = create_app_manager(start_datetime, log_path)
         self._interval = interval
         self._global_mutex_graph = global_mutex_graph
-        self.locker = self.create_app("locker", "Locker", "locker", enable_logging=True)
-        self.test_app = self.create_app("test_app", "TestApp", "test_app")
+        locker = self.create_app(
+            "locker", "Locker", "locker", enable_logging=True
+        )
+        self.locker = cast(Locker, locker)
+        test_app = self.create_app("test_app", "TestApp", "test_app")
+        self.test_app = cast(TestApp, test_app)
 
     @property
     def datetime(self) -> datetime:
@@ -38,51 +55,78 @@ class Harness:
     def app_manager(self) -> AppManager:
         return self._manager
 
-    def step(self):
+    def step(self) -> None:
         self._manager.step(self._interval)
 
-    def advance_time(self, amount: timedelta):
+    def advance_time(self, amount: timedelta) -> None:
         self._manager.advance_time(amount, self._interval)
 
-    def advance_time_to(self, target_time: time):
+    def advance_time_to(self, target_time: time | timedelta) -> None:
         target = self.date_from_time(target_time, future=True)
         self.advance_time_to_datetime(target)
 
-    def advance_time_to_datetime(self, target: datetime):
+    def advance_time_to_datetime(self, target: datetime) -> None:
         self._manager.advance_time_to(target, self._interval)
 
-    def get_state(self, entity_id: str, attribute: str | None = None, type: str | None = None):
+    def get_state(
+        self,
+        entity_id: str,
+        attribute: str | None = None,
+        type: str | None = None,
+    ) -> Any:
         return self.test_app.get_state_as(entity_id, attribute=attribute, type=type)
 
-    def set_state(self, entity_id: str, value, **attributes):
+    def set_state(self, entity_id: str, value: Any, **attributes: Any) -> None:
         self._call_and_check(self.test_app.set_state, entity_id, value, attributes)
 
-    def turn_on(self, entity_id: str):
+    def turn_on(self, entity_id: str) -> None:
         self.set_state(entity_id, "on")
 
-    def turn_off(self, entity_id: str):
+    def turn_off(self, entity_id: str) -> None:
         self.set_state(entity_id, "off")
 
-    def create_app(self, module: str, class_name: str, name: str, **kwargs) -> Hass:
-        return self._call_and_check(self._manager.create_app, module, class_name, name, **kwargs)
+    def create_app(
+        self, module: str, class_name: str, name: str, **kwargs: Any
+    ) -> Hass:
+        return self._call_and_check(
+            self._manager.create_app, module, class_name, name, **kwargs
+        )
 
     def get_app(self, name: str) -> Hass | None:
         return self._manager.get_app(name)
 
-    def schedule_call_in(self, delay: timedelta, func_name: str, *args, **kwargs):
-        self._call_and_check(self.test_app.schedule_call_in, delay, func_name, *args, **kwargs)
+    def schedule_call_in(
+        self, delay: timedelta, func_name: str, *args: Any, **kwargs: Any
+    ) -> None:
+        self._call_and_check(
+            self.test_app.schedule_call_in, delay, func_name, *args, **kwargs
+        )
 
-    def schedule_call_at(self, target_time: time, func_name: str, *args, **kwargs):
+    def schedule_call_at(
+        self, target_time: time | timedelta, func_name: str, *args: Any, **kwargs: Any
+    ) -> None:
         target = self.date_from_time(target_time, future=True)
-        self._call_and_check(self.test_app.schedule_call_at, target, func_name, *args, **kwargs)
+        self._call_and_check(
+            self.test_app.schedule_call_at, target, func_name, *args, **kwargs
+        )
 
-    def schedule_call_at_datetime(self, target: datetime, func_name: str, *args, **kwargs):
-        self._call_and_check(self.test_app.schedule_call_at, target, func_name, *args, **kwargs)
+    def schedule_call_at_datetime(
+        self, target: datetime, func_name: str, *args: Any, **kwargs: Any
+    ) -> None:
+        self._call_and_check(
+            self.test_app.schedule_call_at, target, func_name, *args, **kwargs
+        )
 
-    def call_on_app(self, app, method: str, *args, **kwargs):
-        return self._call_and_check(self.test_app.call_on_app, app, method, *args, **kwargs)
+    def call_on_app(
+        self, app: Any, method: str, *args: Any, **kwargs: Any
+    ) -> Any:
+        return self._call_and_check(
+            self.test_app.call_on_app, app, method, *args, **kwargs
+        )
 
-    def date_from_time(self, time_of_day: time | timedelta, future: bool) -> datetime:
+    def date_from_time(
+        self, time_of_day: time | timedelta, future: bool
+    ) -> datetime:
         if isinstance(time_of_day, time):
             td = timedelta(
                 hours=time_of_day.hour,
@@ -102,21 +146,25 @@ class Harness:
         deadline_datetime: datetime | None = None,
         old: str | None = None,
         new: str | None = None,
-    ):
+    ) -> None:
         actual_deadline = deadline_datetime
         if timeout is not None:
             actual_deadline = self.datetime + timeout
         elif deadline is not None:
             actual_deadline = self.date_from_time(deadline, future=True)
-        self._manager.wait_for_state_change(entity, actual_deadline, self._interval, old=old, new=new)
+        self._manager.wait_for_state_change(
+            entity, actual_deadline, self._interval, old=old, new=new
+        )
 
-    def _call_and_check(self, func, *args, **kwargs):
+    def _call_and_check(
+        self, func: Callable[..., T], *args: Any, **kwargs: Any
+    ) -> T:
         result = func(*args, **kwargs)
         self._manager.call_pending_callbacks()
         assert not self._manager.has_error()
         return result
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         mutex_graph = self.locker.get_global_graph()
         append_graph(self._global_mutex_graph, mutex_graph)
         assert not find_cycle(self._global_mutex_graph)
@@ -125,28 +173,34 @@ class Harness:
 
 
 @pytest.fixture(scope="session")
-def base_output_directory():
+def base_output_directory() -> str:
     return os.path.join(os.path.dirname(__file__), "output")
 
 
 @pytest.fixture(scope="session", autouse=True)
-def clear_output_dir(base_output_directory):
+def clear_output_dir(base_output_directory: str) -> None:
     shutil.rmtree(base_output_directory, ignore_errors=True)
     os.makedirs(base_output_directory, exist_ok=True)
 
 
 @pytest.fixture(scope="module", autouse=True)
-def global_mutex_graph():
-    graph: dict = {}
+def global_mutex_graph() -> Any:
+    graph: dict[str, Any] = {}
     yield graph
     assert not find_cycle(graph)
 
 
 @pytest.fixture
-def harness(request, base_output_directory, global_mutex_graph):
+def harness(
+    request: Any,
+    base_output_directory: str,
+    global_mutex_graph: dict[str, Any],
+) -> Any:
     params = getattr(request, "param", {})
     start_date = params.get("start_date", date(2018, 1, 1))
-    module_default_start_time = getattr(request.module, "_default_start_time", time(1, 0, 0))
+    module_default_start_time = getattr(
+        request.module, "_default_start_time", time(1, 0, 0)
+    )
     start_time = params.get("start_time", module_default_start_time)
     interval = params.get("interval", timedelta(seconds=10))
     safe_name = request.node.name.replace("[", "_").replace("]", "")
@@ -159,5 +213,5 @@ def harness(request, base_output_directory, global_mutex_graph):
 
 
 @pytest.fixture
-def timing(harness):
+def timing(harness: Harness) -> Timing:
     return Timing(harness)

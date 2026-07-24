@@ -6,18 +6,23 @@ norecursedirs = ["config", ".hass", ".appdaemon", "output"]
 warn_no_return = true
 disallow_untyped_defs = true
 disallow_untyped_calls = true
+explicit_package_bases = true
 mypy_path = [
     "test/appdaemon_unit_test",
-    "test/appdaemon_integration_test/helpers",
-    "test/appdaemon_integration_test/config/appdaemon",
+    "test/appdaemon_integration_test",
 ]
 files = [
     "home/.homeassistant/appdaemon/apps",
     "test/appdaemon_unit_test/apps",
+    "test/appdaemon_unit_test/unit_helpers",
+    "test/appdaemon_unit_test/00_infrastructure_tests",
+    "test/appdaemon_unit_test/appdaemon_tests",
+    "test/appdaemon_unit_test/conftest.py",
     "test/appdaemon_integration_test/helpers",
     "test/appdaemon_integration_test/config/appdaemon/apps/dummy.py",
     "test/appdaemon_integration_test/config/appdaemon/apps/history_watcher.py",
     "test/appdaemon_integration_test/config/appdaemon/apps/test_app.py",
+    "test/appdaemon_integration_test/integration_tests",
 ]
 exclude = [
     "robotframework-httplibrary/",
@@ -29,6 +34,10 @@ exclude = [
 
 [[tool.mypy.overrides]]
 module = "apps.hass"
+disable_error_code = ["valid-type"]
+
+[[tool.mypy.overrides]]
+module = "conftest.*"
 disable_error_code = ["valid-type"]
 
 [tool.basedpyright]

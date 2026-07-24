@@ -1,12 +1,15 @@
 from __future__ import annotations
+from typing import Any
+
+from conftest import Harness
 
 
-def _initialize(harness):
+def _initialize(harness: Harness) -> None:
     harness.set_state("input_boolean.test_switch", "off")
     harness.set_state("input_boolean.test_switch2", "off")
 
 
-def _create_enabler_and_switch(harness, initial, **kwargs):
+def _create_enabler_and_switch(harness: Harness, initial: bool, **kwargs: Any) -> tuple[Any, Any]:
     enabler = harness.create_app("enabler", "ScriptEnabler", "enabler", initial=initial)
     enabled_switch = harness.create_app(
         "enabled_switch", "EnabledSwitch", "enabled_switch",
@@ -15,7 +18,7 @@ def _create_enabler_and_switch(harness, initial, **kwargs):
     return enabler, enabled_switch
 
 
-def _create_basic_enabled_switch(harness, initial):
+def _create_basic_enabled_switch(harness: Harness, initial: bool) -> tuple[Any, Any, Any, Any]:
     switch1 = harness.create_app("auto_switch", "AutoSwitch", "switch1", target="input_boolean.test_switch")
     switch2 = harness.create_app("auto_switch", "AutoSwitch", "switch2", target="input_boolean.test_switch2")
     targets = ["switch1", "switch2"]
@@ -23,7 +26,7 @@ def _create_basic_enabled_switch(harness, initial):
     return switch1, switch2, enabler, enabled_switch
 
 
-def _create_enabled_switch_with_guards(harness):
+def _create_enabled_switch_with_guards(harness: Harness) -> tuple[Any, Any, Any, Any, Any]:
     on_guard = harness.create_app("enabler", "ScriptEnabler", "on_guard", initial=False)
     off_guard = harness.create_app("enabler", "ScriptEnabler", "off_guard", initial=False)
     switch = harness.create_app("auto_switch", "AutoSwitch", "switch", target="input_boolean.test_switch")
@@ -34,7 +37,7 @@ def _create_enabled_switch_with_guards(harness):
     return on_guard, off_guard, switch, enabler, enabled_switch
 
 
-def test_start_with_off(harness):
+def test_start_with_off(harness: Harness) -> None:
     _initialize(harness)
     switch1, switch2, enabler, enabled_switch = _create_basic_enabled_switch(harness, False)
     assert harness.get_state("input_boolean.test_switch") == "off"
@@ -47,7 +50,7 @@ def test_start_with_off(harness):
     assert harness.get_state("input_boolean.test_switch2") == "off"
 
 
-def test_start_with_on(harness):
+def test_start_with_on(harness: Harness) -> None:
     _initialize(harness)
     switch1, switch2, enabler, enabled_switch = _create_basic_enabled_switch(harness, True)
     assert harness.get_state("input_boolean.test_switch") == "on"
@@ -60,7 +63,7 @@ def test_start_with_on(harness):
     assert harness.get_state("input_boolean.test_switch2") == "on"
 
 
-def test_guards(harness):
+def test_guards(harness: Harness) -> None:
     _initialize(harness)
     on_guard, off_guard, switch, enabler, enabled_switch = _create_enabled_switch_with_guards(harness)
     assert harness.get_state("input_boolean.test_switch") == "off"
@@ -78,7 +81,7 @@ def test_guards(harness):
     assert harness.get_state("input_boolean.test_switch") == "off"
 
 
-def test_turn_guards_on_and_off(harness):
+def test_turn_guards_on_and_off(harness: Harness) -> None:
     _initialize(harness)
     on_guard, off_guard, switch, enabler, enabled_switch = _create_enabled_switch_with_guards(harness)
     assert harness.get_state("input_boolean.test_switch") == "off"

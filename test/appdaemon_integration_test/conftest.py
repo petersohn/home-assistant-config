@@ -2,7 +2,13 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
+import sys
 import time
+from typing import Any
+
+_HERE = os.path.dirname(__file__)
+sys.path.insert(0, _HERE)
+
 import pytest
 from helpers.home_assistant import create_home_assistant_configuration
 from helpers.app_daemon import create_appdaemon_configuration
@@ -13,18 +19,18 @@ from helpers.history_watcher import HistoryWatcher
 
 
 @pytest.fixture(scope="session")
-def base_output_directory():
+def base_output_directory() -> str:
     return os.path.join(os.path.dirname(__file__), "output")
 
 
 @pytest.fixture(scope="session")
-def global_mutex_graph():
-    graph: dict = {}
+def global_mutex_graph() -> Any:
+    graph: dict[str, Any] = {}
     yield graph
 
 
 @pytest.fixture(scope="session", autouse=True)
-def clear_output_dir(base_output_directory):
+def clear_output_dir(base_output_directory: str) -> None:
     shutil.rmtree(base_output_directory, ignore_errors=True)
     os.makedirs(base_output_directory, exist_ok=True)
 
@@ -38,7 +44,7 @@ def _check_leftover_process(description: str, pattern: str) -> None:
 
 
 @pytest.fixture(scope="session")
-def home_assistant(base_output_directory):
+def home_assistant(clear_output_dir: Any, base_output_directory: str) -> Any:
     port = 18000
     hass_path = os.path.join(base_output_directory, "hass")
     _check_leftover_process("hass", rf"hass .*{hass_path}")
@@ -76,7 +82,7 @@ def home_assistant(base_output_directory):
 
 
 @pytest.fixture(scope="session")
-def appdaemon(home_assistant, base_output_directory):
+def appdaemon(home_assistant: Any, base_output_directory: str) -> Any:
     port = home_assistant["port"] + 1
     appdaemon_dir = os.path.join(base_output_directory, "appdaemon")
     os.makedirs(appdaemon_dir, exist_ok=True)
@@ -114,23 +120,23 @@ def appdaemon(home_assistant, base_output_directory):
 
 
 @pytest.fixture(scope="session")
-def hass_client(home_assistant):
+def hass_client(home_assistant: Any) -> HassClient:
     return HassClient(home_assistant["host"])
 
 
 @pytest.fixture(scope="session")
-def appdaemon_client(appdaemon, global_mutex_graph):
+def appdaemon_client(appdaemon: Any, global_mutex_graph: dict[str, Any]) -> Any:
     client = AppDaemonClient(appdaemon["host"], appdaemon["dir"])
     yield client
     client.check_mutex_graph(global_mutex_graph)
 
 
 @pytest.fixture
-def history_watcher(appdaemon_client):
+def history_watcher(appdaemon_client: AppDaemonClient) -> HistoryWatcher:
     return HistoryWatcher(appdaemon_client)
 
 
 @pytest.fixture(autouse=True)
-def cleanup_apps(appdaemon_client):
+def cleanup_apps(appdaemon_client: AppDaemonClient) -> Any:
     yield
     appdaemon_client.unload_apps()

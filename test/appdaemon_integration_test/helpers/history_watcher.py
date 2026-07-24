@@ -2,6 +2,8 @@ from __future__ import annotations
 import time
 from typing import Any
 
+from helpers.type_util import values_equal
+
 
 class HistoryWatcher:
     def __init__(self, appdaemon_client: Any):
@@ -13,7 +15,13 @@ class HistoryWatcher:
     def check_history(self, *expected: Any) -> None:
         expected_pairs = [[expected[i], expected[i + 1]] for i in range(0, len(expected), 2)]
         actual = self.get_history()
-        assert actual == expected_pairs
+        assert len(actual) == len(expected_pairs), (
+            f"history length mismatch: {actual} != {expected_pairs}"
+        )
+        for act, exp in zip(actual, expected_pairs):
+            assert values_equal(act[0], exp[0]) and values_equal(act[1], exp[1]), (
+                f"history mismatch: {actual} != {expected_pairs}"
+            )
 
     def wait_for_history(self, *expected: Any) -> None:
         expected_pairs = [[expected[i], expected[i + 1]] for i in range(0, len(expected), 2)]

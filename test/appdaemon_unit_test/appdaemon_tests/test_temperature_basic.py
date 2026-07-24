@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from conftest import Harness
 
-def test_basic(harness):
+
+def test_basic(harness: Harness) -> None:
     in_ = "sensor.furnace_in"
     out_ = "sensor.furnace_out"
     target = "input_boolean.temperature_controller_pump"

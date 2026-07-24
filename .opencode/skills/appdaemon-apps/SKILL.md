@@ -110,7 +110,7 @@ Rules (verified across existing apps):
 - Test infrastructure: `conftest.py` provides `harness` and `timing` fixtures. The `Harness` class wraps `AppManager`/`TestApp` with thin methods (`set_state`, `get_state`, `step`, `advance_time`, `create_app`, `schedule_call_at`, etc.). The `Timing` helper provides composite timing assertions (`state_should_change_at`, `state_should_not_change_for`, etc.). Use bare `assert` for state checks; `@pytest.mark.parametrize` for data-driven tests; native `datetime` types (`timedelta`, `time`, `datetime`) for time constants.
 - Run affected suites mid-task, full suite before hand-off:
   ```sh
-  source test/.venv/bin/activate && cd test/appdaemon_unit_test && PYTHONPATH="${PWD}:${PWD}/apps" pytest -v [-k <test>]
+  source test/.venv/bin/activate && cd test/appdaemon_unit_test && pytest -v [-k <test>]
   ```
 - Unit tests must exist for any new/changed behavior. Integration tests (below) run only at the end of a task, once unit tests and `bin/mypy` are green.
 
@@ -146,7 +146,7 @@ Architecture (rooted at `test/appdaemon_integration_test/`):
 
 Run (full or scoped):
 ```sh
-source test/.venv/bin/activate && cd test/appdaemon_integration_test && APPDAEMON_PATH="$PWD/.appdaemon" HASS_PATH="$PWD/.hass" PYTHONPATH="${PWD}:${PWD}/helpers" pytest -v [-k <test>]
+source test/.venv/bin/activate && cd test/appdaemon_integration_test && APPDAEMON_PATH="$PWD/.appdaemon" HASS_PATH="$PWD/.hass" pytest -v [-k <test>]
 ```
 Scope with `-k <test>` when a change is contained to one app; otherwise run the full suite. Exact timing is not asserted — use `appdaemon_client.wait_for_state()` / `history_watcher.wait_for_history()` for nondeterministic waits.
 

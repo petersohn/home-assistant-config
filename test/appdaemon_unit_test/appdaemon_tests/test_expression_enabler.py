@@ -1,5 +1,8 @@
 from __future__ import annotations
+from typing import Any
+
 import pytest
+from conftest import Harness
 
 input_binary1 = "binary_sensor.test_input1"
 input_binary2 = "binary_sensor.test_input2"
@@ -7,13 +10,13 @@ input_sensor1 = "sensor.test_input1"
 input_sensor2 = "sensor.test_input2"
 
 
-def _create_expression_enabler(harness, name, expr):
+def _create_expression_enabler(harness: Harness, name: str, expr: str) -> Any:
     return harness.create_app("enabler", "ExpressionEnabler", name, expr=expr)
 
 
-def _check_expected_states(harness, expected_states):
+def _check_expected_states(harness: Harness, expected_states: dict[str, bool]) -> None:
     for name, value in expected_states.items():
-        app = harness.get_app(name)
+        app: Any = harness.get_app(name)
         assert app.is_enabled() == value
 
 
@@ -23,7 +26,7 @@ def _check_expected_states(harness, expected_states):
     (True, False, {"enablers_and": False, "enablers_nand": True, "enablers_and_not": True, "enablers_or": True}),
     (True, True, {"enablers_and": True, "enablers_nand": False, "enablers_and_not": False, "enablers_or": True}),
 ])
-def test_enablers(harness, enabler1_state, enabler2_state, expected_states):
+def test_enablers(harness: Harness, enabler1_state: bool, enabler2_state: bool, expected_states: dict[str, bool]) -> None:
     harness.create_app("enabler", "ScriptEnabler", "enabler1", initial=enabler1_state)
     harness.create_app("enabler", "ScriptEnabler", "enabler2", initial=enabler2_state)
     _create_expression_enabler(harness, "enablers_and", "e.enabler1 and e.enabler2")
@@ -51,7 +54,7 @@ def test_enablers(harness, enabler1_state, enabler2_state, expected_states):
     (10, 5, {"value_less": False, "value_equal": False}),
     (10, 10, {"value_less": False, "value_equal": True}),
 ])
-def test_numeric_sensors(harness, sensor1, sensor2, expected_states):
+def test_numeric_sensors(harness: Harness, sensor1: Any, sensor2: Any, expected_states: dict[str, bool]) -> None:
     harness.set_state(input_sensor1, sensor1)
     harness.set_state(input_sensor2, sensor2)
     _create_expression_enabler(harness, "value_less", f"v.{input_sensor1} < v.{input_sensor2}")
@@ -67,7 +70,7 @@ def test_numeric_sensors(harness, sensor1, sensor2, expected_states):
     ("aa", "a", {"value_less": False, "value_equal": False}),
     ("aa", "aa", {"value_less": False, "value_equal": True}),
 ])
-def test_alphanumeric_sensors(harness, sensor1, sensor2, expected_states):
+def test_alphanumeric_sensors(harness: Harness, sensor1: str, sensor2: str, expected_states: dict[str, bool]) -> None:
     harness.set_state(input_sensor1, sensor1)
     harness.set_state(input_sensor2, sensor2)
     _create_expression_enabler(harness, "value_less", f"v.{input_sensor1} < v.{input_sensor2}")
@@ -81,7 +84,7 @@ def test_alphanumeric_sensors(harness, sensor1, sensor2, expected_states):
     ("on", "off", {"binary_and": False, "binary_or": True}),
     ("on", "on", {"binary_and": True, "binary_or": True}),
 ])
-def test_binary_sensors(harness, sensor1, sensor2, expected_states):
+def test_binary_sensors(harness: Harness, sensor1: str, sensor2: str, expected_states: dict[str, bool]) -> None:
     harness.set_state(input_binary1, sensor1)
     harness.set_state(input_binary2, sensor2)
     _create_expression_enabler(harness, "binary_and", f"v.{input_binary1} and v.{input_binary2}")
@@ -95,7 +98,7 @@ def test_binary_sensors(harness, sensor1, sensor2, expected_states):
     (True, "off", {"enabler_and_binary_and": False, "enabler_and_binary_or": True}),
     (True, "on", {"enabler_and_binary_and": True, "enabler_and_binary_or": True}),
 ])
-def test_enabler_and_binary_sensor(harness, enabler_state, sensor, expected_states):
+def test_enabler_and_binary_sensor(harness: Harness, enabler_state: bool, sensor: str, expected_states: dict[str, bool]) -> None:
     harness.create_app("enabler", "ScriptEnabler", "enabler", initial=enabler_state)
     harness.set_state(input_binary1, sensor)
     _create_expression_enabler(
@@ -107,7 +110,7 @@ def test_enabler_and_binary_sensor(harness, enabler_state, sensor, expected_stat
     _check_expected_states(harness, expected_states)
 
 
-def test_changes(harness):
+def test_changes(harness: Harness) -> None:
     harness.set_state(input_binary1, "off")
     harness.set_state(input_binary2, "off")
     _create_expression_enabler(harness, "enabler1", f"v.{input_binary1}")

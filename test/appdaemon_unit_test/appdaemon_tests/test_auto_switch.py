@@ -1,6 +1,10 @@
 from __future__ import annotations
 from datetime import time
+from typing import Any
+
 import pytest
+from conftest import Harness
+from apps.hass import Hass
 
 # Use 00:00:00 (matching the original Robot harness).
 _default_start_time = time(0, 0, 0)
@@ -9,7 +13,7 @@ target = "input_boolean.test_switch"
 switch = "input_select.test_auto_switch_switch"
 
 
-def _initialize(harness, type_, initial_switch_state="auto", initial_target_state="off"):
+def _initialize(harness: Harness, type_: str, initial_switch_state: str = "auto", initial_target_state: str = "off") -> tuple[Hass, Hass | None]:
     harness.set_state(target, initial_target_state)
     harness.set_state(switch, initial_switch_state)
     args: dict = {"target": target}
@@ -26,7 +30,7 @@ def _initialize(harness, type_, initial_switch_state="auto", initial_target_stat
     return auto_switch, enabler
 
 
-def _switch_on_and_off(harness, type_, initial_switch_state, initial_target_state, expected_off, expected_on):
+def _switch_on_and_off(harness: Harness, type_: str, initial_switch_state: str, initial_target_state: str, expected_off: str, expected_on: str) -> None:
     auto_switch, _ = _initialize(harness, type_, initial_switch_state, initial_target_state)
     assert harness.get_state(target) == expected_off
     harness.call_on_app(auto_switch, "auto_turn_on")
@@ -39,7 +43,7 @@ def _switch_on_and_off(harness, type_, initial_switch_state, initial_target_stat
     assert harness.get_state(target) == expected_off
 
 
-def _switch_on_and_off_with_enabler(harness, type_, initial_switch_state, initial_target_state, enabler_state, expected_off, expected_on):
+def _switch_on_and_off_with_enabler(harness: Harness, type_: str, initial_switch_state: str, initial_target_state: str, enabler_state: str, expected_off: str, expected_on: str) -> None:
     auto_switch, enabler = _initialize(harness, type_, initial_switch_state, initial_target_state)
     assert enabler is not None
     harness.call_on_app(enabler, enabler_state)
@@ -64,7 +68,7 @@ def _switch_on_and_off_with_enabler(harness, type_, initial_switch_state, initia
     ("Switched", "off", "off", "off", "off"),
     ("Switched", "off", "on", "off", "off"),
 ])
-def test_basic_usage(harness, type_, initial_switch_state, initial_target_state, expected_off, expected_on):
+def test_basic_usage(harness: Harness, type_: str, initial_switch_state: str, initial_target_state: str, expected_off: str, expected_on: str) -> None:
     _switch_on_and_off(harness, type_, initial_switch_state, initial_target_state, expected_off, expected_on)
 
 
@@ -86,7 +90,7 @@ def test_basic_usage(harness, type_, initial_switch_state, initial_target_state,
     ("EnabledSwitched", "off", "off", "disable", "off", "off"),
     ("EnabledSwitched", "off", "on", "disable", "off", "off"),
 ])
-def test_basic_usage_with_enabler(harness, type_, initial_switch_state, initial_target_state, enabler_state, expected_off, expected_on):
+def test_basic_usage_with_enabler(harness: Harness, type_: str, initial_switch_state: str, initial_target_state: str, enabler_state: str, expected_off: str, expected_on: str) -> None:
     _switch_on_and_off_with_enabler(harness, type_, initial_switch_state, initial_target_state, enabler_state, expected_off, expected_on)
 
 
@@ -104,7 +108,7 @@ def test_basic_usage_with_enabler(harness, type_, initial_switch_state, initial_
     ("off", "on", "on", "on"),
     ("off", "on", "auto", "on"),
 ])
-def test_switch_on_and_off_manually(harness, initial, auto_switch_state, changed, expected):
+def test_switch_on_and_off_manually(harness: Harness, initial: str, auto_switch_state: str, changed: str, expected: str) -> None:
     auto_switch, _ = _initialize(harness, "Switched", initial, target)
     if auto_switch_state == "on":
         harness.call_on_app(auto_switch, "auto_turn_on")
@@ -114,7 +118,7 @@ def test_switch_on_and_off_manually(harness, initial, auto_switch_state, changed
     assert harness.get_state(target) == expected
 
 
-def test_target_state_changes(harness):
+def test_target_state_changes(harness: Harness) -> None:
     auto_switch, _ = _initialize(harness, "Switched")
     harness.set_state(switch, "off")
     assert harness.get_state(target) == "off"
@@ -136,7 +140,7 @@ def test_target_state_changes(harness):
     assert harness.get_state(switch) == "auto"
 
 
-def test_enabled_state_changes(harness):
+def test_enabled_state_changes(harness: Harness) -> None:
     auto_switch, enabler = _initialize(harness, "Enabled")
     assert enabler is not None
     harness.call_on_app(enabler, "enable")
@@ -152,7 +156,7 @@ def test_enabled_state_changes(harness):
     ("Basic", "off"),
     ("Reentrant", "on"),
 ])
-def test_reentrancy(harness, type_, expected):
+def test_reentrancy(harness: Harness, type_: str, expected: str) -> None:
     auto_switch, _ = _initialize(harness, type_, "auto", "off")
     harness.call_on_app(auto_switch, "auto_turn_on")
     assert harness.get_state(target) == "on"

@@ -1,7 +1,11 @@
 from __future__ import annotations
 from datetime import time, timedelta
+from typing import Any
 
-from helpers.history_util import (
+from conftest import Harness
+from apps.hass import Hass
+from unit_helpers.timing import Timing
+from unit_helpers.history_util import (
     convert_history_input,
     convert_history_output,
     is_expected_history_found,
@@ -17,7 +21,7 @@ sensor2 = "binary_sensor.error2"
 sensor3 = "binary_sensor.error3"
 
 
-def _create_alert_aggregator(harness, **extra_args):
+def _create_alert_aggregator(harness: Harness, **extra_args: Any) -> tuple[Hass, Hass]:
     alert = harness.create_app(
         "alert", "AlertAggregator", "alert",
         sources=[sensor1, sensor2, sensor3],
@@ -33,19 +37,19 @@ def _create_alert_aggregator(harness, **extra_args):
     return alert, alert_history
 
 
-def _alarm_text_should_be(harness, *lines):
+def _alarm_text_should_be(harness: Harness, *lines: str) -> None:
     expected = "\n".join(lines)
     assert harness.get_state(alert_sensor, attribute="text") == expected
 
 
-def _should_have_history(harness, alert_history, *expected_values):
+def _should_have_history(harness: Harness, alert_history: Any, *expected_values: Any) -> None:
     converted_expected = convert_history_input(list(expected_values))
     values = harness.call_on_app(alert_history, "get_recorded_history")
     converted_values = convert_history_output(list(values))
     assert is_expected_history_found(converted_expected, converted_values)
 
 
-def _state_should_cycle_at(harness, timing, entity, target_time):
+def _state_should_cycle_at(harness: Harness, timing: Timing, entity: str, target_time: timedelta) -> None:
     assert harness.get_state(entity) == "on"
     target_datetime = harness.date_from_time(target_time, future=True)
     deadline = target_datetime - harness.interval
@@ -57,7 +61,7 @@ def _state_should_cycle_at(harness, timing, entity, target_time):
     assert harness.get_state(entity) == "on"
 
 
-def test_turn_alert_on_and_off(harness, timing):
+def test_turn_alert_on_and_off(harness: Harness, timing: Timing) -> None:
     harness.set_state(sensor1, "off")
     harness.set_state(sensor2, "off")
     harness.set_state(sensor3, "off")
@@ -91,7 +95,7 @@ def test_turn_alert_on_and_off(harness, timing):
     timing.state_should_change_at(alert_sensor, "off", timedelta(minutes=6))
 
 
-def test_alert_on_at_the_beginning(harness, timing):
+def test_alert_on_at_the_beginning(harness: Harness, timing: Timing) -> None:
     harness.set_state(sensor1, "off")
     harness.set_state(sensor2, "on")
     harness.set_state(sensor3, "on")
@@ -110,7 +114,7 @@ def test_alert_on_at_the_beginning(harness, timing):
     timing.state_should_change_at(alert_sensor, "off", timedelta(minutes=2))
 
 
-def test_timeout(harness, timing):
+def test_timeout(harness: Harness, timing: Timing) -> None:
     harness.set_state(sensor1, "off")
     harness.set_state(sensor2, "off")
     harness.set_state(sensor3, "off")

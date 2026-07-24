@@ -6,7 +6,9 @@ requires-python = ">=3.12,<3.14"
 dependencies = [
     "appdaemon @ git+https://github.com/petersohn/appdaemon@fix-unload-bug",
     "mypy",
+    "pytest",
     "types-psutil",
     "types-pyyaml",
     "types-python-dateutil",
+    "types-requests",
 ]

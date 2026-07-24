@@ -186,7 +186,7 @@ Run these checks before claiming work complete. They are mandatory, not optional
 - Unit tests. Only the suites affected by the change are needed mid-task; run the full suite before handing off:
 
   ```sh
-  source test/.venv/bin/activate && cd test/appdaemon_unit_test && rm -rf output && PYTHONPATH="${PWD}:${PWD}/apps" pytest -v
+  source test/.venv/bin/activate && cd test/appdaemon_unit_test && rm -rf output && pytest -v
   ```
 
 Fix any failures and rerun before continuing. Do not leave the tree in a state where `bin/mypy` or the unit tests are red.

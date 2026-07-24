@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from datetime import datetime
-from helpers.history_util import convert_history_input, convert_history_output
+from unit_helpers.history_util import convert_history_input, convert_history_output
 
 
-def test_convert_history_input():
+def test_convert_history_input() -> None:
     expected = [
         ("2019-01-01 00:00:00", 3),
         ("2019-02-03 01:21:04", 50),
@@ -16,7 +18,7 @@ def test_convert_history_input():
     assert result == expected
 
 
-def test_convert_history_output():
+def test_convert_history_output() -> None:
     expected = [
         ("2019-01-01 00:00:00", 3),
         ("2019-02-03 01:21:04", 50),

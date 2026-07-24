@@ -3,6 +3,9 @@ import time
 
 import pytest
 
+from helpers.appdaemon_client import AppDaemonClient
+from helpers.history_watcher import HistoryWatcher
+
 input_switch1 = "input_select.test_auto_switch_switch1"
 input_switch2 = "input_select.test_auto_switch_switch2"
 output_switch = "input_boolean.test_switch1"
@@ -11,26 +14,30 @@ enabler = "test_enabler"
 base_configs = ("HistoryWatcher", "EnabledSwitch")
 
 
-def _initialize(appdaemon_client, *configs, **initial_states):
-    appdaemon_client.initialize_states(output_switch="off", **initial_states)
+def _initialize(
+    appdaemon_client: AppDaemonClient, *configs: str, **initial_states: object
+) -> None:
+    appdaemon_client.initialize_states(**{output_switch: "off"}, **initial_states)
     appdaemon_client.load_apps(*configs)
 
 
-def _enable(appdaemon_client):
+def _enable(appdaemon_client: AppDaemonClient) -> None:
     appdaemon_client.call_on_app(enabler, "enable")
 
 
-def _disable(appdaemon_client):
+def _disable(appdaemon_client: AppDaemonClient) -> None:
     appdaemon_client.call_on_app(enabler, "disable")
 
 
-def test_state_changes(appdaemon_client, history_watcher):
+def test_state_changes(
+    appdaemon_client: AppDaemonClient, history_watcher: HistoryWatcher
+) -> None:
     _initialize(
         appdaemon_client,
         *base_configs,
         "AutoSwitch1",
         "ScriptEnablerOff",
-        input_switch1="auto",
+        **{input_switch1: "auto"},
     )
     assert appdaemon_client.get_state(output_switch) == "off"
     appdaemon_client.select_option(input_switch1, "on")
@@ -125,14 +132,14 @@ test_reload_rows = [
 @pytest.mark.parametrize("reentrant, enabler_state, initial, new, expected_states",
                          test_reload_rows)
 def test_reload(
-    appdaemon_client,
-    history_watcher,
-    reentrant,
-    enabler_state,
-    initial,
-    new,
-    expected_states,
-):
+    appdaemon_client: AppDaemonClient,
+    history_watcher: HistoryWatcher,
+    reentrant: bool,
+    enabler_state: str,
+    initial: str,
+    new: str,
+    expected_states: list[str],
+) -> None:
     reentrant_config = "Reentrant" if reentrant else ""
     enabler_config = "ScriptEnabler" + enabler_state
     auto_switch1 = "AutoSwitch1" + reentrant_config
@@ -143,8 +150,7 @@ def test_reload(
         *base_configs,
         auto_switch1,
         enabler_config,
-        input_switch1=initial,
-        input_switch2=new,
+        **{input_switch1: initial, input_switch2: new},
     )
 
     expected_state1 = expected_states[0]

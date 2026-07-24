@@ -4,6 +4,7 @@ import requests  # type: ignore[import-untyped]
 from typing import Any
 from helpers.app_daemon import create_appdaemon_apps_config
 from helpers.mutex_graph import append_graph, find_cycle
+from helpers.type_util import values_equal
 
 
 class AppDaemonClient:
@@ -59,10 +60,10 @@ class AppDaemonClient:
     def wait_for_state(self, entity_id: str, expected: Any, timeout: int = 10) -> None:
         deadline = time.time() + timeout
         while time.time() < deadline:
-            if self.get_state(entity_id) == expected:
+            if values_equal(self.get_state(entity_id), expected):
                 return
             time.sleep(0.1)
-        assert self.get_state(entity_id) == expected
+        assert values_equal(self.get_state(entity_id), expected)
 
     def load_apps(self, *configs: str) -> None:
         self._loaded_apps = create_appdaemon_apps_config(self._dir, "TestApp", *configs)
