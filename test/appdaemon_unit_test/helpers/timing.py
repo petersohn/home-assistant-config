@@ -31,7 +31,9 @@ class Timing:
         assert self._h.get_state(entity) == old
         assert self._h.datetime - before == duration
 
-    def state_should_not_change_until(self, entity: str, target: datetime):
+    def state_should_not_change_until(self, entity: str, target: datetime | time | timedelta):
+        if not isinstance(target, datetime):
+            target = self._h.date_from_time(target, future=True)
         old = self._h.get_state(entity)
         self._h.wait_for_state_change(entity, deadline_datetime=target)
         assert self._h.get_state(entity) == old

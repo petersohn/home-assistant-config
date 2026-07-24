@@ -146,7 +146,8 @@ def global_mutex_graph():
 def harness(request, base_output_directory, global_mutex_graph):
     params = getattr(request, "param", {})
     start_date = params.get("start_date", date(2018, 1, 1))
-    start_time = params.get("start_time", time(1, 0, 0))
+    module_default_start_time = getattr(request.module, "_default_start_time", time(1, 0, 0))
+    start_time = params.get("start_time", module_default_start_time)
     interval = params.get("interval", timedelta(seconds=10))
     safe_name = request.node.name.replace("[", "_").replace("]", "")
     log_dir = os.path.join(base_output_directory, "logs", request.module.__name__)

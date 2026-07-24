@@ -35,8 +35,8 @@ class TestApp(hass.Hass):
 
     def call_on_app(
         self, app: Any, method: str, *args: Any, **kwargs: Any
-    ) -> None:
-        getattr(app, method)(*args, **kwargs)
+    ) -> Any:
+        return getattr(app, method)(*args, **kwargs)
 
     def get_state_as(
         self,
