@@ -1,4 +1,5 @@
 import os
+import tempfile
 import yaml
 from helpers import directories
 from typing import Any
@@ -61,7 +62,11 @@ def create_appdaemon_apps_config(
         if name not in ["test", "locker"]
     ]
 
-    with open(apps_yaml, "w") as target:
+    fd, tmp = tempfile.mkstemp(
+        dir=apps_dir, prefix=".apps.", suffix=".yaml"
+    )
+    with os.fdopen(fd, "w") as target:
         yaml.dump(content, target)
+    os.replace(tmp, apps_yaml)
 
     return all_apps
