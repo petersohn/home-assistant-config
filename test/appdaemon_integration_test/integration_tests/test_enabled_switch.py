@@ -3,8 +3,8 @@ import time
 
 import pytest
 
-from helpers.appdaemon_client import AppDaemonClient
-from helpers.history_watcher import HistoryWatcher
+from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
+from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 
 input_switch1 = "input_select.test_auto_switch_switch1"
 input_switch2 = "input_select.test_auto_switch_switch2"

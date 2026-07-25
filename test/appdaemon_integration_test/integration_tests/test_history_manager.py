@@ -2,10 +2,10 @@ from __future__ import annotations
 import time
 from datetime import datetime, timedelta
 
-from helpers.appdaemon_client import AppDaemonClient
-from helpers.hass_client import HassClient
-from helpers.history_util import convert_history_output
-from helpers.type_util import values_equal
+from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
+from appdaemon_integration_test.helpers.hass_client import HassClient
+from appdaemon_integration_test.helpers.history_util import convert_history_output
+from appdaemon_integration_test.helpers.type_util import values_equal
 
 sensor = "sensor.history_test"
 sensor1 = "sensor.test_sensor1"

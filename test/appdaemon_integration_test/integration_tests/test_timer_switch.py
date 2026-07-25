@@ -2,8 +2,8 @@ from __future__ import annotations
 import time
 from typing import Any
 
-from helpers.appdaemon_client import AppDaemonClient
-from helpers.history_watcher import HistoryWatcher
+from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
+from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 
 start_sensor = "binary_sensor.start"
 control_start_sensor = "binary_sensor.control_start"

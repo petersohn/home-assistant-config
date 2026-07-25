@@ -4,3 +4,9 @@ base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 config_path = os.path.join(base_path, "config")
 hass_config_path = os.path.join(config_path, "hass")
 appdaemon_config_path = os.path.join(config_path, "appdaemon")
+prod_app_dir = os.path.normpath(
+    os.path.join(
+        base_path, "..", "..", "home", ".homeassistant", "appdaemon", "apps"
+    )
+)
+test_apps_path = os.path.join(base_path, "test_apps")

@@ -1,7 +1,7 @@
 import json
 import os
 import yaml
-from helpers import directories
+from appdaemon_integration_test.helpers import directories
 from typing import Any
 
 

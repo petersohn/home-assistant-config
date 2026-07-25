@@ -1,8 +1,8 @@
 from __future__ import annotations
 import time
 
-from helpers.appdaemon_client import AppDaemonClient
-from helpers.history_watcher import HistoryWatcher
+from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
+from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 
 input_entity1 = "sensor.test_cover_position1"
 input_entity2 = "sensor.test_cover_position2"

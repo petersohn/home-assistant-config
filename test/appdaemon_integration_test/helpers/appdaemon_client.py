@@ -2,9 +2,9 @@ from __future__ import annotations
 import time
 import requests  # type: ignore[import-untyped]
 from typing import Any
-from helpers.app_daemon import create_appdaemon_apps_config
-from helpers.mutex_graph import append_graph, find_cycle
-from helpers.type_util import values_equal
+from appdaemon_integration_test.helpers.app_daemon import create_appdaemon_apps_config
+from appdaemon_integration_test.helpers.mutex_graph import append_graph, find_cycle
+from appdaemon_integration_test.helpers.type_util import values_equal
 
 
 class AppDaemonClient:

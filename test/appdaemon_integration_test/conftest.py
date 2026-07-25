@@ -10,13 +10,13 @@ _HERE = os.path.dirname(__file__)
 sys.path.insert(0, _HERE)
 
 import pytest
-from helpers.home_assistant import create_home_assistant_configuration
-from helpers.app_daemon import create_appdaemon_configuration
-from helpers.process_check import find_processes_matching_cmdline
-from helpers.hass_client import HassClient
-from helpers.appdaemon_client import AppDaemonClient
-from helpers.history_watcher import HistoryWatcher
-from helpers.error_log import ErrorLogChecker
+from appdaemon_integration_test.helpers.home_assistant import create_home_assistant_configuration
+from appdaemon_integration_test.helpers.app_daemon import create_appdaemon_configuration
+from appdaemon_integration_test.helpers.process_check import find_processes_matching_cmdline
+from appdaemon_integration_test.helpers.hass_client import HassClient
+from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
+from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
+from appdaemon_integration_test.helpers.error_log import ErrorLogChecker
 
 
 @pytest.fixture(scope="session")
@@ -64,7 +64,7 @@ def home_assistant(clear_output_dir: Any, base_output_directory: str) -> Any:
     )
     # Wait for HASS to start
     import requests
-    from helpers.hass_client import HASS_TOKEN
+    from appdaemon_integration_test.helpers.hass_client import HASS_TOKEN
     headers = {"Authorization": f"Bearer {HASS_TOKEN}"}
     deadline = time.time() + 120
     while time.time() < deadline:
@@ -89,7 +89,7 @@ def appdaemon(home_assistant: Any, base_output_directory: str) -> Any:
     appdaemon_dir = os.path.join(base_output_directory, "appdaemon")
     os.makedirs(appdaemon_dir, exist_ok=True)
     create_appdaemon_configuration(appdaemon_dir, home_assistant["host"], port)
-    from helpers.app_daemon import create_appdaemon_apps_config
+    from appdaemon_integration_test.helpers.app_daemon import create_appdaemon_apps_config
     create_appdaemon_apps_config(appdaemon_dir, "TestApp")
     appdaemon_bin = os.path.join(os.path.dirname(__file__), "appdaemon")
     proc = subprocess.Popen(

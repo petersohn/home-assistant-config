@@ -1,7 +1,7 @@
 import os
 import tempfile
 import yaml
-from helpers import directories
+from appdaemon_integration_test.helpers import directories
 from typing import Any
 
 
@@ -47,14 +47,48 @@ def create_appdaemon_apps_config(
         with open(source_file, "r") as source:
             content.update(yaml.safe_load(source))
 
-    apps_path = os.path.join(directories.appdaemon_config_path, "apps")
-    for file_name in os.listdir(apps_path):
+    # hass.py at the root of the runtime apps dir (symlink to prod)
+    hass_link = os.path.join(apps_dir, "hass.py")
+    if os.path.exists(hass_link):
+        os.remove(hass_link)
+    os.symlink(os.path.join(directories.prod_app_dir, "hass.py"), hass_link)
+
+    # apps/ subdir — symlink each prod .py module
+    apps_subdir = os.path.join(apps_dir, "apps")
+    os.makedirs(apps_subdir, exist_ok=True)
+    prod_apps_subdir = os.path.join(directories.prod_app_dir, "apps")
+    for file_name in os.listdir(prod_apps_subdir):
         if not file_name.endswith(".py"):
             continue
-        target_file = os.path.join(apps_dir, file_name)
+        target_file = os.path.join(apps_subdir, file_name)
         if os.path.exists(target_file):
             os.remove(target_file)
-        os.symlink(os.path.join(apps_path, file_name), target_file)
+        os.symlink(os.path.join(prod_apps_subdir, file_name), target_file)
+
+    # configs/ subdir — symlink yaml configs from the integration test config
+    configs_subdir = os.path.join(apps_dir, "configs")
+    os.makedirs(configs_subdir, exist_ok=True)
+    source_configs = os.path.join(directories.appdaemon_config_path, "configs")
+    for file_name in os.listdir(source_configs):
+        if not file_name.endswith(".yaml"):
+            continue
+        target_file = os.path.join(configs_subdir, file_name)
+        if os.path.exists(target_file):
+            os.remove(target_file)
+        os.symlink(os.path.join(source_configs, file_name), target_file)
+
+    # test_apps/ subdir — symlink the test helper apps
+    test_apps_subdir = os.path.join(apps_dir, "test_apps")
+    os.makedirs(test_apps_subdir, exist_ok=True)
+    for file_name in os.listdir(directories.test_apps_path):
+        if not file_name.endswith(".py") or file_name == "__init__.py":
+            continue
+        target_file = os.path.join(test_apps_subdir, file_name)
+        if os.path.exists(target_file):
+            os.remove(target_file)
+        os.symlink(
+            os.path.join(directories.test_apps_path, file_name), target_file
+        )
 
     all_apps = [
         name

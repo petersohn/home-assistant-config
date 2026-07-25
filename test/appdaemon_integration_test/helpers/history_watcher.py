@@ -2,7 +2,7 @@ from __future__ import annotations
 import time
 from typing import Any
 
-from helpers.type_util import values_equal
+from appdaemon_integration_test.helpers.type_util import values_equal
 
 
 class HistoryWatcher:
