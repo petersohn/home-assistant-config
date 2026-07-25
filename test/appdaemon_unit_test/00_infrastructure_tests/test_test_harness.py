@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, time
 import pytest
-from conftest import Harness
-from unit_helpers.timing import Timing
+from appdaemon_unit_test.conftest import Harness
+from appdaemon_unit_test.test_helpers.timing import Timing
 
 
 @pytest.fixture
@@ -171,7 +171,7 @@ def test_state_should_change_next_day(harness: Harness) -> None:
     harness.set_state("sensor.test_sensor", "sensor state")
     target = time(1, 0, 0)
     harness.schedule_call_at(target, "set_state", "sensor.test_sensor", "new sensor state")
-    from unit_helpers.timing import Timing
+    from appdaemon_unit_test.test_helpers.timing import Timing
     timing = Timing(harness)
     timing.state_should_change_at("sensor.test_sensor", "new sensor state", target)
     assert harness.get_state("sensor.test_sensor") == "new sensor state"

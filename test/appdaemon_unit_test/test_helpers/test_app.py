@@ -1,4 +1,4 @@
-from apps import hass
+from appdaemon_unit_test.test_helpers.hass import Hass
 from datetime import datetime, timedelta, time
 from typing import Any, Callable
 
@@ -18,7 +18,7 @@ def convert(value: str | dict[str, str] | None, type_: str) -> Any:
     return converters[type_](value)
 
 
-class TestApp(hass.Hass):
+class TestApp(Hass):
     def schedule_call_in(
         self, delay: timedelta, func: str, *args: Any, **kwargs: Any
     ) -> None:

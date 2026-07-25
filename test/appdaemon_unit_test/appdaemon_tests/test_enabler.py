@@ -3,8 +3,8 @@ from datetime import date, datetime, time, timedelta
 from typing import Any
 
 import pytest
-from conftest import Harness
-from unit_helpers.timing import Timing
+from appdaemon_unit_test.conftest import Harness
+from appdaemon_unit_test.test_helpers.timing import Timing
 
 test_input = "sensor.test_input"
 test_switch = "input_boolean.test_switch"

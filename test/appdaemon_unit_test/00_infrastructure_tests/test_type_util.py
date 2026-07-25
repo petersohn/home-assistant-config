@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from unit_helpers.type_util import extract_from_dictionary, repeat_item
+from appdaemon_unit_test.test_helpers.type_util import extract_from_dictionary, repeat_item
 
 
 def test_extract_existing_item_from_dictionary() -> None:

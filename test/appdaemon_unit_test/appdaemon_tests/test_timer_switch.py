@@ -2,9 +2,9 @@ from __future__ import annotations
 from datetime import time, timedelta
 from typing import Any
 
-from conftest import Harness
-from apps.hass import Hass
-from unit_helpers.history_util import convert_history_input, convert_history_output
+from appdaemon_unit_test.conftest import Harness
+from hass import Hass
+from appdaemon_unit_test.test_helpers.history_util import convert_history_input, convert_history_output
 
 # Use 00:00:00 so the absolute
 # datetime history assertions in the timer sequence tests match.

@@ -1,5 +1,5 @@
 from typing import Any
-from apps import hass
+from appdaemon_unit_test.test_helpers import hass
 from datetime import datetime
 
 

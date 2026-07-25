@@ -1,6 +1,6 @@
 import pytest
 from typing import Any
-from apps.mutex_graph import find_cycle, append_graph
+from mutex_graph import find_cycle, append_graph
 
 
 @pytest.mark.parametrize("graph_dict, expected", [

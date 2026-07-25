@@ -2,10 +2,10 @@ from __future__ import annotations
 from datetime import time, timedelta
 from typing import Any
 
-from conftest import Harness
-from apps.hass import Hass
-from unit_helpers.timing import Timing
-from unit_helpers.history_util import (
+from appdaemon_unit_test.conftest import Harness
+from hass import Hass
+from appdaemon_unit_test.test_helpers.timing import Timing
+from appdaemon_unit_test.test_helpers.history_util import (
     convert_history_input,
     convert_history_output,
     is_expected_history_found,

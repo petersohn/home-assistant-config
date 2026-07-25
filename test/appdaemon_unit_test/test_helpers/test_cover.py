@@ -1,9 +1,9 @@
 from __future__ import annotations
-from apps import hass
+from appdaemon_unit_test.test_helpers.hass import Hass
 from typing import Callable, override
 
 
-class TestCover(hass.Hass):
+class TestCover(Hass):
     def __init__(self) -> None:
         super(TestCover, self).__init__()
         self.entity: str = ""

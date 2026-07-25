@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from dateutil import tz
 
 if TYPE_CHECKING:
-    from apps import hass as hass_module
+    from appdaemon_unit_test.test_helpers import hass as hass_module
 else:
     hass_module = sys.modules.get("hass") or __import__("hass")
 

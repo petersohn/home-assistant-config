@@ -3,8 +3,8 @@ from datetime import time
 from typing import Any
 
 import pytest
-from conftest import Harness
-from apps.hass import Hass
+from appdaemon_unit_test.conftest import Harness
+from hass import Hass
 
 # Use 00:00:00.
 _default_start_time = time(0, 0, 0)

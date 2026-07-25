@@ -6,16 +6,19 @@ from datetime import datetime, timedelta, time, date
 from typing import Any, Callable, TypeVar, cast
 
 _HERE = os.path.dirname(__file__)
-sys.path.insert(0, _HERE)
-sys.path.insert(0, os.path.join(_HERE, "apps"))
+_APP_DIR = os.path.normpath(
+    os.path.join(_HERE, "..", "..", "home", ".homeassistant", "appdaemon", "apps")
+)
+sys.path.insert(0, os.path.join(_HERE, "test_helpers"))
+sys.path.insert(1, os.path.join(_APP_DIR, "apps"))
 
 import pytest
-from unit_helpers.config import create_app_manager
-from unit_helpers.timing import Timing
-from apps.hass import AppManager, Hass
-from apps.locker import Locker
-from apps.mutex_graph import find_cycle, append_graph
-from apps.test_app import TestApp
+from appdaemon_unit_test.test_helpers.config import create_app_manager
+from appdaemon_unit_test.test_helpers.timing import Timing
+from appdaemon_unit_test.test_helpers.hass import AppManager, Hass
+from locker import Locker
+from mutex_graph import find_cycle, append_graph
+from test_app import TestApp
 
 T = TypeVar("T")
 

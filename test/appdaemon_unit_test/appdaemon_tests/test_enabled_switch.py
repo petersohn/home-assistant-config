@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Any
 
-from conftest import Harness
+from appdaemon_unit_test.conftest import Harness
 
 
 def _initialize(harness: Harness) -> None:

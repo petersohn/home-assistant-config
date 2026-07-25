@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, time
 from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from conftest import Harness
+    from appdaemon_unit_test.conftest import Harness
 
 
 class Timing:
