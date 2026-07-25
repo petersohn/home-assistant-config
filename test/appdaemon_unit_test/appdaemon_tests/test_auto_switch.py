@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 from appdaemon_unit_test.conftest import Harness
-from hass import Hass
+from appdaemon_unit_test.test_helpers.hass import Hass
 
 # Use 00:00:00.
 _default_start_time = time(0, 0, 0)

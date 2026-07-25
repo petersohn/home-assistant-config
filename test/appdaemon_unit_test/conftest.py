@@ -18,7 +18,7 @@ from appdaemon_unit_test.test_helpers.timing import Timing
 from appdaemon_unit_test.test_helpers.hass import AppManager, Hass
 from locker import Locker
 from mutex_graph import find_cycle, append_graph
-from test_app import TestApp
+from appdaemon_unit_test.test_helpers.test_app import TestApp
 
 T = TypeVar("T")
 

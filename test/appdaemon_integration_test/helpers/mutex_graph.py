@@ -1,1 +1,1 @@
-../../../home/.homeassistant/appdaemon/apps/mutex_graph.py
+../../../home/.homeassistant/appdaemon/apps/apps/mutex_graph.py

@@ -8,12 +8,9 @@ disallow_untyped_defs = true
 disallow_untyped_calls = true
 explicit_package_bases = true
 mypy_path = [
-    "test/appdaemon_unit_test",
-    "test/appdaemon_integration_test",
+    "test",
 ]
 files = [
-    # Prod AppDaemon apps live under a dot-dir (home/.homeassistant/...) that
-    # mypy's recursive crawl skips by default, so it must be listed explicitly.
     "home/.homeassistant/appdaemon/apps",
     ".",
 ]
@@ -21,21 +18,16 @@ exclude = [
     "test/appdaemon_integration_test/.appdaemon/",
     "test/appdaemon_integration_test/.hass/",
     "test/appdaemon_integration_test/output/",
-    "test/appdaemon_integration_test/conftest\\.py",
-    # The integration-test apps dir is a symlink farm back to the prod apps;
-    # checking it creates duplicate top-level modules. The real (non-symlink)
-    # test fixture apps there are not type-checked meaningfully.
-    "test/appdaemon_integration_test/config/appdaemon/apps/",
     "test/.venv/",
     "\\.mypy_cache/",
 ]
 
 [[tool.mypy.overrides]]
-module = "apps.hass"
+module = "appdaemon_unit_test.test_helpers.hass"
 disable_error_code = ["valid-type"]
 
 [[tool.mypy.overrides]]
-module = "conftest.*"
+module = "appdaemon_unit_test.conftest"
 disable_error_code = ["valid-type"]
 
 [tool.basedpyright]

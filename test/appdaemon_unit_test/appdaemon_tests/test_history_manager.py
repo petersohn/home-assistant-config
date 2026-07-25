@@ -3,7 +3,7 @@ from datetime import timedelta, time
 from typing import Any
 
 from appdaemon_unit_test.conftest import Harness
-from hass import Hass
+from appdaemon_unit_test.test_helpers.hass import Hass
 from appdaemon_unit_test.test_helpers.timing import Timing
 from appdaemon_unit_test.test_helpers.history_util import convert_history_input, convert_history_output
 from appdaemon_unit_test.test_helpers.race_test_helper import patch_load_history
