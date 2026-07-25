@@ -1,1 +1,0 @@
-../../../../../home/.homeassistant/appdaemon/apps/enabled_switch.py
