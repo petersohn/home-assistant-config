@@ -26,13 +26,11 @@ commands:
                 when: on_fail
             - store_artifacts:
                 path: <<parameters.directory>>/output_logs
-                when: on_fail
       - unless:
           condition: <<parameters.logs_only>>
           steps:
             - store_artifacts:
                 path: <<parameters.directory>>/output
-                when: on_fail
 
 jobs:
   appdaemon-unit-test:
