@@ -18,7 +18,6 @@ files = [
     ".",
 ]
 exclude = [
-    "robotframework-httplibrary/",
     "test/appdaemon_integration_test/.appdaemon/",
     "test/appdaemon_integration_test/.hass/",
     "test/appdaemon_integration_test/output/",

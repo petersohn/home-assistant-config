@@ -1,3 +1,0 @@
-[submodule "robotframework-httplibrary"]
-	path = robotframework-httplibrary
-	url = ../robotframework-httplibrary.git

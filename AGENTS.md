@@ -18,7 +18,6 @@ The project is structured so that it can be installed by Homeshick into the home
       - `*.py`: The AppDaemon apps.
       - `*.yaml`: AppDaemon app configuration files. AppDaemon globs every `*.yaml`/`*.toml` in this directory and merges them, so the app definitions are split across multiple files by functionality.
   - `.local/bin/`: script used from inside Home Assistant.
-- `robotframework-httplibrary/`: Third party testing library. Don't modify this.
 - `test/`
   - `setup_virtualenv.sh`: A script to set up virtualenv for local testing (CI has python packages pre-built in the container).
   - `appdaemon_unit_test/`: Unit tests for AppDaemon apps.
@@ -158,7 +157,6 @@ The test produces outputs in the `output` directory.
 
 - `output/` dir holds the logs generated during the run.
 - pytest terminal output: pass/fail summary with tracebacks for failures.
-- `report.html` / `log.html` / `output.xml` are no longer generated (Robot Framework outputs).
 
 **Outputs specific to unit tests:**
 

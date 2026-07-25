@@ -6,7 +6,7 @@ from conftest import Harness
 from apps.hass import Hass
 from unit_helpers.history_util import convert_history_input, convert_history_output
 
-# Use 00:00:00 (matching the original Robot harness) so the absolute
+# Use 00:00:00 so the absolute
 # datetime history assertions in the timer sequence tests match.
 _default_start_time = time(0, 0, 0)
 

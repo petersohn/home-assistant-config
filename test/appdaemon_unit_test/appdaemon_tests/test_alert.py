@@ -11,7 +11,7 @@ from unit_helpers.history_util import (
     is_expected_history_found,
 )
 
-# Use 00:00:00 (matching the original Robot harness) so that absolute-time
+# Use 00:00:00 so that absolute-time
 # State Should Change At assertions line up with the start of the day.
 _default_start_time = time(0, 0, 0)
 

@@ -5,7 +5,7 @@ from typing import Any
 from conftest import Harness
 from unit_helpers.timing import Timing
 
-# Use 00:00:00 (matching the original Robot harness).
+# Use 00:00:00.
 _default_start_time = time(0, 0, 0)
 
 input_entity = "sensor.target_position"

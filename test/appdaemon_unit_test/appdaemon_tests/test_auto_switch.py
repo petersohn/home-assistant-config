@@ -6,7 +6,7 @@ import pytest
 from conftest import Harness
 from apps.hass import Hass
 
-# Use 00:00:00 (matching the original Robot harness).
+# Use 00:00:00.
 _default_start_time = time(0, 0, 0)
 
 target = "input_boolean.test_switch"

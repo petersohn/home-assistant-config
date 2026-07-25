@@ -8,7 +8,7 @@ from unit_helpers.timing import Timing
 from unit_helpers.history_util import convert_history_input, convert_history_output
 from unit_helpers.race_test_helper import patch_load_history
 
-# Use 00:00:00 (matching the original Robot harness) so absolute-time
+# Use 00:00:00 so absolute-time
 # assertions (e.g. ChangeTracker Check Date Updates) line up with the
 # start of the day.
 _default_start_time = time(0, 0, 0)
