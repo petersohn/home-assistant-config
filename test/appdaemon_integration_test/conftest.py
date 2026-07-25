@@ -4,7 +4,7 @@ import shutil
 import subprocess
 import sys
 import time
-from typing import Any
+from typing import Any, Iterator
 
 _HERE = os.path.dirname(__file__)
 sys.path.insert(0, _HERE)
@@ -16,6 +16,7 @@ from helpers.process_check import find_processes_matching_cmdline
 from helpers.hass_client import HassClient
 from helpers.appdaemon_client import AppDaemonClient
 from helpers.history_watcher import HistoryWatcher
+from helpers.error_log import ErrorLogChecker
 
 
 @pytest.fixture(scope="session")
@@ -118,7 +119,6 @@ def appdaemon(home_assistant: Any, base_output_directory: str) -> Any:
     proc.wait(timeout=10)
     assert proc.poll() is not None
     assert os.path.getsize(f"{appdaemon_dir}/appdaemon.stderr") == 0
-    assert os.path.getsize(f"{appdaemon_dir}/error.log") == 0
 
 
 @pytest.fixture(scope="session")
@@ -131,6 +131,25 @@ def appdaemon_client(appdaemon: Any, global_mutex_graph: dict[str, Any]) -> Any:
     client = AppDaemonClient(appdaemon["host"], appdaemon["dir"])
     yield client
     client.check_mutex_graph(global_mutex_graph)
+
+
+@pytest.fixture(scope="session")
+def error_log_checker(appdaemon: Any) -> ErrorLogChecker:
+    return ErrorLogChecker(os.path.join(appdaemon["dir"], "error.log"))
+
+
+@pytest.fixture(autouse=True)
+def error_log(error_log_checker: ErrorLogChecker) -> Iterator[ErrorLogChecker]:
+    """Per-test error.log gate.
+
+    Marks the current end of error.log at test start, then asserts at teardown
+    that no unexpected error blocks were written during the test. Tests that
+    intentionally trigger an AppDaemon-internal race may wrap the triggering
+    call in ``error_log.allow_errors("KeyError")`` to tolerate matching blocks.
+    """
+    error_log_checker.mark_test_start()
+    yield error_log_checker
+    error_log_checker.check_no_unexpected_errors()
 
 
 @pytest.fixture

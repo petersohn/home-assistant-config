@@ -1,5 +1,6 @@
 from __future__ import annotations
 import time
+from typing import Any
 
 from helpers.appdaemon_client import AppDaemonClient
 from helpers.history_watcher import HistoryWatcher
@@ -105,7 +106,8 @@ def test_reload_because_of_dependency(
 
 
 def test_only_reload_changed_apps(
-    appdaemon_client: AppDaemonClient, history_watcher: HistoryWatcher
+    appdaemon_client: AppDaemonClient, history_watcher: HistoryWatcher,
+    error_log: Any,
 ) -> None:
     _initialize(
         appdaemon_client,
@@ -115,12 +117,18 @@ def test_only_reload_changed_apps(
     )
     _start_control(appdaemon_client)
     history_watcher.wait_for_history(switch1, "on")
-    appdaemon_client.load_apps(
-        *base_configs,
-        "TimerSequenceNoEnabler1_2",
-        "TimerSequenceNoEnabler2",
-        "dummy1",
-    )
+    # Reloading while timer_sequence1 has an active timer triggers an
+    # AppDaemon-internal race: timer_sequence1.terminate() turns off switch1's
+    # target, firing a listen_state callback that executes after switch1 is
+    # popped from AppDaemon.objects. cancel_listen_state cannot stop an
+    # already-dispatched callback, so a KeyError surfaces in error.log.
+    with error_log.allow_errors("KeyError"):
+        appdaemon_client.load_apps(
+            *base_configs,
+            "TimerSequenceNoEnabler1_2",
+            "TimerSequenceNoEnabler2",
+            "dummy1",
+        )
     _wait_for_control(history_watcher)
     history_watcher.check_history(
         control_switch, "on",

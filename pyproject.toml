@@ -12,24 +12,23 @@ mypy_path = [
     "test/appdaemon_integration_test",
 ]
 files = [
+    # Prod AppDaemon apps live under a dot-dir (home/.homeassistant/...) that
+    # mypy's recursive crawl skips by default, so it must be listed explicitly.
     "home/.homeassistant/appdaemon/apps",
-    "test/appdaemon_unit_test/apps",
-    "test/appdaemon_unit_test/unit_helpers",
-    "test/appdaemon_unit_test/00_infrastructure_tests",
-    "test/appdaemon_unit_test/appdaemon_tests",
-    "test/appdaemon_unit_test/conftest.py",
-    "test/appdaemon_integration_test/helpers",
-    "test/appdaemon_integration_test/config/appdaemon/apps/dummy.py",
-    "test/appdaemon_integration_test/config/appdaemon/apps/history_watcher.py",
-    "test/appdaemon_integration_test/config/appdaemon/apps/test_app.py",
-    "test/appdaemon_integration_test/integration_tests",
+    ".",
 ]
 exclude = [
     "robotframework-httplibrary/",
     "test/appdaemon_integration_test/.appdaemon/",
     "test/appdaemon_integration_test/.hass/",
     "test/appdaemon_integration_test/output/",
+    "test/appdaemon_integration_test/conftest\\.py",
+    # The integration-test apps dir is a symlink farm back to the prod apps;
+    # checking it creates duplicate top-level modules. The real (non-symlink)
+    # test fixture apps there are not type-checked meaningfully.
+    "test/appdaemon_integration_test/config/appdaemon/apps/",
     "test/.venv/",
+    "\\.mypy_cache/",
 ]
 
 [[tool.mypy.overrides]]

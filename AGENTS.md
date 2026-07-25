@@ -148,6 +148,8 @@ HASS_PATH=test/appdaemon_integration_test/.hass \
 pytest test/appdaemon_integration_test/ [-k <test>]
 ```
 
+The full integration test suite takes longer time to finish. Give it 5 minutes timeout.
+
 Interpreting the output:
 
 The test produces outputs in the `output` directory.
