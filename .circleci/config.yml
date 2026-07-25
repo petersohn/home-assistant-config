@@ -4,15 +4,35 @@ commands:
     parameters:
       directory:
         type: string
+      logs_only:
+        type: boolean
+        default: false
     steps:
       - run:
           name: run tests
           command: |
             /test/bin/pytest <<parameters.directory>> -v \
                 --tb=short
-      - store_artifacts:
-          path: <<parameters.directory>>/output
-          when: on_fail
+      - when:
+          condition: <<parameters.logs_only>>
+          steps:
+            - run:
+                name: collect log files
+                command: |
+                  mkdir -p <<parameters.directory>>/output_logs
+                  find <<parameters.directory>>/output -type f \( -name '*.log' \
+                    -o -name '*.stdout' -o -name '*.stderr' \) \
+                    -exec cp --parents {} <<parameters.directory>>/output_logs \;
+                when: on_fail
+            - store_artifacts:
+                path: <<parameters.directory>>/output_logs
+                when: on_fail
+      - unless:
+          condition: <<parameters.logs_only>>
+          steps:
+            - store_artifacts:
+                path: <<parameters.directory>>/output
+                when: on_fail
 
 jobs:
   appdaemon-unit-test:
@@ -37,6 +57,7 @@ jobs:
           command: git submodule update --init --recursive
       - pytest:
           directory: test/appdaemon_integration_test
+          logs_only: true
 
 workflows:
   version: 2
