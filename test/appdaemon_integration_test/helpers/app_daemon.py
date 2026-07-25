@@ -65,18 +65,6 @@ def create_appdaemon_apps_config(
             os.remove(target_file)
         os.symlink(os.path.join(prod_apps_subdir, file_name), target_file)
 
-    # configs/ subdir — symlink yaml configs from the integration test config
-    configs_subdir = os.path.join(apps_dir, "configs")
-    os.makedirs(configs_subdir, exist_ok=True)
-    source_configs = os.path.join(directories.appdaemon_config_path, "configs")
-    for file_name in os.listdir(source_configs):
-        if not file_name.endswith(".yaml"):
-            continue
-        target_file = os.path.join(configs_subdir, file_name)
-        if os.path.exists(target_file):
-            os.remove(target_file)
-        os.symlink(os.path.join(source_configs, file_name), target_file)
-
     # test_apps/ subdir — symlink the test helper apps
     test_apps_subdir = os.path.join(apps_dir, "test_apps")
     os.makedirs(test_apps_subdir, exist_ok=True)
