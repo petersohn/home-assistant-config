@@ -1,6 +1,6 @@
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
-norecursedirs = ["config", ".hass", ".appdaemon", "output"]
+norecursedirs = ["config", ".hass", ".appdaemon", "output", "test_apps", "test_helpers"]
 
 [tool.mypy]
 warn_no_return = true
