@@ -95,7 +95,7 @@ class Timer:
         try:
             self.time: float | str = float(time) * 60
         except ValueError:
-            self.time = time
+            self.time = time  # type: ignore[assignment]
         self.callback = callback
         self.timer: str | None = None
         import locker
