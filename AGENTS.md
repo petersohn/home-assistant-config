@@ -43,6 +43,10 @@ app_name:
 
 Because the Python modules are loaded dynamically, only modules loaded before the app is reachable. For this reason, dependencies need to be specified.
 
+### Type narrowing
+
+Prefer `assert isinstance(...)` over `cast(...)` for runtime type narrowing. `cast` lies to the type checker without verification; `assert isinstance` narrows the type and validates at runtime. Use `cast` only when the target type is structurally incompatible with the source (e.g. cross-module class identity mismatches where `isinstance` cannot hold), and document why.
+
 ### Production apps
 
 Modules under `home/.homeassistant/appdaemon/apps/apps/` (configured via the `*.yaml` files in `home/.homeassistant/appdaemon/apps/configs/`, split by functionality):

@@ -9,7 +9,7 @@ class HistoryWatcher:
     def __init__(self, appdaemon_client: Any):
         self._ad = appdaemon_client
 
-    def get_history(self) -> list:
+    def get_history(self) -> list[Any]:
         return self._ad.call_on_app("history_watcher", "get_state_history")
 
     def check_history(self, *expected: Any) -> None:

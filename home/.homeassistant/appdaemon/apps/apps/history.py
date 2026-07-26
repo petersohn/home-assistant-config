@@ -55,11 +55,11 @@ class HistoryManagerBase(hass.Hass):
         self.mutex = locker_app.get_mutex("HistoryManagerBase")
         self.load_config()
 
-    def add_callback(self, callback: Callable[[], None]) -> int:
+    def add_callback(self, func: Callable[[], None]) -> int:
         with self.mutex.lock("add_callback"):
             id = self.callback_id
             self.callback_id += 1
-            self.changed_callbacks[id] = callback
+            self.changed_callbacks[id] = func
             return id
 
     def remove_callback(self, id: int) -> None:

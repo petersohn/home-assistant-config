@@ -1,6 +1,6 @@
 from __future__ import annotations
 from datetime import datetime as dt_datetime, timedelta, time, date
-from typing import Any, Callable, TypeVar, cast
+from typing import Any, Callable, TypeVar
 
 from appdaemon_unit_test.test_helpers.config import create_app_manager
 from appdaemon_unit_test.test_helpers.hass import AppManager, Hass
@@ -30,9 +30,12 @@ class Harness:
         locker = self.create_app(
             "locker", "Locker", "locker", enable_logging=True
         )
-        self.locker = cast(Locker, locker)
+        assert isinstance(locker, Locker)
+        self.locker = locker
         test_app = self.create_app("test_app", "TestApp", "test_app")
-        self.test_app = cast(TestApp, test_app)
+        import test_app as test_app_module  # type: ignore[import-not-found]
+        assert isinstance(test_app, test_app_module.TestApp)
+        self.test_app = test_app
 
     @property
     def datetime(self) -> dt_datetime:

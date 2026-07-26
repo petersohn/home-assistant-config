@@ -1,5 +1,6 @@
 from __future__ import annotations
-import requests  # type: ignore[import-untyped]
+from typing import Any
+import requests
 
 HASS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkY2U3MDgwNDIwYmI0Mjg3OWIyYjQ1MjQ4OTQzNjI4YiIsImlhdCI6MTU0NjI1MDYyNiwiZXhwIjoxODYxNjEwNjI2fQ.1YmZVaw3EH2bu0jExU2Q6mIyrD1Qf0cPPJmt877mNC0"
 
@@ -16,7 +17,7 @@ class HassClient:
         r.raise_for_status()
         return r.json()["state"]
 
-    def get_states(self) -> list:
+    def get_states(self) -> list[Any]:
         r = self._session.get(f"http://{self._host}/api/states")
         r.raise_for_status()
         return r.json()

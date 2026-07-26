@@ -166,6 +166,7 @@ class AutoSwitch(hass.Hass):
             if value != "on" and value != "off":
                 self.log("Invalid state: {}".format(value))
                 return
+            assert isinstance(value, str)
             if not self.intended_state:
                 if self.switch is None or self.get_state(self.switch) == "auto":
                     self.log("State change detected: {}".format(value))
@@ -216,9 +217,14 @@ class MultiSwitcher:
     def __init__(self,         app: hass.Hass, targets: list[str]) -> None:
         self.app = app
         self.targets: list[Switcher] = [
-            Switcher(app.get_app(target))  # type: ignore[arg-type]
-            for target in targets
+            self.__make_switcher(app, target) for target in targets
         ]
+
+    @staticmethod
+    def __make_switcher(app: hass.Hass, target: str) -> Switcher:
+        auto_switch = app.get_app(target)
+        assert isinstance(auto_switch, AutoSwitch)
+        return Switcher(auto_switch)
 
     def init(self, value: bool) -> None:
         for target in self.targets:

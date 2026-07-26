@@ -11,6 +11,7 @@ class HistoryWatcher(hass.Hass):
         locker_app = self.get_app("locker")
         assert isinstance(locker_app, locker.Locker)
         self.mutex = locker_app.get_mutex("TestApp")
+        assert self.entities is not None
         with self.mutex.lock("init"):
             for entity in self.entities:
                 self.listen_state(self.on_change, entity)

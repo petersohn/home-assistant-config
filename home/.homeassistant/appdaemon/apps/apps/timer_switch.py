@@ -95,7 +95,7 @@ class Timer:
         try:
             self.time: float | str = float(time) * 60
         except ValueError:
-            self.time = time  # type: ignore[assignment]
+            self.time = time
         self.callback = callback
         self.timer: str | None = None
         import locker
@@ -113,15 +113,19 @@ class Timer:
     def start(self) -> None:
         with self.mutex.lock("start"):
             self.app.log("Start timer")
-            if type(self.time) is float:
-                delay: float | str = self.time
+            t = self.time
+            if isinstance(t, float):
+                delay: float | str = t
             else:
                 try:
-                    delay = float(self.app.get_state(self.time)) * 60  # type: ignore[arg-type]
+                    assert isinstance(t, str)
+                    state = self.app.get_state(t)
+                    assert isinstance(state, (str, int, float))
+                    delay = float(state) * 60
                 except Exception:
                     self.app.error(traceback.format_exc())
                     delay = 0
-            self.timer = self.app.run_in(self.on_timeout, delay)
+            self.timer = self.app.run_in(self.on_timeout, int(delay))
 
     def is_running(self) -> bool:
         with self.mutex.lock("is_running"):

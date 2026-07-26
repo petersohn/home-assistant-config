@@ -1,6 +1,6 @@
 from __future__ import annotations
 import time
-import requests  # type: ignore[import-untyped]
+import requests
 from typing import Any
 from appdaemon_integration_test.helpers.app_daemon import create_appdaemon_apps_config
 from appdaemon_integration_test.helpers.mutex_graph import append_graph, find_cycle

@@ -16,7 +16,7 @@ switch = "input_select.test_auto_switch_switch"
 def _initialize(harness: Harness, type_: str, initial_switch_state: str = "auto", initial_target_state: str = "off") -> tuple[Hass, Hass | None]:
     harness.set_state(target, initial_target_state)
     harness.set_state(switch, initial_switch_state)
-    args: dict = {"target": target}
+    args: dict[str, Any] = {"target": target}
     enabler = None
     if "Switched" in type_:
         args["switch"] = switch

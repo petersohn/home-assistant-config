@@ -37,8 +37,24 @@ reportImplicitRelativeImport = false
 reportUnusedParameter = false
 reportUnusedCallResult = false
 reportUninitializedInstanceVariable = false
+reportMissingModuleSource = false
+reportImportCycles = false
 venvPath = "test/appdaemon_integration_test/"
 venv = ".appdaemon"
+extraPaths = [
+    "home/.homeassistant/appdaemon/apps",
+    "home/.homeassistant/appdaemon/apps/apps",
+    "test",
+]
+exclude = [
+    "test/appdaemon_integration_test/output/",
+    "test/appdaemon_integration_test/.appdaemon/",
+    "test/appdaemon_integration_test/.hass/",
+    "test/dependencies/",
+    "test/.venv/",
+    "**/.venv/",
+    "**/site-packages/",
+]
 
 [tool.black]
 line-length = 80

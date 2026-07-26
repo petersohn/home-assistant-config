@@ -11,7 +11,7 @@ from dateutil import parser as date_parser
 class TestApp(hass.Hass):
     def initialize(self) -> None:
         self.log("********** INIT ***********")
-        self.register_endpoint(self.api_callback, "TestApp")
+        self.register_endpoint(self.api_callback, "TestApp")  # type: ignore[attr-defined]
 
     def __call(self, data: dict[str, Any]) -> Any:
         args = data.get("args", [])
@@ -116,7 +116,7 @@ class TestApp(hass.Hass):
 
     def _app_running(self, app: str) -> bool:
         try:
-            return self.AD.app_management.objects.get(app) is not None and self.AD.app_management.objects[app].running
+            return self.AD.app_management.objects.get(app) is not None and self.AD.app_management.objects[app].running  # type: ignore[attr-defined]
         except Exception:
             return False
 

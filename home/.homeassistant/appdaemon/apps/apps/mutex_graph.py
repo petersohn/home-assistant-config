@@ -74,7 +74,10 @@ def format_graph(graph: Graph, name: str) -> str:
 
 
 def _list_to_set(l: list[Edge] | set[Edge]) -> set[Edge]:
-    return set(tuple(e) for e in l)  # type: ignore[misc]
+    result: set[Edge] = set()
+    for e in l:
+        result.add((e[0], e[1]))
+    return result
 
 
 def append_graph(graph: dict[str, Any], new: Graph) -> None:
