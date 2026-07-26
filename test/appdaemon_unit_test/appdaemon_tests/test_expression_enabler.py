@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-from appdaemon_unit_test.conftest import Harness
+from appdaemon_unit_test.test_helpers.harness import Harness
 
 input_binary1 = "binary_sensor.test_input1"
 input_binary2 = "binary_sensor.test_input2"

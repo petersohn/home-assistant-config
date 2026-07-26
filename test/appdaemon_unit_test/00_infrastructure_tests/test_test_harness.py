@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, time
 import pytest
-from appdaemon_unit_test.conftest import Harness
+from appdaemon_unit_test.test_helpers.harness import Harness
 from appdaemon_unit_test.test_helpers.timing import Timing
 
 

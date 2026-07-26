@@ -3,7 +3,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Any
 
 import pytest
-from appdaemon_unit_test.conftest import Harness
+from appdaemon_unit_test.test_helpers.harness import Harness
 from appdaemon_unit_test.test_helpers.timing import Timing
 
 test_input = "sensor.test_input"

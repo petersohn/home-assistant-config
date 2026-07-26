@@ -3,7 +3,7 @@ from datetime import time
 from typing import Any
 
 import pytest
-from appdaemon_unit_test.conftest import Harness
+from appdaemon_unit_test.test_helpers.harness import Harness
 from appdaemon_unit_test.test_helpers.hass import Hass
 
 # Use 00:00:00.
