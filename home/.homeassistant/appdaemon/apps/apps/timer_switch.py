@@ -6,7 +6,8 @@ import expression
 import hass
 import hass
 import traceback
-from hass import EntityValue
+from expression import ExpressionResult
+from hass_common import EntityValue
 from typing import Any, Callable
 
 
@@ -79,7 +80,7 @@ class Trigger:
                 and (self.source_state is None or old == self.source_state)
             )
 
-    def on_expression_change(self, value: Any) -> None:
+    def on_expression_change(self, value: ExpressionResult) -> None:
         with self.mutex.lock("on_expression_change"):
             self._on_change(value is True)
 

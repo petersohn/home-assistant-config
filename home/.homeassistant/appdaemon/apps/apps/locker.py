@@ -1,7 +1,6 @@
 from __future__ import annotations
 from copy import deepcopy
 from types import TracebackType
-from typing import Any
 import hass
 import json
 import threading
@@ -52,7 +51,7 @@ class Mutex:
 class Locker(hass.Hass):
     def initialize(self) -> None:
         self.enable_logging: bool = self.args.get("enable_logging", False)
-        self.current_graph: dict[str, Any] = {}
+        self.current_graph: Graph = {}
         self.global_graph: Graph = {}
         self.current_stack: dict[int, list[Edge]] = {}
         self._graph_lock: threading.Lock = threading.Lock()

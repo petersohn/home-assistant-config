@@ -3,7 +3,7 @@ import datetime
 import expression
 import hass
 from expression import ExpressionResult
-from hass import EntityValue
+from hass_common import EntityValue
 from typing import Any
 
 

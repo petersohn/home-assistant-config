@@ -1,6 +1,7 @@
 from __future__ import annotations
 from copy import deepcopy
-from datetime import datetime, timedelta, date, time
+from datetime import datetime, timedelta, date, time, tzinfo
+from hass_common import HistoryResult
 from inspect import Traceback
 from typing import Any, Callable, Literal, NamedTuple
 from traceback import format_exception
@@ -51,8 +52,6 @@ ServiceCallback = Callable[[dict[str, Any]], None]
 ServiceData = NamedTuple(
     "ServiceData", [("app", str), ("callback", ServiceCallback)]
 )
-
-EntityValue = str | dict[str, Any] | None
 
 LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
@@ -428,7 +427,7 @@ class Hass:
         assert self.__manager is not None
         return self.__manager.datetime()
 
-    def get_tz(self) -> Any:
+    def get_tz(self) -> tzinfo:
         from dateutil import tz
         return tz.tzlocal()
 
@@ -564,10 +563,12 @@ class Hass:
         assert self.__manager is not None
         self.__manager.log(self.__name, msg, level)
 
-    def load_history(self, _entity_id: str, _max_interval: timedelta) -> Any:
-        return {}
+    def load_history(
+        self, _entity_id: str, _max_interval: timedelta
+    ) -> HistoryResult:
+        return []
 
-    def load_states(self, entity_id: str) -> dict[str, Any]:
+    def load_states(self, entity_id: str) -> dict[str, str]:
         state = self.get_state(entity_id, attribute="all")
         if state is None:
             raise RuntimeError("Entity not found: {}".format(entity_id))

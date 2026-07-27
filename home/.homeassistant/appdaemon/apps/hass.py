@@ -4,11 +4,9 @@ import datetime
 import http.client
 import json
 from dateutil import tz
+from hass_common import HistoryResult
 from typing import Any, Callable
 from urllib import request
-
-
-EntityValue = str | dict[str, Any] | None
 
 
 class Hass(appdaemon.plugins.hass.hassapi.Hass):
@@ -18,7 +16,7 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
     def remove_callback(self, id: int) -> None:
         raise NotImplementedError
 
-    def get_tz(self) -> Any:
+    def get_tz(self) -> datetime.tzinfo:
         return self.AD.tz
 
     def _api_request(self, path: str) -> Any:
@@ -43,7 +41,7 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
 
     def load_history(
         self, entity_id: str, max_interval: datetime.timedelta
-    ) -> Any:
+    ) -> HistoryResult:
         now = datetime.datetime.now(datetime.timezone.utc)
         begin_timestamp = (now - max_interval).strftime("%Y-%m-%dT%H:%M:%SZ")
         end_timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")

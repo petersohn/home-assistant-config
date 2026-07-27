@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Any
 
 
 class Deadlock(Exception):
@@ -12,6 +11,7 @@ class WrongUnlockOrder(Exception):
 
 Edge = tuple[str, str]
 Graph = dict[str, set[Edge]]
+GraphValue = set[Edge] | list[Edge]
 
 
 def edge_target(edge: Edge) -> str:
@@ -80,9 +80,9 @@ def _list_to_set(l: list[Edge] | set[Edge]) -> set[Edge]:
     return result
 
 
-def append_graph(graph: dict[str, Any], new: Graph) -> None:
+def append_graph(graph: dict[str, GraphValue], new: Graph) -> None:
     for vertex, new_edges in new.items():
-        edges: Any = graph.setdefault(vertex, set())
+        edges: GraphValue = graph.setdefault(vertex, set())
         if type(edges) is not set:
             edges = _list_to_set(edges)
             graph[vertex] = edges

@@ -6,7 +6,7 @@ import traceback
 from collections import deque
 from collections.abc import Callable
 from dateutil import tz
-from hass import EntityValue
+from hass_common import EntityValue, HistoryResult
 from typing import Any, NamedTuple
 
 
@@ -16,8 +16,11 @@ class HistoryElement(NamedTuple):
 
 
 def make_history_element(
-    time: datetime.datetime, value: Any
+    time: datetime.datetime, value: EntityValue
 ) -> HistoryElement:
+    assert isinstance(value, (str, int, float, bool, type(None))), (
+        "Expected scalar state value, got {}".format(type(value).__name__)
+    )
     try:
         if value is None or value == "off":
             real_value: float = 0.0
@@ -30,7 +33,9 @@ def make_history_element(
     return HistoryElement(time, real_value)
 
 
-def get_date(s: str, tzinfo: Any = None) -> datetime.datetime:
+def get_date(
+    s: str, tzinfo: datetime.tzinfo | None = None
+) -> datetime.datetime:
     s = re.sub(r"([-+][0-9]{2}):([0-9]{2})$", "", s)
     try:
         time = datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%S.%f")
@@ -116,7 +121,7 @@ class HistoryManager(HistoryManagerBase):
         self.log("Loading history...")
         self.listen_state(self.on_changed, entity_id=self.entity_id)
         subscribe_time = self.datetime()
-        loaded_history: Any = self.load_history(
+        loaded_history: HistoryResult = self.load_history(
             self.entity_id, self.max_interval
         )
         self.history = deque(
@@ -125,7 +130,8 @@ class HistoryManager(HistoryManagerBase):
                 and element.value is not None,
                 (
                     make_history_element(
-                        get_date(change["last_changed"], self.get_tz()), change["state"]
+                        get_date(change["last_changed"], self.get_tz()),
+                        change["state"],
                     )
                     for changes in loaded_history
                     for change in changes
@@ -210,7 +216,7 @@ class Aggregatum:
 
 
 class LimitedHistoryAggregatum(Aggregatum):
-    def __init__(self, app: Any, interval: datetime.timedelta) -> None:
+    def __init__(self, app: hass.Hass, interval: datetime.timedelta) -> None:
         super().__init__(app)
         self.interval = interval
         self.history: deque[HistoryElement] = deque()
@@ -247,7 +253,7 @@ class Minmax(LimitedHistoryAggregatum):
         self,
         app: hass.Hass,
         interval: datetime.timedelta,
-        function: Callable[..., Any],
+        function: Callable[..., float],
     ) -> None:
         super().__init__(app, interval)
         self.value: float | None = None
@@ -276,7 +282,7 @@ class Minmax(LimitedHistoryAggregatum):
 
 
 class Sum(LimitedHistoryAggregatum):
-    def __init__(self, app: Any, interval: datetime.timedelta) -> None:
+    def __init__(self, app: hass.Hass, interval: datetime.timedelta) -> None:
         super().__init__(app, interval)
         self.value = 0.0
         self.last: float | None = None
@@ -296,7 +302,7 @@ class Sum(LimitedHistoryAggregatum):
 
 
 class IntervalAggragatum(LimitedHistoryAggregatum):
-    def __init__(self, app: Any, interval: datetime.timedelta) -> None:
+    def __init__(self, app: hass.Hass, interval: datetime.timedelta) -> None:
         super().__init__(app, interval)
 
     def adding(self, element: HistoryElement) -> bool:
@@ -354,7 +360,7 @@ class Integral(IntervalAggragatum):
 
 
 class Mean(IntervalAggragatum):
-    def __init__(self, app: Any, interval: datetime.timedelta) -> None:
+    def __init__(self, app: hass.Hass, interval: datetime.timedelta) -> None:
         super().__init__(app, interval)
         self.sum = 0.0
         self.time = 0.0
@@ -380,7 +386,7 @@ class Mean(IntervalAggragatum):
 
 
 class Anglemean(IntervalAggragatum):
-    def __init__(self, app: Any, interval: datetime.timedelta) -> None:
+    def __init__(self, app: hass.Hass, interval: datetime.timedelta) -> None:
         super().__init__(app, interval)
         self.sum180 = 0.0
         self.sum360 = 0.0
@@ -461,7 +467,9 @@ class DecaySum(Aggregatum):
 
 
 class Aggregator:
-    def __init__(self, app: Any, callback: Callable[[float], None]) -> None:
+    def __init__(
+        self, app: hass.Hass, callback: Callable[[float], None]
+    ) -> None:
         import locker
         locker_app = app.get_app("locker")
         assert isinstance(locker_app, locker.Locker)
@@ -540,6 +548,7 @@ class Aggregator:
         with self.mutex.lock("on_change"):
             element = make_history_element(self.app.datetime(), new)
             self.aggregatum.add(element)
+            assert self.timer is not None
             self.app.cancel_timer(self.timer)
             self.timer = None
             self.__set_state()

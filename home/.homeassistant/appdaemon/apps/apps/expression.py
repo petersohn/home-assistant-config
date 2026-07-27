@@ -4,8 +4,9 @@ import enabler
 import hass
 import history
 import traceback
-from hass import EntityValue
+from hass_common import EntityValue
 from typing import Any, Callable
+from collections.abc import Iterator
 
 
 ExpressionResult = str | float | int | bool | None
@@ -26,8 +27,8 @@ class Evaluator:
         return self.__func(self.__prefix + str(value))
 
 
-def filter_nums(*args: Any) -> Any:
-    return filter(lambda x: type(x) == float, args)
+def filter_nums(*args: object) -> Iterator[float]:
+    return (x for x in args if type(x) is float)
 
 
 class ExpressionEvaluator:

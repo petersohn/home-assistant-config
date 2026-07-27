@@ -1,6 +1,6 @@
 from __future__ import annotations
 import hass
-from hass import EntityValue
+from hass_common import EntityValue
 from typing import Any
 
 

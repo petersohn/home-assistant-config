@@ -1,7 +1,7 @@
 from __future__ import annotations
 import datetime
 import hass
-from hass import EntityValue
+from hass_common import EntityValue
 from typing import Any, Callable
 
 
