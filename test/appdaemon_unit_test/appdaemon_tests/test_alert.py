@@ -65,7 +65,7 @@ def test_turn_alert_on_and_off(harness: Harness, timing: Timing) -> None:
     harness.set_state(sensor1, "off")
     harness.set_state(sensor2, "off")
     harness.set_state(sensor3, "off")
-    alert, alert_history = _create_alert_aggregator(harness)
+    _alert, _alert_history = _create_alert_aggregator(harness)
 
     assert harness.get_state(alert_sensor) == "off"
     harness.schedule_call_at(timedelta(minutes=1), "set_state", sensor1, "on")
@@ -99,7 +99,7 @@ def test_alert_on_at_the_beginning(harness: Harness, timing: Timing) -> None:
     harness.set_state(sensor1, "off")
     harness.set_state(sensor2, "on")
     harness.set_state(sensor3, "on")
-    alert, alert_history = _create_alert_aggregator(harness)
+    _alert, _alert_history = _create_alert_aggregator(harness)
 
     assert harness.get_state(alert_sensor) == "on"
     _alarm_text_should_be(harness, "binary_sensor.error2 is bad", "binary_sensor.error3 is bad")
@@ -119,7 +119,7 @@ def test_timeout(harness: Harness, timing: Timing) -> None:
     harness.set_state(sensor2, "off")
     harness.set_state(sensor3, "off")
     timeout = {"minutes": 1}
-    alert, alert_history = _create_alert_aggregator(harness, timeout=timeout)
+    _alert, _alert_history = _create_alert_aggregator(harness, timeout=timeout)
 
     assert harness.get_state(alert_sensor) == "off"
     harness.schedule_call_at(timedelta(seconds=20), "set_state", sensor1, "on")

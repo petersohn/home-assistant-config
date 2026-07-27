@@ -1,18 +1,30 @@
 from __future__ import annotations
 import hass
 from hass_common import EntityValue
-from typing import Any
+from typing import Any, TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    import locker
 
 
 class TemperatureBasic(hass.Hass):
+    sensor_in: str = ""
+    sensor_out: str = ""
+    target: str = ""
+    minimum_out: float = 0.0
+    maximum_out: float = 0.0
+    target_difference: float = 0.0
+    tolerance: float = 1.0
+    mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+
     def initialize(self) -> None:
-        self.sensor_in: str = self.args["sensor_in"]
-        self.sensor_out: str = self.args["sensor_out"]
-        self.target: str = self.args["target"]
-        self.minimum_out: float = float(self.args["minimum_out"])
-        self.maximum_out: float = float(self.args["maximum_out"])
-        self.target_difference: float = float(self.args["target_difference"])
-        self.tolerance: float = float(self.args.get("tolerance", "1"))
+        self.sensor_in = self.args["sensor_in"]
+        self.sensor_out = self.args["sensor_out"]
+        self.target = self.args["target"]
+        self.minimum_out = float(self.args["minimum_out"])
+        self.maximum_out = float(self.args["maximum_out"])
+        self.target_difference = float(self.args["target_difference"])
+        self.tolerance = float(self.args.get("tolerance", "1"))
         import locker
         locker_app = self.get_app("locker")
         assert isinstance(locker_app, locker.Locker)
@@ -28,7 +40,6 @@ class TemperatureBasic(hass.Hass):
             value == "unavailable"
             or value == "unknown"
             or value == ""
-            or value is None
         ):
             self.log(
                 "Cannot evaluate {}: value is {}".format(entity_id, repr(value))
@@ -41,7 +52,7 @@ class TemperatureBasic(hass.Hass):
         if value_out is None:
             return None
         value_in = self.__get_value_or_none(self.sensor_in)
-        if value_out is None:
+        if value_in is None:
             return None
         assert value_in is not None
 

@@ -112,7 +112,7 @@ def test_nothing_happens_for_a_long_time(harness: Harness) -> None:
 
 def test_history_enabler(harness: Harness, timing: Timing) -> None:
     harness.set_state(enabler_entity, "off")
-    history_manager = _initialize_history_manager(harness)
+    _history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 5}
     base_interval = {"minutes": 1}
     harness.create_app(
@@ -139,7 +139,7 @@ def test_history_enabler(harness: Harness, timing: Timing) -> None:
 
 
 def test_aggregated_value(harness: Harness) -> None:
-    history_manager = _initialize_history_manager(harness)
+    _history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 3}
     harness.create_app(
         "history", "AggregatedValue", "aggregated_value",
@@ -178,7 +178,7 @@ def test_aggregated_value(harness: Harness) -> None:
 
 
 def test_aggregated_value_with_base_interval(harness: Harness) -> None:
-    history_manager = _initialize_history_manager(harness)
+    _history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 3}
     base_interval = {"seconds": 10}
     harness.create_app(
@@ -223,7 +223,7 @@ def test_aggregated_value_with_base_interval(harness: Harness) -> None:
 
 
 def test_mean_value(harness: Harness) -> None:
-    history_manager = _initialize_history_manager(harness)
+    _history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 3}
     harness.create_app(
         "history", "AggregatedValue", "aggregated_value",
@@ -241,7 +241,7 @@ def test_mean_value(harness: Harness) -> None:
 
 
 def test_mean_value_irregular_intervals(harness: Harness) -> None:
-    history_manager = _initialize_history_manager(harness)
+    _history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 3}
     harness.create_app(
         "history", "AggregatedValue", "aggregated_value",
@@ -262,7 +262,7 @@ def test_mean_value_irregular_intervals(harness: Harness) -> None:
 
 
 def test_anglemean(harness: Harness) -> None:
-    history_manager = _initialize_history_manager(harness)
+    _history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 4}
     harness.create_app(
         "history", "AggregatedValue", "aggregated_value",
@@ -295,7 +295,7 @@ def test_anglemean(harness: Harness) -> None:
 
 
 def test_min_max_sum_values(harness: Harness) -> None:
-    history_manager = _initialize_history_manager(harness)
+    _history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 5}
     harness.create_app(
         "history", "AggregatedValue", "sum_value",
@@ -366,7 +366,7 @@ def test_min_max_sum_values(harness: Harness) -> None:
 
 
 def test_decaying_sum_value(harness: Harness) -> None:
-    history_manager = _initialize_history_manager(harness)
+    _history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 1}
     harness.create_app(
         "history", "AggregatedValue", "aggregated_value",
@@ -391,7 +391,7 @@ def test_decaying_sum_value(harness: Harness) -> None:
 
 
 def test_binary_input(harness: Harness) -> None:
-    history_manager = _initialize_history_manager(harness)
+    _history_manager = _initialize_history_manager(harness)
     interval = {"minutes": 5}
     harness.create_app(
         "history", "AggregatedValue", "sum_value",

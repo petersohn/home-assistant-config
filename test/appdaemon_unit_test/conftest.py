@@ -11,6 +11,7 @@ _APP_DIR = os.path.normpath(
 )
 sys.path.insert(0, os.path.join(_HERE, "test_helpers"))
 sys.path.insert(1, os.path.join(_APP_DIR, "apps"))
+sys.path.insert(2, _APP_DIR)
 
 import pytest
 from mutex_graph import find_cycle

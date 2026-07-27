@@ -1,13 +1,20 @@
 from __future__ import annotations
 import hass
 from hass_common import EntityValue
-from typing import Any
+from typing import Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import locker
 
 
 class CustomIcon(hass.Hass):
+    off_icon: str = ""
+    on_icon: str = ""
+    mutex: locker.Mutex | None = None
+
     def initialize(self) -> None:
-        self.off_icon: str = self.args["off_icon"]
-        self.on_icon: str = self.args["on_icon"]
+        self.off_icon = self.args["off_icon"]
+        self.on_icon = self.args["on_icon"]
 
         import locker
         locker_app = self.get_app("locker")

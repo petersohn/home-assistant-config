@@ -21,8 +21,10 @@ class WindDirection(hass.Hass):
     _DIRECTION_DIVISOR: ClassVar[float] = 360.0 / _NUM_DIRECTIONS
     _DIRECTION_OFFSET: ClassVar[float] = _DIRECTION_DIVISOR / 2.0
 
+    __entity_name: str = ""
+
     def initialize(self) -> None:
-        self.__entity_name: str = self.args["entity"]
+        self.__entity_name = self.args["entity"]
         self.listen_state(
             self.on_wind_changed, entity_id=self.__entity_name
         )

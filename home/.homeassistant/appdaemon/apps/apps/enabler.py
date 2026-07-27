@@ -2,19 +2,31 @@ from __future__ import annotations
 import datetime
 import hass
 from hass_common import EntityValue
-from typing import Any, Callable
+from typing import Any, Callable, override, TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    import locker
 
 
 class Enabler(hass.Hass):
+    callbacks: dict[int, Callable[[], None]] = {}
+    delay: datetime.timedelta | None = None
+    callback_id: int = 0
+    state: bool | None = None
+    change_state: bool | None = None
+    change_timer: str | None = None
+    state_mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+    callbacks_mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+
     def initialize(self) -> None:
-        self.callbacks: dict[int, Callable[[], None]] = {}
-        self.delay: datetime.timedelta | None = None
+        self.callbacks = {}
+        self.delay = None
         if "delay" in self.args:
             self.delay = datetime.timedelta(**self.args["delay"])
         self.callback_id = 0
-        self.state: bool | None = None
-        self.change_state: bool | None = None
-        self.change_timer: str | None = None
+        self.state = None
+        self.change_state = None
+        self.change_timer = None
         import locker
         locker_app = self.get_app("locker")
         assert isinstance(locker_app, locker.Locker)
@@ -96,6 +108,7 @@ class Enabler(hass.Hass):
 
 
 class ScriptEnabler(Enabler):
+    @override
     def initialize(self) -> None:
         super().initialize()
         self._init_enabler(self.args.get("initial", True))
@@ -108,9 +121,13 @@ class ScriptEnabler(Enabler):
 
 
 class EntityEnabler(Enabler):
+    _entity: str = ""
+    mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+
+    @override
     def initialize(self) -> None:
         super().initialize()
-        self._entity: str = self.args["entity"]
+        self._entity = self.args["entity"]
         self.listen_state(
             self._on_change, entity_id=self._entity
         )
@@ -142,12 +159,16 @@ class EntityEnabler(Enabler):
 
 
 class ValueEnabler(EntityEnabler):
+    values: list[str] | None = None
+
+    @override
     def initialize(self) -> None:
-        self.values: list[str] | None = self.args.get("values")
+        self.values = self.args.get("values")
         if not self.values:
             self.values = [self.args["value"]]
         super().initialize()
 
+    @override
     def _get(self) -> bool:
         assert self.values is not None
         return self.get_state(self._entity) in self.values
@@ -164,11 +185,16 @@ def is_between(
 
 
 class RangeEnabler(EntityEnabler):
+    __min: float | None = None
+    __max: float | None = None
+
+    @override
     def initialize(self) -> None:
-        self.__min: float | None = self.args.get("min")
-        self.__max: float | None = self.args.get("max")
+        self.__min = self.args.get("min")
+        self.__max = self.args.get("max")
         super().initialize()
 
+    @override
     def _get(self) -> bool:
         value = self.get_state(self._entity)
         assert isinstance(value, (str, type(None))), (
@@ -182,12 +208,16 @@ class RangeEnabler(EntityEnabler):
 
 
 class DateEnabler(Enabler):
+    begin: datetime.date = cast("datetime.date", cast(Any, None))
+    end: datetime.date = cast("datetime.date", cast(Any, None))
+
+    @override
     def initialize(self) -> None:
         super().initialize()
-        self.begin: datetime.date = datetime.datetime.strptime(
+        self.begin = datetime.datetime.strptime(
             self.args["begin"], "%m-%d"
         ).date()
-        self.end: datetime.date = datetime.datetime.strptime(
+        self.end = datetime.datetime.strptime(
             self.args["end"], "%m-%d"
         ).date()
         self._init_enabler(self._get())
@@ -206,11 +236,16 @@ class DateEnabler(Enabler):
 
 
 class HistoryEnabler(Enabler):
+    min: float | None = None
+    max: float | None = None
+    aggregator: Any = None
+
+    @override
     def initialize(self) -> None:
         super().initialize()
         self._init_enabler(None)
-        self.min: float | None = self.args.get("min")
-        self.max: float | None = self.args.get("max")
+        self.min = self.args.get("min")
+        self.max = self.args.get("max")
         import history
         self.aggregator = history.Aggregator(self, self.on_value)
 
@@ -220,9 +255,14 @@ class HistoryEnabler(Enabler):
 
 
 class MultiEnabler(Enabler):
+    enablers: list[Enabler] = []
+    mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+    ids: list[int] = []
+
+    @override
     def initialize(self) -> None:
         super().initialize()
-        self.enablers: list[Enabler] = []
+        self.enablers = []
         for name in self.args.get("enablers") or []:
             app = self.get_app(name)
             assert isinstance(app, Enabler)
@@ -232,12 +272,13 @@ class MultiEnabler(Enabler):
         assert isinstance(locker_app, locker.Locker)
         self.mutex = locker_app.get_mutex("MultiEnabler")
         self._init_enabler(self.__get())
-        self.ids: list[int] = []
+        self.ids = []
         for enabler in self.enablers:
             self.ids.append(
                 enabler.add_callback(lambda: self._on_change())
             )
 
+    @override
     def terminate(self) -> None:
         for enabler, id in zip(self.enablers, self.ids):
             enabler.remove_callback(id)
@@ -254,6 +295,9 @@ class MultiEnabler(Enabler):
 
 
 class ExpressionEnabler(Enabler):
+    evaluator: Any = None
+
+    @override
     def initialize(self) -> None:
         super().initialize()
         import expression
@@ -264,5 +308,6 @@ class ExpressionEnabler(Enabler):
         )
         self._init_enabler(bool(self.evaluator.get()))
 
+    @override
     def terminate(self) -> None:
         self.evaluator.cleanup()

@@ -39,7 +39,7 @@ def _create_enabled_switch_with_guards(harness: Harness) -> tuple[Any, Any, Any,
 
 def test_start_with_off(harness: Harness) -> None:
     _initialize(harness)
-    switch1, switch2, enabler, enabled_switch = _create_basic_enabled_switch(harness, False)
+    _switch1, _switch2, enabler, _enabled_switch = _create_basic_enabled_switch(harness, False)
     assert harness.get_state("input_boolean.test_switch") == "off"
     assert harness.get_state("input_boolean.test_switch2") == "off"
     enabler.enable()
@@ -52,7 +52,7 @@ def test_start_with_off(harness: Harness) -> None:
 
 def test_start_with_on(harness: Harness) -> None:
     _initialize(harness)
-    switch1, switch2, enabler, enabled_switch = _create_basic_enabled_switch(harness, True)
+    _switch1, _switch2, enabler, _enabled_switch = _create_basic_enabled_switch(harness, True)
     assert harness.get_state("input_boolean.test_switch") == "on"
     assert harness.get_state("input_boolean.test_switch2") == "on"
     enabler.disable()
@@ -65,7 +65,7 @@ def test_start_with_on(harness: Harness) -> None:
 
 def test_guards(harness: Harness) -> None:
     _initialize(harness)
-    on_guard, off_guard, switch, enabler, enabled_switch = _create_enabled_switch_with_guards(harness)
+    on_guard, off_guard, _switch, enabler, _enabled_switch = _create_enabled_switch_with_guards(harness)
     assert harness.get_state("input_boolean.test_switch") == "off"
     enabler.enable()
     assert harness.get_state("input_boolean.test_switch") == "off"
@@ -83,7 +83,7 @@ def test_guards(harness: Harness) -> None:
 
 def test_turn_guards_on_and_off(harness: Harness) -> None:
     _initialize(harness)
-    on_guard, off_guard, switch, enabler, enabled_switch = _create_enabled_switch_with_guards(harness)
+    on_guard, off_guard, _switch, enabler, _enabled_switch = _create_enabled_switch_with_guards(harness)
     assert harness.get_state("input_boolean.test_switch") == "off"
     on_guard.enable()
     assert harness.get_state("input_boolean.test_switch") == "off"

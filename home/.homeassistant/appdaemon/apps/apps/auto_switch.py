@@ -1,26 +1,38 @@
 from __future__ import annotations
 import hass
 from hass_common import EntityValue
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast, final
 
 if TYPE_CHECKING:
     import enabler
+    import locker
 
 
 class AutoSwitch(hass.Hass):
+    target: str = ""
+    switch: str | None = None
+    reentrant: bool = False
+    intended_state: str | None = None
+    timer: str | None = None
+    mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+    listen_handles: list[str] = []
+    state: int | None = None
+    enabler: enabler.Enabler | None = None
+    enabler_id: int | None = None
+
     def initialize(self) -> None:
-        self.target: str = self.args["target"]
-        self.switch: str | None = self.args.get("switch")
-        self.reentrant: bool = self.args.get("reentrant", False)
-        self.intended_state: str | None = None
-        self.timer: str | None = None
+        self.target = self.args["target"]
+        self.switch = self.args.get("switch")
+        self.reentrant = self.args.get("reentrant", False)
+        self.intended_state = None
+        self.timer = None
 
         import locker
         locker_app = self.get_app("locker")
         assert isinstance(locker_app, locker.Locker)
         self.mutex = locker_app.get_mutex("AutoSwitch")
 
-        self.listen_handles: list[str] = []
+        self.listen_handles = []
 
         with self.mutex.lock("initialize"):
             self.listen_handles.append(
@@ -31,7 +43,7 @@ class AutoSwitch(hass.Hass):
                 self.listen_handles.append(
                     self.listen_state(self.on_switch_change, entity_id=self.switch)
                 )
-            self.state: int | None = None
+            self.state = None
             self.run_in(lambda _: self.init(), 10 if self.switch else 0)
 
             enabler_name = self.args.get("enabler")
@@ -39,8 +51,8 @@ class AutoSwitch(hass.Hass):
                 import enabler as enabler_mod
                 enabler_app = self.get_app(enabler_name)
                 assert isinstance(enabler_app, enabler_mod.Enabler)
-                self.enabler: enabler.Enabler | None = enabler_app
-                self.enabler_id: int | None = enabler_app.add_callback(
+                self.enabler = enabler_app
+                self.enabler_id = enabler_app.add_callback(
                     self.on_enabled_changed
                 )
             else:
@@ -191,6 +203,7 @@ class AutoSwitch(hass.Hass):
             self.timer = None
 
 
+@final
 class Switcher:
     def __init__(self, auto_switch: AutoSwitch) -> None:
         import locker
@@ -213,6 +226,7 @@ class Switcher:
                 self.state = False
 
 
+@final
 class MultiSwitcher:
     def __init__(self,         app: hass.Hass, targets: list[str]) -> None:
         self.app = app

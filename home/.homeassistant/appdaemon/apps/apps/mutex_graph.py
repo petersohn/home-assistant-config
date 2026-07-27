@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import final
 
 
 class Deadlock(Exception):
@@ -22,6 +23,7 @@ def edge_name(edge: Edge) -> str:
     return edge[1]
 
 
+@final
 class DFS:
     def __init__(self, graph: Graph) -> None:
         self.graph: Graph = graph

@@ -3,19 +3,12 @@ import appdaemon.plugins.hass.hassapi
 import datetime
 import http.client
 import json
-from dateutil import tz
 from hass_common import HistoryResult
-from typing import Any, Callable
+from typing import Any
 from urllib import request
 
 
 class Hass(appdaemon.plugins.hass.hassapi.Hass):
-    def add_callback(self, func: Callable[[], None]) -> int:
-        raise NotImplementedError
-
-    def remove_callback(self, id: int) -> None:
-        raise NotImplementedError
-
     def get_tz(self) -> datetime.tzinfo:
         return self.AD.tz
 

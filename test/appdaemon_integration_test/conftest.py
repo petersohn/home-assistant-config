@@ -2,7 +2,8 @@ from __future__ import annotations
 import os
 import shutil
 import sys
-from typing import Any, Iterator
+from typing import Any
+from collections.abc import Iterator
 
 _HERE = os.path.dirname(__file__)
 sys.path.insert(0, _HERE)
@@ -12,7 +13,9 @@ from appdaemon_integration_test.helpers.hass_client import HassClient
 from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
 from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 from appdaemon_integration_test.helpers.error_log import ErrorLogChecker
-from appdaemon_integration_test.helpers.start_stop import home_assistant, appdaemon
+# Imported for side effect: registers the home_assistant and appdaemon
+# session-scoped fixtures defined in start_stop.py with pytest.
+from appdaemon_integration_test.helpers import start_stop as start_stop  # noqa: F401
 
 
 @pytest.fixture(scope="session")

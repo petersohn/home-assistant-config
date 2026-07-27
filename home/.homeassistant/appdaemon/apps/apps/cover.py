@@ -4,17 +4,36 @@ import expression
 import hass
 from expression import ExpressionResult
 from hass_common import EntityValue
-from typing import Any
+from typing import Any, final, TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    import locker
 
 
 class CoverController(hass.Hass):
+    @final
     class Mode:
         AUTO = 0
         MANUAL = 1
         STABLE = 2
 
+    target: str = ""
+    mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+    expression: expression.ExpressionEvaluator = cast(
+        "expression.ExpressionEvaluator", cast(Any, None)
+    )
+    value: ExpressionResult = None
+    is_available: bool = False
+    expected_value: ExpressionResult = None
+    timer: str | None = None
+    delay: datetime.timedelta | None = None
+    mode_switch: str | None = None
+    mode: int = 0
+    arrived_at_target: bool | None = None
+    target_position: float | int | None = None
+
     def initialize(self) -> None:
-        self.target: str = self.args["target"]
+        self.target = self.args["target"]
         import locker
         locker_app = self.get_app("locker")
         assert isinstance(locker_app, locker.Locker)
@@ -23,19 +42,19 @@ class CoverController(hass.Hass):
         self.expression = expression.ExpressionEvaluator(
             self, self.args["expr"], self.on_expression_change
         )
-        self.value: ExpressionResult = self.expression.get()
+        self.value = self.expression.get()
 
         with self.mutex.lock("initialize"):
-            self.is_available: bool = False
-            self.expected_value: ExpressionResult = None
-            self.timer: str | None = None
+            self.is_available = False
+            self.expected_value = None
+            self.timer = None
 
             delay = self.args.get("delay")
-            self.delay: datetime.timedelta | None = (
+            self.delay = (
                 datetime.timedelta(**delay) if delay is not None else None
             )
 
-            self.mode_switch: str | None = self.args.get("mode_switch")
+            self.mode_switch = self.args.get("mode_switch")
 
             state = self.get_state(self.target)
             self.is_available = state is not None and state != "unavailable"
@@ -57,7 +76,7 @@ class CoverController(hass.Hass):
                     assert isinstance(mode, (str, type(None)))
                     self._set_mode_from_str(mode)
             else:
-                self.mode: int = self.Mode.AUTO
+                self.mode = self.Mode.AUTO
 
             if (
                 self.is_available
@@ -107,11 +126,11 @@ class CoverController(hass.Hass):
 
     def _set_value_inner(self, value: ExpressionResult) -> None:
         self.log("Execute command: {}".format(value))
-        self.arrived_at_target: bool | None = None
+        self.arrived_at_target = None
         if type(value) is float or type(value) is int:
             if value >= 0 and value <= 100:
                 self._execute("cover/set_cover_position", position=int(value))
-                self.target_position: float | int | None = value
+                self.target_position = value
                 return
         elif type(value) is str:
             lower = value.lower()

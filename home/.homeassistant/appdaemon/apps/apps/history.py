@@ -7,7 +7,10 @@ from collections import deque
 from collections.abc import Callable
 from dateutil import tz
 from hass_common import EntityValue, HistoryResult
-from typing import Any, NamedTuple
+from typing import Any, final, NamedTuple, override, TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    import locker
 
 
 class HistoryElement(NamedTuple):
@@ -50,8 +53,13 @@ def get_date(
 
 
 class HistoryManagerBase(hass.Hass):
+    changed_callbacks: dict[int, Callable[[], None]] = {}
+    callback_id: int = 0
+    loaded: bool = False
+    mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+
     def initialize(self) -> None:
-        self.changed_callbacks: dict[int, Callable[[], None]] = {}
+        self.changed_callbacks = {}
         self.callback_id = 0
         self.loaded = False
         import locker
@@ -96,12 +104,17 @@ class HistoryManagerBase(hass.Hass):
 
 
 class HistoryManager(HistoryManagerBase):
+    max_interval: datetime.timedelta = datetime.timedelta(days=1)
+    entity_id: str = ""
+    history: deque[HistoryElement] = deque()
+
+    @override
     def initialize(self) -> None:
-        self.max_interval: datetime.timedelta = datetime.timedelta(
+        self.max_interval = datetime.timedelta(
             **self.args.get("max_interval", {"days": 1})
         )
-        self.entity_id: str = self.args["entity"]
-        self.history: deque[HistoryElement] = deque()
+        self.entity_id = self.args["entity"]
+        self.history = deque()
         super().initialize()
 
     def __filter(self) -> None:
@@ -117,6 +130,7 @@ class HistoryManager(HistoryManagerBase):
             self.__filter()
             return self.history
 
+    @override
     def load_config_inner(self, *args: Any, **kwargs: Any) -> None:
         self.log("Loading history...")
         self.listen_state(self.on_changed, entity_id=self.entity_id)
@@ -126,8 +140,7 @@ class HistoryManager(HistoryManagerBase):
         )
         self.history = deque(
             filter(
-                lambda element: element.time < subscribe_time
-                and element.value is not None,
+                lambda element: element.time < subscribe_time,
                 (
                     make_history_element(
                         get_date(change["last_changed"], self.get_tz()),
@@ -162,12 +175,18 @@ class HistoryManager(HistoryManagerBase):
 
 
 class ChangeTracker(HistoryManagerBase):
+    entity_id: str = ""
+    changed_time: datetime.datetime | None = None
+    updated_time: datetime.datetime | None = None
+
+    @override
     def initialize(self) -> None:
-        self.entity_id: str = self.args["entity"]
-        self.changed_time: datetime.datetime | None = None
-        self.updated_time: datetime.datetime | None = None
+        self.entity_id = self.args["entity"]
+        self.changed_time = None
+        self.updated_time = None
         super().initialize()
 
+    @override
     def load_config_inner(self) -> None:
         self.log("Loading last change...")
         result = self.load_states(self.entity_id)
@@ -221,6 +240,7 @@ class LimitedHistoryAggregatum(Aggregatum):
         self.interval = interval
         self.history: deque[HistoryElement] = deque()
 
+    @override
     def add(self, element: HistoryElement) -> None:
         if not self.adding(element):
             self.history.append(element)
@@ -248,6 +268,7 @@ class LimitedHistoryAggregatum(Aggregatum):
         pass
 
 
+@final
 class Minmax(LimitedHistoryAggregatum):
     def __init__(
         self,
@@ -259,6 +280,7 @@ class Minmax(LimitedHistoryAggregatum):
         self.value: float | None = None
         self.function = function
 
+    @override
     def adding(self, element: HistoryElement) -> bool:
         if self.value is None:
             if self.history:
@@ -268,6 +290,7 @@ class Minmax(LimitedHistoryAggregatum):
         self.value = self.function(self.value, element.value)
         return False
 
+    @override
     def removed(self, element: HistoryElement) -> None:
         if self.value is not None and abs(element.value - self.value) < 0.0001:
             self._reevaluate()
@@ -275,18 +298,21 @@ class Minmax(LimitedHistoryAggregatum):
     def _reevaluate(self) -> None:
         self.value = self.function([e.value for e in self.history])
 
+    @override
     def get(self) -> float:
         if self.value is None:
             raise ValueError
         return self.value
 
 
+@final
 class Sum(LimitedHistoryAggregatum):
     def __init__(self, app: hass.Hass, interval: datetime.timedelta) -> None:
         super().__init__(app, interval)
         self.value = 0.0
         self.last: float | None = None
 
+    @override
     def adding(self, element: HistoryElement) -> bool:
         if self.last is not None and element.value == self.last:
             return True
@@ -294,9 +320,11 @@ class Sum(LimitedHistoryAggregatum):
         self.last = element.value
         return False
 
+    @override
     def removed(self, element: HistoryElement) -> None:
         self.value -= element.value
 
+    @override
     def get(self) -> float:
         return self.value
 
@@ -305,15 +333,18 @@ class IntervalAggragatum(LimitedHistoryAggregatum):
     def __init__(self, app: hass.Hass, interval: datetime.timedelta) -> None:
         super().__init__(app, interval)
 
+    @override
     def adding(self, element: HistoryElement) -> bool:
         if self.history:
             interval = element.time - self.history[-1].time
             self.add_interval(interval, self.history[-1].value)
         return False
 
+    @override
     def removed(self, element: HistoryElement) -> None:
         self._remove(element)
 
+    @override
     def trimmed(self, element: HistoryElement) -> None:
         self._remove(element)
 
@@ -332,6 +363,7 @@ class IntervalAggragatum(LimitedHistoryAggregatum):
         raise NotImplementedError
 
 
+@final
 class Integral(IntervalAggragatum):
     def __init__(
         self,
@@ -343,15 +375,18 @@ class Integral(IntervalAggragatum):
         self.base_interval = base_interval
         self.sum = 0.0
 
+    @override
     def get(self) -> float:
         return self.sum
 
+    @override
     def add_interval(
         self, interval: datetime.timedelta, value: float
     ) -> None:
         seconds = interval / self.base_interval
         self.sum += value * seconds
 
+    @override
     def remove_interval(
         self, interval: datetime.timedelta, value: float
     ) -> None:
@@ -359,17 +394,20 @@ class Integral(IntervalAggragatum):
         self.sum -= value * seconds
 
 
+@final
 class Mean(IntervalAggragatum):
     def __init__(self, app: hass.Hass, interval: datetime.timedelta) -> None:
         super().__init__(app, interval)
         self.sum = 0.0
         self.time = 0.0
 
+    @override
     def get(self) -> float:
         if self.time == 0.0:
             raise ValueError
         return self.sum / self.time
 
+    @override
     def add_interval(
         self, interval: datetime.timedelta, value: float
     ) -> None:
@@ -377,6 +415,7 @@ class Mean(IntervalAggragatum):
         self.sum += value * seconds
         self.time += seconds
 
+    @override
     def remove_interval(
         self, interval: datetime.timedelta, value: float
     ) -> None:
@@ -385,6 +424,7 @@ class Mean(IntervalAggragatum):
         self.time -= seconds
 
 
+@final
 class Anglemean(IntervalAggragatum):
     def __init__(self, app: hass.Hass, interval: datetime.timedelta) -> None:
         super().__init__(app, interval)
@@ -394,6 +434,7 @@ class Anglemean(IntervalAggragatum):
         self.sum180_2 = 0.0
         self.time = 0.0
 
+    @override
     def get(self) -> float:
         if self.time == 0.0:
             raise ValueError
@@ -407,6 +448,7 @@ class Anglemean(IntervalAggragatum):
         else:
             return self.sum360 / self.time
 
+    @override
     def add_interval(
         self, interval: datetime.timedelta, value: float
     ) -> None:
@@ -419,6 +461,7 @@ class Anglemean(IntervalAggragatum):
         self.sum360_2 += (value360**2) * seconds
         self.time += seconds
 
+    @override
     def remove_interval(
         self, interval: datetime.timedelta, value: float
     ) -> None:
@@ -432,6 +475,7 @@ class Anglemean(IntervalAggragatum):
         self.time -= seconds
 
 
+@final
 class DecaySum(Aggregatum):
     def __init__(
         self,
@@ -446,6 +490,7 @@ class DecaySum(Aggregatum):
         self.last: float | None = None
         self.time: datetime.datetime | None = None
 
+    @override
     def add(self, element: HistoryElement) -> None:
         if self.time is None:
             self.time = element.time
@@ -462,10 +507,12 @@ class DecaySum(Aggregatum):
         self.value = current
         self.time = element.time
 
+    @override
     def get(self) -> float | None:
         return self.value
 
 
+@final
 class Aggregator:
     def __init__(
         self, app: hass.Hass, callback: Callable[[float], None]
@@ -565,9 +612,13 @@ class Aggregator:
 
 
 class AggregatedValue(hass.Hass):
+    target: str = ""
+    attributes: dict[str, Any] = {}
+    aggregator_app: Aggregator = cast("Aggregator", cast(Any, None))
+
     def initialize(self) -> None:
-        self.target: str = self.args["target"]
-        self.attributes: dict[str, Any] = self.args.get("attributes", {})
+        self.target = self.args["target"]
+        self.attributes = self.args.get("attributes", {})
         self.aggregator_app = Aggregator(self, self.__set_state)
 
     def __set_state(self, value: Any) -> None:

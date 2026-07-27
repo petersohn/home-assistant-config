@@ -3,10 +3,21 @@ import datetime
 import expression
 import hass
 from expression import ExpressionResult
-from typing import Any
+from typing import Any, final, TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    import locker
 
 
 class AlertAggregator(hass.Hass):
+    # Set in initialize(); cast(None) because AppDaemon lifecycle guarantees
+    # initialize() runs before any callback uses these.
+    target: str = ""  # pyright: ignore[reportRedeclaration]
+    timeout: datetime.timedelta | None = None  # pyright: ignore[reportRedeclaration]
+    sources: list[AlertAggregator.Source] = []  # pyright: ignore[reportRedeclaration]
+    mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+
+    @final
     class Source:
         def __init__(
             self,

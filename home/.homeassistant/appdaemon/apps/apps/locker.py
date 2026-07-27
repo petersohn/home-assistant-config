@@ -2,8 +2,8 @@ from __future__ import annotations
 from copy import deepcopy
 from types import TracebackType
 import hass
-import json
 import threading
+from typing import Any, cast, final
 from mutex_graph import (
     Deadlock,
     Edge,
@@ -17,6 +17,7 @@ from mutex_graph import (
 )
 
 
+@final
 class Lock:
     def __init__(self, mutex: Mutex, name: str) -> None:
         self.mutex = mutex
@@ -38,6 +39,7 @@ class Lock:
         self.mutex.locker.pop_edge(self.mutex.name, self.name)
 
 
+@final
 class Mutex:
     def __init__(self, locker: Locker, name: str) -> None:
         self._lock: threading.Lock = threading.Lock()
@@ -49,12 +51,18 @@ class Mutex:
 
 
 class Locker(hass.Hass):
+    enable_logging: bool = False
+    current_graph: Graph = {}
+    global_graph: Graph = {}
+    current_stack: dict[int, list[Edge]] = {}
+    _graph_lock: threading.Lock = cast("threading.Lock", cast(Any, None))
+
     def initialize(self) -> None:
-        self.enable_logging: bool = self.args.get("enable_logging", False)
-        self.current_graph: Graph = {}
-        self.global_graph: Graph = {}
-        self.current_stack: dict[int, list[Edge]] = {}
-        self._graph_lock: threading.Lock = threading.Lock()
+        self.enable_logging = self.args.get("enable_logging", False)
+        self.current_graph = {}
+        self.global_graph = {}
+        self.current_stack = {}
+        self._graph_lock = threading.Lock()
 
     def get_mutex(self, name: str) -> Mutex:
         return Mutex(self, name)

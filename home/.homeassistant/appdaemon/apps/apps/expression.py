@@ -1,11 +1,14 @@
 from __future__ import annotations
 import datetime
-import enabler
 import hass
-import history
 import traceback
+from callback_provider import (
+    CallbackProvider,
+    ChangeTrackerProvider,
+    EnablerProvider,
+)
 from hass_common import EntityValue
-from typing import Any, Callable
+from typing import Any, Callable, cast, final
 from collections.abc import Iterator
 
 
@@ -31,6 +34,7 @@ def filter_nums(*args: object) -> Iterator[float]:
     return (x for x in args if type(x) is float)
 
 
+@final
 class ExpressionEvaluator:
     def __init__(
         self,
@@ -60,9 +64,9 @@ class ExpressionEvaluator:
         for name, id in self.app_callbacks.items():
             try:
                 app = self.app.get_app(name)
-                assert isinstance(
-                    app, (enabler.Enabler, history.HistoryManagerBase)
-                ), "App {!r} does not support remove_callback".format(name)
+                assert isinstance(app, CallbackProvider), (
+                    "App {!r} does not support remove_callback".format(name)
+                )
                 app.remove_callback(id)
             except Exception:
                 self.app.error(traceback.format_exc())
@@ -173,9 +177,9 @@ class ExpressionEvaluator:
                 )
             )
             if self.callback is not None and name not in self.app_callbacks:
-                assert isinstance(
-                    app, (enabler.Enabler, history.HistoryManagerBase)
-                ), "App {!r} does not support add_callback".format(name)
+                assert isinstance(app, CallbackProvider), (
+                    "App {!r} does not support add_callback".format(name)
+                )
                 id = app.add_callback(lambda: self._on_app_change())
                 self.app_callbacks[name] = id
             return app
@@ -185,7 +189,7 @@ class ExpressionEvaluator:
 
     def _get_enabled(self, name: str) -> bool:
         app = self._get_app(name)
-        assert isinstance(app, enabler.Enabler), (
+        assert isinstance(app, EnablerProvider), (
             "Expected {!r} to be an Enabler app, got {}".format(
                 name, type(app).__name__
             )
@@ -194,7 +198,7 @@ class ExpressionEvaluator:
 
     def _get_last_changed(self, name: str) -> Any:
         app = self._get_app(name)
-        assert isinstance(app, history.ChangeTracker), (
+        assert isinstance(app, ChangeTrackerProvider), (
             "Expected {!r} to be a ChangeTracker app, got {}".format(
                 name, type(app).__name__
             )
@@ -203,7 +207,7 @@ class ExpressionEvaluator:
 
     def _get_last_updated(self, name: str) -> Any:
         app = self._get_app(name)
-        assert isinstance(app, history.ChangeTracker), (
+        assert isinstance(app, ChangeTrackerProvider), (
             "Expected {!r} to be a ChangeTracker app, got {}".format(
                 name, type(app).__name__
             )
@@ -253,9 +257,13 @@ class ExpressionEvaluator:
 
 
 class Expression(hass.Hass):
+    target: str = ""
+    attributes: dict[str, Any] = {}
+    evaluator: ExpressionEvaluator = cast("ExpressionEvaluator", cast(Any, None))
+
     def initialize(self) -> None:
-        self.target: str = self.args["target"]
-        self.attributes: dict[str, Any] = self.args.get("attributes", {})
+        self.target = self.args["target"]
+        self.attributes = self.args.get("attributes", {})
         self.evaluator = ExpressionEvaluator(
             self, self.args["expr"], self._set
         )

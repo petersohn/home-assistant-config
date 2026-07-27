@@ -1,12 +1,16 @@
 from __future__ import annotations
 import hass
 import locker
-from typing import Any
+from typing import Any, cast
 
 
 class HistoryWatcher(hass.Hass):
+    state_history: list[tuple[str, Any]] = []
+    entities: list[str] | None = None
+    mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+
     def initialize(self) -> None:
-        self.state_history: list[tuple[str, Any]] = []
+        self.state_history = []
         self.entities = self.args.get("entities")
         locker_app = self.get_app("locker")
         assert isinstance(locker_app, locker.Locker)

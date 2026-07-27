@@ -47,9 +47,9 @@ def process(url: str, headers: dict[str, str]) -> list[str]:
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--url') # pyright:ignore[reportUnusedCallResult]
-parser.add_argument('--auth') # pyright:ignore[reportUnusedCallResult]
-parser.add_argument('--target') # pyright:ignore[reportUnusedCallResult]
+parser.add_argument('--url')
+parser.add_argument('--auth')
+parser.add_argument('--target')
 args = parser.parse_args()
 
 headers: dict[str, str] = {'Authorization': 'Basic ' + base64.b64encode(args.auth.encode()).decode()}

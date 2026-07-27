@@ -1,6 +1,6 @@
 from __future__ import annotations
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
 from appdaemon_integration_test.helpers.hass_client import HassClient

@@ -1,16 +1,18 @@
 from __future__ import annotations
 import auto_switch
-import datetime
 import enabler
 import expression
-import hass
 import hass
 import traceback
 from expression import ExpressionResult
 from hass_common import EntityValue
-from typing import Any, Callable
+from typing import Any, Callable, final, TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    import locker
 
 
+@final
 class Trigger:
     def __init__(
         self,
@@ -85,6 +87,7 @@ class Trigger:
             self._on_change(value is True)
 
 
+@final
 class Timer:
     def __init__(
         self,
@@ -139,6 +142,19 @@ class Timer:
 
 
 class TimerSwitch(hass.Hass):
+    trigger: Trigger = cast("Trigger", cast(Any, None))
+    targets: auto_switch.MultiSwitcher = cast(
+        "auto_switch.MultiSwitcher", cast(Any, None)
+    )
+    enabler: enabler.Enabler | None = None
+    enabler_id: int | None = None
+    delay: float | None = None
+    delay_timer: str | None = None
+    mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+    timer: Timer = cast("Timer", cast(Any, None))
+    was_enabled: bool | None = None
+    is_on: bool = False
+
     def initialize(self) -> None:
         self.trigger = Trigger(
             app=self,
@@ -154,8 +170,8 @@ class TimerSwitch(hass.Hass):
             import enabler as enabler_mod
             enabler_app = self.get_app(enabler_name)
             assert isinstance(enabler_app, enabler_mod.Enabler)
-            self.enabler: enabler.Enabler | None = enabler_app
-            self.enabler_id: int | None = enabler_app.add_callback(
+            self.enabler = enabler_app
+            self.enabler_id = enabler_app.add_callback(
                 self.on_enabled_changed
             )
         else:
@@ -164,11 +180,11 @@ class TimerSwitch(hass.Hass):
 
         delay = self.args.get("delay")
         if delay is not None:
-            self.delay: float | None = float(delay)
+            self.delay = float(delay)
         else:
             self.delay = None
 
-        self.delay_timer: str | None = None
+        self.delay_timer = None
 
         import locker
         locker_app = self.get_app("locker")
@@ -176,8 +192,8 @@ class TimerSwitch(hass.Hass):
         self.mutex = locker_app.get_mutex("TimerSwitch")
         with self.mutex.lock("initialize"):
             self.timer = Timer(self, self.args["time"], self.on_timeout)
-            self.was_enabled: bool | None = None
-            self.is_on: bool = self.trigger.is_on()
+            self.was_enabled = None
+            self.is_on = self.trigger.is_on()
             self.run_in(lambda _: self.on_enabled_changed(), 0)
 
     def terminate(self) -> None:
@@ -258,6 +274,7 @@ class TimerSwitch(hass.Hass):
             self.targets.turn_off()
 
 
+@final
 class SequenceElement:
     def __init__(
         self,
@@ -269,8 +286,18 @@ class SequenceElement:
 
 
 class TimerSequence(hass.Hass):
+    sequence: list[SequenceElement] = []
+    trigger: Trigger = cast("Trigger", cast(Any, None))
+    enabler: enabler.Enabler | None = None
+    enabler_id: int | None = None
+    restart_on_trigger: bool = False
+    rising_edge: bool = True
+    falling_edge: bool = False
+    current_index: int | None = None
+    mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
+
     def initialize(self) -> None:
-        self.sequence: list[SequenceElement] = [
+        self.sequence = [
             SequenceElement(
                 Timer(self, element["time"], self.on_timeout),
                 (
@@ -296,21 +323,21 @@ class TimerSequence(hass.Hass):
             import enabler as enabler_mod
             enabler_app = self.get_app(enabler_name)
             assert isinstance(enabler_app, enabler_mod.Enabler)
-            self.enabler: enabler.Enabler | None = enabler_app
-            self.enabler_id: int | None = enabler_app.add_callback(
+            self.enabler = enabler_app
+            self.enabler_id = enabler_app.add_callback(
                 self.on_enabled_changed
             )
         else:
             self.enabler = None
             self.enabler_id = None
 
-        self.restart_on_trigger: bool = self.args.get(
+        self.restart_on_trigger = self.args.get(
             "restart_on_trigger", False
         )
-        self.rising_edge: bool = self.args.get("rising_edge", True)
-        self.falling_edge: bool = self.args.get("falling_edge", False)
+        self.rising_edge = self.args.get("rising_edge", True)
+        self.falling_edge = self.args.get("falling_edge", False)
 
-        self.current_index: int | None = None
+        self.current_index = None
         import locker
         locker_app = self.get_app("locker")
         assert isinstance(locker_app, locker.Locker)
