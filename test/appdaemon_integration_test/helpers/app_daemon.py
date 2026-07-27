@@ -47,11 +47,18 @@ def create_appdaemon_apps_config(
         with open(source_file, "r") as source:
             content.update(yaml.safe_load(source))
 
-    # hass.py at the root of the runtime apps dir (symlink to prod)
-    hass_link = os.path.join(apps_dir, "hass.py")
-    if os.path.exists(hass_link):
-        os.remove(hass_link)
-    os.symlink(os.path.join(directories.prod_app_dir, "hass.py"), hass_link)
+    # Top-level .py modules at the root of the runtime apps dir (symlink to
+    # prod). These are shared base modules imported by the app modules in
+    # apps/, e.g. hass.py and callback_provider.py.
+    for file_name in os.listdir(directories.prod_app_dir):
+        if not file_name.endswith(".py"):
+            continue
+        target_file = os.path.join(apps_dir, file_name)
+        if os.path.exists(target_file):
+            os.remove(target_file)
+        os.symlink(
+            os.path.join(directories.prod_app_dir, file_name), target_file
+        )
 
     # apps/ subdir — symlink each prod .py module
     apps_subdir = os.path.join(apps_dir, "apps")

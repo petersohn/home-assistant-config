@@ -13,9 +13,11 @@ from appdaemon_integration_test.helpers.hass_client import HassClient
 from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
 from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 from appdaemon_integration_test.helpers.error_log import ErrorLogChecker
-# Imported for side effect: registers the home_assistant and appdaemon
-# session-scoped fixtures defined in start_stop.py with pytest.
-from appdaemon_integration_test.helpers import start_stop as start_stop  # noqa: F401
+# Registers the home_assistant and appdaemon session-scoped fixtures. pytest
+# only auto-loads conftest.py on the ancestor chain of test files; helpers/ is
+# a sibling of integration_tests/, so the fixtures must be registered as a
+# plugin here.
+pytest_plugins = ("appdaemon_integration_test.helpers.start_stop",)
 
 
 @pytest.fixture(scope="session")
