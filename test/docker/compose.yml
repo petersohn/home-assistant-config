@@ -1,0 +1,14 @@
+services:
+  hass:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    ports:
+      - "18000:8123"
+    volumes:
+      - ../appdaemon_integration_test/output/hass:/config
+
+  appdaemon:
+    image: kangirigungi/appdaemon:latest
+    ports:
+      - "18001:18001"
+    volumes:
+      - ../appdaemon_integration_test/output/appdaemon:/conf
