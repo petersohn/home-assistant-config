@@ -19,9 +19,10 @@ heater_check2:
     dependencies:
         - locker
     expr: >
-      v.sensor.temperature_living_room_upper or
-      v.sensor.temperature_bedroom_upper or
-      v.sensor.temperature_kitchen
+      max(nums(
+      v.sensor.temperature_living_room_upper,
+      v.sensor.temperature_bedroom_upper,
+      v.sensor.temperature_kitchen))
     target: sensor.heater_check2
     attributes:
       icon: mdi:home-thermometer-outline
