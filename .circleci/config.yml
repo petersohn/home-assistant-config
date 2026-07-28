@@ -11,8 +11,8 @@ commands:
       - run:
           name: run tests
           command: |
-            /test/bin/pytest <<parameters.directory>> -v \
-                --tb=short
+            source test/appdaemon_integration_test/.appdaemon/bin/activate
+            pytest <<parameters.directory>> -v --tb=short
       - when:
           condition: <<parameters.logs_only>>
           steps:
@@ -20,8 +20,9 @@ commands:
                 name: collect log files
                 command: |
                   mkdir -p <<parameters.directory>>/output_logs
-                  find <<parameters.directory>>/output -type f \( -name '*.log*' \
-                    -o -name '*.stdout' -o -name '*.stderr' \) \
+                  find <<parameters.directory>>/output -type f \
+                    \( -name '*.log*' -o -name '*.stdout' \
+                    -o -name '*.stderr' \) \
                     -exec cp --parents {} <<parameters.directory>>/output_logs \;
                 when: on_fail
             - store_artifacts:
@@ -35,26 +36,34 @@ commands:
                 when: on_fail
 
 jobs:
-  appdaemon-unit-test:
-    docker:
-      - image: kangirigungi/home-assistant-config-test:pytest
-    environment:
-      - TEST_PYTHON: /test/bin/python
+  test:
+    machine:
+      image: ubuntu-2404:current
+    docker_layer_caching: true
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - venv-{{ checksum "test/dependencies/appdaemon/uv.lock" }}
+      - run:
+          name: setup venv
+          command: |
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+            source ~/.bashrc
+            ./test/setup_virtualenv.sh
+      - save_cache:
+          paths:
+            - test/appdaemon_integration_test/.appdaemon
+          key: venv-{{ checksum "test/dependencies/appdaemon/uv.lock" }}
+          when: on_success
+      - run:
+          name: mypy
+          command: bin/mypy
+      - run:
+          name: basedpyright
+          command: bin/basedpyright
       - pytest:
           directory: test/appdaemon_unit_test
-
-  appdaemon-integration-test:
-    docker:
-      - image: kangirigungi/home-assistant-config-test:pytest
-    environment:
-      - HASS_PATH: /homeassistant
-      - APPDAEMON_PATH: /appdaemon
-    steps:
-      - checkout
-      - run:
-          command: git submodule update --init --recursive
       - pytest:
           directory: test/appdaemon_integration_test
           logs_only: true
@@ -63,5 +72,4 @@ workflows:
   version: 2
   test:
     jobs:
-      - appdaemon-unit-test
-      - appdaemon-integration-test
+      - test
