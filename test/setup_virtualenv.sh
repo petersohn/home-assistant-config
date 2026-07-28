@@ -9,7 +9,7 @@ if ! command -v uv >/dev/null 2>&1; then
     exit 1
 fi
 
-venv_path="appdaemon_integration_test/.appdaemon"
+venv_path=".venv"
 rm -rf "$venv_path"
 uv venv --python python3.12 "$venv_path"
 (

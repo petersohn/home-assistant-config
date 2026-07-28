@@ -11,7 +11,7 @@ commands:
       - run:
           name: run tests
           command: |
-            source test/appdaemon_integration_test/.appdaemon/bin/activate
+            source test/.venv/bin/activate
             pytest <<parameters.directory>> -v --tb=short
       - when:
           condition: <<parameters.logs_only>>
@@ -53,7 +53,7 @@ jobs:
             ./test/setup_virtualenv.sh
       - save_cache:
           paths:
-            - test/appdaemon_integration_test/.appdaemon
+            - test/.venv
           key: venv-{{ checksum "test/dependencies/appdaemon/uv.lock" }}
           when: on_success
       - run:

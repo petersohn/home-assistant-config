@@ -15,7 +15,7 @@ files = [
     ".",
 ]
 exclude = [
-    "test/appdaemon_integration_test/.appdaemon/",
+    "test/.venv/",
     "test/appdaemon_integration_test/output/",
     "\\.mypy_cache/",
     "stubs/",
@@ -35,8 +35,8 @@ reportExplicitAny = false
 reportImplicitRelativeImport = false
 reportUnusedParameter = false
 reportUnusedCallResult = false
-venvPath = "test/appdaemon_integration_test/"
-venv = ".appdaemon"
+venvPath = "test/"
+venv = ".venv"
 stubPath = "stubs"
 extraPaths = [
     "home/.homeassistant/appdaemon/apps",
@@ -45,7 +45,7 @@ extraPaths = [
 ]
 exclude = [
     "test/appdaemon_integration_test/output/",
-    "test/appdaemon_integration_test/.appdaemon/",
+    "test/.venv/",
     "**/.venv/",
     "**/site-packages/",
 ]

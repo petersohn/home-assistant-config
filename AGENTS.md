@@ -92,7 +92,7 @@ To set up the virtual environment to run the tests, use this command:
 
 This command removes the venv if it exists, then reinstalls it using `uv`.
 
-The venv is installed at `test/appdaemon_integration_test/.appdaemon` (Python 3.12). It contains test deps, AppDaemon, mypy, and basedpyright.
+The venv is installed at `test/.venv` (Python 3.12). It contains test deps, AppDaemon, mypy, and basedpyright.
 
 Requires `uv` to be installed: <https://docs.astral.sh/uv/getting-started/installation/>.
 
@@ -124,7 +124,7 @@ To run the unit tests, first make sure that the venv is installed. Then run:
 
 ```sh
 # Unit tests
-source test/appdaemon_integration_test/.appdaemon/bin/activate
+source test/.venv/bin/activate
 pytest test/appdaemon_unit_test/ [-k <test>]
 ```
 
@@ -132,7 +132,7 @@ To run the integration tests, first make sure that the venv is installed and Doc
 
 ```sh
 # Integration tests
-source test/appdaemon_integration_test/.appdaemon/bin/activate
+source test/.venv/bin/activate
 pytest test/appdaemon_integration_test/ [-k <test>]
 ```
 
@@ -175,7 +175,7 @@ Run these checks before claiming work complete. They are mandatory, not optional
 - Unit tests. Only the suites affected by the change are needed mid-task; run the full suite before handing off:
 
   ```sh
-  source test/appdaemon_integration_test/.appdaemon/bin/activate && cd test/appdaemon_unit_test && rm -rf output && pytest -v
+  source test/.venv/bin/activate && cd test/appdaemon_unit_test && rm -rf output && pytest -v
   ```
 
 Fix any failures and rerun before continuing. Do not leave the tree in a state where `bin/mypy`, `bin/basedpyright`, or the unit tests are red.
@@ -185,7 +185,7 @@ Fix any failures and rerun before continuing. Do not leave the tree in a state w
 Run the integration tests once the full unit test suite is green and types are clean:
 
 ```sh
-source test/appdaemon_integration_test/.appdaemon/bin/activate && cd test/appdaemon_integration_test && rm -rf output && pytest -v
+source test/.venv/bin/activate && cd test/appdaemon_integration_test && rm -rf output && pytest -v
 ```
 
 Integration tests are slow and nondeterministic, so save them for the end. If a change is contained to one app, scope the run with `-k <test>`; otherwise run the full suite.
