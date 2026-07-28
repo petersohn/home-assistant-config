@@ -45,18 +45,28 @@ jobs:
     steps:
       - checkout
       - restore_cache:
+          key: uv-base
+      - restore_cache:
           keys:
-            - venv-{{ checksum "test/dependencies/appdaemon/uv.lock" }}
+            - venv-{{ checksum "test/dependencies/appdaemon/pyproject.toml" }}-{{ checksum "test/dependencies/appdaemon/uv.lock" }}
+            - venv-{{ checksum "test/dependencies/appdaemon/pyproject.toml" }}
       - run:
           name: setup venv
           command: |
-            curl -LsSf https://astral.sh/uv/install.sh | sh
-            source ~/.bashrc
+            export PATH="$HOME/.local/bin:$PATH"
+            if ! command -v uv >/dev/null 2>&1; then
+              curl -LsSf https://astral.sh/uv/install.sh | sh
+            fi
             ./test/setup_virtualenv.sh
       - save_cache:
           paths:
+            - ~/.local/bin/uv
+          key: uv-base
+          when: on_success
+      - save_cache:
+          paths:
             - test/.venv
-          key: venv-{{ checksum "test/dependencies/appdaemon/uv.lock" }}
+          key: venv-{{ checksum "test/dependencies/appdaemon/pyproject.toml" }}-{{ checksum "test/dependencies/appdaemon/uv.lock" }}
           when: on_success
       - run:
           name: mypy

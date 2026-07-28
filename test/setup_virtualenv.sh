@@ -10,8 +10,9 @@ if ! command -v uv >/dev/null 2>&1; then
 fi
 
 venv_path=".venv"
-rm -rf "$venv_path"
-uv venv --python python3.12 "$venv_path"
+if [ ! -d "$venv_path" ]; then
+    uv venv --python python3.12 "$venv_path"
+fi
 (
     cd dependencies/appdaemon
     VIRTUAL_ENV="$script_dir/$venv_path" uv sync --frozen --no-install-project --active
