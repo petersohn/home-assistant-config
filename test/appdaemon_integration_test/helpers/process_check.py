@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-import psutil  # pyright: ignore[reportMissingModuleSource]
+import psutil
 
 
 def find_processes_matching_cmdline(pattern: str) -> list[tuple[int, str]]:
