@@ -7,12 +7,12 @@ commands:
       logs_only:
         type: boolean
         default: false
-      name:
+      job_name:
         type: string
         default: run tests
     steps:
       - run:
-          name: <<parameters.name>>
+          name: run <<parameters.name>>
           command: |
             source test/.venv/bin/activate
             pytest <<parameters.directory>> -v --tb=short
@@ -65,10 +65,10 @@ jobs:
           name: basedpyright
           command: bin/basedpyright
       - pytest:
-          name: unit tests
+          job_name: unit tests
           directory: test/appdaemon_unit_test
       - pytest:
-          name: integration tests
+          job_name: integration tests
           directory: test/appdaemon_integration_test
           logs_only: true
 
