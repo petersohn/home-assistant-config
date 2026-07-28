@@ -9,8 +9,8 @@ from typing import Any
 def create_appdaemon_configuration(
     target_directory: str, hass_host: str, api_port: int
 ) -> None:
-    log_file = os.path.join(target_directory, "appdaemon.log")
-    error_file = os.path.join(target_directory, "error.log")
+    log_file = "appdaemon.log"
+    error_file = "error.log"
     secrets_yaml = os.path.join(target_directory, "secrets.yaml")
     appdaemon_yaml = os.path.join(target_directory, "appdaemon.yaml")
 

@@ -56,27 +56,26 @@ input_number:
     max: 100
     initial: 0
 
-cover:
-  - platform: template
-    covers:
-      test_cover:
-        position_template: "{{ states('input_number.cover_position') }}"
-        value_template: >
+template:
+  - cover:
+      - name: test_cover
+        position: "{{ states('input_number.cover_position') }}"
+        state: >
           {{
             'opening' if states('input_boolean.cover_moving') == 'on'
             else states('input_number.cover_position') != 0
           }}
-        availability_template: "{{ states('sensor.cover_available') }}"
+        availability: "{{ states('sensor.cover_available') }}"
         open_cover:
-          service: script.set_cover_position
+          action: script.set_cover_position
           data:
             position: 100
         close_cover:
-          service: script.set_cover_position
+          action: script.set_cover_position
           data:
             position: 0
         set_cover_position:
-          service: script.set_cover_position
+          action: script.set_cover_position
           data:
             position: "{{ position }}"
 
@@ -86,14 +85,14 @@ script:
       position:
         name: position
     sequence:
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         data:
           entity_id: input_boolean.cover_moving
-      - service: input_number.set_value
+      - action: input_number.set_value
         data:
           entity_id: input_number.cover_position
           value: "{{ position }}"
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         data:
           entity_id: input_boolean.cover_moving
 
