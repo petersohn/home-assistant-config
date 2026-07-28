@@ -11,8 +11,6 @@ dependencies = [
     "requests",
     "pyyaml",
     "python-dateutil",
-    "psutil",
-    "types-psutil",
     "types-pyyaml",
     "types-python-dateutil",
     "types-requests",

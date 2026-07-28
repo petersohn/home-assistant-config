@@ -1,6 +1,7 @@
 from __future__ import annotations
 import os
 import shutil
+import socket
 import subprocess
 import time
 from typing import Any
@@ -33,6 +34,43 @@ def _compose(*args: str) -> list[str]:
 
 def _run_compose(*args: str) -> None:
     subprocess.run(_compose(*args), check=True, env=_COMPOSE_ENV)
+
+
+def _port_is_free(port: int) -> bool:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            s.bind(("127.0.0.1", port))
+        except OSError:
+            return False
+        return True
+
+
+@pytest.fixture(scope="session", autouse=True)
+def no_stale_services() -> None:
+    """Ensure no stale hass/appdaemon containers or ports are occupied.
+
+    Checks the compose project for any running services and verifies the
+    host ports HASS_PORT and APPDAEMON_PORT are free, so a previous crashed
+    run cannot collide with the new session.
+    """
+    ps = subprocess.run(
+        _compose("ps", "--services", "--filter", "status=running"),
+        check=True,
+        env=_COMPOSE_ENV,
+        capture_output=True,
+        text=True,
+    )
+    running = [line for line in ps.stdout.splitlines() if line.strip()]
+    assert not running, (
+        f"stale compose services already running: {running}; "
+        f"run 'docker compose -f {COMPOSE_FILE} down' first"
+    )
+    for port in (HASS_PORT, APPDAEMON_PORT):
+        assert _port_is_free(port), (
+            f"port {port} already in use; stop the occupying process or "
+            f"run 'docker compose -f {COMPOSE_FILE} down'"
+        )
 
 
 @pytest.fixture(scope="session")
