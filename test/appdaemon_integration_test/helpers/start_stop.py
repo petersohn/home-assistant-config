@@ -20,9 +20,19 @@ COMPOSE_FILE = os.path.normpath(
 HASS_PORT = 18000
 APPDAEMON_PORT = 18001
 
+# Run the containers as the host user so files written to the mounted output
+# volumes are owned by the host user and can be cleaned up without sudo.
+_HOST_UID = str(os.getuid())
+_HOST_GID = str(os.getgid())
+_COMPOSE_ENV = {**os.environ, "HOST_UID": _HOST_UID, "HOST_GID": _HOST_GID}
+
 
 def _compose(*args: str) -> list[str]:
     return ["docker", "compose", "-f", COMPOSE_FILE, *args]
+
+
+def _run_compose(*args: str) -> None:
+    subprocess.run(_compose(*args), check=True, env=_COMPOSE_ENV)
 
 
 @pytest.fixture(scope="session")
@@ -37,7 +47,7 @@ def home_assistant(clear_output_dir: Any, base_output_directory: str) -> Any:
         os.path.join(config_dir, "auth"),
         os.path.join(hass_path, ".storage", "auth"),
     )
-    subprocess.run(_compose("up", "-d", "hass"), check=True)
+    _run_compose("up", "-d", "hass")
     # Wait for HASS to start
     import requests
     from appdaemon_integration_test.helpers.hass_client import HASS_TOKEN
@@ -54,7 +64,7 @@ def home_assistant(clear_output_dir: Any, base_output_directory: str) -> Any:
     else:
         raise RuntimeError("Home Assistant failed to start")
     yield {"host": f"127.0.0.1:{HASS_PORT}", "port": HASS_PORT}
-    subprocess.run(_compose("stop", "hass"), check=True)
+    _run_compose("stop", "hass")
 
 
 @pytest.fixture(scope="session")
@@ -63,7 +73,7 @@ def appdaemon(home_assistant: Any, base_output_directory: str) -> Any:
     os.makedirs(appdaemon_dir, exist_ok=True)
     create_appdaemon_configuration(appdaemon_dir, "hass:8123", APPDAEMON_PORT)
     create_appdaemon_apps_config(appdaemon_dir, "TestApp")
-    subprocess.run(_compose("up", "-d", "appdaemon"), check=True)
+    _run_compose("up", "-d", "appdaemon")
     # Wait for AppDaemon to start
     import requests
     test_arg = "This is a test"
@@ -82,4 +92,4 @@ def appdaemon(home_assistant: Any, base_output_directory: str) -> Any:
     else:
         raise RuntimeError("AppDaemon failed to start")
     yield {"host": f"127.0.0.1:{APPDAEMON_PORT}", "dir": appdaemon_dir}
-    subprocess.run(_compose("stop", "appdaemon"), check=True)
+    _run_compose("stop", "appdaemon")

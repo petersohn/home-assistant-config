@@ -1,6 +1,7 @@
 services:
   hass:
     image: ghcr.io/home-assistant/home-assistant:stable
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     ports:
       - "18000:8123"
     volumes:
@@ -8,6 +9,9 @@ services:
 
   appdaemon:
     image: kangirigungi/appdaemon:latest
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    environment:
+      HOME: /conf
     ports:
       - "18001:18001"
     volumes:
