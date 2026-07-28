@@ -172,6 +172,8 @@ Run these checks before claiming work complete. They are mandatory, not optional
   bin/basedpyright
   ```
 
+**Important**: These tools should always run clean. Findings are NOT pre-existing, as they are checked by CI.
+
 - Unit tests. Only the suites affected by the change are needed mid-task; run the full suite before handing off:
 
   ```sh
