@@ -151,7 +151,7 @@ class AutoSwitch(hass.Hass):
     ) -> None:
         with self.mutex.lock("on_switch_change"):
             self.log("on_switch_change")
-            value = self.get_state(entity)
+            value = new if new is not None else self.get_state(entity)
             if value == "on":
                 self.log("Manually turning on")
                 self.turn_on(self.target)
@@ -174,7 +174,7 @@ class AutoSwitch(hass.Hass):
     ) -> None:
         with self.mutex.lock("on_target_change"):
             self.log("on_target_change")
-            value = self.get_state(entity)
+            value = new if new is not None else self.get_state(entity)
             if value != "on" and value != "off":
                 self.log("Invalid state: {}".format(value))
                 return
