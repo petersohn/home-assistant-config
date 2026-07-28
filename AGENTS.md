@@ -182,10 +182,11 @@ Run these checks before claiming work complete. They are mandatory, not optional
 
 ### After every change
 
-- Type check:
+- Type check (both mypy and basedpyright):
 
   ```sh
   bin/mypy
+  bin/basedpyright
   ```
 
 - Unit tests. Only the suites affected by the change are needed mid-task; run the full suite before handing off:
@@ -194,7 +195,7 @@ Run these checks before claiming work complete. They are mandatory, not optional
   source test/.venv/bin/activate && cd test/appdaemon_unit_test && rm -rf output && pytest -v
   ```
 
-Fix any failures and rerun before continuing. Do not leave the tree in a state where `bin/mypy` or the unit tests are red.
+Fix any failures and rerun before continuing. Do not leave the tree in a state where `bin/mypy`, `bin/basedpyright`, or the unit tests are red.
 
 ### At the end of a task or project
 
