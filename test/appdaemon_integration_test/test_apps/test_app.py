@@ -16,8 +16,8 @@ class TestApp(hass.Hass):
     def __call(self, data: dict[str, Any]) -> Any:
         args = data.get("args", [])
         kwargs = data.get("kwargs", {})
-        arg_types = data.get("arg_types") or []
-        kwarg_types = data.get("kwarg_types") or {}
+        arg_types: list[Any] = data.get("arg_types") or []
+        kwarg_types: dict[str, Any] = data.get("kwarg_types") or {}
         result_type = data.get("result_type")
 
         def convert(target_type: Any, value: Any) -> Any:
@@ -27,8 +27,8 @@ class TestApp(hass.Hass):
                     {
                         "datetime": self.__to_datetime,
                         "datestr": self.__to_datestr,
-                        "Int": lambda val: int(float(val)),
-                        "percent": lambda val: int(float(val) * 100.0),
+                        "Int": lambda val: int(float(val)),  # pyright: ignore[reportUnknownLambdaType,reportUnknownArgumentType]
+                        "percent": lambda val: int(float(val) * 100.0),  # pyright: ignore[reportUnknownLambdaType,reportUnknownArgumentType]
                     },
                     {},
                 )
@@ -50,7 +50,7 @@ class TestApp(hass.Hass):
             if isinstance(value, dict):
                 return {
                     convert_output(k): convert_output(v)
-                    for k, v in value.items()
+                    for k, v in value.items()  # pyright: ignore[reportUnknownVariableType]
                 }
 
             try:

@@ -263,7 +263,8 @@ class MultiEnabler(Enabler):
     def initialize(self) -> None:
         super().initialize()
         self.enablers = []
-        for name in self.args.get("enablers") or []:
+        enablers: list[str] = self.args.get("enablers", []) or []
+        for name in enablers:
             app = self.get_app(name)
             assert isinstance(app, Enabler)
             self.enablers.append(app)

@@ -20,6 +20,7 @@ exclude = [
     "test/appdaemon_integration_test/output/",
     "test/.venv/",
     "\\.mypy_cache/",
+    "stubs/",
 ]
 
 [[tool.mypy.overrides]]
@@ -38,6 +39,7 @@ reportUnusedParameter = false
 reportUnusedCallResult = false
 venvPath = "test/appdaemon_integration_test/"
 venv = ".appdaemon"
+stubPath = "stubs"
 extraPaths = [
     "home/.homeassistant/appdaemon/apps",
     "home/.homeassistant/appdaemon/apps/apps",

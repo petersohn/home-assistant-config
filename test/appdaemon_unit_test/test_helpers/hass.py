@@ -203,7 +203,7 @@ class AppManager:
                     ScheduledTask(
                         app=app,
                         time=self.__datetime,
-                        callback=lambda _: call_callback(
+                        callback=lambda _: call_callback(  # pyright: ignore[reportUnknownLambdaType]
                             f, name, attribute, old, new
                         ),
                         repeat=None,

@@ -11,6 +11,9 @@ class _Allow:
     On exit, removes the allow-listed substring from the checker.
     """
 
+    _checker: "ErrorLogChecker"
+    _message_substring: str
+
     def __init__(self, checker: "ErrorLogChecker", message_substring: str) -> None:
         self._checker = checker
         self._message_substring = message_substring
@@ -19,8 +22,8 @@ class _Allow:
         return self._checker
 
     def __exit__(self, *exc: object) -> None:
-        if self._message_substring in self._checker._allowed:
-            self._checker._allowed.remove(self._message_substring)
+        if self._message_substring in self._checker.allowed:
+            self._checker.allowed.remove(self._message_substring)
 
 
 class ErrorLogChecker:
@@ -32,6 +35,12 @@ class ErrorLogChecker:
     given substring (e.g. ``KeyError`` raised by an AppDaemon-internal race
     during reload).
     """
+
+    _path: str
+
+    @property
+    def allowed(self) -> list[str]:
+        return self._allowed
 
     def __init__(self, error_log_path: str) -> None:
         self._path = error_log_path
@@ -53,7 +62,7 @@ class ErrorLogChecker:
         except those matching a currently-allowed substring."""
         new_content = self._read_from(self._offset)
         blocks = self._parse_blocks(new_content)
-        unexpected = []
+        unexpected: list[str] = []
         for block in blocks:
             if not any(sub in block for sub in self._allowed):
                 unexpected.append(block)

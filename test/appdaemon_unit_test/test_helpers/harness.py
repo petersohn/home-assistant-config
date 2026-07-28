@@ -14,6 +14,9 @@ T = TypeVar("T")
 class Harness:
     locker: Locker
     test_app: TestApp
+    _manager: AppManager
+    _interval: timedelta
+    _global_mutex_graph: dict[str, Any]
 
     def __init__(
         self,

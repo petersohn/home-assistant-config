@@ -6,7 +6,10 @@ HASS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkY2U3MDgwNDIwYmI0M
 
 
 class HassClient:
-    def __init__(self, host: str):
+    _session: requests.Session
+    _host: str
+
+    def __init__(self, host: str) -> None:
         self._session = requests.Session()
         self._session.headers["Authorization"] = f"Bearer {HASS_TOKEN}"
         self._session.headers["Connection"] = "keep-alive"

@@ -6,7 +6,9 @@ from appdaemon_integration_test.helpers.type_util import values_equal
 
 
 class HistoryWatcher:
-    def __init__(self, appdaemon_client: Any):
+    _ad: Any
+
+    def __init__(self, appdaemon_client: Any) -> None:
         self._ad = appdaemon_client
 
     def get_history(self) -> list[Any]:

@@ -121,7 +121,7 @@ def test_date_enabler(harness: Harness, expected_state: bool, begin: str, end: s
     (True, [True, True, True, True]),
 ])
 def test_multi_enabler(harness: Harness, expected_state: bool, vs: list[bool]) -> None:
-    names = []
+    names: list[str] = []
     for i, value in enumerate(vs):
         name = f"enabler{i}"
         harness.create_app("enabler", "ScriptEnabler", name, initial=value)

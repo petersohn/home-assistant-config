@@ -26,7 +26,7 @@ class Lock:
     def __enter__(self) -> None:
         # self.mutex.locker.log("lock {}.{}".format(self.mutex.name, self.name))
         self.mutex.locker.push_edge(self.mutex.name, self.name)
-        self.mutex._lock.acquire()
+        self.mutex.acquire()
 
     def __exit__(
         self,
@@ -35,7 +35,7 @@ class Lock:
         exc_tb: TracebackType | None,
     ) -> None:
         # self.mutex.locker.log("unlock {}.{}".format(self.mutex.name, self.name))
-        self.mutex._lock.release()
+        self.mutex.release()
         self.mutex.locker.pop_edge(self.mutex.name, self.name)
 
 
@@ -48,6 +48,12 @@ class Mutex:
 
     def lock(self, name: str) -> Lock:
         return Lock(self, name)
+
+    def acquire(self) -> None:
+        self._lock.acquire()
+
+    def release(self) -> None:
+        self._lock.release()
 
 
 class Locker(hass.Hass):

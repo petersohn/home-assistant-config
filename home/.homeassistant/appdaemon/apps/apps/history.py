@@ -224,6 +224,8 @@ class ChangeTracker(HistoryManagerBase):
 
 
 class Aggregatum:
+    app: hass.Hass
+
     def __init__(self, app: hass.Hass) -> None:
         self.app = app
 
@@ -235,6 +237,8 @@ class Aggregatum:
 
 
 class LimitedHistoryAggregatum(Aggregatum):
+    interval: datetime.timedelta
+
     def __init__(self, app: hass.Hass, interval: datetime.timedelta) -> None:
         super().__init__(app)
         self.interval = interval

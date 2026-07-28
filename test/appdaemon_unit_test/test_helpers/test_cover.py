@@ -38,7 +38,7 @@ class TestCover(Hass):
             lambda args: self.set_position(0),
         )
         _ = self.listen_state(
-            lambda *_: self.__set_availability(),
+            lambda *_: self.__set_availability(),  # pyright: ignore[reportUnknownLambdaType,reportUnknownArgumentType]
             self.available_entity,
         )
 

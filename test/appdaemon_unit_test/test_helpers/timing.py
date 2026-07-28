@@ -7,6 +7,8 @@ if TYPE_CHECKING:
 
 
 class Timing:
+    _h: Harness
+
     def __init__(self, harness: Harness) -> None:
         self._h = harness
 

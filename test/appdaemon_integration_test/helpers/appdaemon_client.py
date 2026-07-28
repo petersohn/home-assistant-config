@@ -8,6 +8,10 @@ from appdaemon_integration_test.helpers.type_util import values_equal
 
 
 class AppDaemonClient:
+    _session: requests.Session
+    _host: str
+    _dir: str
+
     def __init__(self, host: str, appdaemon_dir: str) -> None:
         self._session = requests.Session()
         self._host = host
