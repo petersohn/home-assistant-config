@@ -27,6 +27,7 @@ CI (machine executor, Ubuntu VM)
 ├── checkout repo
 ├── restore cache (venv, keyed by uv.lock hash)
 ├── uv sync (single venv: test deps + appdaemon + typecheckers)
+├── bin/mypy, bin/basedpyright (on VM, from single venv)
 ├── docker compose up -d hass appdaemon (with DLC-cached images)
 ├── pytest (on VM, from single venv)
 │   ├── unit tests (no containers needed)
@@ -205,6 +206,12 @@ jobs:
             - test/appdaemon_integration_test/.appdaemon
           key: venv-{{ checksum "test/dependencies/appdaemon/uv.lock" }}
           when: on_success
+      - run:
+          name: mypy
+          command: bin/mypy
+      - run:
+          name: basedpyright
+          command: bin/basedpyright
       - pytest:
           directory: test/appdaemon_unit_test
       - pytest:
