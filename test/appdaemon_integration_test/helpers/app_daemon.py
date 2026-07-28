@@ -1,4 +1,5 @@
 import os
+import shutil
 import tempfile
 import yaml
 from appdaemon_integration_test.helpers import directories
@@ -17,7 +18,7 @@ def create_appdaemon_configuration(
         directories.appdaemon_config_path, "appdaemon.yaml"
     )
 
-    os.symlink(source_appdaemon_yaml, appdaemon_yaml)
+    shutil.copy2(source_appdaemon_yaml, appdaemon_yaml)
 
     with open(secrets_yaml, "w") as secrets:
         yaml.dump(
@@ -56,7 +57,7 @@ def create_appdaemon_apps_config(
         target_file = os.path.join(apps_dir, file_name)
         if os.path.exists(target_file):
             os.remove(target_file)
-        os.symlink(
+        shutil.copy2(
             os.path.join(directories.prod_app_dir, file_name), target_file
         )
 
@@ -70,7 +71,7 @@ def create_appdaemon_apps_config(
         target_file = os.path.join(apps_subdir, file_name)
         if os.path.exists(target_file):
             os.remove(target_file)
-        os.symlink(os.path.join(prod_apps_subdir, file_name), target_file)
+        shutil.copy2(os.path.join(prod_apps_subdir, file_name), target_file)
 
     # test_apps/ subdir — symlink the test helper apps
     test_apps_subdir = os.path.join(apps_dir, "test_apps")
@@ -81,7 +82,7 @@ def create_appdaemon_apps_config(
         target_file = os.path.join(test_apps_subdir, file_name)
         if os.path.exists(target_file):
             os.remove(target_file)
-        os.symlink(
+        shutil.copy2(
             os.path.join(directories.test_apps_path, file_name), target_file
         )
 
