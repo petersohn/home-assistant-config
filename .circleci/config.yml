@@ -12,7 +12,7 @@ commands:
         default: run tests
     steps:
       - run:
-          name: run <<parameters.name>>
+          name: run <<parameters.job_name>>
           command: |
             source test/.venv/bin/activate
             pytest <<parameters.directory>> -v --tb=short
