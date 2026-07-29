@@ -154,12 +154,14 @@ class AutoSwitch(hass.Hass):
             value = new if new is not None else self.get_state(entity)
             if value == "on":
                 self.log("Manually turning on")
-                self.turn_on(self.target)
-                self.__stop_timer()
+                self.__set_intended_state("on")
+                if self.get_state(self.target) != "on":
+                    self.turn_on(self.target)
             elif value == "off":
                 self.log("Manually turning off")
-                self.turn_off(self.target)
-                self.__stop_timer()
+                self.__set_intended_state("off")
+                if self.get_state(self.target) != "off":
+                    self.turn_off(self.target)
             else:
                 self.log("Setting to auto")
                 self.__update(self.state)
@@ -184,7 +186,15 @@ class AutoSwitch(hass.Hass):
                     self.log("State change detected: {}".format(value))
                     self.__update(self.state)
                 else:
-                    self.select_option(entity_id=self.switch, option=value)
+                    switch_state = self.get_state(self.switch)
+                    assert isinstance(switch_state, str)
+                    self.log("Reverting target to manual state: {}".format(switch_state))
+                    self.__set_intended_state(switch_state)
+                    if self.get_state(self.target) != switch_state:
+                        if switch_state == "on":
+                            self.turn_on(self.target)
+                        else:
+                            self.turn_off(self.target)
             elif value == self.intended_state:
                 self.log("State stabilized to {}".format(new))
                 self.intended_state = None

@@ -123,11 +123,13 @@ def test_target_state_changes(harness: Harness) -> None:
     harness.set_state(switch, "off")
     assert harness.get_state(target) == "off"
     harness.turn_on(target)
-    assert harness.get_state(target) == "on"
-    assert harness.get_state(switch) == "on"
-    harness.turn_off(target)
     assert harness.get_state(target) == "off"
     assert harness.get_state(switch) == "off"
+    harness.set_state(switch, "on")
+    assert harness.get_state(target) == "on"
+    harness.turn_off(target)
+    assert harness.get_state(target) == "on"
+    assert harness.get_state(switch) == "on"
 
     harness.set_state(switch, "auto")
     harness.call_on_app(auto_switch, "auto_turn_off")
