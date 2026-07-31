@@ -8,6 +8,7 @@ dependencies = [
     "basedpyright",
     "mypy",
     "pytest",
+    "pytest-timeout",
     "requests",
     "pyyaml",
     "python-dateutil",

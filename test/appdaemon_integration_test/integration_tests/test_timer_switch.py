@@ -2,6 +2,7 @@ from __future__ import annotations
 import time
 from typing import Any
 
+import pytest
 from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
 from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 
@@ -61,6 +62,7 @@ def test_control(
     history_watcher.check_history(control_switch, "on", control_switch, "off")
 
 
+@pytest.mark.timeout(180)
 def test_reload_because_of_dependency(
     appdaemon_client: AppDaemonClient, history_watcher: HistoryWatcher
 ) -> None:
@@ -105,6 +107,7 @@ def test_reload_because_of_dependency(
     appdaemon_client.set_state(enabler_switch, "off")
 
 
+@pytest.mark.timeout(180)
 def test_only_reload_changed_apps(
     appdaemon_client: AppDaemonClient, history_watcher: HistoryWatcher,
     error_log: Any,
