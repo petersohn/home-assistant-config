@@ -69,10 +69,8 @@ def format_graph(graph: Graph, name: str) -> str:
     result = ""
     for vertex, edges in graph.items():
         for edge in edges:
-            result += '    "{}" -> "{}" [label="{}"]\n'.format(
-                vertex, edge_target(edge), edge_name(edge)
-            )
-    return 'digraph "{}"{{\n{}}}\n'.format(name, result)
+            result += f'    "{vertex}" -> "{edge_target(edge)}" [label="{edge_name(edge)}"]\n'
+    return f'digraph "{name}"{{\n{result}}}\n'
 
 
 def _list_to_set(l: list[Edge] | set[Edge]) -> set[Edge]:

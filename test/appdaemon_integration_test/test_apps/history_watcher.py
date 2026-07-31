@@ -29,7 +29,7 @@ class HistoryWatcher(hass.Hass):
         **kwargs: Any,
     ) -> None:
         with self.mutex.lock("on_change"):
-            self.log("{} = {}".format(entity, new))
+            self.log(f"{entity} = {new}")
             self.state_history.append((entity, new))
 
     def get_state_history(self) -> list[tuple[str, Any]]:

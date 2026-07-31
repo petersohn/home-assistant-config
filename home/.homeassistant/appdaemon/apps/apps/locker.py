@@ -24,7 +24,7 @@ class Lock:
         self.name = name
 
     def __enter__(self) -> None:
-        # self.mutex.locker.log("lock {}.{}".format(self.mutex.name, self.name))
+        # self.mutex.locker.log(f"lock {self.mutex.name}.{self.name}")
         self.mutex.locker.push_edge(self.mutex.name, self.name)
         self.mutex.acquire()
 
@@ -34,7 +34,7 @@ class Lock:
         exc_val: BaseException | None,
         exc_tb: TracebackType | None,
     ) -> None:
-        # self.mutex.locker.log("unlock {}.{}".format(self.mutex.name, self.name))
+        # self.mutex.locker.log(f"unlock {self.mutex.name}.{self.name}")
         self.mutex.release()
         self.mutex.locker.pop_edge(self.mutex.name, self.name)
 

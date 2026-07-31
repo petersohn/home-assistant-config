@@ -22,7 +22,7 @@ def make_history_element(
     time: datetime.datetime, value: EntityValue
 ) -> HistoryElement:
     assert isinstance(value, (str, int, float, bool, type(None))), (
-        "Expected scalar state value, got {}".format(type(value).__name__)
+        f"Expected scalar state value, got {type(value).__name__}"
     )
     try:
         if value is None or value == "off":
@@ -80,7 +80,7 @@ class HistoryManagerBase(hass.Hass):
             del self.changed_callbacks[id]
 
     def changed(self) -> None:
-        self.log("callbacks={}".format(len(self.changed_callbacks)))
+        self.log(f"callbacks={len(self.changed_callbacks)}")
         for callback in self.changed_callbacks.values():
             callback()
 
@@ -151,9 +151,9 @@ class HistoryManager(HistoryManagerBase):
                 ),
             )
         )
-        self.log("Total loaded history size: {}".format(len(self.history)))
+        self.log(f"Total loaded history size: {len(self.history)}")
         self.__filter()
-        self.log("Filtered history size: {}".format(len(self.history)))
+        self.log(f"Filtered history size: {len(self.history)}")
         self.log("History loaded.")
 
     def on_changed(

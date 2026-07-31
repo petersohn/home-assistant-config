@@ -23,13 +23,13 @@ def create_service_data(entity_id: str, value: str) -> tuple[str, str]:
     data: dict[str, Any] = {"entity_id": entity_id}
     if domain in ["input_boolean", "switch"]:
         assert value in ["off", "on"]
-        return "services/{}/turn_{}".format(domain, value), json.dumps(data)
+        return f"services/{domain}/turn_{value}", json.dumps(data)
     if domain == "input_select":
         data["option"] = value
         return "services/input_select/select_option", json.dumps(data)
     if domain in ["input_number", "input_text"]:
         data["value"] = value
-        return "services/{}/set_value".format(domain), json.dumps(data)
+        return f"services/{domain}/set_value", json.dumps(data)
 
     assert domain in ["sensor", "binary_sensor"]
-    return "states/{}".format(entity_id), json.dumps({"state": value})
+    return f"states/{entity_id}", json.dumps({"state": value})

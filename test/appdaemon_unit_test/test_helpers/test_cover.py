@@ -43,7 +43,7 @@ class TestCover(Hass):
         )
 
     def set_position(self, value: int) -> None:
-        self.log("Set position to {}".format(value))
+        self.log(f"Set position to {value}")
         if not self.is_available():
             return
         self.target = value
@@ -83,7 +83,7 @@ class TestCover(Hass):
             attributes["current_position"] = str(self.position)
             self.set_state(self.position_entity, str(self.position))
 
-        self.log("State={} position={}".format(state, self.position))
+        self.log(f"State={state} position={self.position}")
         self.set_state(self.entity, state, attributes)
 
     def __set_availability(self) -> None:

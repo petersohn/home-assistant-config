@@ -103,7 +103,7 @@ class CoverController(hass.Hass):
         elif state == self.Mode.STABLE:
             self.select_option(self.mode_switch, "stable")
         else:
-            self.error("Invalid state: {}".format(state))
+            self.error(f"Invalid state: {state}")
             self.mode = self.Mode.AUTO
 
     def _set_mode_from_str(self, mode: str | None) -> None:
@@ -114,7 +114,7 @@ class CoverController(hass.Hass):
         elif mode == "stable":
             self.mode = self.Mode.STABLE
         else:
-            self.log("Invalid mode: {}".format(mode))
+            self.log(f"Invalid mode: {mode}")
             self._set_mode(self.Mode.STABLE)
 
     def _execute(self, service: str, **kwargs: Any) -> None:
@@ -125,7 +125,7 @@ class CoverController(hass.Hass):
         self._set_value(self.expected_value)
 
     def _set_value_inner(self, value: ExpressionResult) -> None:
-        self.log("Execute command: {}".format(value))
+        self.log(f"Execute command: {value}")
         self.arrived_at_target = None
         if type(value) is float or type(value) is int:
             if value >= 0 and value <= 100:
@@ -143,10 +143,10 @@ class CoverController(hass.Hass):
                 self.target_position = 0
                 return
 
-        self.log("Invalid value: {}".format(value))
+        self.log(f"Invalid value: {value}")
 
     def _set_value(self, value: ExpressionResult) -> None:
-        self.log("Changing to {}".format(value))
+        self.log(f"Changing to {value}")
 
         if self.expected_value != value and self.mode == self.Mode.STABLE:
             self.log("Setting mode back to auto")
@@ -173,10 +173,10 @@ class CoverController(hass.Hass):
     def on_expression_change(self, value: ExpressionResult) -> None:
         with self.mutex.lock("on_expression_change"):
             if self.value == value:
-                self.log("Value unchanged: {}".format(value))
+                self.log(f"Value unchanged: {value}")
                 return
 
-            self.log("Value changed: {} -> {}".format(self.value, value))
+            self.log(f"Value changed: {self.value} -> {value}")
             self.value = value
 
             if self.delay is None:
@@ -212,15 +212,13 @@ class CoverController(hass.Hass):
         with self.mutex.lock("on_state_change"):
             if old is None or new is None or old["state"] != new["state"]:
                 self.log(
-                    "State changed: {} -> {}".format(
-                        _get_state(old), _get_state(new)
-                    )
+                    f"State changed: {_get_state(old)} -> {_get_state(new)}"
                 )
             if new is not None:
                 self._check_state(new)
 
     def _check_state(self, states: dict[str, Any]) -> None:
-        # self.log('--> {}'.format(states))
+        # self.log(f'--> {states}')
         state = states["state"]
         was_available = self.is_available
         is_available = state is not None and state != "unavailable"
@@ -265,7 +263,7 @@ class CoverController(hass.Hass):
                 self.log("Started moving")
                 self.arrived_at_target = False
             elif self.arrived_at_target is False and not is_moving:
-                self.log("Stopped at {}, force resetting".format(position))
+                self.log(f"Stopped at {position}, force resetting")
                 self._reset_value()
         else:
             self.log("Position not yet set")
@@ -280,7 +278,7 @@ class CoverController(hass.Hass):
     ) -> None:
         with self.mutex.lock("on_mode_change"):
             if old != new:
-                self.log("New mode: {} -> {}".format(old, new))
+                self.log(f"New mode: {old} -> {new}")
                 self._set_mode_from_str(new)
                 if self.mode == self.Mode.AUTO:
                     self.log("Back to auto, resetting value.")

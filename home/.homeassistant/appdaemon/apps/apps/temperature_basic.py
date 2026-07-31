@@ -42,7 +42,7 @@ class TemperatureBasic(hass.Hass):
             or value == ""
         ):
             self.log(
-                "Cannot evaluate {}: value is {}".format(entity_id, repr(value))
+                f"Cannot evaluate {entity_id}: value is {value!r}"
             )
             return None
         return float(value)

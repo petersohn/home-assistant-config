@@ -44,7 +44,7 @@ class TestApp(Hass):
         attribute: str | None = None,
         type: str | None = None,
     ) -> Any:
-        self.log("get_state_as {} {} {}".format(entity, attribute, type))
+        self.log(f"get_state_as {entity} {attribute} {type}")
         value = self.get_state(entity, attribute)
         if type is None:
             return value

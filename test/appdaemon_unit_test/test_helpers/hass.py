@@ -107,13 +107,13 @@ class AppManager:
 
     def add_app(self, name: str, app: Hass, args: dict[str, Any]) -> None:
         if name in self.__apps:
-            raise RuntimeError("App already exists: {}".format(name))
+            raise RuntimeError(f"App already exists: {name}")
         app.init_app(self, name, args)
         self.__apps[name] = app
         self.__app_order.append(name)
 
     def remove_app(self, name: str) -> None:
-        self.__debug("Remove app: {}".format(name))
+        self.__debug(f"Remove app: {name}")
         app = self.__apps[name]
         del self.__apps[name]
         self.__app_order = list(filter(lambda a: a != name, self.__app_order))
@@ -175,7 +175,7 @@ class AppManager:
             data.attributes.update(attributes)
 
         new = data.to_map()
-        self.__debug("Set state {} by {}: {}".format(name, app, new))
+        self.__debug(f"Set state {name} by {app}: {new}")
 
         for id, callback in self.__state_callbacks.items():
             if callback.entity != name:
@@ -197,7 +197,7 @@ class AppManager:
                 new: str | dict[str, Any] | None,
             ) -> None:
                 self.__debug(
-                    "Schedule state change callback {} for {}".format(id, app)
+                    f"Schedule state change callback {id} for {app}"
                 )
                 _ = self.schedule_task(
                     ScheduledTask(
@@ -252,9 +252,7 @@ class AppManager:
     ) -> int:
         id = self.__get_id()
         self.__debug(
-            "Listen state {} by {}: {}".format(
-                callback.entity, callback.app, id
-            )
+            f"Listen state {callback.entity} by {callback.app}: {id}"
         )
         self.__state_callbacks[id] = callback
         return id
@@ -271,7 +269,7 @@ class AppManager:
 
     def __schedule_task(self, id: str, task: ScheduledTask) -> None:
         self.__debug(
-            "schedule task {} at {}".format(id, task.time.strftime("%H:%M:%S"))
+            f"schedule task {id} at {task.time.strftime('%H:%M:%S')}"
         )
         self.__scheduled_tasks[id] = task
         self.__calculate_scheduled_task_order()
@@ -282,7 +280,7 @@ class AppManager:
         return id
 
     def cancel_timer(self, id: str) -> None:
-        self.__debug("Cancel timer {}".format(id))
+        self.__debug(f"Cancel timer {id}")
         if id in self.__scheduled_tasks:
             del self.__scheduled_tasks[id]
         else:
@@ -296,9 +294,7 @@ class AppManager:
         return self.__has_error
 
     def log(self, app: str, msg: str, level: LogLevel) -> None:
-        line = "{} [{}] {}: {}".format(
-            self.__datetime.strftime("%Y-%m-%d %H:%M:%S"), level, app, msg
-        )
+        line = f"{self.__datetime.strftime('%Y-%m-%d %H:%M:%S')} [{level}] {app}: {msg}"
         print(line)
         with open(self.__log_filename, "a") as f:
             print(line, file=f)
@@ -320,7 +316,7 @@ class AppManager:
                 break
 
             self.__debug(
-                "Execute scheduled task {} for {}".format(id, task.app)
+                f"Execute scheduled task {id} for {task.app}"
             )
 
             if task.repeat is not None:
@@ -357,7 +353,7 @@ class AppManager:
         new: str | None = None,
     ) -> None:
         current_state = self.get_state(entity)
-        self.__debug("Wait for state change current={}".format(current_state))
+        self.__debug(f"Wait for state change current={current_state}")
 
         step_count = 0
         while not deadline or self.__datetime < deadline:
@@ -366,7 +362,7 @@ class AppManager:
             state = self.get_state(entity)
             if state != current_state:
                 self.__debug(
-                    "{}: {} -> {}".format(entity, current_state, state)
+                    f"{entity}: {current_state} -> {state}"
                 )
             if (
                 state != current_state
@@ -384,12 +380,12 @@ class AppManager:
         self, app: str, key: ServiceKey, callback: ServiceCallback
     ) -> None:
         if key in self.__services:
-            raise RuntimeError("Service already registered: {}".format(key))
+            raise RuntimeError(f"Service already registered: {key}")
         self.__services[key] = ServiceData(app=app, callback=callback)
 
     def unregister_service(self, key: ServiceKey) -> None:
         if key not in self.__services:
-            raise RuntimeError("Service not registered: {}".format(key))
+            raise RuntimeError(f"Service not registered: {key}")
         del self.__services[key]
 
     def call_service(
@@ -571,7 +567,7 @@ class Hass:
     def load_states(self, entity_id: str) -> dict[str, str]:
         state = self.get_state(entity_id, attribute="all")
         if state is None:
-            raise RuntimeError("Entity not found: {}".format(entity_id))
+            raise RuntimeError(f"Entity not found: {entity_id}")
         assert type(state) is dict
 
         now = self.datetime().strftime("%Y-%m-%dT%H:%M:%S")

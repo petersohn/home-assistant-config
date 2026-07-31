@@ -39,5 +39,5 @@ class CustomIcon(hass.Hass):
         #     state = self.get_state(entity=entity, attribute='all')
         #     icon = self.on_icon if state['state'] == 'on' else self.off_icon
         #     state['attributes']['icon'] = icon
-        #     self.log("set state: {}".format(state['attributes']))
+        #     self.log(f"set state: {state['attributes']}")
         #     self.set_state(entity, attributes=state['attributes'])

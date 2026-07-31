@@ -69,9 +69,7 @@ class EnabledSwitch(hass.Hass):
             on_guard_on = self._is_guard_on(self.on_guard)
             off_guard_on = self._is_guard_on(self.off_guard)
             self.log(
-                "enabled={} on_guard={} off_guard={}".format(
-                    enabled, on_guard_on, off_guard_on
-                )
+                f"enabled={enabled} on_guard={on_guard_on} off_guard={off_guard_on}"
             )
             if enabled:
                 if on_guard_on:

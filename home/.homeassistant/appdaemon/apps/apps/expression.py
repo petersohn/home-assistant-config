@@ -65,7 +65,7 @@ class ExpressionEvaluator:
             try:
                 app = self.app.get_app(name)
                 assert isinstance(app, CallbackProvider), (
-                    "App {!r} does not support remove_callback".format(name)
+                    f"App {name!r} does not support remove_callback"
                 )
                 app.remove_callback(id)
             except Exception:
@@ -115,9 +115,8 @@ class ExpressionEvaluator:
         if value is None:
             return ""
         assert isinstance(value, (str, int, float, bool)), (
-            "Expected scalar from get_state({!r}, attribute={!r}), got {}".format(
-                entity, attribute, type(value).__name__
-            )
+            f"Expected scalar from get_state({entity!r}, "
+            f"attribute={attribute!r}), got {type(value).__name__}"
         )
         try:
             return float(value)
@@ -139,17 +138,15 @@ class ExpressionEvaluator:
         if value == "off":
             return False
         assert isinstance(value, (str, int, float, bool)), (
-            "Expected scalar from get_state({!r}), got {}".format(
-                entity, type(value).__name__
-            )
+            f"Expected scalar from get_state({entity!r}), "
+            f"got {type(value).__name__}"
         )
         try:
             return float(value)
         except ValueError:
             assert isinstance(value, str), (
-                "Expected str from get_state({!r}), got {}".format(
-                    entity, type(value).__name__
-                )
+                f"Expected str from get_state({entity!r}), "
+                f"got {type(value).__name__}"
             )
             return value
 
@@ -172,13 +169,12 @@ class ExpressionEvaluator:
         try:
             app = self.app.get_app(name)
             assert isinstance(app, hass.Hass), (
-                "Expected {!r} to be a Hass app, got {}".format(
-                    name, type(app).__name__
-                )
+                f"Expected {name!r} to be a Hass app, "
+                f"got {type(app).__name__}"
             )
             if self.callback is not None and name not in self.app_callbacks:
                 assert isinstance(app, CallbackProvider), (
-                    "App {!r} does not support add_callback".format(name)
+                    f"App {name!r} does not support add_callback"
                 )
                 id = app.add_callback(lambda: self._on_app_change())
                 self.app_callbacks[name] = id
@@ -190,27 +186,24 @@ class ExpressionEvaluator:
     def _get_enabled(self, name: str) -> bool:
         app = self._get_app(name)
         assert isinstance(app, EnablerProvider), (
-            "Expected {!r} to be an Enabler app, got {}".format(
-                name, type(app).__name__
-            )
+            f"Expected {name!r} to be an Enabler app, "
+            f"got {type(app).__name__}"
         )
         return app.is_enabled()
 
     def _get_last_changed(self, name: str) -> Any:
         app = self._get_app(name)
         assert isinstance(app, ChangeTrackerProvider), (
-            "Expected {!r} to be a ChangeTracker app, got {}".format(
-                name, type(app).__name__
-            )
+            f"Expected {name!r} to be a ChangeTracker app, "
+            f"got {type(app).__name__}"
         )
         return app.last_changed()
 
     def _get_last_updated(self, name: str) -> Any:
         app = self._get_app(name)
         assert isinstance(app, ChangeTrackerProvider), (
-            "Expected {!r} to be a ChangeTracker app, got {}".format(
-                name, type(app).__name__
-            )
+            f"Expected {name!r} to be a ChangeTracker app, "
+            f"got {type(app).__name__}"
         )
         return app.last_updated()
 
@@ -226,7 +219,7 @@ class ExpressionEvaluator:
         new: EntityValue,
         **kwargs: Any,
     ) -> None:
-        self.app.log("state change({}): {} -> {}".format(entity, old, new))
+        self.app.log(f"state change({entity}): {old} -> {new}")
         if new != old:
             self.fire_callback({})
 
@@ -234,9 +227,8 @@ class ExpressionEvaluator:
         try:
             result = eval(self.expr, self.evaluators)
             assert result is None or isinstance(result, (str, float, int, bool)), (
-                "Expression returned unexpected type {}: {!r}".format(
-                    type(result).__name__, result
-                )
+                f"Expression returned unexpected type "
+                f"{type(result).__name__}: {result!r}"
             )
         except Exception:
             self.app.error(traceback.format_exc())

@@ -35,7 +35,7 @@ class Enabler(hass.Hass):
 
     def _init_enabler(self, state: bool | None) -> None:
         self.state = state
-        self.log("Init: {}".format(self.state))
+        self.log(f"Init: {self.state}")
 
     def terminate(self) -> None:
         if self.change_timer is not None:
@@ -59,7 +59,7 @@ class Enabler(hass.Hass):
             return
 
         with self.state_mutex.lock("change"):
-            self.log("change={} delay={}".format(state, self.delay))
+            self.log(f"change={state} delay={self.delay}")
             if self.change_timer is not None:
                 if self.change_state == state:
                     self.log("no change")
@@ -73,16 +73,14 @@ class Enabler(hass.Hass):
 
     def _do_change(self, state: bool | None) -> None:
         if self.state != state:
-            self.log("state change {} -> {}".format(self.state, state))
+            self.log(f"state change {self.state} -> {state}")
             self.state = state
 
     def on_timeout(self, kwargs: dict[str, Any]) -> None:
         callbacks = self.get_callbacks()
         with self.state_mutex.lock("on_timeout"):
             self.log(
-                "timeout state={} callbacks={}".format(
-                    self.change_state, len(callbacks)
-                )
+                f"timeout state={self.change_state} callbacks={len(callbacks)}"
             )
             self._do_change(self.change_state)
             self.change_state = None
@@ -94,12 +92,12 @@ class Enabler(hass.Hass):
             id = self.callback_id
             self.callbacks[id] = func
             self.callback_id += 1
-            self.log("add_callback={}".format(id))
+            self.log(f"add_callback={id}")
             return id
 
     def remove_callback(self, id: int) -> None:
         with self.callbacks_mutex.lock("remove_callback"):
-            self.log("remove_callback={}".format(id))
+            self.log(f"remove_callback={id}")
             del self.callbacks[id]
 
     def is_enabled(self) -> bool:
@@ -148,9 +146,7 @@ class EntityEnabler(Enabler):
         with self.mutex.lock("_on_change"):
             value = self._get()
             self.log(
-                "state change {}: {} -> {} value={}".format(
-                    entity, old, new, value
-                )
+                f"state change {entity}: {old} -> {new} value={value}"
             )
             self.change(value)
 
@@ -198,9 +194,8 @@ class RangeEnabler(EntityEnabler):
     def _get(self) -> bool:
         value = self.get_state(self._entity)
         assert isinstance(value, (str, type(None))), (
-            "Expected str or None from get_state({!r}), got {}".format(
-                self._entity, type(value).__name__
-            )
+            f"Expected str or None from get_state({self._entity!r}), "
+            f"got {type(value).__name__}"
         )
         if value is None:
             return False

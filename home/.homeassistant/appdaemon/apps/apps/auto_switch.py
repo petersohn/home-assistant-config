@@ -79,7 +79,7 @@ class AutoSwitch(hass.Hass):
     def initialize_state(self, kwargs: dict[str, Any]) -> None:
         with self.mutex.lock("initialize_state"):
             switch_state = self.get_state(self.switch)
-            self.log("Switch state={}".format(switch_state))
+            self.log(f"Switch state={switch_state}")
             if switch_state == "on":
                 self.log("Initially turning on")
                 self.turn_on(self.target)
@@ -112,7 +112,7 @@ class AutoSwitch(hass.Hass):
 
     def __update(self, state: int | None) -> None:
         self.__stop_timer()
-        self.log("Got new state: {} -> {}".format(self.state, state))
+        self.log(f"Got new state: {self.state} -> {state}")
         self.state = state
 
         if self.switch and self.get_state(self.switch) != "auto":
@@ -178,17 +178,17 @@ class AutoSwitch(hass.Hass):
             self.log("on_target_change")
             value = new if new is not None else self.get_state(entity)
             if value != "on" and value != "off":
-                self.log("Invalid state: {}".format(value))
+                self.log(f"Invalid state: {value}")
                 return
             assert isinstance(value, str)
             if not self.intended_state:
                 if self.switch is None or self.get_state(self.switch) == "auto":
-                    self.log("State change detected: {}".format(value))
+                    self.log(f"State change detected: {value}")
                     self.__update(self.state)
                 else:
                     switch_state = self.get_state(self.switch)
                     assert isinstance(switch_state, str)
-                    self.log("Reverting target to manual state: {}".format(switch_state))
+                    self.log(f"Reverting target to manual state: {switch_state}")
                     self.__set_intended_state(switch_state)
                     if self.get_state(self.target) != switch_state:
                         if switch_state == "on":
@@ -196,14 +196,12 @@ class AutoSwitch(hass.Hass):
                         else:
                             self.turn_off(self.target)
             elif value == self.intended_state:
-                self.log("State stabilized to {}".format(new))
+                self.log(f"State stabilized to {new}")
                 self.intended_state = None
                 self.__stop_timer()
             else:
                 self.log(
-                    "Wrong state: {}, intended={}".format(
-                        value, self.intended_state
-                    )
+                    f"Wrong state: {value}, intended={self.intended_state}"
                 )
                 self.__update(self.state)
 

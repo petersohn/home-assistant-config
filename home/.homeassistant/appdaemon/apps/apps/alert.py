@@ -50,12 +50,12 @@ class AlertAggregator(hass.Hass):
         def on_change(self, value: ExpressionResult) -> None:
             with self.app.mutex.lock("on_change"):
                 value = bool(value)
-                self.app.log("{}: Change: {}".format(self.entity, value))
+                self.app.log(f"{self.entity}: Change: {value}")
                 if value:
                     if self.app.timeout is not None:
                         if self.value:
                             self.app.error(
-                                "Value is already set: {}".format(self.entity)
+                                f"Value is already set: {self.entity}"
                             )
                             return
 
@@ -66,7 +66,7 @@ class AlertAggregator(hass.Hass):
                             )
                         else:
                             self.app.error(
-                                "Timer is already set: {}".format(self.entity)
+                                f"Timer is already set: {self.entity}"
                             )
                         return
                 else:
@@ -147,7 +147,7 @@ class AlertAggregator(hass.Hass):
 
     def on_change(self, entity: str, value: bool) -> None:
         if value:
-            self.log("Alert turned on for {}".format(entity))
+            self.log(f"Alert turned on for {entity}")
             self._turn_off()
             self._turn_on()
             return

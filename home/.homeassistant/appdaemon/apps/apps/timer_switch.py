@@ -72,9 +72,7 @@ class Trigger:
         **kwargs: Any,
     ) -> None:
         self.app.log(
-            "state changed: {} -> {} target={} -> {}".format(
-                old, new, self.source_state, self.target_state
-            )
+            f"state changed: {old} -> {new} target={self.source_state} -> {self.target_state}"
         )
         with self.mutex.lock("on_state_change"):
             self._on_change(
@@ -211,7 +209,7 @@ class TimerSwitch(hass.Hass):
         enabled = self.enabler is None or self.enabler.is_enabled()
         if self.was_enabled != enabled:
             self.was_enabled = enabled
-            self.log("enabled changed to {}".format(enabled))
+            self.log(f"enabled changed to {enabled}")
             if enabled:
                 if self.is_on:
                     self.__start()
@@ -232,7 +230,7 @@ class TimerSwitch(hass.Hass):
 
     def on_change(self, value: bool) -> None:
         with self.mutex.lock("on_change"):
-            self.log("on_change: {}".format(value))
+            self.log(f"on_change: {value}")
             if self.delay is None:
                 self._handle_change(value)
                 return

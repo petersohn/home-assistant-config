@@ -21,7 +21,7 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
         token = hass_config["token"]
         if hasattr(token, "get_secret_value"):
             token = token.get_secret_value()
-        url = "{}/api/{}".format(hass_config["ha_url"], path)
+        url = f"{hass_config['ha_url']}/api/{path}"
         self.log("Calling API: " + url)
         with request.urlopen(
             request.Request(
@@ -38,10 +38,11 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
         now = datetime.datetime.now(datetime.timezone.utc)
         begin_timestamp = (now - max_interval).strftime("%Y-%m-%dT%H:%M:%SZ")
         end_timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
-        path = "history/period/{}?filter_entity_id={}&end_time={}".format(
-            begin_timestamp, entity_id, end_timestamp
+        path = (
+            f"history/period/{begin_timestamp}"
+            f"?filter_entity_id={entity_id}&end_time={end_timestamp}"
         )
         return self._api_request(path)
 
     def load_states(self, entity_id: str) -> dict[str, Any]:
-        return self._api_request("states/{}".format(entity_id))
+        return self._api_request(f"states/{entity_id}")
