@@ -7,7 +7,7 @@ sprinkler_run_time:
         - maximum_temperature_last_day
     target: sensor.sprinkler_run_time
     expr: >
-        (1.2 * v.sensor.maximum_temperature_last_day - 15.0
+        (1.0 * v.sensor.maximum_temperature_last_day - 9.0
         - 4.0 * v.sensor.rain_decaying) * 0.8
     attributes:
         unit_of_measurement: min
