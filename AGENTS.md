@@ -88,7 +88,7 @@ Only clean up resources registered on **other apps** in `terminate()`:
 There are two levels of testing:
 
 - **Unit tests**: These use a mocked version of AppDaemon. Fast and deterministic. These test the functionality of the apps, along with exact timing and edge cases.
-- **Integration tests**: These use a real Home Assistant and AppDaemon. Slow and nondeterministic. These test that the apps work in realistic conditions. No exact timing is tested. Basic functionality is tested, plus behavior that rely on AppDaemon's inner logic, such as reloading apps when the configuration changes. Integration tests are not necessary for every app, but should be added for more complex functionality, especially cross-app interactions.
+- **Integration tests**: These use a real Home Assistant and AppDaemon. Slow and nondeterministic. These test that the apps work in realistic conditions. No exact timing is tested. Basic functionality is tested, plus behavior that rely on AppDaemon's inner logic, such as reloading apps when the configuration changes. Integration tests are not necessary for every app, but should be added for more complex functionality, especially cross-app interactions. An integration test is also needed when Home Assistant is driven in a new kind of way (e.g. calling a notify service, using a new integration platform), to verify the AppDaemon-to-HASS service call path works end-to-end.
 
 #### Setting up virtual environment
 
