@@ -85,6 +85,8 @@ def home_assistant(clear_output_dir: Any, base_output_directory: str) -> Any:
         os.path.join(config_dir, "auth"),
         os.path.join(hass_path, ".storage", "auth"),
     )
+    os.makedirs(os.path.join(hass_path, "notify"), exist_ok=True)
+    open(os.path.join(hass_path, "notify", "notify.log"), "w").close()
     _run_compose("up", "-d", "hass")
     # Wait for HASS to start
     import requests
@@ -111,6 +113,7 @@ def appdaemon(home_assistant: Any, base_output_directory: str) -> Any:
     os.makedirs(appdaemon_dir, exist_ok=True)
     create_appdaemon_configuration(appdaemon_dir, "hass:8123", APPDAEMON_PORT)
     create_appdaemon_apps_config(appdaemon_dir, "TestApp")
+    os.makedirs(os.path.join(appdaemon_dir, "notify"), exist_ok=True)
     _run_compose("up", "-d", "appdaemon")
     # Wait for AppDaemon to start
     import requests

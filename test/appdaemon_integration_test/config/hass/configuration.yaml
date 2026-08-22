@@ -6,6 +6,8 @@ homeassistant:
   time_zone: Europe/Budapest
   auth_providers:
     - type: homeassistant
+  allowlist_external_dirs:
+    - /config/notify
 
 http:
   server_port: 18123
@@ -95,6 +97,15 @@ script:
       - action: input_boolean.turn_off
         data:
           entity_id: input_boolean.cover_moving
+
+command_line:
+  - sensor:
+      name: log_notifier
+      command: "tail -n 1 /config/notify/notify.log"
+      scan_interval: 1
+  - notify:
+      name: test_log_notifier
+      command: "cat >> /config/notify/notify.log"
 
 history:
 

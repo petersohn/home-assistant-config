@@ -18,6 +18,10 @@ class AppDaemonClient:
         self._dir = appdaemon_dir
         self._loaded_apps: list[str] = []
 
+    @property
+    def dir(self) -> str:
+        return self._dir
+
     def call_function(self, function: str, *args: Any, **kwargs: Any) -> Any:
         result_type = kwargs.pop("result_type", None)
         arg_types = kwargs.pop("arg_types", [])

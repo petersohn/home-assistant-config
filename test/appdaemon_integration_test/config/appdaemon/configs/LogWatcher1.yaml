@@ -1,0 +1,8 @@
+log_watcher:
+  module: log_watcher
+  class: LogWatcher
+  file: /conf/notify/watched.log
+  poll_interval: 1
+  notifier: notify/test_log_notifier
+  dependencies:
+    - locker

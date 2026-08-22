@@ -590,7 +590,7 @@ class Hass:
             callback,
         )
 
-    def call_service(self, service: str, entity_id: str, **kwargs: Any) -> None:
+    def call_service(self, service: str, entity_id: str = "", **kwargs: Any) -> None:
         assert self.__manager is not None
         self.__manager.call_service(
             self.__name,

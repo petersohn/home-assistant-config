@@ -86,6 +86,4 @@ class LogWatcher(hass.Hass):
 
         if self.enabler is None or self.enabler.is_enabled():
             message = "".join(lines)
-            self.call_service(
-                self.notifier, entity_id="", message=message, **self.extra_args
-            )
+            self.call_service(self.notifier, message=message, **self.extra_args)
