@@ -83,7 +83,7 @@ def test_no_new_lines_no_action(harness: Harness, tmp_path: Any) -> None:
     assert calls == []
 
 
-def test_multiple_lines_single_notification(harness: Harness, tmp_path: Any) -> None:
+def test_sequential_polls_only_emit_new_lines(harness: Harness, tmp_path: Any) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
     calls = _register_notifier(harness)
@@ -92,14 +92,21 @@ def test_multiple_lines_single_notification(harness: Harness, tmp_path: Any) -> 
     harness.advance_time(timedelta(seconds=10))
 
     with open(log_file, "a") as f:
-        f.write("line a\n")
-        f.write("line b\n")
-        f.write("line c\n")
+        f.write("first batch\n")
 
     harness.advance_time(timedelta(seconds=10))
 
     assert len(calls) == 1
-    assert "line a\nline b\nline c\n" in calls[0]["message"]
+    assert "first batch\n" in calls[0]["message"]
+
+    with open(log_file, "a") as f:
+        f.write("second batch\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 2
+    assert "second batch\n" in calls[1]["message"]
+    assert "first batch\n" not in calls[1]["message"]
 
 
 def test_extra_args_passed_through(harness: Harness, tmp_path: Any) -> None:
