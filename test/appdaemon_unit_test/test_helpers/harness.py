@@ -161,6 +161,9 @@ class Harness:
         assert not self._manager.has_error()
         return result
 
+    def clear_errors(self) -> None:
+        self._manager.clear_errors()
+
     def cleanup(self) -> None:
         mutex_graph = self.locker.get_global_graph()
         append_graph(self._global_mutex_graph, mutex_graph)

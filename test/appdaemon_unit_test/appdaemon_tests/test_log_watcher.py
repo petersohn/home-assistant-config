@@ -120,3 +120,80 @@ def test_extra_args_passed_through(harness: Harness, tmp_path: Any) -> None:
     assert len(calls) == 1
     assert calls[0]["title"] == "TestLog"
     assert "hello\n" in calls[0]["message"]
+
+
+def test_enabler_disabled_suppresses_notification(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing\n")
+    calls = _register_notifier(harness)
+    enabler: Any = harness.create_app(
+        "enabler", "ScriptEnabler", "test_enabler", initial=True
+    )
+    _create_log_watcher(harness, str(log_file), enabler="test_enabler")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    enabler.disable()
+
+    with open(log_file, "a") as f:
+        f.write("while disabled\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert calls == []
+
+    with open(log_file, "a") as f:
+        f.write("after re-enable\n")
+
+    enabler.enable()
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 1
+    assert "after re-enable\n" in calls[0]["message"]
+    assert "while disabled\n" not in calls[0]["message"]
+
+
+def test_file_shrink_resets_offset(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing line 1\nexisting line 2\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(harness, str(log_file))
+
+    harness.advance_time(timedelta(seconds=10))
+
+    log_file.write_text("rotated fresh content\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 1
+    assert "rotated fresh content\n" in calls[0]["message"]
+
+
+def test_file_missing_then_recreated(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("first line\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(harness, str(log_file))
+
+    harness.advance_time(timedelta(seconds=10))
+
+    with open(log_file, "a") as f:
+        f.write("second line\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 1
+    assert "second line\n" in calls[0]["message"]
+
+    log_file.unlink()
+
+    harness.advance_time(timedelta(seconds=10))
+    harness.clear_errors()
+
+    log_file.write_text("fresh line a\nfresh line b\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 2
+    assert "fresh line a\nfresh line b\n" in calls[1]["message"]

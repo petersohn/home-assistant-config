@@ -293,6 +293,9 @@ class AppManager:
     def has_error(self) -> bool:
         return self.__has_error
 
+    def clear_errors(self) -> None:
+        self.__has_error = False
+
     def log(self, app: str, msg: str, level: LogLevel) -> None:
         line = f"{self.__datetime.strftime('%Y-%m-%d %H:%M:%S')} [{level}] {app}: {msg}"
         print(line)
