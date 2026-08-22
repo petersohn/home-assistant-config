@@ -85,3 +85,6 @@ gate_controller_maintenance:
 sunlight_sensor_maintenance:
   name: Sunlight Sensor
   icon: mdi:weather-sunny-alert
+appdaemon_error_log_alert:
+  name: "AppDaemon hibanapló riasztás"
+  icon: mdi:bell-alert

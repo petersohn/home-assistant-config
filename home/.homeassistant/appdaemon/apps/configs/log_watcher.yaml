@@ -1,0 +1,18 @@
+appdaemon_error_log_alert_enabler:
+    module: enabler
+    class: ValueEnabler
+    dependencies: locker
+    entity: input_boolean.appdaemon_error_log_alert
+    value: 'on'
+
+
+appdaemon_error_log_watcher:
+    module: log_watcher
+    class: LogWatcher
+    file: /var/log/appdaemon/error.log
+    poll_interval: 10
+    notifier: notify.telegram_alert
+    enabler: appdaemon_error_log_alert_enabler
+    dependencies:
+        - locker
+        - appdaemon_error_log_alert_enabler
