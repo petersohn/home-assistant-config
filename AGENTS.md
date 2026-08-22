@@ -75,6 +75,14 @@ Modules under `home/.homeassistant/appdaemon/apps/apps/` (configured via the `*.
 - `wind_direction.py` (`WindDirection`): Updates the mdi arrow icon on a wind-direction sensor based on its bearing.
 - `custom_icon.py` (`CustomIcon`): Intended to swap mdi icons on entities based on on/off state; currently inactive (callbacks are stubbed out).
 
+### Timer and callback cleanup in terminate()
+
+AppDaemon automatically cancels timers and state/event listeners created by an app's own `run_in`/`run_every`/`run_daily`/`listen_state`/`listen_event` calls when the app terminates. There is no need to call `cancel_timer` or unregister listeners for resources created on the app itself in `terminate()`.
+
+Only clean up resources registered on **other apps** in `terminate()`:
+- Callbacks registered on another app (e.g. `enabler.remove_callback(self.enabler_id)`), because AppDaemon cannot know about them.
+- `ExpressionEvaluator` instances created via another app (`expression.py`), which manage their own callbacks.
+
 ### Testing
 
 There are two levels of testing:
