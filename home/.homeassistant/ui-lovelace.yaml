@@ -1247,6 +1247,7 @@ views:
           - alert.air_quality
           - alert.low_space
           - alert.camera_detection
+          - input_boolean.appdaemon_error_log_alert
         title: Riasztások
       - type: entities
         entities:
