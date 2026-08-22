@@ -11,7 +11,7 @@ appdaemon_error_log_watcher:
     class: LogWatcher
     file: /var/log/appdaemon/error.log
     poll_interval: 10
-    notifier: notify.telegram_alert
+    notifier: notify/telegram_alert
     enabler: appdaemon_error_log_alert_enabler
     args:
       title: AppDaemon hiba
