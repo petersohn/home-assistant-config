@@ -4,11 +4,7 @@ camera_detection_alert:
     dependencies:
         - locker
     expr: >
-        (v.input_select.presence_mode == "sleep"
-        or
-        v.input_select.presence_mode == "away"
-        and
-        (v.sensor.time >= "22:00" or v.sensor.time <= "07:00"))
+        (v.input_select.presence_mode == "sleep")
         and
         ((ok.binary_sensor.kapu_person_detected and
         v.binary_sensor.kapu_person_detected)
