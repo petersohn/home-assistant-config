@@ -1,4 +1,4 @@
-from appdaemon_unit_test.test_helpers.hass import Hass
+from appdaemon_unit_test.test_helpers.hass import Hass, ServiceCallback
 from datetime import datetime, timedelta, time
 from typing import Any, Callable
 
@@ -57,3 +57,8 @@ class TestApp(Hass):
         if future and value < self.datetime():
             value += timedelta(days=1)
         return value
+
+    def register_service(
+        self, service: str, entity_id: str, callback: ServiceCallback
+    ) -> None:
+        self._register_service(service, entity_id, callback)

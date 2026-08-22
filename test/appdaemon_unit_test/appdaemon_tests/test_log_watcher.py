@@ -1,0 +1,122 @@
+from __future__ import annotations
+
+from datetime import timedelta
+from typing import Any
+
+from appdaemon_unit_test.test_helpers.harness import Harness
+
+
+NOTIFIER = "notify/notify"
+
+
+def _create_log_watcher(
+    harness: Harness,
+    file: str,
+    poll_interval: timedelta | None = None,
+    notifier: str = NOTIFIER,
+    enabler: str | None = None,
+    args: dict[str, Any] | None = None,
+) -> Any:
+    interval = poll_interval if poll_interval is not None else timedelta(seconds=10)
+    kwargs: dict[str, Any] = {
+        "file": file,
+        "poll_interval": int(interval.total_seconds()),
+        "notifier": notifier,
+    }
+    if enabler is not None:
+        kwargs["enabler"] = enabler
+    if args is not None:
+        kwargs["args"] = args
+    return harness.create_app(
+        "log_watcher", "LogWatcher", "log_watcher", **kwargs
+    )
+
+
+def _register_notifier(harness: Harness, notifier: str = NOTIFIER) -> list[dict[str, Any]]:
+    calls: list[dict[str, Any]] = []
+
+    def capture(data: dict[str, Any]) -> None:
+        calls.append(data)
+
+    harness.test_app.register_service(notifier, "", capture)
+    return calls
+
+
+def test_startup_seeks_to_end(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing line\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(harness, str(log_file))
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert calls == []
+
+
+def test_new_lines_notification(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(harness, str(log_file))
+
+    harness.advance_time(timedelta(seconds=10))
+
+    with open(log_file, "a") as f:
+        f.write("new line 1\n")
+        f.write("new line 2\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 1
+    assert "new line 1\nnew line 2\n" in calls[0]["message"]
+
+
+def test_no_new_lines_no_action(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(harness, str(log_file))
+
+    harness.advance_time(timedelta(seconds=10))
+    harness.advance_time(timedelta(seconds=10))
+
+    assert calls == []
+
+
+def test_multiple_lines_single_notification(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(harness, str(log_file))
+
+    harness.advance_time(timedelta(seconds=10))
+
+    with open(log_file, "a") as f:
+        f.write("line a\n")
+        f.write("line b\n")
+        f.write("line c\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 1
+    assert "line a\nline b\nline c\n" in calls[0]["message"]
+
+
+def test_extra_args_passed_through(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(
+        harness, str(log_file), args={"title": "TestLog"}
+    )
+
+    harness.advance_time(timedelta(seconds=10))
+
+    with open(log_file, "a") as f:
+        f.write("hello\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 1
+    assert calls[0]["title"] == "TestLog"
+    assert "hello\n" in calls[0]["message"]
