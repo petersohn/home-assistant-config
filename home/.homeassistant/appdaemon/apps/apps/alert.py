@@ -54,7 +54,7 @@ class AlertAggregator(hass.Hass):
                 if value:
                     if self.app.timeout is not None:
                         if self.value:
-                            self.app.error(
+                            self.app.log(
                                 f"Value is already set: {self.entity}"
                             )
                             return
@@ -65,7 +65,7 @@ class AlertAggregator(hass.Hass):
                                 self.app.timeout.total_seconds(),
                             )
                         else:
-                            self.app.error(
+                            self.app.log(
                                 f"Timer is already set: {self.entity}"
                             )
                         return
