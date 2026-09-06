@@ -168,3 +168,42 @@ def test_reentrancy(harness: Harness, type_: str, expected: str) -> None:
     assert harness.get_state(target) == expected
     harness.call_on_app(auto_switch, "auto_turn_off")
     assert harness.get_state(target) == "off"
+
+
+def test_target_unavailable(harness: Harness) -> None:
+    auto_switch, _ = _initialize(harness, "Basic")
+    harness.set_state(target, "unavailable")
+    harness.call_on_app(auto_switch, "auto_turn_on")
+    assert harness.get_state(target) == "unavailable"
+    harness.call_on_app(auto_switch, "auto_turn_off")
+    assert harness.get_state(target) == "unavailable"
+
+
+def test_target_unavailable_manual_mode(harness: Harness) -> None:
+    _initialize(harness, "Switched")
+    harness.set_state(switch, "on")
+    harness.set_state(target, "unavailable")
+    harness.step()
+    assert harness.get_state(target) == "unavailable"
+
+
+def test_target_unavailable_retry_after_recovery(harness: Harness) -> None:
+    auto_switch, _ = _initialize(harness, "Basic")
+    harness.set_state(target, "unavailable")
+    harness.call_on_app(auto_switch, "auto_turn_on")
+    assert harness.get_state(target) == "unavailable"
+    harness.set_state(target, "off")
+    harness.step()
+    assert harness.get_state(target) == "on"
+
+
+def test_target_unavailable_recovery_to_wrong_state(harness: Harness) -> None:
+    auto_switch, _ = _initialize(harness, "Basic", initial_target_state="off")
+    assert harness.get_state(target) == "off"
+    harness.set_state(target, "unavailable")
+    harness.step()
+    harness.call_on_app(auto_switch, "auto_turn_on")
+    assert harness.get_state(target) == "unavailable"
+    harness.set_state(target, "off")
+    harness.step()
+    assert harness.get_state(target) == "on"

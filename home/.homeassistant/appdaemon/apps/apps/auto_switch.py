@@ -82,10 +82,12 @@ class AutoSwitch(hass.Hass):
             self.log(f"Switch state={switch_state}")
             if switch_state == "on":
                 self.log("Initially turning on")
-                self.turn_on(self.target)
+                if self.__is_target_available():
+                    self.turn_on(self.target)
             elif switch_state == "off":
                 self.log("Initially turning off")
-                self.turn_off(self.target)
+                if self.__is_target_available():
+                    self.turn_off(self.target)
 
     def auto_turn_on(self) -> None:
         with self.mutex.lock("auto_turn_on"):
@@ -110,6 +112,13 @@ class AutoSwitch(hass.Hass):
         with self.mutex.lock("on_enabled_changed"):
             self.__update(self.state)
 
+    def __is_target_available(self) -> bool:
+        target_state = self.get_state(self.target)
+        if target_state in ("unavailable", "unknown"):
+            self.log(f"Target {self.target} not available")
+            return False
+        return True
+
     def __update(self, state: int | None) -> None:
         self.__stop_timer()
         self.log(f"Got new state: {self.state} -> {state}")
@@ -117,6 +126,9 @@ class AutoSwitch(hass.Hass):
 
         if self.switch and self.get_state(self.switch) != "auto":
             self.log("On manual mode")
+            return
+
+        if not self.__is_target_available():
             return
 
         if state == 0 or (
@@ -154,14 +166,16 @@ class AutoSwitch(hass.Hass):
             value = new if new is not None else self.get_state(entity)
             if value == "on":
                 self.log("Manually turning on")
-                self.__set_intended_state("on")
-                if self.get_state(self.target) != "on":
-                    self.turn_on(self.target)
+                if self.__is_target_available():
+                    self.__set_intended_state("on")
+                    if self.get_state(self.target) != "on":
+                        self.turn_on(self.target)
             elif value == "off":
                 self.log("Manually turning off")
-                self.__set_intended_state("off")
-                if self.get_state(self.target) != "off":
-                    self.turn_off(self.target)
+                if self.__is_target_available():
+                    self.__set_intended_state("off")
+                    if self.get_state(self.target) != "off":
+                        self.turn_off(self.target)
             else:
                 self.log("Setting to auto")
                 self.__update(self.state)
