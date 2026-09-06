@@ -129,6 +129,27 @@ def test_extra_args_passed_through(harness: Harness, tmp_path: Any) -> None:
     assert "hello\n" in calls[0]["message"]
 
 
+def test_html_like_content_escaped(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(harness, str(log_file))
+
+    harness.advance_time(timedelta(seconds=10))
+
+    with open(log_file, "a") as f:
+        f.write('Failed: error=400 <string> at byte offset 24 "x"\n')
+        f.write("a & b < c > d\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 1
+    message = calls[0]["message"]
+    assert "<string>" not in message
+    assert "&lt;string&gt;" in message
+    assert "a &amp; b &lt; c &gt; d" in message
+
+
 def test_enabler_disabled_suppresses_notification(harness: Harness, tmp_path: Any) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")

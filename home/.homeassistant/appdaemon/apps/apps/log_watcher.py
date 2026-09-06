@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import html
 import os
 from typing import Any, TYPE_CHECKING, cast
 
@@ -85,5 +86,5 @@ class LogWatcher(hass.Hass):
         self.log(f"{len(lines)} new line(s) from {self.file}")
 
         if self.enabler is None or self.enabler.is_enabled():
-            message = "".join(lines)
+            message = "".join(html.escape(line) for line in lines)
             self.call_service(self.notifier, message=message, **self.extra_args)
