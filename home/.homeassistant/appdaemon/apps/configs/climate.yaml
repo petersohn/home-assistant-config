@@ -10,6 +10,12 @@ heater_check:
       v.sensor.temperature_kitchen,
       v.sensor.daikin_bedroom_inside_temperature,
       v.sensor.daikin_living_room_inside_temperature))
+      if ok.sensor.temperature_living_room_upper
+      or ok.sensor.temperature_bedroom_upper
+      or ok.sensor.temperature_kitchen
+      or ok.sensor.daikin_bedroom_inside_temperature
+      or ok.sensor.daikin_living_room_inside_temperature
+      else "unavailable"
     target: sensor.heater_check
 
 
@@ -23,6 +29,10 @@ heater_check2:
       v.sensor.temperature_living_room_upper,
       v.sensor.temperature_bedroom_upper,
       v.sensor.temperature_kitchen))
+      if ok.sensor.temperature_living_room_upper
+      or ok.sensor.temperature_bedroom_upper
+      or ok.sensor.temperature_kitchen
+      else "unavailable"
     target: sensor.heater_check2
     attributes:
       icon: mdi:home-thermometer-outline
