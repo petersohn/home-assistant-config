@@ -13,6 +13,7 @@ from appdaemon_integration_test.helpers.hass_client import HassClient
 from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
 from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 from appdaemon_integration_test.helpers.error_log import ErrorLogChecker
+from appdaemon_integration_test.helpers.mqtt_client import MqttClient
 # Registers the home_assistant and appdaemon session-scoped fixtures. pytest
 # only auto-loads conftest.py on the ancestor chain of test files; helpers/ is
 # a sibling of integration_tests/, so the fixtures must be registered as a
@@ -52,6 +53,12 @@ def appdaemon_client(appdaemon: Any, global_mutex_graph: dict[str, Any]) -> Any:
 @pytest.fixture(scope="session")
 def error_log_checker(appdaemon: Any) -> ErrorLogChecker:
     return ErrorLogChecker(os.path.join(appdaemon["dir"], "error.log"))
+
+
+@pytest.fixture(scope="session")
+def mqtt_client(mosquitto: Any) -> Iterator[MqttClient]:
+    with MqttClient(mosquitto["host"]) as client:
+        yield client
 
 
 @pytest.fixture(autouse=True)

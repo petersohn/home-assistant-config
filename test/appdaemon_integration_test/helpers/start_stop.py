@@ -105,6 +105,12 @@ def home_assistant(mosquitto: Any, clear_output_dir: Any, base_output_directory:
         os.path.join(config_dir, "auth"),
         os.path.join(hass_path, ".storage", "auth"),
     )
+    # Seed the MQTT broker config entry, because the `broker` option is no
+    # longer accepted in configuration.yaml.
+    shutil.copy(
+        os.path.join(config_dir, "core.config_entries"),
+        os.path.join(hass_path, ".storage", "core.config_entries"),
+    )
     os.makedirs(os.path.join(hass_path, "notify"), exist_ok=True)
     open(os.path.join(hass_path, "notify", "notify.log"), "w").close()
     _run_compose("up", "-d", "hass")

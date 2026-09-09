@@ -17,7 +17,9 @@ api:
 websocket_api:
 
 mqtt:
-  sensor: []
+  sensor:
+    - name: smoke_sensor
+      state_topic: home/test/smoke_sensor/state
   binary_sensor: []
   switch: []
 
