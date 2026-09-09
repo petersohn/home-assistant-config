@@ -13,6 +13,8 @@ files = [
 exclude = [
     "test/.venv/",
     "test/appdaemon_integration_test/output/",
+    "test/appdaemon_integration_test/.hass/",
+    "test/appdaemon_integration_test/.appdaemon/",
     "\\.mypy_cache/",
     "stubs/",
 ]
@@ -41,6 +43,8 @@ extraPaths = [
 ]
 exclude = [
     "test/appdaemon_integration_test/output/",
+    "test/appdaemon_integration_test/.hass/",
+    "test/appdaemon_integration_test/.appdaemon/",
     "test/.venv/",
     "**/.venv/",
     "**/site-packages/",
