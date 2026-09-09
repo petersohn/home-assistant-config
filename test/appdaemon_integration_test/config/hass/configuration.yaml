@@ -16,6 +16,11 @@ api:
 
 websocket_api:
 
+mqtt:
+  sensor: []
+  binary_sensor: []
+  switch: []
+
 input_boolean:
   control_switch:
   test_switch1:

@@ -20,6 +20,7 @@ COMPOSE_FILE = os.path.normpath(
 
 HASS_PORT = 18000
 APPDAEMON_PORT = 18001
+MOSQUITTO_PORT = 18830
 
 # Run the containers as the host user so files written to the mounted output
 # volumes are owned by the host user and can be cleaned up without sudo.
@@ -66,7 +67,7 @@ def no_stale_services() -> None:
         f"stale compose services already running: {running}; "
         f"run 'docker compose -f {COMPOSE_FILE} down' first"
     )
-    for port in (HASS_PORT, APPDAEMON_PORT):
+    for port in (MOSQUITTO_PORT, HASS_PORT, APPDAEMON_PORT):
         assert _port_is_free(port), (
             f"port {port} already in use; stop the occupying process or "
             f"run 'docker compose -f {COMPOSE_FILE} down'"
@@ -74,7 +75,26 @@ def no_stale_services() -> None:
 
 
 @pytest.fixture(scope="session")
-def home_assistant(clear_output_dir: Any, base_output_directory: str) -> Any:
+def mosquitto() -> Any:
+    _run_compose("up", "-d", "mosquitto")
+    deadline = time.time() + 30
+    while time.time() < deadline:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(0.5)
+            try:
+                s.connect(("127.0.0.1", MOSQUITTO_PORT))
+                break
+            except OSError:
+                pass
+        time.sleep(0.2)
+    else:
+        raise RuntimeError("Mosquitto failed to start")
+    yield {"host": f"127.0.0.1:{MOSQUITTO_PORT}", "port": MOSQUITTO_PORT}
+    _run_compose("stop", "mosquitto")
+
+
+@pytest.fixture(scope="session")
+def home_assistant(mosquitto: Any, clear_output_dir: Any, base_output_directory: str) -> Any:
     hass_path = os.path.join(base_output_directory, "hass")
     shutil.rmtree(hass_path, ignore_errors=True)
     create_home_assistant_configuration(hass_path, 8123)

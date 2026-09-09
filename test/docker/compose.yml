@@ -1,4 +1,11 @@
 services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "18830:1883"
+    volumes:
+      - ../docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
   hass:
     image: ghcr.io/home-assistant/home-assistant:stable
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
