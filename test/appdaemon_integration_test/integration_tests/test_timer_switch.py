@@ -124,10 +124,7 @@ def test_only_reload_changed_apps(
     # AppDaemon-internal race: timer_sequence1.terminate() turns off switch1's
     # target, firing a listen_state callback that executes after switch1 is
     # popped from AppDaemon.objects. cancel_listen_state cannot stop an
-    # already-dispatched callback, so a KeyError surfaces in error.log. The
-    # switch turn-off now round-trips the MQTT broker, so the callback (and
-    # the resulting error) can fire well after load_apps returns; the
-    # allowance is kept for the rest of the test instead of a scoped window.
+    # already-dispatched callback, so a KeyError surfaces in error.log.
     error_log.allow_errors("KeyError")
     appdaemon_client.load_apps(
         *base_configs,

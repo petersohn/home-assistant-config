@@ -54,7 +54,12 @@ class MqttClient:
             self._client.subscribe(f"{TOPIC_PREFIX}/+/command")
 
     def _on_message(self, _client: Any, _userdata: Any, message: mqtt.MQTTMessage) -> None:
-        state_topic = message.topic.replace("/command", "/state")
+        if not message.topic.endswith("/command"):
+            self._logger.warning(
+                "ignoring non-command message on %s", message.topic
+            )
+            return
+        state_topic = message.topic[: -len("/command")] + "/state"
         self._logger.info("echo %s -> %s", message.payload, state_topic)
         # Publish without wait_for_publish: this runs on the paho network
         # thread, and blocking here would deadlock the PUBACK handling (the
