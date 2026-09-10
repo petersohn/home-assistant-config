@@ -9,6 +9,11 @@ from paho.mqtt.enums import CallbackAPIVersion
 
 TOPIC_PREFIX = "home/test"
 
+# Sensors configured in the HASS test config with a value_template reading
+# value_json.state. Every publish to these must be a JSON body, even when
+# the caller passes no attributes.
+JSON_TEMPLATE_SENSORS: frozenset[str] = frozenset({"test_sensor1", "test_sensor2"})
+
 
 class MqttClient:
     """Publishes test entity states and emulates MQTT switch devices.
@@ -62,8 +67,8 @@ class MqttClient:
     def publish_state(
         self, name: str, payload: Any, *, retain: bool = True, attributes: dict[str, Any] | None = None
     ) -> None:
-        if attributes:
-            body = json.dumps({"state": payload, **attributes})
+        if attributes or name in JSON_TEMPLATE_SENSORS:
+            body = json.dumps({"state": payload, **(attributes or {})})
         else:
             body = str(payload)
         self._publish(f"{TOPIC_PREFIX}/{name}/state", body, retain=retain)

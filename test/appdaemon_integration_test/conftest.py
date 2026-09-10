@@ -9,7 +9,9 @@ _HERE = os.path.dirname(__file__)
 sys.path.insert(0, _HERE)
 
 import pytest
-from appdaemon_integration_test.helpers.hass_client import HassClient
+import time
+import requests
+from appdaemon_integration_test.helpers.hass_client import HassClient, HASS_TOKEN
 from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
 from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 from appdaemon_integration_test.helpers.error_log import ErrorLogChecker
@@ -58,8 +60,31 @@ def error_log_checker(appdaemon: Any) -> ErrorLogChecker:
 
 
 @pytest.fixture(scope="session")
-def mqtt_client(mosquitto: Any) -> Iterator[MqttClient]:
+def mqtt_client(mosquitto: Any, home_assistant: Any) -> Iterator[MqttClient]:
+    session = requests.Session()
+    session.headers["Authorization"] = f"Bearer {HASS_TOKEN}"
+    host = home_assistant["host"]
+    # Probe entities from every MQTT platform used by the test config. HASS
+    # loads the mqtt integration (and its topic subscriptions) late in
+    # startup, well after the HTTP API responds. Publishing a retained probe
+    # and waiting for it to appear in HASS guarantees the subscriptions are
+    # active before the first test publishes its states.
     with MqttClient(mosquitto["host"]) as client:
+        probes = {"sensor.smoke_sensor": "probe", "binary_sensor.start": "on"}
+        client.publish_state("smoke_sensor", "probe")
+        client.publish_state("start", "on")
+        deadline = time.time() + 120
+        pending = dict(probes)
+        while time.time() < deadline:
+            for entity_id, expected in list(pending.items()):
+                r = session.get(f"http://{host}/api/states/{entity_id}")
+                if r.status_code == 200 and r.json()["state"] == expected:
+                    del pending[entity_id]
+            if not pending:
+                break
+            time.sleep(0.2)
+        else:
+            raise RuntimeError(f"HASS MQTT not ready, missing: {pending}")
         yield client
 
 

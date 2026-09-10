@@ -55,6 +55,10 @@ class AppDaemonClient:
         name = self._mqtt_name(entity_id)
         if self._mqtt_client is not None and name is not None:
             self._mqtt_client.publish_state(name, value, attributes=attributes or None)
+            # MQTT state updates reach AppDaemon asynchronously. Wait until
+            # the new state is visible so set_state keeps the synchronous
+            # semantics tests rely on (ordering and immediate assertions).
+            self.wait_for_state(entity_id, value)
             return
         self.call_function("set_state", entity_id, state=value, attributes=attributes)
 

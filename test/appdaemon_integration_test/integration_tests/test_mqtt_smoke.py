@@ -20,3 +20,12 @@ def test_set_state_routes_sensors_via_mqtt(
 ) -> None:
     appdaemon_client.set_state("sensor.smoke_sensor2", 7)
     appdaemon_client.wait_for_state("sensor.smoke_sensor2", 7)
+
+
+def test_smoke_binary_sensor_via_mqtt(
+    appdaemon_client: AppDaemonClient,
+) -> None:
+    appdaemon_client.set_state("binary_sensor.start", "on")
+    appdaemon_client.wait_for_state("binary_sensor.start", "on")
+    appdaemon_client.set_state("binary_sensor.start", "off")
+    appdaemon_client.wait_for_state("binary_sensor.start", "off")

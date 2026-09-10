@@ -45,10 +45,16 @@ mqtt:
   binary_sensor:
     - name: start
       state_topic: home/test/start/state
+      payload_on: "on"
+      payload_off: "off"
     - name: control_start
       state_topic: home/test/control_start/state
+      payload_on: "on"
+      payload_off: "off"
     - name: enabler_switch
       state_topic: home/test/enabler_switch/state
+      payload_on: "on"
+      payload_off: "off"
   switch: []
 
 input_boolean:

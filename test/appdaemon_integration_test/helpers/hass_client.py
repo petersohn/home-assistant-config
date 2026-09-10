@@ -63,7 +63,13 @@ class HassClient:
         content = r.json()
         if not content or not content[0]:
             return 0
-        return len(content[0])
+        return len(
+            [
+                row
+                for row in content[0]
+                if row["state"] not in ("unavailable", "unknown")
+            ]
+        )
 
     def wait_for_history_size(
         self, entity_id: str, expected: int, timeout: float = 15.0

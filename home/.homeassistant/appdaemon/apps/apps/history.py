@@ -148,6 +148,7 @@ class HistoryManager(HistoryManagerBase):
                     )
                     for changes in loaded_history
                     for change in changes
+                    if change["state"] not in ("unavailable", "unknown")
                 ),
             )
         )
