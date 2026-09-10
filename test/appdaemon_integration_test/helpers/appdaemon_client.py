@@ -4,6 +4,7 @@ import requests
 from typing import Any
 from appdaemon_integration_test.helpers.app_daemon import create_appdaemon_apps_config
 from appdaemon_integration_test.helpers.mutex_graph import append_graph, find_cycle
+from appdaemon_integration_test.helpers.mqtt_client import MqttClient
 from appdaemon_integration_test.helpers.type_util import values_equal
 
 
@@ -11,11 +12,13 @@ class AppDaemonClient:
     _session: requests.Session
     _host: str
     _dir: str
+    _mqtt_client: MqttClient | None
 
-    def __init__(self, host: str, appdaemon_dir: str) -> None:
+    def __init__(self, host: str, appdaemon_dir: str, mqtt_client: MqttClient | None = None) -> None:
         self._session = requests.Session()
         self._host = host
         self._dir = appdaemon_dir
+        self._mqtt_client = mqtt_client
         self._loaded_apps: list[str] = []
 
     @property
@@ -41,7 +44,18 @@ class AppDaemonClient:
     def get_state(self, entity_id: str, **kwargs: Any) -> Any:
         return self.call_function("get_state", entity_id, **kwargs)
 
+    @staticmethod
+    def _mqtt_name(entity_id: str) -> str | None:
+        domain, _, name = entity_id.partition(".")
+        if domain in ("sensor", "binary_sensor"):
+            return name
+        return None
+
     def set_state(self, entity_id: str, value: Any, **attributes: Any) -> None:
+        name = self._mqtt_name(entity_id)
+        if self._mqtt_client is not None and name is not None:
+            self._mqtt_client.publish_state(name, value, attributes=attributes or None)
+            return
         self.call_function("set_state", entity_id, state=value, attributes=attributes)
 
     def turn_on(self, entity_id: str) -> None:
@@ -86,7 +100,7 @@ class AppDaemonClient:
 
     def initialize_states(self, **states: Any) -> None:
         for entity, state in states.items():
-            self.call_function("set_state", entity, state=state, attributes={})
+            self.set_state(entity, state)
 
     def check_mutex_graph(self, global_mutex_graph: dict[str, Any]) -> None:
         graph = self.call_on_app("locker", "get_global_graph")

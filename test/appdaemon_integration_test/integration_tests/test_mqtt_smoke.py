@@ -13,3 +13,10 @@ def test_smoke_sensor_via_mqtt(
     mqtt_client.publish_state("smoke_sensor", 42)
     appdaemon_client.wait_for_state("sensor.smoke_sensor", 42)
     assert hass_client.get_state("sensor.smoke_sensor") == "42"
+
+
+def test_set_state_routes_sensors_via_mqtt(
+    appdaemon_client: AppDaemonClient,
+) -> None:
+    appdaemon_client.set_state("sensor.smoke_sensor2", 7)
+    appdaemon_client.wait_for_state("sensor.smoke_sensor2", 7)

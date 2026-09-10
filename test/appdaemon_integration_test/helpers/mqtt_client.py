@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 from typing import Any
 
@@ -58,8 +59,14 @@ class MqttClient:
         if retain:
             self._published_topics.add(topic)
 
-    def publish_state(self, name: str, payload: Any, *, retain: bool = True) -> None:
-        self._publish(f"{TOPIC_PREFIX}/{name}/state", payload, retain=retain)
+    def publish_state(
+        self, name: str, payload: Any, *, retain: bool = True, attributes: dict[str, Any] | None = None
+    ) -> None:
+        if attributes:
+            body = json.dumps({"state": payload, **attributes})
+        else:
+            body = str(payload)
+        self._publish(f"{TOPIC_PREFIX}/{name}/state", body, retain=retain)
 
     def set_switch_state(self, name: str, on: bool) -> None:
         self.publish_state(name, "on" if on else "off")

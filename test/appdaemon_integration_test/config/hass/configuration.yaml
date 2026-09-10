@@ -20,7 +20,35 @@ mqtt:
   sensor:
     - name: smoke_sensor
       state_topic: home/test/smoke_sensor/state
-  binary_sensor: []
+    - name: smoke_sensor2
+      state_topic: home/test/smoke_sensor2/state
+    - name: control_time
+      state_topic: home/test/control_time/state
+    - name: history_test
+      state_topic: home/test/history_test/state
+    - name: test_sensor1
+      state_topic: home/test/test_sensor1/state
+      value_template: "{{ value_json.state }}"
+      json_attributes_topic: home/test/test_sensor1/state
+      json_attributes_template: '{"foo": "{{ value_json.foo }}"}'
+    - name: test_sensor2
+      state_topic: home/test/test_sensor2/state
+      value_template: "{{ value_json.state }}"
+      json_attributes_topic: home/test/test_sensor2/state
+      json_attributes_template: '{"foo": "{{ value_json.foo }}"}'
+    - name: test_cover_position1
+      state_topic: home/test/test_cover_position1/state
+    - name: test_cover_position2
+      state_topic: home/test/test_cover_position2/state
+    - name: cover_available
+      state_topic: home/test/cover_available/state
+  binary_sensor:
+    - name: start
+      state_topic: home/test/start/state
+    - name: control_start
+      state_topic: home/test/control_start/state
+    - name: enabler_switch
+      state_topic: home/test/enabler_switch/state
   switch: []
 
 input_boolean:

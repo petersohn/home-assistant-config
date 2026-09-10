@@ -44,8 +44,10 @@ def hass_client(home_assistant: Any) -> HassClient:
 
 
 @pytest.fixture(scope="session")
-def appdaemon_client(appdaemon: Any, global_mutex_graph: dict[str, Any]) -> Any:
-    client = AppDaemonClient(appdaemon["host"], appdaemon["dir"])
+def appdaemon_client(
+    appdaemon: Any, mqtt_client: MqttClient, global_mutex_graph: dict[str, Any]
+) -> Any:
+    client = AppDaemonClient(appdaemon["host"], appdaemon["dir"], mqtt_client)
     yield client
     client.check_mutex_graph(global_mutex_graph)
 
