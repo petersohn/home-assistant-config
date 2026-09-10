@@ -4,9 +4,9 @@ history_watcher:
   dependencies:
     - locker
   entities:
-    - input_boolean.control_switch
-    - input_boolean.test_switch1
-    - input_boolean.test_switch2
-    - input_boolean.test_switch3
+    - switch.control_switch
+    - switch.test_switch1
+    - switch.test_switch2
+    - switch.test_switch3
     - input_number.cover_position
     - input_select.test_cover_mode

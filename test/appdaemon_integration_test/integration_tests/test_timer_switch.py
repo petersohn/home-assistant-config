@@ -10,10 +10,10 @@ start_sensor = "binary_sensor.start"
 control_start_sensor = "binary_sensor.control_start"
 control_time = "sensor.control_time"
 enabler_switch = "binary_sensor.enabler_switch"
-control_switch = "input_boolean.control_switch"
-switch1 = "input_boolean.test_switch1"
-switch2 = "input_boolean.test_switch2"
-switch3 = "input_boolean.test_switch3"
+control_switch = "switch.control_switch"
+switch1 = "switch.test_switch1"
+switch2 = "switch.test_switch2"
+switch3 = "switch.test_switch3"
 base_configs = ("TimerSwitchControl", "HistoryWatcher")
 
 
@@ -24,13 +24,13 @@ def _initialize(appdaemon_client: AppDaemonClient, *configs: str) -> None:
             control_start_sensor: "off",
             control_time: 0.25,
             enabler_switch: "off",
+            control_switch: "off",
+            switch1: "off",
+            switch2: "off",
+            switch3: "off",
         }
     )
     appdaemon_client.load_apps(*configs)
-    appdaemon_client.turn_off(control_switch)
-    appdaemon_client.turn_off(switch1)
-    appdaemon_client.turn_off(switch2)
-    appdaemon_client.turn_off(switch3)
 
 
 def _start_control(appdaemon_client: AppDaemonClient) -> None:
@@ -124,14 +124,17 @@ def test_only_reload_changed_apps(
     # AppDaemon-internal race: timer_sequence1.terminate() turns off switch1's
     # target, firing a listen_state callback that executes after switch1 is
     # popped from AppDaemon.objects. cancel_listen_state cannot stop an
-    # already-dispatched callback, so a KeyError surfaces in error.log.
-    with error_log.allow_errors("KeyError"):
-        appdaemon_client.load_apps(
-            *base_configs,
-            "TimerSequenceNoEnabler1_2",
-            "TimerSequenceNoEnabler2",
-            "dummy1",
-        )
+    # already-dispatched callback, so a KeyError surfaces in error.log. The
+    # switch turn-off now round-trips the MQTT broker, so the callback (and
+    # the resulting error) can fire well after load_apps returns; the
+    # allowance is kept for the rest of the test instead of a scoped window.
+    error_log.allow_errors("KeyError")
+    appdaemon_client.load_apps(
+        *base_configs,
+        "TimerSequenceNoEnabler1_2",
+        "TimerSequenceNoEnabler2",
+        "dummy1",
+    )
     _wait_for_control(history_watcher)
     history_watcher.check_history(
         control_switch, "on",

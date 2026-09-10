@@ -56,7 +56,12 @@ class MqttClient:
     def _on_message(self, _client: Any, _userdata: Any, message: mqtt.MQTTMessage) -> None:
         state_topic = message.topic.replace("/command", "/state")
         self._logger.info("echo %s -> %s", message.payload, state_topic)
-        self._publish(state_topic, message.payload, retain=True)
+        # Publish without wait_for_publish: this runs on the paho network
+        # thread, and blocking here would deadlock the PUBACK handling (the
+        # command echo would never be delivered). The network loop sends the
+        # message as soon as this callback returns.
+        self._client.publish(state_topic, message.payload, retain=True, qos=1)
+        self._published_topics.add(state_topic)
 
     def _publish(self, topic: str, payload: Any, *, retain: bool) -> None:
         info = self._client.publish(topic, str(payload), retain=retain, qos=1)

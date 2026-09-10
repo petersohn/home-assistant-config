@@ -8,7 +8,7 @@ from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 
 input_switch1 = "input_select.test_auto_switch_switch1"
 input_switch2 = "input_select.test_auto_switch_switch2"
-output_switch = "input_boolean.test_switch1"
+output_switch = "switch.test_switch1"
 enabler = "test_enabler"
 
 base_configs = ("HistoryWatcher", "EnabledSwitch")

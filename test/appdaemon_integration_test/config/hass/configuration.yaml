@@ -55,14 +55,29 @@ mqtt:
       state_topic: home/test/enabler_switch/state
       payload_on: "on"
       payload_off: "off"
-  switch: []
+  switch:
+    - name: control_switch
+      command_topic: home/test/control_switch/command
+      state_topic: home/test/control_switch/state
+      payload_on: "on"
+      payload_off: "off"
+    - name: test_switch1
+      command_topic: home/test/test_switch1/command
+      state_topic: home/test/test_switch1/state
+      payload_on: "on"
+      payload_off: "off"
+    - name: test_switch2
+      command_topic: home/test/test_switch2/command
+      state_topic: home/test/test_switch2/state
+      payload_on: "on"
+      payload_off: "off"
+    - name: test_switch3
+      command_topic: home/test/test_switch3/command
+      state_topic: home/test/test_switch3/state
+      payload_on: "on"
+      payload_off: "off"
 
 input_boolean:
-  control_switch:
-  test_switch1:
-  test_switch2:
-  test_switch3:
-  cover_available:
   cover_moving:
     initial: false
 

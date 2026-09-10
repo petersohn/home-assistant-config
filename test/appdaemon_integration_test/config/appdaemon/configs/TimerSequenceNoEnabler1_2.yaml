@@ -15,5 +15,5 @@ switch1:
   module: auto_switch
   class: AutoSwitch
   dependencies: locker
-  target: input_boolean.test_switch3
+  target: switch.test_switch3
   reentrant: true

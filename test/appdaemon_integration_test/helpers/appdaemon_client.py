@@ -47,7 +47,7 @@ class AppDaemonClient:
     @staticmethod
     def _mqtt_name(entity_id: str) -> str | None:
         domain, _, name = entity_id.partition(".")
-        if domain in ("sensor", "binary_sensor"):
+        if domain in ("sensor", "binary_sensor", "switch"):
             return name
         return None
 

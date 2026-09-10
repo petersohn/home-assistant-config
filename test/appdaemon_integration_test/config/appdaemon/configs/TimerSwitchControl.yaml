@@ -13,5 +13,5 @@ control_switch:
   module: auto_switch
   class: AutoSwitch
   dependencies: locker
-  target: input_boolean.control_switch
+  target: switch.control_switch
   reentrant: true
