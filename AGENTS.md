@@ -51,6 +51,14 @@ Home Assistant uses `domain.service` (dot notation) for service names, but AppDa
 
 Prefer `assert isinstance(...)` over `cast(...)` for runtime type narrowing. `cast` lies to the type checker without verification; `assert isinstance` narrows the type and validates at runtime. Use `cast` only when the target type is structurally incompatible with the source (e.g. cross-module class identity mismatches where `isinstance` cannot hold), and document why.
 
+### Avoid `Any`
+
+Avoid `Any`; use the most specific type possible. In particular:
+
+- Prefer a dataclass over `dict[str, Any]` for structured values (e.g. a fixture yielding host/port info).
+- Use `TypedDict` only when the value is inherently a dict, typically because it comes from an external API call.
+- For genuinely dynamic values (e.g. `object` payload that gets stringified), use `object` instead of `Any`.
+
 ### Production apps
 
 Modules under `home/.homeassistant/appdaemon/apps/apps/` (configured via the `*.yaml` files in `home/.homeassistant/appdaemon/apps/configs/`, split by functionality):
