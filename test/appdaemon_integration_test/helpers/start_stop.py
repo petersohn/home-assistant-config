@@ -4,7 +4,8 @@ import shutil
 import socket
 import subprocess
 import time
-from typing import Any
+from collections.abc import Iterator
+from dataclasses import dataclass
 
 from appdaemon_integration_test.helpers.home_assistant import create_home_assistant_configuration
 from appdaemon_integration_test.helpers.app_daemon import (
@@ -21,6 +22,18 @@ COMPOSE_FILE = os.path.normpath(
 HASS_PORT = 18000
 APPDAEMON_PORT = 18001
 MOSQUITTO_PORT = 18830
+
+
+@dataclass(frozen=True)
+class ServiceInfo:
+    host: str
+    port: int
+
+
+@dataclass(frozen=True)
+class AppDaemonInfo:
+    host: str
+    dir: str
 
 # Run the containers as the host user so files written to the mounted output
 # volumes are owned by the host user and can be cleaned up without sudo.
@@ -75,7 +88,7 @@ def no_stale_services() -> None:
 
 
 @pytest.fixture(scope="session")
-def mosquitto() -> Any:
+def mosquitto() -> Iterator[ServiceInfo]:
     _run_compose("up", "-d", "mosquitto")
     deadline = time.time() + 30
     while time.time() < deadline:
@@ -89,12 +102,14 @@ def mosquitto() -> Any:
         time.sleep(0.2)
     else:
         raise RuntimeError("Mosquitto failed to start")
-    yield {"host": f"127.0.0.1:{MOSQUITTO_PORT}", "port": MOSQUITTO_PORT}
+    yield ServiceInfo(host=f"127.0.0.1:{MOSQUITTO_PORT}", port=MOSQUITTO_PORT)
     _run_compose("stop", "mosquitto")
 
 
 @pytest.fixture(scope="session")
-def home_assistant(mosquitto: Any, clear_output_dir: Any, base_output_directory: str) -> Any:
+def home_assistant(
+    mosquitto: ServiceInfo, clear_output_dir: None, base_output_directory: str
+) -> Iterator[ServiceInfo]:
     hass_path = os.path.join(base_output_directory, "hass")
     shutil.rmtree(hass_path, ignore_errors=True)
     create_home_assistant_configuration(hass_path, 8123)
@@ -129,12 +144,12 @@ def home_assistant(mosquitto: Any, clear_output_dir: Any, base_output_directory:
         time.sleep(0.2)
     else:
         raise RuntimeError("Home Assistant failed to start")
-    yield {"host": f"127.0.0.1:{HASS_PORT}", "port": HASS_PORT}
+    yield ServiceInfo(host=f"127.0.0.1:{HASS_PORT}", port=HASS_PORT)
     _run_compose("stop", "hass")
 
 
 @pytest.fixture(scope="session")
-def appdaemon(home_assistant: Any, base_output_directory: str) -> Any:
+def appdaemon(home_assistant: ServiceInfo, base_output_directory: str) -> Iterator[AppDaemonInfo]:
     appdaemon_dir = os.path.join(base_output_directory, "appdaemon")
     os.makedirs(appdaemon_dir, exist_ok=True)
     create_appdaemon_configuration(appdaemon_dir, "hass:8123", APPDAEMON_PORT)
@@ -158,5 +173,5 @@ def appdaemon(home_assistant: Any, base_output_directory: str) -> Any:
         time.sleep(0.5)
     else:
         raise RuntimeError("AppDaemon failed to start")
-    yield {"host": f"127.0.0.1:{APPDAEMON_PORT}", "dir": appdaemon_dir}
+    yield AppDaemonInfo(host=f"127.0.0.1:{APPDAEMON_PORT}", dir=appdaemon_dir)
     _run_compose("stop", "appdaemon")

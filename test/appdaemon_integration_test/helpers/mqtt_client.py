@@ -68,14 +68,14 @@ class MqttClient:
         self._client.publish(state_topic, message.payload, retain=True, qos=1)
         self._published_topics.add(state_topic)
 
-    def _publish(self, topic: str, payload: Any, *, retain: bool) -> None:
+    def _publish(self, topic: str, payload: object, *, retain: bool) -> None:
         info = self._client.publish(topic, str(payload), retain=retain, qos=1)
         info.wait_for_publish(timeout=5)
         if retain:
             self._published_topics.add(topic)
 
     def publish_state(
-        self, name: str, payload: Any, *, retain: bool = True, attributes: dict[str, Any] | None = None
+        self, name: str, payload: object, *, retain: bool = True, attributes: dict[str, object] | None = None
     ) -> None:
         if attributes or name in JSON_TEMPLATE_SENSORS:
             body = json.dumps({"state": payload, **(attributes or {})})

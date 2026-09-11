@@ -2,10 +2,19 @@ from __future__ import annotations
 import os
 import shutil
 import sys
-from typing import Any
+_HERE = os.path.dirname(__file__)
+
 from collections.abc import Iterator
 
-_HERE = os.path.dirname(__file__)
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from appdaemon_integration_test.helpers.start_stop import (
+        AppDaemonInfo,
+        ServiceInfo,
+    )
+    from appdaemon_integration_test.helpers.mutex_graph import Graph
+
 sys.path.insert(0, _HERE)
 
 import pytest
@@ -29,8 +38,8 @@ def base_output_directory() -> str:
 
 
 @pytest.fixture(scope="session")
-def global_mutex_graph() -> Any:
-    graph: dict[str, Any] = {}
+def global_mutex_graph() -> Iterator[Graph]:
+    graph: Graph = {}
     yield graph
 
 
@@ -41,35 +50,35 @@ def clear_output_dir(base_output_directory: str) -> None:
 
 
 @pytest.fixture(scope="session")
-def hass_client(home_assistant: Any) -> HassClient:
-    return HassClient(home_assistant["host"])
+def hass_client(home_assistant: ServiceInfo) -> HassClient:
+    return HassClient(home_assistant.host)
 
 
 @pytest.fixture(scope="session")
 def appdaemon_client(
-    appdaemon: Any, mqtt_client: MqttClient, global_mutex_graph: dict[str, Any]
-) -> Any:
-    client = AppDaemonClient(appdaemon["host"], appdaemon["dir"], mqtt_client)
+    appdaemon: AppDaemonInfo, mqtt_client: MqttClient, global_mutex_graph: Graph
+) -> Iterator[AppDaemonClient]:
+    client = AppDaemonClient(appdaemon.host, appdaemon.dir, mqtt_client)
     yield client
     client.check_mutex_graph(global_mutex_graph)
 
 
 @pytest.fixture(scope="session")
-def error_log_checker(appdaemon: Any) -> ErrorLogChecker:
-    return ErrorLogChecker(os.path.join(appdaemon["dir"], "error.log"))
+def error_log_checker(appdaemon: AppDaemonInfo) -> ErrorLogChecker:
+    return ErrorLogChecker(os.path.join(appdaemon.dir, "error.log"))
 
 
 @pytest.fixture(scope="session")
-def mqtt_client(mosquitto: Any, home_assistant: Any) -> Iterator[MqttClient]:
+def mqtt_client(mosquitto: ServiceInfo, home_assistant: ServiceInfo) -> Iterator[MqttClient]:
     session = requests.Session()
     session.headers["Authorization"] = f"Bearer {HASS_TOKEN}"
-    host = home_assistant["host"]
+    host = home_assistant.host
     # Probe entities from every MQTT platform used by the test config. HASS
     # loads the mqtt integration (and its topic subscriptions) late in
     # startup, well after the HTTP API responds. Publishing a retained probe
     # and waiting for it to appear in HASS guarantees the subscriptions are
     # active before the first test publishes its states.
-    with MqttClient(mosquitto["host"]) as client:
+    with MqttClient(mosquitto.host) as client:
         probes = {"sensor.smoke_sensor": "probe", "binary_sensor.start": "on"}
         client.publish_state("smoke_sensor", "probe")
         client.publish_state("start", "on")
@@ -108,6 +117,6 @@ def history_watcher(appdaemon_client: AppDaemonClient) -> HistoryWatcher:
 
 
 @pytest.fixture(autouse=True)
-def cleanup_apps(appdaemon_client: AppDaemonClient) -> Any:
+def cleanup_apps(appdaemon_client: AppDaemonClient) -> Iterator[None]:
     yield
     appdaemon_client.unload_apps()
