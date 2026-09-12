@@ -9,9 +9,6 @@ homeassistant:
   allowlist_external_dirs:
     - /config/notify
 
-http:
-  server_port: 18123
-
 api:
 
 websocket_api:

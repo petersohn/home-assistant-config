@@ -23,13 +23,6 @@ config:
 
 homeassistant_alerts:
 
-http:
-    use_x_forwarded_for: true
-    trusted_proxies:
-      - 127.0.0.1
-      - 172.30.0.0/16
-      - ::1
-
 lovelace:
   resource_mode: yaml
   dashboards:
