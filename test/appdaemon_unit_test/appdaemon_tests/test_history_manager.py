@@ -1,7 +1,5 @@
 from __future__ import annotations
-from datetime import timedelta, time
-from typing import Any
-
+from datetime import datetime, timedelta, time
 from appdaemon_unit_test.test_helpers.harness import Harness
 from appdaemon_unit_test.test_helpers.hass import Hass
 from appdaemon_unit_test.test_helpers.timing import Timing
@@ -34,21 +32,22 @@ def _initialize_history_manager(harness: Harness, name: str = "history_manager")
 
 
 def _initialize_history_manager_with_race(
-    harness: Harness, history: Any, race_value: Any,
+    harness: Harness, history: list[list[tuple[datetime, int]]],
+    race_value: str | None,
 ) -> Hass:
     harness.set_state(entity, 0)
     patch_load_history(harness.app_manager, history, race_value)
     return _create_history_manager(harness)
 
 
-def _history_should_be(harness: Harness, app: Hass, *expected_values: Any) -> None:
+def _history_should_be(harness: Harness, app: Hass, *expected_values: datetime | str | int) -> None:
     converted_expected = convert_history_input(list(expected_values))
     values = harness.call_on_app(app, "get_recorded_history")
     converted_values = convert_history_output(list(values))
     assert converted_values == converted_expected
 
 
-def _times_should_match(harness: Harness, actual: Any, expected_time: time | timedelta) -> None:
+def _times_should_match(harness: Harness, actual: datetime, expected_time: time | timedelta) -> None:
     expected = harness.date_from_time(expected_time, future=False)
     assert actual == expected
 
@@ -454,7 +453,7 @@ def test_state_change_during_load_is_not_lost(harness: Harness) -> None:
     time0 = harness.datetime
     harness.advance_time(timedelta(minutes=1))
     history = [[(time0, 5)]]
-    history_manager = _initialize_history_manager_with_race(harness, history, 10)
+    history_manager = _initialize_history_manager_with_race(harness, history, "10")
     time1 = harness.datetime
     harness.advance_time(timedelta(minutes=1))
     harness.set_state(entity, 7)
@@ -468,7 +467,7 @@ def test_state_in_query_and_listener_is_not_duplicated(harness: Harness) -> None
     harness.advance_time(timedelta(minutes=1))
     time1 = harness.datetime
     history = [[(time0, 5), (time1, 10)]]
-    history_manager = _initialize_history_manager_with_race(harness, history, 10)
+    history_manager = _initialize_history_manager_with_race(harness, history, "10")
     harness.advance_time(timedelta(minutes=1))
     harness.set_state(entity, 7)
     time2 = harness.datetime

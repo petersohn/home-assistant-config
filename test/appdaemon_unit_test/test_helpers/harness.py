@@ -1,6 +1,6 @@
 from __future__ import annotations
 from datetime import datetime as dt_datetime, timedelta, time, date
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, TypeVar, overload
 
 from appdaemon_unit_test.test_helpers.config import create_app_manager
 from appdaemon_unit_test.test_helpers.hass import AppManager, Hass
@@ -64,6 +64,17 @@ class Harness:
 
     def advance_time_to_datetime(self, target: dt_datetime) -> None:
         self._manager.advance_time_to(target, self._interval)
+
+    @overload
+    def get_state(self, entity_id: str, attribute: None = ..., type: None = ...) -> str | None: ...
+
+    @overload
+    def get_state(self, entity_id: str, attribute: str, type: None = ...) -> str | dict[str, str] | None: ...
+
+    @overload
+    def get_state(
+        self, entity_id: str, attribute: str | None = ..., *, type: str
+    ) -> int | float | str | dict[str, int | float | str] | None: ...
 
     def get_state(
         self,

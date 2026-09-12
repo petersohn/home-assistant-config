@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from appdaemon_unit_test.test_helpers.harness import Harness
+from enabler import ScriptEnabler
 
 
 NOTIFIER = "notify/notify"
@@ -155,9 +156,10 @@ def test_enabler_disabled_suppresses_notification(harness: Harness, tmp_path: Pa
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
     calls = _register_notifier(harness)
-    enabler: Any = harness.create_app(
+    enabler = harness.create_app(
         "enabler", "ScriptEnabler", "test_enabler", initial=True
     )
+    assert isinstance(enabler, ScriptEnabler)
     _create_log_watcher(harness, str(log_file), enabler="test_enabler")
 
     harness.advance_time(timedelta(seconds=10))

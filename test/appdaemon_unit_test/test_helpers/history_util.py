@@ -1,13 +1,15 @@
+from collections.abc import Sequence
 from datetime import datetime
 from dateutil import parser as date_parser
-from typing import Any
-
-
-def convert_history_input(args: list[str | int]) -> list[tuple[str, int]]:
-    return [
-        (_convert_timestamp(args[i]), int(args[i + 1]))
-        for i in range(0, len(args), 2)
-    ]
+def convert_history_input(
+    args: Sequence[datetime | str | int],
+) -> list[tuple[str, int]]:
+    result: list[tuple[str, int]] = []
+    for i in range(0, len(args), 2):
+        timestamp, value = args[i], args[i + 1]
+        assert isinstance(value, int)
+        result.append((_convert_timestamp(timestamp), value))
+    return result
 
 
 def _convert_timestamp(value: str | int | datetime) -> str:
@@ -19,7 +21,7 @@ def _convert_timestamp(value: str | int | datetime) -> str:
 
 def convert_history_output(
     result: list[tuple[datetime | str, float]],
-) -> list[tuple[str, float]]:
+) -> list[tuple[str, int]]:
     return [
         (_convert_timestamp(date), int(value))
         for date, value in result
@@ -27,6 +29,7 @@ def convert_history_output(
 
 
 def is_expected_history_found(
-    converted_input: Any, converted_output: Any
+    converted_input: list[tuple[str, int]],
+    converted_output: list[tuple[str, int]],
 ) -> bool:
     return all(i in converted_output for i in converted_input)

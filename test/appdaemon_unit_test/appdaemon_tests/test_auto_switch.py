@@ -4,7 +4,8 @@ from typing import Any
 
 import pytest
 from appdaemon_unit_test.test_helpers.harness import Harness
-from appdaemon_unit_test.test_helpers.hass import Hass
+from auto_switch import AutoSwitch
+from enabler import ScriptEnabler
 
 # Use 00:00:00.
 _default_start_time = time(0, 0, 0)
@@ -13,7 +14,7 @@ target = "input_boolean.test_switch"
 switch = "input_select.test_auto_switch_switch"
 
 
-def _initialize(harness: Harness, type_: str, initial_switch_state: str = "auto", initial_target_state: str = "off") -> tuple[Hass, Hass | None]:
+def _initialize(harness: Harness, type_: str, initial_switch_state: str = "auto", initial_target_state: str = "off") -> tuple[AutoSwitch, ScriptEnabler | None]:
     harness.set_state(target, initial_target_state)
     harness.set_state(switch, initial_switch_state)
     args: dict[str, Any] = {"target": target}
@@ -24,8 +25,10 @@ def _initialize(harness: Harness, type_: str, initial_switch_state: str = "auto"
         args["reentrant"] = True
     if "Enabled" in type_:
         enabler = harness.create_app("enabler", "ScriptEnabler", "switch_enabler")
+        assert isinstance(enabler, ScriptEnabler)
         args["enabler"] = "switch_enabler"
     auto_switch = harness.create_app("auto_switch", "AutoSwitch", "test_auto_switch", **args)
+    assert isinstance(auto_switch, AutoSwitch)
     harness.step()
     return auto_switch, enabler
 

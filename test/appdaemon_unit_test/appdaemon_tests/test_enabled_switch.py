@@ -2,6 +2,9 @@ from __future__ import annotations
 from typing import Any
 
 from appdaemon_unit_test.test_helpers.harness import Harness
+from auto_switch import AutoSwitch
+from enabled_switch import EnabledSwitch
+from enabler import ScriptEnabler
 
 
 def _initialize(harness: Harness) -> None:
@@ -9,27 +12,34 @@ def _initialize(harness: Harness) -> None:
     harness.set_state("input_boolean.test_switch2", "off")
 
 
-def _create_enabler_and_switch(harness: Harness, initial: bool, **kwargs: Any) -> tuple[Any, Any]:
+def _create_enabler_and_switch(harness: Harness, initial: bool, **kwargs: Any) -> tuple[ScriptEnabler, EnabledSwitch]:
     enabler = harness.create_app("enabler", "ScriptEnabler", "enabler", initial=initial)
+    assert isinstance(enabler, ScriptEnabler)
     enabled_switch = harness.create_app(
         "enabled_switch", "EnabledSwitch", "enabled_switch",
         enabler="enabler", **kwargs,
     )
+    assert isinstance(enabled_switch, EnabledSwitch)
     return enabler, enabled_switch
 
 
-def _create_basic_enabled_switch(harness: Harness, initial: bool) -> tuple[Any, Any, Any, Any]:
+def _create_basic_enabled_switch(harness: Harness, initial: bool) -> tuple[AutoSwitch, AutoSwitch, ScriptEnabler, EnabledSwitch]:
     switch1 = harness.create_app("auto_switch", "AutoSwitch", "switch1", target="input_boolean.test_switch")
+    assert isinstance(switch1, AutoSwitch)
     switch2 = harness.create_app("auto_switch", "AutoSwitch", "switch2", target="input_boolean.test_switch2")
+    assert isinstance(switch2, AutoSwitch)
     targets = ["switch1", "switch2"]
     enabler, enabled_switch = _create_enabler_and_switch(harness, initial, targets=targets)
     return switch1, switch2, enabler, enabled_switch
 
 
-def _create_enabled_switch_with_guards(harness: Harness) -> tuple[Any, Any, Any, Any, Any]:
+def _create_enabled_switch_with_guards(harness: Harness) -> tuple[ScriptEnabler, ScriptEnabler, AutoSwitch, ScriptEnabler, EnabledSwitch]:
     on_guard = harness.create_app("enabler", "ScriptEnabler", "on_guard", initial=False)
+    assert isinstance(on_guard, ScriptEnabler)
     off_guard = harness.create_app("enabler", "ScriptEnabler", "off_guard", initial=False)
+    assert isinstance(off_guard, ScriptEnabler)
     switch = harness.create_app("auto_switch", "AutoSwitch", "switch", target="input_boolean.test_switch")
+    assert isinstance(switch, AutoSwitch)
     targets = ["switch"]
     enabler, enabled_switch = _create_enabler_and_switch(
         harness, False, targets=targets, on_guard="on_guard", off_guard="off_guard",

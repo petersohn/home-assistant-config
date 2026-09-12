@@ -2,16 +2,17 @@ from __future__ import annotations
 import time
 from typing import Any
 
+from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
 from appdaemon_integration_test.helpers.type_util import values_equal
 
 
 class HistoryWatcher:
-    _ad: Any
+    _ad: AppDaemonClient
 
-    def __init__(self, appdaemon_client: Any) -> None:
+    def __init__(self, appdaemon_client: AppDaemonClient) -> None:
         self._ad = appdaemon_client
 
-    def get_history(self) -> list[Any]:
+    def get_history(self) -> list[tuple[str, Any]]:
         return self._ad.call_on_app("history_watcher", "get_state_history")
 
     def check_history(self, *expected: Any) -> None:

@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import Any
 
 import pytest
 from appdaemon_unit_test.test_helpers.harness import Harness
+from enabler import Enabler
 
 input_binary1 = "binary_sensor.test_input1"
 input_binary2 = "binary_sensor.test_input2"
@@ -10,13 +10,16 @@ input_sensor1 = "sensor.test_input1"
 input_sensor2 = "sensor.test_input2"
 
 
-def _create_expression_enabler(harness: Harness, name: str, expr: str) -> Any:
-    return harness.create_app("enabler", "ExpressionEnabler", name, expr=expr)
+def _create_expression_enabler(harness: Harness, name: str, expr: str) -> Enabler:
+    enabler = harness.create_app("enabler", "ExpressionEnabler", name, expr=expr)
+    assert isinstance(enabler, Enabler)
+    return enabler
 
 
 def _check_expected_states(harness: Harness, expected_states: dict[str, bool]) -> None:
     for name, value in expected_states.items():
-        app: Any = harness.get_app(name)
+        app = harness.get_app(name)
+        assert isinstance(app, Enabler)
         assert app.is_enabled() == value
 
 
@@ -54,7 +57,7 @@ def test_enablers(harness: Harness, enabler1_state: bool, enabler2_state: bool, 
     (10, 5, {"value_less": False, "value_equal": False}),
     (10, 10, {"value_less": False, "value_equal": True}),
 ])
-def test_numeric_sensors(harness: Harness, sensor1: Any, sensor2: Any, expected_states: dict[str, bool]) -> None:
+def test_numeric_sensors(harness: Harness, sensor1: float, sensor2: float, expected_states: dict[str, bool]) -> None:
     harness.set_state(input_sensor1, sensor1)
     harness.set_state(input_sensor2, sensor2)
     _create_expression_enabler(harness, "value_less", f"v.{input_sensor1} < v.{input_sensor2}")

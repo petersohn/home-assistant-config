@@ -7,7 +7,7 @@ from callback_provider import (
     ChangeTrackerProvider,
     EnablerProvider,
 )
-from hass_common import EntityValue
+from hass_common import AttributeValue, EntityValue
 from typing import Any, Callable, cast, final
 from collections.abc import Iterator
 
@@ -250,7 +250,7 @@ class ExpressionEvaluator:
 
 class Expression(hass.Hass):
     target: str = ""
-    attributes: dict[str, Any] = {}
+    attributes: dict[str, AttributeValue] = {}
     evaluator: ExpressionEvaluator = cast("ExpressionEvaluator", cast(Any, None))
 
     def initialize(self) -> None:

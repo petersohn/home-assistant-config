@@ -20,7 +20,7 @@ class HassClient:
         r.raise_for_status()
         return r.json()["state"]
 
-    def get_states(self) -> list[Any]:
+    def get_states(self) -> list[dict[str, Any]]:
         r = self._session.get(f"http://{self._host}/api/states")
         r.raise_for_status()
         return r.json()

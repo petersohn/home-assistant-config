@@ -6,7 +6,7 @@ import traceback
 from collections import deque
 from collections.abc import Callable
 from dateutil import tz
-from hass_common import EntityValue, HistoryResult
+from hass_common import AttributeValue, EntityValue, HistoryResult
 from typing import Any, final, NamedTuple, override, TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
@@ -618,7 +618,7 @@ class Aggregator:
 
 class AggregatedValue(hass.Hass):
     target: str = ""
-    attributes: dict[str, Any] = {}
+    attributes: dict[str, AttributeValue] = {}
     aggregator_app: Aggregator = cast("Aggregator", cast(Any, None))
 
     def initialize(self) -> None:

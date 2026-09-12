@@ -1,6 +1,6 @@
 from appdaemon_unit_test.test_helpers.hass import Hass, ServiceCallback
 from datetime import datetime, timedelta, time
-from typing import Any, Callable
+from typing import Any, Callable, overload
 
 
 def convert(value: str | dict[str, str] | None, type_: str) -> Any:
@@ -37,6 +37,21 @@ class TestApp(Hass):
         self, app: Any, method: str, *args: Any, **kwargs: Any
     ) -> Any:
         return getattr(app, method)(*args, **kwargs)
+
+    @overload
+    def get_state_as(
+        self, entity: str, attribute: None = ..., type: None = ...
+    ) -> str | None: ...
+
+    @overload
+    def get_state_as(
+        self, entity: str, attribute: str, type: None = ...
+    ) -> str | dict[str, str] | None: ...
+
+    @overload
+    def get_state_as(
+        self, entity: str, attribute: str | None = ..., *, type: str
+    ) -> int | float | str | dict[str, int | float | str] | None: ...
 
     def get_state_as(
         self,
