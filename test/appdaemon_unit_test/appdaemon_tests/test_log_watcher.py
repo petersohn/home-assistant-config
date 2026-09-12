@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from pathlib import Path
 from typing import Any
 
 from appdaemon_unit_test.test_helpers.harness import Harness
@@ -42,7 +43,7 @@ def _register_notifier(harness: Harness, notifier: str = NOTIFIER) -> list[dict[
     return calls
 
 
-def test_startup_seeks_to_end(harness: Harness, tmp_path: Any) -> None:
+def test_startup_seeks_to_end(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing line\n")
     calls = _register_notifier(harness)
@@ -53,7 +54,7 @@ def test_startup_seeks_to_end(harness: Harness, tmp_path: Any) -> None:
     assert calls == []
 
 
-def test_new_lines_notification(harness: Harness, tmp_path: Any) -> None:
+def test_new_lines_notification(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
     calls = _register_notifier(harness)
@@ -71,7 +72,7 @@ def test_new_lines_notification(harness: Harness, tmp_path: Any) -> None:
     assert "new line 1\nnew line 2\n" in calls[0]["message"]
 
 
-def test_no_new_lines_no_action(harness: Harness, tmp_path: Any) -> None:
+def test_no_new_lines_no_action(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
     calls = _register_notifier(harness)
@@ -83,7 +84,7 @@ def test_no_new_lines_no_action(harness: Harness, tmp_path: Any) -> None:
     assert calls == []
 
 
-def test_sequential_polls_only_emit_new_lines(harness: Harness, tmp_path: Any) -> None:
+def test_sequential_polls_only_emit_new_lines(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
     calls = _register_notifier(harness)
@@ -109,7 +110,7 @@ def test_sequential_polls_only_emit_new_lines(harness: Harness, tmp_path: Any) -
     assert "first batch\n" not in calls[1]["message"]
 
 
-def test_extra_args_passed_through(harness: Harness, tmp_path: Any) -> None:
+def test_extra_args_passed_through(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
     calls = _register_notifier(harness)
@@ -129,7 +130,7 @@ def test_extra_args_passed_through(harness: Harness, tmp_path: Any) -> None:
     assert "hello\n" in calls[0]["message"]
 
 
-def test_html_like_content_escaped(harness: Harness, tmp_path: Any) -> None:
+def test_html_like_content_escaped(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
     calls = _register_notifier(harness)
@@ -150,7 +151,7 @@ def test_html_like_content_escaped(harness: Harness, tmp_path: Any) -> None:
     assert "a &amp; b &lt; c &gt; d" in message
 
 
-def test_enabler_disabled_suppresses_notification(harness: Harness, tmp_path: Any) -> None:
+def test_enabler_disabled_suppresses_notification(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
     calls = _register_notifier(harness)
@@ -182,7 +183,7 @@ def test_enabler_disabled_suppresses_notification(harness: Harness, tmp_path: An
     assert "while disabled\n" not in calls[0]["message"]
 
 
-def test_file_shrink_resets_offset(harness: Harness, tmp_path: Any) -> None:
+def test_file_shrink_resets_offset(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing line 1\nexisting line 2\n")
     calls = _register_notifier(harness)
@@ -198,7 +199,7 @@ def test_file_shrink_resets_offset(harness: Harness, tmp_path: Any) -> None:
     assert "rotated fresh content\n" in calls[0]["message"]
 
 
-def test_oversized_message_split_into_chunks(harness: Harness, tmp_path: Any) -> None:
+def test_oversized_message_split_into_chunks(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
     calls = _register_notifier(harness)
@@ -221,7 +222,7 @@ def test_oversized_message_split_into_chunks(harness: Harness, tmp_path: Any) ->
     assert "4\n" in combined
 
 
-def test_single_oversized_line_hard_split(harness: Harness, tmp_path: Any) -> None:
+def test_single_oversized_line_hard_split(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
     calls = _register_notifier(harness)
@@ -241,7 +242,7 @@ def test_single_oversized_line_hard_split(harness: Harness, tmp_path: Any) -> No
 
 
 def test_mixed_lines_split_preserves_all_content(
-    harness: Harness, tmp_path: Any
+    harness: Harness, tmp_path: Path
 ) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("existing\n")
@@ -266,7 +267,7 @@ def test_mixed_lines_split_preserves_all_content(
     assert calls[0]["message"] == "z" * 3000 + "\n"
 
 
-def test_file_missing_then_recreated(harness: Harness, tmp_path: Any) -> None:
+def test_file_missing_then_recreated(harness: Harness, tmp_path: Path) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("first line\n")
     calls = _register_notifier(harness)

@@ -1,9 +1,9 @@
 from __future__ import annotations
 import time
-from typing import Any
 
 import pytest
 from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
+from appdaemon_integration_test.helpers.error_log import ErrorLogChecker
 from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 
 start_sensor = "binary_sensor.start"
@@ -110,7 +110,7 @@ def test_reload_because_of_dependency(
 @pytest.mark.timeout(180)
 def test_only_reload_changed_apps(
     appdaemon_client: AppDaemonClient, history_watcher: HistoryWatcher,
-    error_log: Any,
+    error_log: ErrorLogChecker,
 ) -> None:
     _initialize(
         appdaemon_client,
