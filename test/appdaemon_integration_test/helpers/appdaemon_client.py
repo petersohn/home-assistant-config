@@ -3,7 +3,12 @@ import time
 import requests
 from typing import Any
 from appdaemon_integration_test.helpers.app_daemon import create_appdaemon_apps_config
-from appdaemon_integration_test.helpers.mutex_graph import append_graph, find_cycle
+from appdaemon_integration_test.helpers.mutex_graph import (
+    Graph,
+    GraphValue,
+    append_graph,
+    find_cycle,
+)
 from appdaemon_integration_test.helpers.mqtt_client import MqttClient
 from appdaemon_integration_test.helpers.type_util import values_equal
 
@@ -25,7 +30,9 @@ class AppDaemonClient:
     def dir(self) -> str:
         return self._dir
 
-    def call_function(self, function: str, *args: Any, **kwargs: Any) -> Any:
+    def call_function(
+        self, function: str, *args: object, **kwargs: object
+    ) -> Any:
         result_type = kwargs.pop("result_type", None)
         arg_types = kwargs.pop("arg_types", [])
         kwarg_types = kwargs.pop("kwarg_types", {})
@@ -41,7 +48,7 @@ class AppDaemonClient:
         r.raise_for_status()
         return r.json()
 
-    def get_state(self, entity_id: str, **kwargs: Any) -> Any:
+    def get_state(self, entity_id: str, **kwargs: object) -> Any:
         return self.call_function("get_state", entity_id, **kwargs)
 
     @staticmethod
@@ -51,7 +58,7 @@ class AppDaemonClient:
             return name
         return None
 
-    def set_state(self, entity_id: str, value: Any, **attributes: Any) -> None:
+    def set_state(self, entity_id: str, value: object, **attributes: object) -> None:
         name = self._mqtt_name(entity_id)
         if self._mqtt_client is not None and name is not None:
             self._mqtt_client.publish_state(name, value, attributes=attributes or None)
@@ -71,19 +78,21 @@ class AppDaemonClient:
     def select_option(self, entity_id: str, value: str) -> None:
         self.call_function("select_option", entity_id, value)
 
-    def set_value(self, entity_id: str, value: Any) -> None:
+    def set_value(self, entity_id: str, value: object) -> None:
         self.call_function("set_value", entity_id, value)
 
-    def call_service(self, service: str, **kwargs: Any) -> None:
+    def call_service(self, service: str, **kwargs: object) -> None:
         self.call_function("call_service", service, **kwargs)
 
-    def call_on_app(self, app_name: str, function: str, *args: Any, **kwargs: Any) -> Any:
+    def call_on_app(
+        self, app_name: str, function: str, *args: object, **kwargs: object
+    ) -> Any:
         return self.call_function("call_on_app", app_name, function, *args, **kwargs)
 
     def log(self, message: str) -> None:
         self.call_function("log", message)
 
-    def wait_for_state(self, entity_id: str, expected: Any, timeout: int = 10) -> None:
+    def wait_for_state(self, entity_id: str, expected: object, timeout: int = 10) -> None:
         deadline = time.time() + timeout
         while time.time() < deadline:
             if values_equal(self.get_state(entity_id), expected):
@@ -102,14 +111,14 @@ class AppDaemonClient:
         self._wait_until_unloaded(*self._loaded_apps, timeout=30)
         self._loaded_apps = []
 
-    def initialize_states(self, **states: Any) -> None:
+    def initialize_states(self, **states: object) -> None:
         for entity, state in states.items():
             self.set_state(entity, state)
 
-    def check_mutex_graph(self, global_mutex_graph: dict[str, Any]) -> None:
-        graph = self.call_on_app("locker", "get_global_graph")
+    def check_mutex_graph(self, global_mutex_graph: dict[str, GraphValue]) -> None:
+        graph: Graph = self.call_on_app("locker", "get_global_graph")
         append_graph(global_mutex_graph, graph)
-        assert not find_cycle(global_mutex_graph)
+        assert not find_cycle(graph)
 
     def _wait_until_loaded(self, *apps: str, timeout: int = 30) -> None:
         deadline = time.time() + timeout

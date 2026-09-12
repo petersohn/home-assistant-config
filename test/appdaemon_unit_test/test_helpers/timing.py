@@ -1,6 +1,6 @@
 from __future__ import annotations
 from datetime import datetime, timedelta, time
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from appdaemon_unit_test.test_helpers.harness import Harness
@@ -12,18 +12,18 @@ class Timing:
     def __init__(self, harness: Harness) -> None:
         self._h = harness
 
-    def state_should_change_at(self, entity: str, value: Any, target_time: time | timedelta) -> None:
+    def state_should_change_at(self, entity: str, value: object, target_time: time | timedelta) -> None:
         target = self._h.date_from_time(target_time, future=True)
         self.state_should_change_at_datetime(entity, value, target)
 
-    def state_should_change_at_datetime(self, entity: str, value: Any, target: datetime) -> None:
+    def state_should_change_at_datetime(self, entity: str, value: object, target: datetime) -> None:
         deadline = target - self._h.interval
         assert self._h.get_state(entity) != value
         self.state_should_not_change_until(entity, deadline)
         self._h.step()
         assert self._h.get_state(entity) == value
 
-    def state_should_change_in(self, entity: str, value: Any, duration: timedelta) -> None:
+    def state_should_change_in(self, entity: str, value: object, duration: timedelta) -> None:
         timeout = duration - self._h.interval
         assert self._h.get_state(entity) != value
         self.state_should_not_change_for(entity, timeout)

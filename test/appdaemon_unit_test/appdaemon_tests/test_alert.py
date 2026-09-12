@@ -1,6 +1,5 @@
 from __future__ import annotations
 from datetime import time, timedelta
-from typing import Any
 
 from appdaemon_unit_test.test_helpers.harness import Harness
 from appdaemon_unit_test.test_helpers.hass import Hass
@@ -21,7 +20,7 @@ sensor2 = "binary_sensor.error2"
 sensor3 = "binary_sensor.error3"
 
 
-def _create_alert_aggregator(harness: Harness, **extra_args: Any) -> tuple[Hass, Hass]:
+def _create_alert_aggregator(harness: Harness, **extra_args: object) -> tuple[Hass, Hass]:
     alert = harness.create_app(
         "alert", "AlertAggregator", "alert",
         sources=[sensor1, sensor2, sensor3],
@@ -42,7 +41,7 @@ def _alarm_text_should_be(harness: Harness, *lines: str) -> None:
     assert harness.get_state(alert_sensor, attribute="text") == expected
 
 
-def _should_have_history(harness: Harness, alert_history: Any, *expected_values: Any) -> None:
+def _should_have_history(harness: Harness, alert_history: Hass, *expected_values: str | int) -> None:
     converted_expected = convert_history_input(list(expected_values))
     values = harness.call_on_app(alert_history, "get_recorded_history")
     converted_values = convert_history_output(list(values))
@@ -57,7 +56,8 @@ def _state_should_cycle_at(harness: Harness, timing: Timing, entity: str, target
     harness.step()
     date = harness.datetime
     alert_history = harness.get_app("alert_history")
-    _should_have_history(harness, alert_history, date, 0, date, 1)
+    assert alert_history is not None
+    _should_have_history(harness, alert_history, date.strftime("%Y-%m-%d %H:%M:%S"), 0, date.strftime("%Y-%m-%d %H:%M:%S"), 1)
     assert harness.get_state(entity) == "on"
 
 

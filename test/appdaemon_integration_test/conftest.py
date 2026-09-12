@@ -6,7 +6,7 @@ _HERE = os.path.dirname(__file__)
 
 from collections.abc import Iterator
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from appdaemon_integration_test.helpers.start_stop import (
@@ -14,6 +14,8 @@ if TYPE_CHECKING:
         ServiceInfo,
     )
     from appdaemon_integration_test.helpers.mutex_graph import Graph
+
+from appdaemon_integration_test.helpers.mutex_graph import GraphValue
 
 sys.path.insert(0, _HERE)
 
@@ -60,7 +62,7 @@ def appdaemon_client(
 ) -> Iterator[AppDaemonClient]:
     client = AppDaemonClient(appdaemon.host, appdaemon.dir, mqtt_client)
     yield client
-    client.check_mutex_graph(global_mutex_graph)
+    client.check_mutex_graph(cast(dict[str, GraphValue], global_mutex_graph))
 
 
 @pytest.fixture(scope="session")

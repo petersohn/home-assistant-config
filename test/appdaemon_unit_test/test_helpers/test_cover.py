@@ -1,6 +1,6 @@
 from __future__ import annotations
 from appdaemon_unit_test.test_helpers.hass import Hass
-from typing import Callable, override
+from typing import Callable, cast, override
 
 
 class TestCover(Hass):
@@ -15,9 +15,15 @@ class TestCover(Hass):
 
     @override
     def initialize(self) -> None:
-        self.entity = self.args["entity"]
-        self.available_entity = self.args["available_entity"]
-        self.position_entity = self.args["position_entity"]
+        entity = self.args["entity"]
+        available_entity = self.args["available_entity"]
+        position_entity = self.args["position_entity"]
+        assert isinstance(entity, str)
+        assert isinstance(available_entity, str)
+        assert isinstance(position_entity, str)
+        self.entity = entity
+        self.available_entity = available_entity
+        self.position_entity = position_entity
         self.set_state(self.entity, "unknown")
         self.process_id = None
         self.position = 0
@@ -25,7 +31,7 @@ class TestCover(Hass):
         self._register_service(
             "cover/set_cover_position",
             self.entity,
-            lambda args: self.set_position(args["position"]),
+            lambda args: self.set_position(cast(int, args["position"])),
         )
         self._register_service(
             "cover/open_cover",

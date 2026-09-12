@@ -1,5 +1,5 @@
 import pytest
-from typing import Any
+from mutex_graph import Graph, GraphValue
 from mutex_graph import find_cycle, append_graph
 
 
@@ -14,7 +14,7 @@ from mutex_graph import find_cycle, append_graph
     ({'': [('a', 'e1'), ('b', 'e2')], 'a': [('b', 'e3'), ('c', 'e4')], 'c': [('b', 'e5'), ('a', 'e6')]}, True),
     ({'': [('a', 'e1')], 'a': [('a', 'e2')]}, True),
 ])
-def test_find_cycle(graph_dict: dict[str, Any], expected: bool) -> None:
+def test_find_cycle(graph_dict: Graph, expected: bool) -> None:
     assert find_cycle(graph_dict) == expected
 
 
@@ -32,6 +32,8 @@ def test_find_cycle(graph_dict: dict[str, Any], expected: bool) -> None:
      {'': {('a', 'e1')}, 'a': {('b', 'e2')}},
      {'': {('c', 'e3')}, 'c': {('b', 'e4')}}),
 ])
-def test_append_graph(expected: dict[str, Any], g1: dict[str, Any], g2: dict[str, Any]) -> None:
+def test_append_graph(
+    expected: dict[str, GraphValue], g1: dict[str, GraphValue], g2: Graph,
+) -> None:
     append_graph(g1, g2)
     assert g1 == expected

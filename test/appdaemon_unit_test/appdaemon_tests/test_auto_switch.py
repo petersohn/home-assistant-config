@@ -1,6 +1,5 @@
 from __future__ import annotations
 from datetime import time
-from typing import Any
 
 import pytest
 from appdaemon_unit_test.test_helpers.harness import Harness
@@ -17,7 +16,7 @@ switch = "input_select.test_auto_switch_switch"
 def _initialize(harness: Harness, type_: str, initial_switch_state: str = "auto", initial_target_state: str = "off") -> tuple[AutoSwitch, ScriptEnabler | None]:
     harness.set_state(target, initial_target_state)
     harness.set_state(switch, initial_switch_state)
-    args: dict[str, Any] = {"target": target}
+    args: dict[str, object] = {"target": target}
     enabler = None
     if "Switched" in type_:
         args["switch"] = switch

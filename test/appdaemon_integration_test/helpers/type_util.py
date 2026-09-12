@@ -1,7 +1,9 @@
 from typing import Any
 
 
-def extract_from_dictionary(dictionary: dict[Any, Any], key: Any) -> Any:
+def extract_from_dictionary[Key, Value](
+    dictionary: dict[Key, Value], key: Key
+) -> Value | None:
     result = None
     if key in dictionary:
         result = dictionary[key]
@@ -16,7 +18,7 @@ def _try_float(value: Any) -> float | None:
         return None
 
 
-def values_equal(a: Any, b: Any) -> bool:
+def values_equal(a: object, b: object) -> bool:
     """Compare two values with numeric coercion.
 
     If both values can be converted to floats, compare them numerically so

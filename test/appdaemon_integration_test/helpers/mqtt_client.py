@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion
@@ -42,18 +41,21 @@ class MqttClient:
     def __enter__(self) -> "MqttClient":
         return self
 
-    def __exit__(self, *_args: Any) -> None:
+    def __exit__(self, *_args: object) -> None:
         self.cleanup_retained()
         self._client.loop_stop()
         self._client.disconnect()
 
     def _on_connect(
-        self, _client: Any, _userdata: Any, _flags: Any, rc: Any, *_extra: Any
+        self, _client: object, _userdata: object, _flags: object,
+        rc: object, *_extra: object,
     ) -> None:
         if self._emulate:
             self._client.subscribe(f"{TOPIC_PREFIX}/+/command")
 
-    def _on_message(self, _client: Any, _userdata: Any, message: mqtt.MQTTMessage) -> None:
+    def _on_message(
+        self, _client: object, _userdata: object, message: mqtt.MQTTMessage
+    ) -> None:
         if not message.topic.endswith("/command"):
             self._logger.warning(
                 "ignoring non-command message on %s", message.topic

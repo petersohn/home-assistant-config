@@ -3,7 +3,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta, date, time, tzinfo
 from hass_common import HistoryResult
 from inspect import Traceback
-from typing import Any, Callable, Literal, NamedTuple
+from typing import Any, Callable, Literal, NamedTuple, cast
 from traceback import format_exception
 import os
 
@@ -13,14 +13,13 @@ class State:
         self.state: str | None = None
         self.attributes: dict[str, str] = {}
 
-    def to_map(self) -> dict[str, Any]:
+    def to_map(self) -> dict[str, object]:
         return {"state": self.state, "attributes": deepcopy(self.attributes)}
 
 
-StateCallback = Callable[
-    [str, str | None, str | dict[str, Any] | None, str | dict[str, Any] | None],
-    None,
-]
+EntityState = str | dict[str, str | dict[str, str] | None] | None
+
+StateCallback = Callable[[str, str | None, EntityState, EntityState], None]
 
 StateCallbackRecord = NamedTuple(
     "StateCallbackRecord",
@@ -34,7 +33,7 @@ StateCallbackRecord = NamedTuple(
     ],
 )
 
-SchedulerChallback = Callable[[dict[str, Any]], None]
+SchedulerChallback = Callable[[dict[str, object]], None]
 
 ScheduledTask = NamedTuple(
     "ScheduledTask",
@@ -43,12 +42,12 @@ ScheduledTask = NamedTuple(
         ("time", datetime),
         ("callback", SchedulerChallback),
         ("repeat", timedelta | None),
-        ("kwargs", dict[str, Any]),
+        ("kwargs", dict[str, object]),
     ],
 )
 
 ServiceKey = NamedTuple("ServiceKey", [("service", str), ("entity_id", str)])
-ServiceCallback = Callable[[dict[str, Any]], None]
+ServiceCallback = Callable[[dict[str, object]], None]
 ServiceData = NamedTuple(
     "ServiceData", [("app", str), ("callback", ServiceCallback)]
 )
@@ -64,7 +63,7 @@ class ErrorHandler:
     def __enter__(self) -> None:
         pass
 
-    def __exit__(self, exc_type: type, exc_val: Any, exc_tb: Traceback) -> bool:
+    def __exit__(self, exc_type: type, exc_val: object, exc_tb: Traceback) -> bool:
         if not isinstance(exc_val, Exception):
             return False
 
@@ -97,7 +96,7 @@ class AppManager:
         library_name: str,
         class_name: str,
         app_name: str,
-        **kwargs: Any,
+        **kwargs: object,
     ) -> Hass:
         library = __import__(library_name)
         class_ = getattr(library, class_name)
@@ -105,7 +104,7 @@ class AppManager:
         self.add_app(app_name, obj, kwargs)
         return obj
 
-    def add_app(self, name: str, app: Hass, args: dict[str, Any]) -> None:
+    def add_app(self, name: str, app: Hass, args: dict[str, object]) -> None:
         if name in self.__apps:
             raise RuntimeError(f"App already exists: {name}")
         app.init_app(self, name, args)
@@ -150,14 +149,17 @@ class AppManager:
 
     def get_state(
         self, name: str, attribute: str | None = None
-    ) -> str | dict[str, str] | None:
+    ) -> EntityState:
         data = self.__states.get(name)
         if data is None:
             return None
         if attribute is None:
             return data.state
         if attribute == "all":
-            return data.to_map()
+            return {
+                "state": data.state,
+                "attributes": dict(data.attributes),
+            }
         return data.attributes.get(attribute)
 
     def set_state(
@@ -168,13 +170,21 @@ class AppManager:
         attributes: dict[str, str] | None = None,
     ) -> None:
         data = self.__states.setdefault(name, State())
-        old = data.to_map()
+        old_state_value = data.state
+        old_attributes = dict(data.attributes)
         data.state = None if state is None else str(state)
 
         if attributes is not None:
             data.attributes.update(attributes)
 
-        new = data.to_map()
+        new_state_value = data.state
+        new_attributes = dict(data.attributes)
+        old: dict[str, str | dict[str, str] | None] = {
+            "state": old_state_value, "attributes": old_attributes,
+        }
+        new: dict[str, str | dict[str, str] | None] = {
+            "state": new_state_value, "attributes": new_attributes,
+        }
         self.__debug(f"Set state {name} by {app}: {new}")
 
         for id, callback in self.__state_callbacks.items():
@@ -185,16 +195,16 @@ class AppManager:
                 f: StateCallback,
                 name: str,
                 attribute: str | None,
-                old: str | dict[str, Any] | None,
-                new: str | dict[str, Any] | None,
+                old: EntityState,
+                new: EntityState,
             ) -> None:
                 f(name, attribute, old, new, **{})
 
             def schedule_call(
                 f: StateCallback,
                 attribute: str | None,
-                old: str | dict[str, Any] | None,
-                new: str | dict[str, Any] | None,
+                old: EntityState,
+                new: EntityState,
             ) -> None:
                 self.__debug(
                     f"Schedule state change callback {id} for {app}"
@@ -212,7 +222,7 @@ class AppManager:
                 )
 
             if callback.attribute is None:
-                old_state = old["state"]
+                old_state = cast(str | None, old["state"])
                 if (
                     data.state != old_state
                     and (callback.old is None or old_state == callback.old)
@@ -227,8 +237,10 @@ class AppManager:
                         callback.callback, callback.attribute, old, new
                     )
             else:
-                old_attr = old["attributes"].get(callback.attribute)
-                new_attr = data.attributes.get(callback.attribute)
+                old_all_attributes = cast(dict[str, str], old["attributes"])
+                new_all_attributes = cast(dict[str, str], new["attributes"])
+                old_attr = old_all_attributes.get(callback.attribute)
+                new_attr = new_all_attributes.get(callback.attribute)
                 if (
                     old_attr != new_attr
                     and (callback.old is None or old_attr == callback.old)
@@ -392,7 +404,7 @@ class AppManager:
         del self.__services[key]
 
     def call_service(
-        self, _app: str, key: ServiceKey, data: dict[str, Any]
+        self, _app: str, key: ServiceKey, data: dict[str, object]
     ) -> None:
         service = self.__services[key]
         service.callback(data)
@@ -402,7 +414,7 @@ class Hass:
     def __init__(self) -> None:
         self.__manager: AppManager | None = None
         self.__name = ""
-        self.args: dict[str, Any] = {}
+        self.args: dict[str, object] = {}
 
     def initialize(self) -> None:
         pass
@@ -411,7 +423,7 @@ class Hass:
         pass
 
     def init_app(
-        self, manager: AppManager, name: str, args: dict[str, Any]
+        self, manager: AppManager, name: str, args: dict[str, object]
     ) -> None:
         self.__manager = manager
         self.__name = name
@@ -438,7 +450,7 @@ class Hass:
 
     def get_state(
         self, entity_id: str, attribute: str | None = None
-    ) -> str | dict[str, str] | None:
+    ) -> EntityState:
         assert self.__manager is not None
         return self.__manager.get_state(entity_id, attribute)
 
@@ -488,7 +500,7 @@ class Hass:
         self.__manager.cancel_listen_state(id)
 
     def run_in(
-        self, callback: SchedulerChallback, delay: int, **kwargs: Any
+        self, callback: SchedulerChallback, delay: int, **kwargs: object
     ) -> str:
         assert self.__manager is not None
         return self.__manager.schedule_task(
@@ -502,7 +514,7 @@ class Hass:
         )
 
     def run_at(
-        self, callback: SchedulerChallback, when: datetime, **kwargs: Any
+        self, callback: SchedulerChallback, when: datetime, **kwargs: object
     ) -> str:
         assert self.__manager is not None
         return self.__manager.schedule_task(
@@ -520,7 +532,7 @@ class Hass:
         callback: SchedulerChallback,
         when: datetime,
         repeat: int,
-        **kwargs: Any,
+        **kwargs: object,
     ) -> str:
         assert self.__manager is not None
         return self.__manager.schedule_task(
@@ -534,7 +546,7 @@ class Hass:
         )
 
     def run_daily(
-        self, callback: SchedulerChallback, when: time, **kwargs: Any
+        self, callback: SchedulerChallback, when: time, **kwargs: object
     ) -> str:
         assert self.__manager is not None
         next = datetime.combine(self.date(), when)
@@ -567,7 +579,7 @@ class Hass:
     ) -> HistoryResult:
         return []
 
-    def load_states(self, entity_id: str) -> dict[str, str]:
+    def load_states(self, entity_id: str) -> dict[str, Any]:
         state = self.get_state(entity_id, attribute="all")
         if state is None:
             raise RuntimeError(f"Entity not found: {entity_id}")
@@ -590,7 +602,7 @@ class Hass:
             callback,
         )
 
-    def call_service(self, service: str, entity_id: str = "", **kwargs: Any) -> None:
+    def call_service(self, service: str, entity_id: str = "", **kwargs: object) -> None:
         assert self.__manager is not None
         self.__manager.call_service(
             self.__name,

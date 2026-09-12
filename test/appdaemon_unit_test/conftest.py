@@ -17,7 +17,7 @@ sys.path.insert(2, _APP_DIR)
 
 import pytest
 from pytest import FixtureRequest
-from mutex_graph import Graph, find_cycle
+from mutex_graph import Graph, GraphValue, find_cycle
 from appdaemon_unit_test.test_helpers.harness import Harness
 from appdaemon_unit_test.test_helpers.timing import Timing
 
@@ -59,7 +59,10 @@ def harness(
     log_dir = os.path.join(base_output_directory, "logs", module.__name__)
     os.makedirs(log_dir, exist_ok=True)
     log_path = os.path.join(log_dir, f"{safe_name}.log")
-    h = Harness(start_date, start_time, interval, log_path, global_mutex_graph)
+    h = Harness(
+        start_date, start_time, interval, log_path,
+        cast(dict[str, GraphValue], global_mutex_graph),
+    )
     yield h
     h.cleanup()
 

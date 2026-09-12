@@ -15,7 +15,7 @@ class HistoryWatcher:
     def get_history(self) -> list[tuple[str, Any]]:
         return self._ad.call_on_app("history_watcher", "get_state_history")
 
-    def check_history(self, *expected: Any) -> None:
+    def check_history(self, *expected: object) -> None:
         expected_pairs = [[expected[i], expected[i + 1]] for i in range(0, len(expected), 2)]
         actual = self.get_history()
         assert len(actual) == len(expected_pairs), (
@@ -26,7 +26,7 @@ class HistoryWatcher:
                 f"history mismatch: {actual} != {expected_pairs}"
             )
 
-    def wait_for_history(self, *expected: Any) -> None:
+    def wait_for_history(self, *expected: object) -> None:
         expected_pairs = [[expected[i], expected[i + 1]] for i in range(0, len(expected), 2)]
         deadline = time.time() + 30
         while time.time() < deadline:

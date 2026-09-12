@@ -6,8 +6,6 @@ def extract_from_dictionary[Key, Value](
         result = dictionary[key]
         del dictionary[key]
 
-    print(dictionary)
-
     return result
 
 

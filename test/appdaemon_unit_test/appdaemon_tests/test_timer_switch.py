@@ -1,6 +1,5 @@
 from __future__ import annotations
-from datetime import time, timedelta
-from typing import Any
+from datetime import datetime, time, timedelta
 
 from appdaemon_unit_test.test_helpers.harness import Harness
 from appdaemon_unit_test.test_helpers.hass import Hass
@@ -25,7 +24,7 @@ def _create_auto_switch(harness: Harness, name: str, target: str) -> Hass:
     )
 
 
-def _create_timer_switch(harness: Harness, time: Any = 1, **args: Any) -> Hass:
+def _create_timer_switch(harness: Harness, time: object = 1, **args: object) -> Hass:
     _create_auto_switch(harness, "auto_switch", switch)
     enabler = harness.create_app("enabler", "ScriptEnabler", "enabler")
     harness.create_app(
@@ -35,7 +34,7 @@ def _create_timer_switch(harness: Harness, time: Any = 1, **args: Any) -> Hass:
     return enabler
 
 
-def _create_timer_sequence(harness: Harness, **args: Any) -> Hass:
+def _create_timer_sequence(harness: Harness, **args: object) -> Hass:
     enabler = harness.create_app("enabler", "ScriptEnabler", "enabler")
     harness.create_app(
         "timer_switch", "TimerSequence", "timer_sequence",
@@ -51,7 +50,7 @@ def _create_history_manager(harness: Harness, name: str, entity: str) -> Hass:
     )
 
 
-def _history_should_be(harness: Harness, app: Hass, *expected_values: Any) -> None:
+def _history_should_be(harness: Harness, app: Hass, *expected_values: datetime | str | int) -> None:
     converted_expected = convert_history_input(list(expected_values))
     values = harness.call_on_app(app, "get_recorded_history")
     converted_values = convert_history_output(list(values))
@@ -89,7 +88,7 @@ def test_switch_on_and_off_expr(harness: Harness) -> None:
     assert harness.get_state(switch) == "off"
 
 
-def _switch_off_after_motion_restarts(harness: Harness, **args: Any) -> None:
+def _switch_off_after_motion_restarts(harness: Harness, **args: object) -> None:
     _create_timer_switch(harness, **args)
     harness.schedule_call_at(timedelta(seconds=20), "set_state", motion_detector, "on")
     harness.schedule_call_at(timedelta(seconds=30), "set_state", motion_detector, "off")
@@ -108,7 +107,7 @@ def test_switch_off_after_motion_restarts_expr(harness: Harness) -> None:
     _switch_off_after_motion_restarts(harness, expr=f"v.{motion_detector}")
 
 
-def _do_not_start_if_enabler_is_disabled(harness: Harness, **args: Any) -> None:
+def _do_not_start_if_enabler_is_disabled(harness: Harness, **args: object) -> None:
     enabler = _create_timer_switch(harness, **args)
     _set_enabled_state(harness, enabler, "disable")
     harness.set_state(motion_detector, "on")
@@ -124,7 +123,7 @@ def test_do_not_start_if_enabler_is_disabled_expr(harness: Harness) -> None:
     _do_not_start_if_enabler_is_disabled(harness, expr=f"v.{motion_detector}")
 
 
-def _switch_off_when_enabler_is_disabled(harness: Harness, **args: Any) -> None:
+def _switch_off_when_enabler_is_disabled(harness: Harness, **args: object) -> None:
     enabler = _create_timer_switch(harness, **args)
     harness.schedule_call_at(timedelta(seconds=30), "set_state", motion_detector, "on")
     harness.schedule_call_at(timedelta(seconds=40), "set_state", motion_detector, "off")
@@ -142,7 +141,7 @@ def test_switch_off_when_enabler_is_disabled_expr(harness: Harness) -> None:
     _switch_off_when_enabler_is_disabled(harness, expr=f"v.{motion_detector}")
 
 
-def _switch_on_when_enabler_is_enabled_while_in_motion(harness: Harness, **args: Any) -> None:
+def _switch_on_when_enabler_is_enabled_while_in_motion(harness: Harness, **args: object) -> None:
     enabler = _create_timer_switch(harness, **args)
     _set_enabled_state(harness, enabler, "disable")
     harness.schedule_call_at(timedelta(seconds=20), "set_state", motion_detector, "on")
@@ -161,7 +160,7 @@ def test_switch_on_when_enabler_is_enabled_while_in_motion_expr(harness: Harness
     _switch_on_when_enabler_is_enabled_while_in_motion(harness, expr=f"v.{motion_detector}")
 
 
-def _stop_at_disabling_and_restart_after_enabling(harness: Harness, **args: Any) -> None:
+def _stop_at_disabling_and_restart_after_enabling(harness: Harness, **args: object) -> None:
     enabler = _create_timer_switch(harness, **args)
     harness.set_state(motion_detector, "on")
     harness.set_state(motion_detector, "off")
@@ -186,7 +185,7 @@ def test_stop_at_disabling_and_restart_after_enabling_expr(harness: Harness) -> 
     _stop_at_disabling_and_restart_after_enabling(harness, expr=f"v.{motion_detector}")
 
 
-def _stop_at_disabling_and_restart_at_enabling_while_in_motion(harness: Harness, **args: Any) -> None:
+def _stop_at_disabling_and_restart_at_enabling_while_in_motion(harness: Harness, **args: object) -> None:
     enabler = _create_timer_switch(harness, **args)
     harness.schedule_call_at(timedelta(seconds=20), "set_state", motion_detector, "on")
     harness.schedule_call_at(timedelta(seconds=30), "call_on_app", enabler, "disable")
@@ -207,7 +206,7 @@ def test_stop_at_disabling_and_restart_at_enabling_while_in_motion_expr(harness:
     _stop_at_disabling_and_restart_at_enabling_while_in_motion(harness, expr=f"v.{motion_detector}")
 
 
-def _start_when_motion_at_initialization(harness: Harness, **args: Any) -> None:
+def _start_when_motion_at_initialization(harness: Harness, **args: object) -> None:
     harness.set_state(motion_detector, "on")
     _create_timer_switch(harness, **args)
     harness.schedule_call_at(timedelta(seconds=30), "set_state", motion_detector, "off")
@@ -224,7 +223,7 @@ def test_start_when_motion_at_initialization_expr(harness: Harness) -> None:
     _start_when_motion_at_initialization(harness, expr=f"v.{motion_detector}")
 
 
-def _delay(harness: Harness, **args: Any) -> None:
+def _delay(harness: Harness, **args: object) -> None:
     _create_timer_switch(harness, time=1, delay=30, **args)
     harness.schedule_call_at(timedelta(minutes=1), "set_state", motion_detector, "on")
     harness.schedule_call_at(timedelta(minutes=1, seconds=40), "set_state", motion_detector, "off")
@@ -479,7 +478,7 @@ def test_timer_sequence_both_edges(harness: Harness) -> None:
                        "2018-01-01 00:04:00", 0)
 
 
-def _state_should_change_at(harness: Harness, entity: str, value: Any, target_time: time | timedelta) -> None:
+def _state_should_change_at(harness: Harness, entity: str, value: object, target_time: time | timedelta) -> None:
     target = harness.date_from_time(target_time, future=True)
     deadline = target - harness.interval
     assert harness.get_state(entity) != value

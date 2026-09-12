@@ -1,8 +1,9 @@
 from __future__ import annotations
 from datetime import datetime, time, timedelta
-from typing import Any
 
 import pytest
+from typing import cast
+
 from appdaemon_unit_test.test_helpers.harness import Harness
 
 input1 = "sensor.test_input1"
@@ -12,23 +13,23 @@ output = "sensor.test_output"
 
 
 def _initialize(
-    harness: Harness, expression: str, args: Any = None,
-    **initial_values: Any,
+    harness: Harness, expression: str, args: object = None,
+    **initial_values: object,
 ) -> None:
     for entity, value in initial_values.items():
         harness.set_state(entity, value)
-    kwargs = {"expr": expression}
-    if args:
-        kwargs.update(args)
+    kwargs: dict[str, object] = {"expr": expression}
+    if isinstance(args, dict):
+        kwargs.update(cast(dict[str, object], args))
     harness.create_app("expression", "Expression", "expression", target=output, **kwargs)
 
 
-def _initialize_with_args(harness: Harness, expression: str, **initial_values: Any) -> None:
+def _initialize_with_args(harness: Harness, expression: str, **initial_values: object) -> None:
     args_dict = {"list": ["first", "second", "third"], "dict": {"a": "foo", "b": "bar", "c": "baz"}}
     _initialize(harness, expression, args=args_dict, **initial_values)
 
 
-def _test_states(harness: Harness, sensor1: Any, sensor2: Any, type_: str, expected: Any) -> None:
+def _test_states(harness: Harness, sensor1: str | int | float, sensor2: str | int | float, type_: str, expected: str | int | float) -> None:
     harness.set_state(input1, sensor1)
     harness.set_state(input2, sensor2)
     assert harness.get_state(output, type=type_) == expected
@@ -40,7 +41,7 @@ def _test_states(harness: Harness, sensor1: Any, sensor2: Any, type_: str, expec
     (63, -8, "int", 55),
     (-7, 5, "int", -2),
 ])
-def test_numeric_sensors(harness: Harness, sensor1: Any, sensor2: Any, type_: str, expected: Any) -> None:
+def test_numeric_sensors(harness: Harness, sensor1: str | int | float, sensor2: str | int | float, type_: str, expected: str | int | float) -> None:
     _initialize(harness, f'v.{input1} + v["{input2}"]', **{input1: "0", input2: "0"})
     _test_states(harness, sensor1, sensor2, type_, expected)
 
@@ -51,7 +52,7 @@ def test_numeric_sensors(harness: Harness, sensor1: Any, sensor2: Any, type_: st
     ("bar", "", "str", "bar"),
     ("", "", "str", ""),
 ])
-def test_alphanumeric_sensors(harness: Harness, sensor1: Any, sensor2: Any, type_: str, expected: Any) -> None:
+def test_alphanumeric_sensors(harness: Harness, sensor1: str | int | float, sensor2: str | int | float, type_: str, expected: str | int | float) -> None:
     _initialize(harness, f"v.{input1} + v.{input2}", **{input1: "", input2: ""})
     _test_states(harness, sensor1, sensor2, type_, expected)
 
@@ -63,7 +64,7 @@ def test_alphanumeric_sensors(harness: Harness, sensor1: Any, sensor2: Any, type
     (5, 10, "str", "off"),
     (10, 5, "str", "on"),
 ])
-def test_numeric_binary_sensors(harness: Harness, sensor1: Any, sensor2: Any, type_: str, expected: Any) -> None:
+def test_numeric_binary_sensors(harness: Harness, sensor1: str | int | float, sensor2: str | int | float, type_: str, expected: str | int | float) -> None:
     _initialize(harness, f"v.{input1} > v.{input2}", **{input1: "0", input2: "0"})
     _test_states(harness, sensor1, sensor2, type_, expected)
 
@@ -76,7 +77,7 @@ def test_numeric_binary_sensors(harness: Harness, sensor1: Any, sensor2: Any, ty
     ("bar", "", "str", "on"),
     ("", "", "str", "off"),
 ])
-def test_alphanumeric_binary_sensors(harness: Harness, sensor1: Any, sensor2: Any, type_: str, expected: Any) -> None:
+def test_alphanumeric_binary_sensors(harness: Harness, sensor1: str | int | float, sensor2: str | int | float, type_: str, expected: str | int | float) -> None:
     _initialize(harness, f'v.{input1} > v["{input2}"]', **{input1: "", input2: ""})
     _test_states(harness, sensor1, sensor2, type_, expected)
 
@@ -88,7 +89,7 @@ def test_alphanumeric_binary_sensors(harness: Harness, sensor1: Any, sensor2: An
     (-7, 5, "int", -2),
     ("foo", "bar", "str", "foobar"),
 ])
-def test_attributes(harness: Harness, attr1: Any, attr2: Any, type_: str, expected: Any) -> None:
+def test_attributes(harness: Harness, attr1: str, attr2: str, type_: str, expected: str | int) -> None:
     _initialize(harness, f'a.{input1}.attr1 + a["{input1}"]["attr2"]', **{input1: ""})
     harness.set_state(input1, 0, attr1=attr1, attr2=attr2)
     assert harness.get_state(output, type=type_) == expected
@@ -101,12 +102,12 @@ def test_attributes(harness: Harness, attr1: Any, attr2: Any, type_: str, expect
     ("foo", 0, "str", "on"),
     (-1, 0, "str", "on"),
 ])
-def test_ok(harness: Harness, sensor1: Any, sensor2: Any, type_: str, expected: Any) -> None:
+def test_ok(harness: Harness, sensor1: str | int | float, sensor2: str | int | float, type_: str, expected: str | int | float) -> None:
     _initialize(harness, f"ok.{input1}", **{input1: "unknown"})
     _test_states(harness, sensor1, sensor2, type_, expected)
 
 
-def _times_should_match(harness: Harness, result: Any, td: timedelta) -> None:
+def _times_should_match(harness: Harness, result: str | None, td: timedelta) -> None:
     expected: datetime = harness.date_from_time(td, future=False)
     assert result == expected.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -127,7 +128,7 @@ def test_get_now(harness: Harness) -> None:
     (1, "a", "secondfoo"),
     (2, "b", "thirdbar"),
 ])
-def test_args(harness: Harness, sensor1: Any, sensor2: Any, expected: Any) -> None:
+def test_args(harness: Harness, sensor1: str | int, sensor2: str | int, expected: str | int) -> None:
     _initialize_with_args(
         harness,
         "args['list'][int(v['sensor.test_input1'])] + args['dict'][v['sensor.test_input2']]",

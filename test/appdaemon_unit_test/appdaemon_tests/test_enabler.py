@@ -27,7 +27,7 @@ def _create_enabled_switch(harness: Harness, name: str, enabler_name: str, targe
     (False, False),
 ])
 def test_script_enabler(harness: Harness, initial_state_arg: bool | None, expected_initial_state: bool) -> None:
-    args = {}
+    args: dict[str, object] = {}
     if initial_state_arg is not None:
         args["initial"] = initial_state_arg
     enabler = harness.create_app("enabler", "ScriptEnabler", "enabler", **args)

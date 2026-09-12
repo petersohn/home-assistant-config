@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Any
 
 from appdaemon_unit_test.test_helpers.harness import Harness
 from auto_switch import AutoSwitch
@@ -12,7 +11,7 @@ def _initialize(harness: Harness) -> None:
     harness.set_state("input_boolean.test_switch2", "off")
 
 
-def _create_enabler_and_switch(harness: Harness, initial: bool, **kwargs: Any) -> tuple[ScriptEnabler, EnabledSwitch]:
+def _create_enabler_and_switch(harness: Harness, initial: bool, **kwargs: object) -> tuple[ScriptEnabler, EnabledSwitch]:
     enabler = harness.create_app("enabler", "ScriptEnabler", "enabler", initial=initial)
     assert isinstance(enabler, ScriptEnabler)
     enabled_switch = harness.create_app(

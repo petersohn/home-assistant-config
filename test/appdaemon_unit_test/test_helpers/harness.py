@@ -5,7 +5,7 @@ from typing import Any, Callable, TypeVar, overload
 from appdaemon_unit_test.test_helpers.config import create_app_manager
 from appdaemon_unit_test.test_helpers.hass import AppManager, Hass
 from locker import Locker
-from mutex_graph import find_cycle, append_graph
+from mutex_graph import GraphValue, find_cycle, append_graph
 from appdaemon_unit_test.test_helpers.test_app import TestApp
 
 T = TypeVar("T")
@@ -16,7 +16,7 @@ class Harness:
     test_app: TestApp
     _manager: AppManager
     _interval: timedelta
-    _global_mutex_graph: dict[str, Any]
+    _global_mutex_graph: dict[str, GraphValue]
 
     def __init__(
         self,
@@ -24,7 +24,7 @@ class Harness:
         start_time: time,
         interval: timedelta,
         log_path: str,
-        global_mutex_graph: dict[str, Any],
+        global_mutex_graph: dict[str, GraphValue],
     ) -> None:
         start_datetime = dt_datetime.combine(start_date, start_time)
         self._manager = create_app_manager(start_datetime, log_path)
@@ -84,7 +84,9 @@ class Harness:
     ) -> Any:
         return self.test_app.get_state_as(entity_id, attribute=attribute, type=type)
 
-    def set_state(self, entity_id: str, value: Any, **attributes: Any) -> None:
+    def set_state(
+        self, entity_id: str, value: object, **attributes: object
+    ) -> None:
         self._call_and_check(self.test_app.set_state, entity_id, value, attributes)
 
     def turn_on(self, entity_id: str) -> None:
@@ -94,7 +96,7 @@ class Harness:
         self.set_state(entity_id, "off")
 
     def create_app(
-        self, module: str, class_name: str, name: str, **kwargs: Any
+        self, module: str, class_name: str, name: str, **kwargs: object
     ) -> Hass:
         return self._call_and_check(
             self._manager.create_app, module, class_name, name, **kwargs
@@ -104,14 +106,15 @@ class Harness:
         return self._manager.get_app(name)
 
     def schedule_call_in(
-        self, delay: timedelta, func_name: str, *args: Any, **kwargs: Any
+        self, delay: timedelta, func_name: str, *args: object, **kwargs: object
     ) -> None:
         self._call_and_check(
             self.test_app.schedule_call_in, delay, func_name, *args, **kwargs
         )
 
     def schedule_call_at(
-        self, target_time: time | timedelta, func_name: str, *args: Any, **kwargs: Any
+        self, target_time: time | timedelta, func_name: str,
+        *args: object, **kwargs: object,
     ) -> None:
         target = self.date_from_time(target_time, future=True)
         self._call_and_check(
@@ -119,14 +122,15 @@ class Harness:
         )
 
     def schedule_call_at_datetime(
-        self, target: dt_datetime, func_name: str, *args: Any, **kwargs: Any
+        self, target: dt_datetime, func_name: str,
+        *args: object, **kwargs: object,
     ) -> None:
         self._call_and_check(
             self.test_app.schedule_call_at, target, func_name, *args, **kwargs
         )
 
     def call_on_app(
-        self, app: Any, method: str, *args: Any, **kwargs: Any
+        self, app: object, method: str, *args: object, **kwargs: object
     ) -> Any:
         return self._call_and_check(
             self.test_app.call_on_app, app, method, *args, **kwargs
@@ -178,6 +182,6 @@ class Harness:
     def cleanup(self) -> None:
         mutex_graph = self.locker.get_global_graph()
         append_graph(self._global_mutex_graph, mutex_graph)
-        assert not find_cycle(self._global_mutex_graph)
+        assert not find_cycle(mutex_graph)
         self._manager.remove_all_apps()
         assert not self._manager.has_error()

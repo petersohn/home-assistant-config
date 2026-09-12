@@ -1,6 +1,5 @@
 from __future__ import annotations
 from datetime import time, timedelta
-from typing import Any
 
 from appdaemon_unit_test.test_helpers.harness import Harness
 from appdaemon_unit_test.test_helpers.timing import Timing
@@ -27,7 +26,7 @@ def _state_should_change_at(
     assert harness.get_state(entity, type="int") == value
 
 
-def _initialize(harness: Harness, **args: Any) -> None:
+def _initialize(harness: Harness, **args: object) -> None:
     harness.set_state(input_entity, 0)
     harness.set_state(availability_entity, "on")
     harness.set_state(mode_switch, "auto")
@@ -45,7 +44,7 @@ def _initialize(harness: Harness, **args: Any) -> None:
     )
 
 
-def _initialize_with_delay(harness: Harness, minutes: int, **args: Any) -> None:
+def _initialize_with_delay(harness: Harness, minutes: int, **args: object) -> None:
     delay = {"minutes": minutes}
     _initialize(harness, delay=delay, **args)
 

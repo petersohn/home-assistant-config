@@ -3,12 +3,7 @@ from datetime import datetime, timedelta, time
 from typing import Any, Callable, overload
 
 
-def convert(value: str | dict[str, str] | None, type_: str) -> Any:
-    if value is None:
-        return None
-    if isinstance(value, dict):
-        return {k: convert(v, type_) for k, v in value.items()}
-
+def _convert_scalar(value: str, type_: str) -> Any:
     converters: dict[str, Callable[[str], Any]] = {
         "str": lambda val: val,
         "int": lambda val: int(float(val)),
@@ -20,7 +15,7 @@ def convert(value: str | dict[str, str] | None, type_: str) -> Any:
 
 class TestApp(Hass):
     def schedule_call_in(
-        self, delay: timedelta, func: str, *args: Any, **kwargs: Any
+        self, delay: timedelta, func: str, *args: object, **kwargs: object
     ) -> None:
         f = getattr(self, func)
         _ = self.run_in(
@@ -28,13 +23,13 @@ class TestApp(Hass):
         )
 
     def schedule_call_at(
-        self, when: datetime, func: str, *args: Any, **kwargs: Any
+        self, when: datetime, func: str, *args: object, **kwargs: object
     ) -> None:
         f = getattr(self, func)
         _ = self.run_at(lambda _: f(*args, **kwargs), when)
 
     def call_on_app(
-        self, app: Any, method: str, *args: Any, **kwargs: Any
+        self, app: object, method: str, *args: object, **kwargs: object
     ) -> Any:
         return getattr(app, method)(*args, **kwargs)
 
@@ -63,7 +58,13 @@ class TestApp(Hass):
         value = self.get_state(entity, attribute)
         if type is None:
             return value
-        return convert(value, type)
+        if isinstance(value, dict):
+            return {
+                k: _convert_scalar(v, type) if isinstance(v, str) else v
+                for k, v in value.items()
+            }
+        assert value is None or isinstance(value, str)
+        return _convert_scalar(value, type) if value is not None else None
 
     def get_next_time_of_day(
         self, time_of_day: timedelta, future: bool

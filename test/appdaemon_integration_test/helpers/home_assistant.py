@@ -2,7 +2,6 @@ import json
 import os
 import yaml
 from appdaemon_integration_test.helpers import directories
-from typing import Any
 
 
 def create_home_assistant_configuration(target_directory: str, port: int) -> None:
@@ -47,7 +46,7 @@ def create_home_assistant_configuration(target_directory: str, port: int) -> Non
 
 def create_service_data(entity_id: str, value: str) -> tuple[str, str]:
     domain = entity_id[0 : entity_id.find(".")]
-    data: dict[str, Any] = {"entity_id": entity_id}
+    data: dict[str, object] = {"entity_id": entity_id}
     if domain in ["input_boolean", "switch"]:
         assert value in ["off", "on"]
         return f"services/{domain}/turn_{value}", json.dumps(data)

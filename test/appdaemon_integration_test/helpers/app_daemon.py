@@ -3,7 +3,6 @@ import shutil
 import tempfile
 import yaml
 from appdaemon_integration_test.helpers import directories
-from typing import Any
 
 
 def create_appdaemon_configuration(
@@ -62,7 +61,7 @@ def create_appdaemon_apps_config(
 
     os.makedirs(apps_dir, exist_ok=True)
 
-    content: dict[str, Any] = {}
+    content: dict[str, object] = {}
     for config in app_configs:
         source_file = os.path.join(
             directories.appdaemon_config_path, "configs", config + ".yaml"

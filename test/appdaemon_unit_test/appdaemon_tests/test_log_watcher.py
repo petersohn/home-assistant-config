@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from datetime import timedelta
 from pathlib import Path
-from typing import Any
-
 from appdaemon_unit_test.test_helpers.harness import Harness
+from appdaemon_unit_test.test_helpers.hass import Hass
 from enabler import ScriptEnabler
 
 
@@ -17,10 +16,10 @@ def _create_log_watcher(
     poll_interval: timedelta | None = None,
     notifier: str = NOTIFIER,
     enabler: str | None = None,
-    args: dict[str, Any] | None = None,
-) -> Any:
+    args: dict[str, object] | None = None,
+) -> Hass:
     interval = poll_interval if poll_interval is not None else timedelta(seconds=10)
-    kwargs: dict[str, Any] = {
+    kwargs: dict[str, object] = {
         "file": file,
         "poll_interval": int(interval.total_seconds()),
         "notifier": notifier,
@@ -34,10 +33,16 @@ def _create_log_watcher(
     )
 
 
-def _register_notifier(harness: Harness, notifier: str = NOTIFIER) -> list[dict[str, Any]]:
-    calls: list[dict[str, Any]] = []
+def _message(call: dict[str, object]) -> str:
+    message = call["message"]
+    assert isinstance(message, str)
+    return message
 
-    def capture(data: dict[str, Any]) -> None:
+
+def _register_notifier(harness: Harness, notifier: str = NOTIFIER) -> list[dict[str, object]]:
+    calls: list[dict[str, object]] = []
+
+    def capture(data: dict[str, object]) -> None:
         calls.append(data)
 
     harness.test_app.register_service(notifier, "", capture)
@@ -70,7 +75,7 @@ def test_new_lines_notification(harness: Harness, tmp_path: Path) -> None:
     harness.advance_time(timedelta(seconds=10))
 
     assert len(calls) == 1
-    assert "new line 1\nnew line 2\n" in calls[0]["message"]
+    assert "new line 1\nnew line 2\n" in _message(calls[0])
 
 
 def test_no_new_lines_no_action(harness: Harness, tmp_path: Path) -> None:
@@ -99,7 +104,7 @@ def test_sequential_polls_only_emit_new_lines(harness: Harness, tmp_path: Path) 
     harness.advance_time(timedelta(seconds=10))
 
     assert len(calls) == 1
-    assert "first batch\n" in calls[0]["message"]
+    assert "first batch\n" in _message(calls[0])
 
     with open(log_file, "a") as f:
         f.write("second batch\n")
@@ -107,8 +112,8 @@ def test_sequential_polls_only_emit_new_lines(harness: Harness, tmp_path: Path) 
     harness.advance_time(timedelta(seconds=10))
 
     assert len(calls) == 2
-    assert "second batch\n" in calls[1]["message"]
-    assert "first batch\n" not in calls[1]["message"]
+    assert "second batch\n" in _message(calls[1])
+    assert "first batch\n" not in _message(calls[1])
 
 
 def test_extra_args_passed_through(harness: Harness, tmp_path: Path) -> None:
@@ -128,7 +133,7 @@ def test_extra_args_passed_through(harness: Harness, tmp_path: Path) -> None:
 
     assert len(calls) == 1
     assert calls[0]["title"] == "TestLog"
-    assert "hello\n" in calls[0]["message"]
+    assert "hello\n" in _message(calls[0])
 
 
 def test_html_like_content_escaped(harness: Harness, tmp_path: Path) -> None:
@@ -146,7 +151,7 @@ def test_html_like_content_escaped(harness: Harness, tmp_path: Path) -> None:
     harness.advance_time(timedelta(seconds=10))
 
     assert len(calls) == 1
-    message = calls[0]["message"]
+    message = _message(calls[0])
     assert "<string>" not in message
     assert "&lt;string&gt;" in message
     assert "a &amp; b &lt; c &gt; d" in message
@@ -181,8 +186,8 @@ def test_enabler_disabled_suppresses_notification(harness: Harness, tmp_path: Pa
     harness.advance_time(timedelta(seconds=10))
 
     assert len(calls) == 1
-    assert "after re-enable\n" in calls[0]["message"]
-    assert "while disabled\n" not in calls[0]["message"]
+    assert "after re-enable\n" in _message(calls[0])
+    assert "while disabled\n" not in _message(calls[0])
 
 
 def test_file_shrink_resets_offset(harness: Harness, tmp_path: Path) -> None:
@@ -198,7 +203,7 @@ def test_file_shrink_resets_offset(harness: Harness, tmp_path: Path) -> None:
     harness.advance_time(timedelta(seconds=10))
 
     assert len(calls) == 1
-    assert "rotated fresh content\n" in calls[0]["message"]
+    assert "rotated fresh content\n" in _message(calls[0])
 
 
 def test_oversized_message_split_into_chunks(harness: Harness, tmp_path: Path) -> None:
@@ -218,8 +223,8 @@ def test_oversized_message_split_into_chunks(harness: Harness, tmp_path: Path) -
 
     assert len(calls) == 2
     for call in calls:
-        assert len(call["message"]) <= 4000
-    combined = "".join(call["message"] for call in calls)
+        assert len(_message(call)) <= 4000
+    combined = "".join(_message(call) for call in calls)
     assert "0\n" in combined
     assert "4\n" in combined
 
@@ -239,8 +244,8 @@ def test_single_oversized_line_hard_split(harness: Harness, tmp_path: Path) -> N
 
     assert len(calls) == 3
     for call in calls:
-        assert len(call["message"]) <= 4000
-    assert "".join(call["message"] for call in calls) == "y" * 9000 + "\n"
+        assert len(_message(call)) <= 4000
+    assert "".join(_message(call) for call in calls) == "y" * 9000 + "\n"
 
 
 def test_mixed_lines_split_preserves_all_content(
@@ -261,12 +266,12 @@ def test_mixed_lines_split_preserves_all_content(
 
     assert len(calls) == 3
     for call in calls:
-        assert len(call["message"]) <= 4000
-    assert "".join(call["message"] for call in calls) == (
+        assert len(_message(call)) <= 4000
+    assert "".join(_message(call) for call in calls) == (
         "z" * 3000 + "\n" + "w" * 4500 + "\n"
     )
     # First chunk ends at the 3000-char line boundary.
-    assert calls[0]["message"] == "z" * 3000 + "\n"
+    assert _message(calls[0]) == "z" * 3000 + "\n"
 
 
 def test_file_missing_then_recreated(harness: Harness, tmp_path: Path) -> None:
@@ -283,7 +288,7 @@ def test_file_missing_then_recreated(harness: Harness, tmp_path: Path) -> None:
     harness.advance_time(timedelta(seconds=10))
 
     assert len(calls) == 1
-    assert "second line\n" in calls[0]["message"]
+    assert "second line\n" in _message(calls[0])
 
     log_file.unlink()
 
@@ -295,4 +300,4 @@ def test_file_missing_then_recreated(harness: Harness, tmp_path: Path) -> None:
     harness.advance_time(timedelta(seconds=10))
 
     assert len(calls) == 2
-    assert "fresh line a\nfresh line b\n" in calls[1]["message"]
+    assert "fresh line a\nfresh line b\n" in _message(calls[1])
