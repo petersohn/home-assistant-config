@@ -4,6 +4,7 @@ import time
 import pytest
 
 from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
+from appdaemon_integration_test.helpers.error_log import ErrorLogChecker
 from appdaemon_integration_test.helpers.history_watcher import HistoryWatcher
 
 input_switch1 = "input_select.test_auto_switch_switch1"
@@ -134,6 +135,7 @@ test_reload_rows = [
 def test_reload(
     appdaemon_client: AppDaemonClient,
     history_watcher: HistoryWatcher,
+    error_log: ErrorLogChecker,
     reentrant: bool,
     enabler_state: str,
     initial: str,
@@ -163,9 +165,20 @@ def test_reload(
         expected += [output_switch, "on"]
     history_watcher.check_history(*expected)
 
-    appdaemon_client.load_apps(
-        *base_configs, auto_switch2, enabler_config, "dummy1"
-    )
+    # Reloading while the switch is on triggers an AppDaemon-internal race:
+    # terminate() turns off the target, firing a listen_state callback that
+    # can execute after the app is popped from AppDaemon.objects.
+    # cancel_listen_state cannot stop an already-dispatched callback, so a
+    # KeyError surfaces in error.log. The race is otherwise harmless: the
+    # dropped callback is the app's own, whose termination is in progress
+    # anyway (AppDaemon's intended behavior is to discard stale callbacks),
+    # and the missing callback-counter increment has no functional effect.
+    # Fixable only in AppDaemon itself (TOCTOU between get_app_instance and
+    # objects[name] in threads.py); tolerated here instead.
+    with error_log.allow_errors("KeyError"):
+        appdaemon_client.load_apps(
+            *base_configs, auto_switch2, enabler_config, "dummy1"
+        )
     if expected_state1 == expected_state2:
         time.sleep(2)
     appdaemon_client.wait_for_state(output_switch, expected_state2)
