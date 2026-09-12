@@ -86,5 +86,24 @@ class LogWatcher(hass.Hass):
         self.log(f"{len(lines)} new line(s) from {self.file}")
 
         if self.enabler is None or self.enabler.is_enabled():
+            # Escape line-by-line so chunk boundaries never cut an HTML entity.
             message = "".join(html.escape(line) for line in lines)
-            self.call_service(self.notifier, message=message, **self.extra_args)
+            for chunk in self._split_message(message):
+                self.call_service(self.notifier, message=chunk, **self.extra_args)
+
+    # Telegram's limit is 4096 characters; leave some headroom.
+    MESSAGE_LIMIT: int = 4000
+
+    @staticmethod
+    def _split_message(text: str) -> list[str]:
+        chunks: list[str] = []
+        start = 0
+        while start < len(text):
+            end = min(start + LogWatcher.MESSAGE_LIMIT, len(text))
+            if end < len(text):
+                newline = text.rfind("\n", start, end)
+                if newline != -1 and newline > start:
+                    end = newline + 1
+            chunks.append(text[start:end])
+            start = end
+        return chunks

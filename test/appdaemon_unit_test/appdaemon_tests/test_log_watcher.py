@@ -198,6 +198,74 @@ def test_file_shrink_resets_offset(harness: Harness, tmp_path: Any) -> None:
     assert "rotated fresh content\n" in calls[0]["message"]
 
 
+def test_oversized_message_split_into_chunks(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(harness, str(log_file))
+
+    harness.advance_time(timedelta(seconds=10))
+
+    line = "x" * 1000
+    with open(log_file, "a") as f:
+        for i in range(5):
+            f.write(f"{line} {i}\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 2
+    for call in calls:
+        assert len(call["message"]) <= 4000
+    combined = "".join(call["message"] for call in calls)
+    assert "0\n" in combined
+    assert "4\n" in combined
+
+
+def test_single_oversized_line_hard_split(harness: Harness, tmp_path: Any) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(harness, str(log_file))
+
+    harness.advance_time(timedelta(seconds=10))
+
+    with open(log_file, "a") as f:
+        f.write("y" * 9000 + "\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 3
+    for call in calls:
+        assert len(call["message"]) <= 4000
+    assert "".join(call["message"] for call in calls) == "y" * 9000 + "\n"
+
+
+def test_mixed_lines_split_preserves_all_content(
+    harness: Harness, tmp_path: Any
+) -> None:
+    log_file = tmp_path / "test.log"
+    log_file.write_text("existing\n")
+    calls = _register_notifier(harness)
+    _create_log_watcher(harness, str(log_file))
+
+    harness.advance_time(timedelta(seconds=10))
+
+    with open(log_file, "a") as f:
+        f.write("z" * 3000 + "\n")
+        f.write("w" * 4500 + "\n")
+
+    harness.advance_time(timedelta(seconds=10))
+
+    assert len(calls) == 3
+    for call in calls:
+        assert len(call["message"]) <= 4000
+    assert "".join(call["message"] for call in calls) == (
+        "z" * 3000 + "\n" + "w" * 4500 + "\n"
+    )
+    # First chunk ends at the 3000-char line boundary.
+    assert calls[0]["message"] == "z" * 3000 + "\n"
+
+
 def test_file_missing_then_recreated(harness: Harness, tmp_path: Any) -> None:
     log_file = tmp_path / "test.log"
     log_file.write_text("first line\n")
