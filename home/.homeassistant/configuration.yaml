@@ -95,12 +95,18 @@ command_line:
   - binary_sensor:
       command: !secret printer_command
       name: cups_available
+      icon: mdi:printer
+      device_class: connectivity
   - binary_sensor:
       command: !secret tresorit_status_command
       name: tresorit_running
+      icon: mdi:cloud-sync
+      device_class: connectivity
   - binary_sensor:
       command: curl --fail https://home.kangirigungi.com >/dev/null && echo ON || echo OFF
       name: gateway_available
+      icon: mdi:server-network
+      device_class: connectivity
   - notify:
       name: restart_cups
       command: !secret restart_cups_command

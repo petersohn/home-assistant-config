@@ -27,7 +27,7 @@ binary_sensor.network_available:
 
 binary_sensor.internet_available:
   friendly_name: Internet
-  icon: mdi:earth
+  icon: mdi:wan
 
 binary_sensor.desktop_available:
   friendly_name: Desktop
@@ -35,28 +35,12 @@ binary_sensor.desktop_available:
 
 binary_sensor.gateway_available:
   friendly_name: Gateway
-  icon: mdi:server-network
-  device_class: connectivity
-
-binary_sensor.ssh_tunnel_available:
-  friendly_name: SSH tunnel
-  icon: mdi:download-network
-  device_class: connectivity
 
 binary_sensor.cups_available:
   friendly_name: Nyomtató
-  icon: mdi:printer
-  device_class: connectivity
 
 binary_sensor.tresorit_running:
   friendly_name: Tresorit
-  icon: mdi:cloud-sync
-  device_class: connectivity
-
-binary_sensor.mosquitto_bridge_available:
-  friendly_name: Mosquitto Bridge
-  icon: mdi:bridge
-  device_class: connectivity
 
 binary_sensor.furnace_temperature_available:
   friendly_name: Furnace Temperature

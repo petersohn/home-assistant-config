@@ -446,6 +446,28 @@ views:
               navigation_path: /lovelace/window_door
             double_tap_action:
               action: more-info
+      - type: heading
+        heading: Hálózat
+        icon: mdi:network
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/state
+        badges:
+          - type: entity
+            entity: binary_sensor.network_available
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            entity: binary_sensor.internet_available
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            entity: binary_sensor.tresorit_running
+            color: state
+            tap_action:
+              action: more-info
 
 
     icon: 'mdi:home'
