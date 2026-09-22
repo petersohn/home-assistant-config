@@ -400,6 +400,9 @@ views:
       - type: heading
         heading: Riasztás
         icon: mdi:alert
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/alerts
         badges:
           - type: entity
             entity: alert.furnace_overheat
