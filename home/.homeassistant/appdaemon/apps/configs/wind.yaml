@@ -7,6 +7,8 @@ wind_direction:
 wind_direction_average_icon:
     class: WindDirection
     module: wind_direction
+    dependencies:
+        - wind_direction_average
     entity: sensor.wind_direction_average
 
 

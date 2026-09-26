@@ -17,6 +17,7 @@ dining_room_window_blind:
     dependencies:
         - locker
         - window_blind_shield_1
+        - is_sunlight_or_false
     expr: >
         75 if v.input_select.presence_mode == 'home' and e.window_blind_shield_1
         else 'open' if v.input_select.presence_mode == 'home' or (
@@ -113,6 +114,7 @@ storage_window_blind_switch:
     module: enabled_switch
     dependencies:
         - storage_window_blind_enabler
+        - auto_switch_storage_window_blind
         - locker
     enabler: storage_window_blind_enabler
     targets:

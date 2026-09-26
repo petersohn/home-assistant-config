@@ -85,6 +85,7 @@ motion_sensor_well_enabler:
     dependencies:
         - sun_enabler_night
         - locker
+        - motion_sensor_well_average
     expr: >
         e.sun_enabler_night and
         v.sensor.motion_sensor_well_average <= 0.2 and
@@ -135,6 +136,7 @@ gate_opening:
     dependencies:
         - auto_switch_light_driveway
         - auto_switch_light_gate_reflector
+        - sun_enabler_night
         - locker
     sensor: cover.gate
     target_state: opening
@@ -293,6 +295,8 @@ garage_driveway_motion_sensor:
     dependencies:
         - auto_switch_light_driveway
         - sun_enabler_night
+        - auto_switch_light_outside_5
+        - auto_switch_light_garage
         - locker
     sensor: binary_sensor.motion_sensor_garage
     targets:
@@ -334,6 +338,7 @@ well_motion_sensor:
     module: timer_switch
     dependencies:
         - auto_switch_light_well
+        - auto_switch_light_driveway
         - motion_sensor_well_enabler
         - locker
     sensor: binary_sensor.motion_sensor_well
