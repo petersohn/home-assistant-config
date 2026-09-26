@@ -26,10 +26,11 @@ StateCallbackRecord = NamedTuple(
     [
         ("app", str),
         ("callback", StateCallback),
-        ("entity", str),
+        ("entity", str | None),
         ("attribute", str | None),
         ("old", str | None),
         ("new", str | None),
+        ("namespace", str),
     ],
 )
 
@@ -76,7 +77,7 @@ class AppManager:
     def __init__(self, begin_time: datetime, log_filename: str):
         self.__apps: dict[str, Hass] = {}
         self.__app_order: list[str] = []
-        self.__states: dict[str, State] = {}
+        self.__states: dict[str, dict[str, State]] = {"default": {}}
         self.__state_callbacks: dict[int, StateCallbackRecord] = {}
         self.__state_callback_id = 0
         self.__datetime = begin_time
@@ -147,19 +148,35 @@ class AppManager:
     def get_app(self, name: str) -> Hass | None:
         return self.__apps.get(name)
 
+    def __state_dict(self, namespace: str) -> dict[str, State]:
+        if namespace not in self.__states:
+            self.__states[namespace] = {}
+        return self.__states[namespace]
+
     def get_state(
-        self, name: str, attribute: str | None = None
-    ) -> EntityState:
-        data = self.__states.get(name)
+        self,
+        name: str | None,
+        attribute: str | None = None,
+        namespace: str = "default",
+    ) -> EntityState | dict[str, EntityState]:
+        states = self.__state_dict(namespace)
+        if name is None:
+            all_states: dict[str, EntityState] = {
+                entity: data.state
+                for entity, data in states.items()
+            }
+            return all_states
+        data = states.get(name)
         if data is None:
             return None
         if attribute is None:
             return data.state
         if attribute == "all":
-            return {
+            all_state: dict[str, str | dict[str, str] | None] = {
                 "state": data.state,
                 "attributes": dict(data.attributes),
             }
+            return all_state
         return data.attributes.get(attribute)
 
     def set_state(
@@ -168,8 +185,10 @@ class AppManager:
         name: str,
         state: str | None,
         attributes: dict[str, str] | None = None,
+        namespace: str = "default",
     ) -> None:
-        data = self.__states.setdefault(name, State())
+        states = self.__state_dict(namespace)
+        data = states.setdefault(name, State())
         old_state_value = data.state
         old_attributes = dict(data.attributes)
         data.state = None if state is None else str(state)
@@ -188,7 +207,9 @@ class AppManager:
         self.__debug(f"Set state {name} by {app}: {new}")
 
         for id, callback in self.__state_callbacks.items():
-            if callback.entity != name:
+            if callback.namespace != namespace:
+                continue
+            if callback.entity is not None and callback.entity != name:
                 continue
 
             def call_callback(
@@ -252,6 +273,10 @@ class AppManager:
                         old_attr,
                         new_attr,
                     )
+
+    def remove_entity(self, name: str, namespace: str = "default") -> None:
+        states = self.__state_dict(namespace)
+        states.pop(name, None)
 
     def __get_id(self) -> int:
         id = self.__state_callback_id
@@ -449,19 +474,29 @@ class Hass:
         return self.datetime().time()
 
     def get_state(
-        self, entity_id: str, attribute: str | None = None
-    ) -> EntityState:
+        self,
+        entity_id: str | None,
+        attribute: str | None = None,
+        namespace: str = "default",
+    ) -> EntityState | dict[str, EntityState]:
         assert self.__manager is not None
-        return self.__manager.get_state(entity_id, attribute)
+        return self.__manager.get_state(entity_id, attribute, namespace)
 
     def set_state(
         self,
         entity_id: str,
         state: str | None,
         attributes: dict[str, str] | None = None,
+        namespace: str = "default",
     ) -> None:
         assert self.__manager is not None
-        self.__manager.set_state(self.__name, entity_id, state, attributes)
+        self.__manager.set_state(
+            self.__name, entity_id, state, attributes, namespace
+        )
+
+    def remove_entity(self, entity_id: str, namespace: str = "default") -> None:
+        assert self.__manager is not None
+        self.__manager.remove_entity(entity_id, namespace)
 
     def select_option(self, entity_id: str, option: str) -> None:
         assert self.__manager is not None
@@ -478,10 +513,11 @@ class Hass:
     def listen_state(
         self,
         callback: StateCallback,
-        entity_id: str,
+        entity_id: str | None,
         attribute: str | None = None,
         old: str | None = None,
         new: str | None = None,
+        namespace: str = "default",
     ) -> int:
         assert self.__manager is not None
         return self.__manager.listen_state(
@@ -492,6 +528,7 @@ class Hass:
                 attribute=attribute,
                 old=old,
                 new=new,
+                namespace=namespace,
             )
         )
 
