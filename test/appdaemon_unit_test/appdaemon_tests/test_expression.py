@@ -155,6 +155,18 @@ def test_changes(harness: Harness) -> None:
     assert harness.get_state(output) == "00:01:00 00:01:30"
 
 
+def test_missing_input(harness: Harness) -> None:
+    harness.app_manager.create_app(
+        "expression", "Expression", "expression",
+        target=output,
+        expr=f"0.5 * v.{input1}",
+    )
+    harness.clear_errors()
+    assert harness.get_state(output, attribute="all") is None
+    harness.set_state(input1, 5)
+    assert harness.get_state(output) == "2.5"
+
+
 def test_nums(harness: Harness) -> None:
     _initialize(
         harness,

@@ -265,6 +265,8 @@ class Expression(hass.Hass):
         self.evaluator.cleanup()
 
     def _set(self, value: ExpressionResult) -> None:
+        if value is None:
+            return
         if type(value) is bool:
             value = "on" if value else "off"
         self.set_state(self.target, state=value, attributes=self.attributes)
