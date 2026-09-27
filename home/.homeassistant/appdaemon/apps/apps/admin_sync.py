@@ -96,6 +96,8 @@ class AdminSync(hass.Hass):
     def _mirror(self, entity: str) -> None:
         try:
             state = self.get_state(entity, attribute="all", namespace="admin")
+            if state is None:
+                return
             assert isinstance(state, dict)
             value = state.get("state")
             if value is not None and not isinstance(value, str):

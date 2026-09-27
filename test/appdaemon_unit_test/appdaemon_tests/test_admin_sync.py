@@ -176,6 +176,18 @@ def test_mirror_failure_logged_not_fatal(harness: Harness) -> None:
     harness.clear_errors()
 
 
+def test_mirror_of_vanished_entity_skipped_silently(
+    harness: Harness,
+) -> None:
+    app = _create_admin_sync(harness)
+    harness.clear_errors()
+    # Event fires for an entity that is already gone by the time the
+    # callback reads it (fast scheduler_callback churn).
+    app.on_admin_change("state_changed", {"entity_id": "scheduler_callback.gone"})
+    assert harness.get_state("scheduler_callback.gone") is None
+    assert not harness.app_manager.has_error()
+
+
 def test_numeric_state_gets_measurement_attributes(
     harness: Harness,
 ) -> None:
