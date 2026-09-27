@@ -1682,3 +1682,234 @@ views:
           - sensor.date
           - sensor.time
     icon: 'mdi:wrench'
+
+  - title: AppDaemon
+    icon: mdi:robot
+    badges: []
+    cards:
+      - type: entities
+        entities:
+          - sensor.active_apps
+          - sensor.inactive_apps
+          - sensor.appdaemon_uptime
+          - sensor.appdaemon_booted
+          - sensor.threads_current_busy
+          - sensor.threads_max_busy
+          - sensor.threads_max_busy_time
+          - sensor.threads_last_action_time
+        title: AppDaemon
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.admin_sync
+        title: admin_sync
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.air_quality_alert
+          - app.availability_alerts
+          - app.availability_alerts_critical
+          - app.camera_detection_alert
+          - app.freeze_alerts
+          - app.tracker_changes
+          - app.tracker_last_changed
+          - app.tracker_last_updated
+          - app.tracker_not_updated
+          - app.window_alerts
+          - app.window_alerts_sleep
+        title: alerts
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.is_dark
+          - app.is_light_enough_to_open_blind
+          - app.is_night_or_dark
+          - app.is_sunlight_or_false
+          - app.is_sunlight_or_true
+          - app.lights_should_be_on
+          - app.sun_enabler_night
+          - app.sunlight
+        title: base_enablers
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.christmas_light_balcony_enabler
+          - app.christmas_light_balcony_switcher
+          - app.christmas_light_switch_balcony
+          - app.christmas_light_switch_front
+          - app.christmas_light_switch_tree
+          - app.christmas_light_switcher
+          - app.christmas_lights_date_enabler
+          - app.christmas_lights_enabler
+        title: christmas_lights
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.christmas_tree
+          - app.christmas_tree_enabler
+          - app.christmas_tree_switcher
+        title: christmas_tree
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.auto_switch_climate_bedroom
+          - app.auto_switch_climate_living_room
+          - app.climate_bedroom_switch
+          - app.climate_enabler
+          - app.climate_living_room_switch
+          - app.heater_check
+          - app.heater_check2
+        title: climate
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.furnace_overheat_warning
+          - app.heating_pump
+        title: heating
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.auto_switch_hot_water_pump
+          - app.hot_water_pump_backend_timer
+          - app.hot_water_pump_enabler
+          - app.no_hot_water
+        title: hot_water_pump
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.lightbulb_icon
+          - app.play_icon
+          - app.pump_icon
+          - app.string_lights_icon
+        title: icons
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.locker
+        title: locker
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.appdaemon_error_log_alert_enabler
+          - app.appdaemon_error_log_watcher
+        title: log_watcher
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.driveway_person_detected
+          - app.driveway_vehicle_detected
+          - app.garage2_motion_sensor
+          - app.garage_driveway_motion_sensor
+          - app.garden_person_detected
+          - app.garden_vehicle_detected
+          - app.gate_opening
+          - app.gate_person_detected
+          - app.gate_vehicle_detected
+          - app.home_light_switcher
+          - app.motion_sensor_garage2_average
+          - app.motion_sensor_garage2_history
+          - app.motion_sensor_garage_average
+          - app.motion_sensor_garage_history
+          - app.motion_sensor_well_average
+          - app.motion_sensor_well_enabler
+          - app.motion_sensor_well_history
+          - app.well_motion_sensor
+        title: motion_lights
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.auto_switch_light_driveway
+          - app.auto_switch_light_garage
+          - app.auto_switch_light_gate_reflector
+          - app.auto_switch_light_outside_0
+          - app.auto_switch_light_outside_1
+          - app.auto_switch_light_outside_2
+          - app.auto_switch_light_outside_3
+          - app.auto_switch_light_outside_4
+          - app.auto_switch_light_outside_5
+          - app.auto_switch_light_outside_6
+          - app.auto_switch_light_well
+          - app.light_outside_2_4_5_6_enabler
+          - app.light_outside_switcher_0
+          - app.light_outside_switcher_1
+          - app.light_outside_switcher_2_4_5_6
+          - app.light_outside_switcher_3
+        title: outside_lights
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.auto_switch_balcony_sprinkler
+          - app.auto_switch_sprinkler_1
+          - app.auto_switch_sprinkler_2
+          - app.auto_switch_sprinkler_3
+          - app.auto_switch_sprinkler_cellar
+          - app.cellar_sprinkler_switcher
+          - app.sprinkler_enabler
+          - app.sprinkler_run_time
+          - app.sprinkler_run_time_2
+          - app.sprinkler_timer
+        title: sprinkler
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.auto_switch_water_heater
+          - app.is_attic_warm_enough_for_water_heater
+          - app.is_water_heater_stopped
+          - app.water_heater_enabler
+          - app.water_heater_switch
+        title: water_heater
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.maximum_temperature_last_day
+          - app.rain_decaying
+          - app.rain_history
+          - app.rain_last_day
+          - app.rain_last_hour
+          - app.temperature_history
+        title: weather
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.wind_direction
+          - app.wind_direction_average
+          - app.wind_direction_average_icon
+          - app.wind_direction_short_term
+          - app.wind_disabler
+          - app.wind_short_term
+        title: wind
+        state_color: true
+        show_header_toggle: false
+      - type: entities
+        entities:
+          - app.auto_switch_storage_window_blind
+          - app.dining_room_2_window_blind
+          - app.dining_room_window_blind
+          - app.living_room_window_blind
+          - app.storage_door_open
+          - app.storage_window_blind_1
+          - app.storage_window_blind_2
+          - app.storage_window_blind_auto_open_enabler
+          - app.storage_window_blind_enabler
+          - app.storage_window_blind_switch
+          - app.window_blind_shield_1
+          - app.window_blind_shield_2
+        title: window_blinds
+        state_color: true
+        show_header_toggle: false
