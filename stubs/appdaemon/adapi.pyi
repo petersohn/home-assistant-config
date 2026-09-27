@@ -6,6 +6,8 @@ from typing import Any, Literal, Protocol, overload
 
 TimerCallback = Callable[[dict[str, Any]], Any]
 
+EventCallback = Callable[..., None]
+
 
 class StateCallback(Protocol):
     def __call__(
@@ -167,3 +169,37 @@ class ADAPI:
         entity_id: str,
         namespace: str | None = None,
     ) -> None: ...
+
+    @overload
+    def listen_event(
+        self,
+        callback: EventCallback,
+        event: str | None = ...,
+        *,
+        namespace: str | None = ...,
+        timeout: str | int | float | dt.timedelta | None = ...,
+        oneshot: bool = ...,
+        pin: bool | None = ...,
+        pin_thread: int | None = ...,
+        **kwargs: Any,
+    ) -> str: ...
+    @overload
+    def listen_event(
+        self,
+        callback: EventCallback,
+        event: list[str],
+        *,
+        namespace: str | None = ...,
+        timeout: str | int | float | dt.timedelta | None = ...,
+        oneshot: bool = ...,
+        pin: bool | None = ...,
+        pin_thread: int | None = ...,
+        **kwargs: Any,
+    ) -> list[str]: ...
+
+    def cancel_listen_event(
+        self,
+        handle: str,
+        name: str | None = None,
+        silent: bool = False,
+    ) -> bool: ...

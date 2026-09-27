@@ -61,6 +61,17 @@ def test_resync_removes_stale_entities(harness: Harness) -> None:
     assert harness.get_state(admin_total) is None
 
 
+def test_removal_event_removes_mirror_immediately(
+    harness: Harness,
+) -> None:
+    _set_admin(harness, admin_total, "1")
+    _create_admin_sync(harness)
+    assert harness.get_state(admin_total) == "1"
+    harness.app_manager.remove_entity(admin_total, namespace="admin")
+    harness.app_manager.call_pending_callbacks()
+    assert harness.get_state(admin_total) is None
+
+
 def test_unchanged_not_re_set(harness: Harness) -> None:
     _set_admin(harness, admin_total, "1")
     app = _create_admin_sync(harness)

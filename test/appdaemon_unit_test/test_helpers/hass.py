@@ -34,6 +34,20 @@ StateCallbackRecord = NamedTuple(
     ],
 )
 
+EventData = dict[str, Any]
+
+EventCallback = Callable[[str, EventData], None]
+
+EventCallbackRecord = NamedTuple(
+    "EventCallbackRecord",
+    [
+        ("app", str),
+        ("callback", EventCallback),
+        ("event", str | None),
+        ("namespace", str),
+    ],
+)
+
 SchedulerChallback = Callable[[dict[str, object]], None]
 
 ScheduledTask = NamedTuple(
@@ -80,6 +94,8 @@ class AppManager:
         self.__states: dict[str, dict[str, State]] = {"default": {}}
         self.__state_callbacks: dict[int, StateCallbackRecord] = {}
         self.__state_callback_id = 0
+        self.__event_callbacks: dict[int, EventCallbackRecord] = {}
+        self.__event_callback_id = 0
         self.__datetime = begin_time
         self.__scheduled_tasks: dict[str, ScheduledTask] = {}
         self.__scheduled_task_order: list[str] = []
@@ -124,6 +140,13 @@ class AppManager:
             if value.app == name
         ]:
             self.cancel_listen_state(callback_id)
+
+        for callback_id in [
+            key
+            for key, value in self.__event_callbacks.items()
+            if value.app == name
+        ]:
+            self.cancel_listen_event(callback_id)
 
         for timer_id in [
             key
@@ -188,6 +211,7 @@ class AppManager:
         namespace: str = "default",
     ) -> None:
         states = self.__state_dict(namespace)
+        is_new = name not in states
         data = states.setdefault(name, State())
         old_state_value = data.state
         old_attributes = dict(data.attributes)
@@ -274,9 +298,77 @@ class AppManager:
                         new_attr,
                     )
 
+        self.fire_event(
+            app,
+            "state_changed",
+            {
+                "entity_id": name,
+                "new_state": new,
+                "old_state": old,
+            },
+            namespace,
+        )
+        if is_new:
+            self.fire_event(
+                app,
+                "__AD_ENTITY_ADDED",
+                {"entity_id": name, "state": new},
+                namespace,
+            )
+
     def remove_entity(self, name: str, namespace: str = "default") -> None:
         states = self.__state_dict(namespace)
-        states.pop(name, None)
+        existed = states.pop(name, None) is not None
+        if existed:
+            self.fire_event(
+                "AppManager",
+                "__AD_ENTITY_REMOVED",
+                {"entity_id": name},
+                namespace,
+            )
+
+    def fire_event(
+        self,
+        app: str,
+        event: str,
+        data: dict[str, Any],
+        namespace: str = "default",
+    ) -> None:
+        self.__debug(f"Event {event} in {namespace} by {app}: {data}")
+        for id, record in list(self.__event_callbacks.items()):
+            if record.namespace != namespace:
+                continue
+            if record.event is not None and record.event != event:
+                continue
+            if record.event is None and event.startswith("__"):
+                continue
+
+            def call_callback(
+                f: EventCallback,
+                event: str,
+                data: dict[str, Any],
+            ) -> None:
+                f(event, data)
+
+            def schedule_call(
+                f: EventCallback,
+                event: str,
+                data: dict[str, Any],
+            ) -> None:
+                self.__debug(f"Schedule event callback {id} for {app}")
+                _ = self.schedule_task(
+                    ScheduledTask(
+                        app=app,
+                        time=self.__datetime,
+                        callback=lambda _: call_callback(  # pyright: ignore[reportUnknownLambdaType]
+                            f, event, data
+                        ),
+                        repeat=None,
+                        kwargs={},
+                    )
+                )
+
+            schedule_call(record.callback, event, data)
 
     def __get_id(self) -> int:
         id = self.__state_callback_id
@@ -297,6 +389,19 @@ class AppManager:
     def cancel_listen_state(self, id: int) -> None:
         if id in self.__state_callbacks:
             del self.__state_callbacks[id]
+
+    def listen_event(self, callback: EventCallbackRecord) -> int:
+        id = self.__event_callback_id
+        self.__event_callback_id += 1
+        self.__debug(
+            f"Listen event {callback.event} by {callback.app}: {id}"
+        )
+        self.__event_callbacks[id] = callback
+        return id
+
+    def cancel_listen_event(self, id: int) -> None:
+        if id in self.__event_callbacks:
+            del self.__event_callbacks[id]
 
     def __calculate_scheduled_task_order(self) -> None:
         self.__scheduled_task_order = list(self.__scheduled_tasks.keys())
@@ -535,6 +640,39 @@ class Hass:
     def cancel_listen_state(self, id: int) -> None:
         assert self.__manager is not None
         self.__manager.cancel_listen_state(id)
+
+    def listen_event(
+        self,
+        callback: EventCallback,
+        event: str | list[str] | None = None,
+        namespace: str = "default",
+        **_kwargs: object,
+    ) -> int | list[int]:
+        assert self.__manager is not None
+        if isinstance(event, str) or event is None:
+            return self.__manager.listen_event(
+                EventCallbackRecord(
+                    app=self.__name,
+                    callback=callback,
+                    event=event,
+                    namespace=namespace,
+                )
+            )
+        return [
+            self.__manager.listen_event(
+                EventCallbackRecord(
+                    app=self.__name,
+                    callback=callback,
+                    event=e,
+                    namespace=namespace,
+                )
+            )
+            for e in event
+        ]
+
+    def cancel_listen_event(self, id: int) -> None:
+        assert self.__manager is not None
+        self.__manager.cancel_listen_event(id)
 
     def run_in(
         self, callback: SchedulerChallback, delay: int, **kwargs: object
