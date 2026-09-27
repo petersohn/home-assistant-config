@@ -35,24 +35,23 @@ class AdminSync(hass.Hass):
         assert isinstance(locker_app, locker.Locker)
         self.mutex = locker_app.get_mutex("AdminSync")
 
+        self._sync_with_retry()
+
+    def _retry_init(self, kwargs: dict[str, object]) -> None:
+        self._sync_with_retry()
+
+    def _sync_with_retry(self) -> None:
         try:
-            if not self.listener_registered:
-                self._register_listener()
-                self.listener_registered = True
+            self._ensure_listener()
             self.full_sync({})
         except Exception:
             self.error(traceback.format_exc())
             _ = self.run_in(self._retry_init, 60)
 
-    def _retry_init(self, kwargs: dict[str, object]) -> None:
-        try:
-            if not self.listener_registered:
-                self._register_listener()
-                self.listener_registered = True
-            self.full_sync({})
-        except Exception:
-            self.error(traceback.format_exc())
-            _ = self.run_in(self._retry_init, 60)
+    def _ensure_listener(self) -> None:
+        if not self.listener_registered:
+            self._register_listener()
+            self.listener_registered = True
 
     def _register_listener(self) -> None:
         """Listen for admin namespace changes.

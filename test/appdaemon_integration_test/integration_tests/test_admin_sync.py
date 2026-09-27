@@ -1,49 +1,25 @@
 from __future__ import annotations
-import time
-from typing import Any
 
 from appdaemon_integration_test.helpers.appdaemon_client import AppDaemonClient
 from appdaemon_integration_test.helpers.hass_client import HassClient
-from appdaemon_integration_test.helpers.type_util import values_equal
 
 
-def _wait_for_hass_state(
-    hass_client: HassClient, entity_id: str, expected: Any, timeout: float = 15.0
-) -> None:
-    deadline = time.time() + timeout
-    last: Any = None
-    while time.time() < deadline:
-        try:
-            last = hass_client.get_state(entity_id)
-        except Exception:
-            last = None
-        if values_equal(last, expected):
-            return
-        time.sleep(0.1)
-    assert values_equal(last, expected), (
-        f"{entity_id}: expected {expected!r}, got {last!r}"
+def _admin_get_active_apps(appdaemon_client: AppDaemonClient) -> float:
+    value = appdaemon_client.call_function(
+        "get_state", "sensor.active_apps", namespace="admin"
     )
+    assert isinstance(value, int | float | str)
+    return float(value)
 
 
-def _wait_for_hass_entity_gone(
-    hass_client: HassClient, entity_id: str, timeout: float = 15.0
-) -> None:
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        if all(s["entity_id"] != entity_id for s in hass_client.get_states()):
-            return
-        time.sleep(0.1)
-    assert all(
-        s["entity_id"] != entity_id for s in hass_client.get_states()
-    ), f"{entity_id} still present in HASS"
-
-
-def _admin_set_state(
-    appdaemon_client: AppDaemonClient, entity_id: str, value: Any
-) -> None:
-    appdaemon_client.call_function(
-        "set_state", entity_id, state=value, namespace="admin"
+def _admin_get_app_state(
+    appdaemon_client: AppDaemonClient, app_name: str
+) -> str:
+    value = appdaemon_client.call_function(
+        "get_state", "app." + app_name, namespace="admin"
     )
+    assert isinstance(value, str)
+    return value
 
 
 def test_admin_entities_synced_to_hass(
@@ -51,17 +27,11 @@ def test_admin_entities_synced_to_hass(
 ) -> None:
     appdaemon_client.load_apps("AdminSync")
 
-    admin_total = appdaemon_client.call_function(
-        "get_state", "sensor.total_apps", namespace="admin"
-    )
-    assert admin_total is not None
-    _wait_for_hass_state(hass_client, "sensor.total_apps", admin_total)
+    active_apps = _admin_get_active_apps(appdaemon_client)
+    hass_client.wait_for_state("sensor.active_apps", active_apps)
 
-    app_state = appdaemon_client.call_function(
-        "get_state", "app.admin_sync", namespace="admin"
-    )
-    assert app_state is not None
-    _wait_for_hass_state(hass_client, "app.admin_sync", app_state)
+    app_state = _admin_get_app_state(appdaemon_client, "admin_sync")
+    hass_client.wait_for_state("app.admin_sync", app_state)
 
 
 def test_admin_change_propagates(
@@ -69,11 +39,24 @@ def test_admin_change_propagates(
 ) -> None:
     appdaemon_client.load_apps("AdminSync")
 
-    _admin_set_state(appdaemon_client, "sensor.total_apps", 123)
-    _wait_for_hass_state(hass_client, "sensor.total_apps", 123)
+    active_apps = _admin_get_active_apps(appdaemon_client)
+    hass_client.wait_for_state("sensor.active_apps", active_apps)
 
-    _admin_set_state(appdaemon_client, "sensor.total_apps", 456)
-    _wait_for_hass_state(hass_client, "sensor.total_apps", 456)
+    appdaemon_client.load_apps("AdminSync", "dummy1")
+    active_apps_after_load = _admin_get_active_apps(appdaemon_client)
+    assert active_apps_after_load == active_apps + 1
+    hass_client.wait_for_state("sensor.active_apps", active_apps_after_load)
+
+    app_state = _admin_get_app_state(appdaemon_client, "dummy1")
+    hass_client.wait_for_state("app.dummy1", app_state)
+
+    appdaemon_client.load_apps("AdminSync")
+    hass_client.wait_for_app_state("app.dummy1", "terminated")
+    active_apps_after_unload = _admin_get_active_apps(appdaemon_client)
+    assert active_apps_after_unload == active_apps
+    hass_client.wait_for_state(
+        "sensor.active_apps", active_apps_after_unload
+    )
 
 
 def test_admin_entity_removal_syncs(
@@ -81,10 +64,15 @@ def test_admin_entity_removal_syncs(
 ) -> None:
     appdaemon_client.load_apps("AdminSync")
 
-    _admin_set_state(appdaemon_client, "sensor.admin_sync_probe", "probe")
-    _wait_for_hass_state(hass_client, "sensor.admin_sync_probe", "probe")
+    appdaemon_client.call_function(
+        "set_state",
+        "sensor.admin_sync_probe",
+        state="probe",
+        namespace="admin",
+    )
+    hass_client.wait_for_state("sensor.admin_sync_probe", "probe")
 
     appdaemon_client.call_function(
         "remove_entity", "sensor.admin_sync_probe", namespace="admin"
     )
-    _wait_for_hass_entity_gone(hass_client, "sensor.admin_sync_probe")
+    hass_client.wait_for_entity_gone("sensor.admin_sync_probe")

@@ -172,9 +172,7 @@ class AppManager:
         return self.__apps.get(name)
 
     def __state_dict(self, namespace: str) -> dict[str, State]:
-        if namespace not in self.__states:
-            self.__states[namespace] = {}
-        return self.__states[namespace]
+        return self.__states.setdefault(namespace, {})
 
     def get_state(
         self,

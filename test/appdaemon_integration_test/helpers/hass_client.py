@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import Any
 import requests
 
+from appdaemon_integration_test.helpers.type_util import values_equal
+
 HASS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJkY2U3MDgwNDIwYmI0Mjg3OWIyYjQ1MjQ4OTQzNjI4YiIsImlhdCI6MTU0NjI1MDYyNiwiZXhwIjoxODYxNjEwNjI2fQ.1YmZVaw3EH2bu0jExU2Q6mIyrD1Qf0cPPJmt877mNC0"
 
 
@@ -81,3 +83,55 @@ class HassClient:
                 return
             time.sleep(0.2)
         assert self.get_history_size(entity_id) == expected
+
+    def wait_for_state(
+        self, entity_id: str, expected: object, timeout: float = 15.0
+    ) -> None:
+        import time
+        deadline = time.time() + timeout
+        last: object = None
+        while time.time() < deadline:
+            try:
+                last = self.get_state(entity_id)
+            except Exception:
+                last = None
+            if values_equal(last, expected):
+                return
+            time.sleep(0.1)
+        assert values_equal(last, expected), (
+            f"{entity_id}: expected {expected!r}, got {last!r}"
+        )
+
+    def wait_for_app_state(
+        self, entity_id: str, expected: object, timeout: float = 15.0
+    ) -> None:
+        import time
+        deadline = time.time() + timeout
+        last: object = None
+        while time.time() < deadline:
+            time.sleep(0.1)
+            try:
+                last = self.get_state(entity_id)
+            except Exception:
+                last = None
+            if last == expected:
+                return
+        assert last == expected, (
+            f"{entity_id}: expected {expected!r}, got {last!r}"
+        )
+
+    def wait_for_entity_gone(
+        self, entity_id: str, timeout: float = 15.0
+    ) -> None:
+        import time
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            if all(
+                state["entity_id"] != entity_id
+                for state in self.get_states()
+            ):
+                return
+            time.sleep(0.1)
+        assert all(
+            state["entity_id"] != entity_id for state in self.get_states()
+        ), f"{entity_id} still present in HASS"
