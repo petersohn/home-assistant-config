@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import hass
 import traceback
-from hass_common import EntityValue
+from hass_common import AttributeValue
 from typing import Any, final, TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 @final
 class AdminSync(hass.Hass):
-    mirrored: dict[str, tuple[str | None, dict[str, str]]] = {}
+    mirrored: dict[str, tuple[str | None, dict[str, AttributeValue]]] = {}
     resync_timer: str | None = None
     resync_interval: datetime.timedelta = cast(
         "datetime.timedelta", cast(Any, None)
@@ -47,28 +47,55 @@ class AdminSync(hass.Hass):
             _ = self.run_in(self._retry_init, 60)
 
     def _register_listener(self) -> None:
-        self.listen_state(self.on_admin_change, entity_id=None, namespace="admin")
+        """Listen for admin namespace changes.
+
+        AppDaemon does not dispatch ``listen_state`` callbacks for the
+        admin namespace, and entity additions/removals surface as the
+        ``__AD_ENTITY_ADDED`` and ``__AD_ENTITY_REMOVED`` system events,
+        not as ``state_changed``. ``__silent`` suppresses the admin
+        counter updates that every dispatched callback performs, which
+        would otherwise feed this listener forever.
+        """
+        self.listen_event(
+            self.on_admin_change,
+            ["state_changed", "__AD_ENTITY_ADDED", "__AD_ENTITY_REMOVED"],
+            namespace="admin",
+            __silent=True,
+        )
 
     def on_admin_change(
-        self,
-        entity: str,
-        attribute: str | None,
-        old: EntityValue,
-        new: EntityValue,
-        **kwargs: Any,
+        self, event: str, data: dict[str, Any], **kwargs: Any
     ) -> None:
+        entity = data.get("entity_id")
+        if not isinstance(entity, str):
+            return
         with self.mutex.lock("on_admin_change"):
-            self._mirror(entity)
+            if event == "__AD_ENTITY_REMOVED":
+                self._remove(entity)
+            else:
+                self._mirror(entity)
+
+    def _remove(self, entity: str) -> None:
+        if entity not in self.mirrored:
+            return
+        try:
+            self.remove_entity(entity)
+        except Exception:
+            self.error(f"Failed to remove {entity}")
+            self.error(traceback.format_exc())
+        else:
+            del self.mirrored[entity]
 
     def _mirror(self, entity: str) -> None:
         try:
             state = self.get_state(entity, attribute="all", namespace="admin")
             assert isinstance(state, dict)
             value = state.get("state")
-            assert value is None or isinstance(value, str)
+            if value is not None and not isinstance(value, str):
+                value = str(value)
             raw_attributes = state.get("attributes")
             assert isinstance(raw_attributes, dict)
-            attributes: dict[str, str] = dict(raw_attributes)
+            attributes: dict[str, AttributeValue] = dict(raw_attributes)
             if self.mirrored.get(entity) == (value, attributes):
                 return
             self.set_state(entity, state=value, attributes=attributes)
@@ -86,13 +113,7 @@ class AdminSync(hass.Hass):
                     self._mirror(entity)
                 for entity in list(self.mirrored):
                     if entity not in admin:
-                        try:
-                            self.remove_entity(entity)
-                        except Exception:
-                            self.error(f"Failed to remove {entity}")
-                            self.error(traceback.format_exc())
-                        else:
-                            del self.mirrored[entity]
+                        self._remove(entity)
             except Exception:
                 self.error(traceback.format_exc())
         if self.resync_timer is None:
