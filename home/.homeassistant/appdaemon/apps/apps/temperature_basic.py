@@ -35,9 +35,13 @@ class TemperatureBasic(hass.Hass):
 
     def __get_value_or_none(self, entity_id: str) -> float | None:
         value = self.get_state(entity_id)
-        assert isinstance(value, str)
+        assert isinstance(value, (str, type(None))), (
+            f"Expected str or None from get_state({entity_id!r}), "
+            f"got {type(value).__name__}"
+        )
         if (
-            value == "unavailable"
+            value is None
+            or value == "unavailable"
             or value == "unknown"
             or value == ""
         ):

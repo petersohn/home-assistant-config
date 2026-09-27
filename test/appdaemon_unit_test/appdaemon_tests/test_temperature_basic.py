@@ -53,3 +53,28 @@ def test_basic(harness: Harness) -> None:
     assert harness.get_state(target) == "on"
     harness.set_state(out_, 28)
     assert harness.get_state(target) == "off"
+
+
+def test_missing_entity(harness: Harness) -> None:
+    in_ = "sensor.furnace_in"
+    out_ = "sensor.furnace_out"
+    target = "input_boolean.temperature_controller_pump"
+    harness.set_state(in_, 20)
+    harness.set_state(out_, 40)
+    harness.set_state(target, "on")
+    harness.create_app(
+        "temperature_basic",
+        "TemperatureBasic",
+        "heating_pump",
+        sensor_in=in_,
+        sensor_out=out_,
+        target=target,
+        target_difference=5,
+        tolerance=1,
+        maximum_out=80,
+        minimum_out=30,
+    )
+
+    harness.app_manager.remove_entity(in_)
+    harness.set_state(out_, 45)
+    assert harness.get_state(target) == "on"
