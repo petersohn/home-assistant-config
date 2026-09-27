@@ -38,7 +38,7 @@ class AdminSync(hass.Hass):
             self.error(traceback.format_exc())
             _ = self.run_in(self._retry_init, 60)
 
-    def _retry_init(self, kwargs: dict[str, Any]) -> None:
+    def _retry_init(self, kwargs: dict[str, object]) -> None:
         try:
             self._register_listener()
             self.full_sync({})
@@ -64,7 +64,7 @@ class AdminSync(hass.Hass):
         )
 
     def on_admin_change(
-        self, event: str, data: dict[str, Any], **kwargs: Any
+        self, event: str, data: dict[str, object], **kwargs: object
     ) -> None:
         entity = data.get("entity_id")
         if not isinstance(entity, str):
@@ -104,7 +104,7 @@ class AdminSync(hass.Hass):
             self.error(f"Failed to mirror {entity}")
             self.error(traceback.format_exc())
 
-    def full_sync(self, kwargs: dict[str, Any]) -> None:
+    def full_sync(self, kwargs: dict[str, object]) -> None:
         with self.mutex.lock("full_sync"):
             try:
                 admin = self.get_state(entity_id=None, namespace="admin")
@@ -116,12 +116,12 @@ class AdminSync(hass.Hass):
                         self._remove(entity)
             except Exception:
                 self.error(traceback.format_exc())
-        if self.resync_timer is None:
-            self.resync_timer = self.run_every(
-                self.full_sync,
-                self.datetime() + self.resync_interval,
-                int(self.resync_interval.total_seconds()),
-            )
+            if self.resync_timer is None:
+                self.resync_timer = self.run_every(
+                    self.full_sync,
+                    self.datetime() + self.resync_interval,
+                    int(self.resync_interval.total_seconds()),
+                )
 
     def terminate(self) -> None:
         pass

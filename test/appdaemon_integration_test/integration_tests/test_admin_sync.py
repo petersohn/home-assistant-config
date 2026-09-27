@@ -87,5 +87,4 @@ def test_admin_entity_removal_syncs(
     appdaemon_client.call_function(
         "remove_entity", "sensor.admin_sync_probe", namespace="admin"
     )
-    appdaemon_client.call_on_app("admin_sync", "full_sync", {})
     _wait_for_hass_entity_gone(hass_client, "sensor.admin_sync_probe")

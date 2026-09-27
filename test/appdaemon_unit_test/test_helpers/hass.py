@@ -34,7 +34,7 @@ StateCallbackRecord = NamedTuple(
     ],
 )
 
-EventData = dict[str, Any]
+EventData = dict[str, object]
 
 EventCallback = Callable[[str, EventData], None]
 
@@ -355,10 +355,10 @@ class AppManager:
                 event: str,
                 data: dict[str, Any],
             ) -> None:
-                self.__debug(f"Schedule event callback {id} for {app}")
+                self.__debug(f"Schedule event callback {id} for {record.app}")
                 _ = self.schedule_task(
                     ScheduledTask(
-                        app=app,
+                        app=record.app,
                         time=self.__datetime,
                         callback=lambda _: call_callback(  # pyright: ignore[reportUnknownLambdaType]
                             f, event, data
@@ -646,8 +646,9 @@ class Hass:
         callback: EventCallback,
         event: str | list[str] | None = None,
         namespace: str = "default",
-        **_kwargs: object,
+        **kwargs: object,
     ) -> int | list[int]:
+        """Register event callback. Kwargs event-data filters not implemented by mock."""
         assert self.__manager is not None
         if isinstance(event, str) or event is None:
             return self.__manager.listen_event(

@@ -187,7 +187,7 @@ class ADAPI:
     def listen_event(
         self,
         callback: EventCallback,
-        event: list[str],
+        event: Iterable[str],
         *,
         namespace: str | None = ...,
         timeout: str | int | float | dt.timedelta | None = ...,
@@ -199,7 +199,7 @@ class ADAPI:
 
     def cancel_listen_event(
         self,
-        handle: str,
-        name: str | None = None,
+        handle: str | Iterable[str],
+        *,
         silent: bool = False,
-    ) -> bool: ...
+    ) -> bool | dict[str, bool]: ...
