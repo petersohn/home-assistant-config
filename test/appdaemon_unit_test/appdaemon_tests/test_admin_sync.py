@@ -103,6 +103,55 @@ def test_unchanged_not_re_set(harness: Harness) -> None:
     assert harness.get_state(admin_total) == "2"
 
 
+def test_initialize_retries_after_full_sync_failure(
+    harness: Harness,
+) -> None:
+    _set_admin(harness, admin_total, "1")
+    sync_calls = 0
+    register_calls = 0
+    original_full_sync = admin_sync.AdminSync.full_sync
+    original_register = (
+        admin_sync.AdminSync._register_listener  # pyright: ignore[reportPrivateUsage]
+    )
+
+    def failing_full_sync(
+        self: admin_sync.AdminSync, kwargs: dict[str, object]
+    ) -> None:
+        nonlocal sync_calls
+        if sync_calls == 0:
+            sync_calls += 1
+            raise RuntimeError("HASS down")
+        sync_calls += 1
+        original_full_sync(self, kwargs)
+
+    def counting_register(self: admin_sync.AdminSync) -> None:
+        nonlocal register_calls
+        register_calls += 1
+        original_register(self)
+
+    setattr(admin_sync.AdminSync, "full_sync", failing_full_sync)
+    setattr(admin_sync.AdminSync, "_register_listener", counting_register)
+    harness.clear_errors()
+    try:
+        app = harness.app_manager.create_app(
+            "admin_sync", "AdminSync", "admin_sync"
+        )
+        assert isinstance(app, admin_sync.AdminSync)
+        assert sync_calls == 1
+        assert register_calls == 1
+        assert harness.app_manager.has_error()
+        harness.clear_errors()
+
+        harness.advance_time(timedelta(seconds=60))
+        assert sync_calls == 2
+        assert register_calls == 1
+        assert not harness.app_manager.has_error()
+        assert harness.get_state(admin_total) == "1"
+    finally:
+        setattr(admin_sync.AdminSync, "full_sync", original_full_sync)
+        setattr(admin_sync.AdminSync, "_register_listener", original_register)
+
+
 def test_mirror_failure_logged_not_fatal(harness: Harness) -> None:
     _set_admin(harness, admin_total, "1")
     app = harness.app_manager.create_app(

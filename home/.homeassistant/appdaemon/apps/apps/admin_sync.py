@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 class AdminSync(hass.Hass):
     mirrored: dict[str, tuple[str | None, dict[str, AttributeValue]]] = {}
     resync_timer: str | None = None
+    listener_registered: bool = False
     resync_interval: datetime.timedelta = cast(
         "datetime.timedelta", cast(Any, None)
     )
@@ -22,7 +23,10 @@ class AdminSync(hass.Hass):
     def initialize(self) -> None:
         self.mirrored = {}
         self.resync_timer = None
-        interval = self.args.get("resync_interval", {"minutes": 5})
+        self.listener_registered = False
+        interval: dict[str, int | float] = self.args.get(
+            "resync_interval", {"minutes": 5}
+        )
         assert isinstance(interval, dict)
         self.resync_interval = datetime.timedelta(**interval)
 
@@ -32,7 +36,9 @@ class AdminSync(hass.Hass):
         self.mutex = locker_app.get_mutex("AdminSync")
 
         try:
-            self._register_listener()
+            if not self.listener_registered:
+                self._register_listener()
+                self.listener_registered = True
             self.full_sync({})
         except Exception:
             self.error(traceback.format_exc())
@@ -40,7 +46,9 @@ class AdminSync(hass.Hass):
 
     def _retry_init(self, kwargs: dict[str, object]) -> None:
         try:
-            self._register_listener()
+            if not self.listener_registered:
+                self._register_listener()
+                self.listener_registered = True
             self.full_sync({})
         except Exception:
             self.error(traceback.format_exc())
@@ -93,7 +101,9 @@ class AdminSync(hass.Hass):
             value = state.get("state")
             if value is not None and not isinstance(value, str):
                 value = str(value)
-            raw_attributes = state.get("attributes")
+            raw_attributes: dict[str, AttributeValue] | None = (
+                state.get("attributes")
+            )
             assert isinstance(raw_attributes, dict)
             attributes: dict[str, AttributeValue] = dict(raw_attributes)
             if self.mirrored.get(entity) == (value, attributes):
@@ -106,16 +116,15 @@ class AdminSync(hass.Hass):
 
     def full_sync(self, kwargs: dict[str, object]) -> None:
         with self.mutex.lock("full_sync"):
-            try:
-                admin = self.get_state(entity_id=None, namespace="admin")
-                assert isinstance(admin, dict)
-                for entity in admin:
-                    self._mirror(entity)
-                for entity in list(self.mirrored):
-                    if entity not in admin:
-                        self._remove(entity)
-            except Exception:
-                self.error(traceback.format_exc())
+            admin: dict[str, str] = self.get_state(
+                entity_id=None, namespace="admin"
+            )
+            assert isinstance(admin, dict)
+            for entity in admin:
+                self._mirror(entity)
+            for entity in list(self.mirrored):
+                if entity not in admin:
+                    self._remove(entity)
             if self.resync_timer is None:
                 self.resync_timer = self.run_every(
                     self.full_sync,
