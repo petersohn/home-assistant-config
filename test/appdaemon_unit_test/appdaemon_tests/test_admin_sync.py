@@ -174,3 +174,52 @@ def test_mirror_failure_logged_not_fatal(harness: Harness) -> None:
     # Must not raise; error is logged internally.
     app._mirror(admin_total)
     harness.clear_errors()
+
+
+def test_numeric_state_gets_measurement_attributes(
+    harness: Harness,
+) -> None:
+    _set_admin(harness, admin_total, "42")
+    _create_admin_sync(harness)
+    mirrored = harness.app_manager.get_state(admin_total, "all")
+    assert isinstance(mirrored, dict)
+    attributes = mirrored["attributes"]
+    assert isinstance(attributes, dict)
+    assert attributes["state_class"] == "measurement"
+    assert attributes["unit_of_measurement"] == "count"
+
+
+def test_non_numeric_state_not_annotated(harness: Harness) -> None:
+    _set_admin(harness, admin_uptime, "1 day, 0:00:00")
+    _create_admin_sync(harness)
+    mirrored = harness.app_manager.get_state(admin_uptime, "all")
+    assert isinstance(mirrored, dict)
+    attributes = mirrored["attributes"]
+    assert isinstance(attributes, dict)
+    assert "state_class" not in attributes
+    assert "unit_of_measurement" not in attributes
+
+
+def test_numeric_app_state_annotated(harness: Harness) -> None:
+    app_entity = "app.some_app"
+    _set_admin(harness, app_entity, "3")
+    _create_admin_sync(harness)
+    mirrored = harness.app_manager.get_state(app_entity, "all")
+    assert isinstance(mirrored, dict)
+    attributes = mirrored["attributes"]
+    assert isinstance(attributes, dict)
+    assert attributes["state_class"] == "measurement"
+    assert attributes["unit_of_measurement"] == "count"
+
+
+def test_numeric_change_keeps_annotation(harness: Harness) -> None:
+    _set_admin(harness, admin_total, "1")
+    _create_admin_sync(harness)
+    _set_admin(harness, admin_total, "2")
+    assert harness.get_state(admin_total) == "2"
+    mirrored = harness.app_manager.get_state(admin_total, "all")
+    assert isinstance(mirrored, dict)
+    attributes = mirrored["attributes"]
+    assert isinstance(attributes, dict)
+    assert attributes["state_class"] == "measurement"
+    assert attributes["unit_of_measurement"] == "count"

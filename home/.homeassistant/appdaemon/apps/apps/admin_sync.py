@@ -105,6 +105,13 @@ class AdminSync(hass.Hass):
             )
             assert isinstance(raw_attributes, dict)
             attributes: dict[str, AttributeValue] = dict(raw_attributes)
+            numeric_unit = self._numeric_unit(entity, value)
+            if numeric_unit is not None:
+                attributes = {
+                    **attributes,
+                    "unit_of_measurement": numeric_unit,
+                    "state_class": "measurement",
+                }
             if self.mirrored.get(entity) == (value, attributes):
                 return
             self.set_state(entity, state=value, attributes=attributes)
@@ -112,6 +119,18 @@ class AdminSync(hass.Hass):
         except Exception:
             self.error(f"Failed to mirror {entity}")
             self.error(traceback.format_exc())
+
+    def _numeric_unit(self, entity: str, value: str | None) -> str | None:
+        if value is None:
+            return None
+        try:
+            float(value)
+        except ValueError:
+            return None
+        domain = entity.split(".")[0]
+        if domain in ("sensor", "app"):
+            return "count"
+        return None
 
     def full_sync(self, kwargs: dict[str, object]) -> None:
         with self.mutex.lock("full_sync"):
