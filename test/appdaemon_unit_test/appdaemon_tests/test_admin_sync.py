@@ -198,7 +198,7 @@ def test_numeric_state_gets_measurement_attributes(
     attributes = mirrored["attributes"]
     assert isinstance(attributes, dict)
     assert attributes["state_class"] == "measurement"
-    assert attributes["unit_of_measurement"] == "count"
+    assert attributes["unit_of_measurement"] == ""
 
 
 def test_non_numeric_state_not_annotated(harness: Harness) -> None:
@@ -221,7 +221,7 @@ def test_numeric_app_state_annotated(harness: Harness) -> None:
     attributes = mirrored["attributes"]
     assert isinstance(attributes, dict)
     assert attributes["state_class"] == "measurement"
-    assert attributes["unit_of_measurement"] == "count"
+    assert attributes["unit_of_measurement"] == ""
 
 
 def test_numeric_change_keeps_annotation(harness: Harness) -> None:
@@ -234,4 +234,4 @@ def test_numeric_change_keeps_annotation(harness: Harness) -> None:
     attributes = mirrored["attributes"]
     assert isinstance(attributes, dict)
     assert attributes["state_class"] == "measurement"
-    assert attributes["unit_of_measurement"] == "count"
+    assert attributes["unit_of_measurement"] == ""

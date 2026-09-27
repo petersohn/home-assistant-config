@@ -131,7 +131,7 @@ class AdminSync(hass.Hass):
             return None
         domain = entity.split(".")[0]
         if domain in ("sensor", "app"):
-            return "count"
+            return ""
         return None
 
     def full_sync(self, kwargs: dict[str, object]) -> None:
