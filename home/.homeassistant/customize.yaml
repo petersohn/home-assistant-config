@@ -547,3 +547,27 @@ sensor.inverter_alarms:
 
 sensor.inverter_efficiency:
   icon: mdi:percent-circle
+
+sensor.active_apps:
+  icon: mdi:cog-play
+
+sensor.inactive_apps:
+  icon: mdi:cog-stop
+
+sensor.appdaemon_uptime:
+  icon: mdi:timer-outline
+
+sensor.appdaemon_booted:
+  icon: mdi:calendar-start
+
+sensor.threads_current_busy:
+  icon: mdi:gauge
+
+sensor.threads_max_busy:
+  icon: mdi:gauge-full
+
+sensor.threads_max_busy_time:
+  icon: mdi:gauge-full
+
+sensor.threads_last_action_time:
+  icon: mdi:gauge

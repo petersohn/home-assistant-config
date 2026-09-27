@@ -256,7 +256,7 @@ class Expression(hass.Hass):
     def initialize(self) -> None:
         self.target = self.args["target"]
         self.attributes = self.args.get("attributes", {})
-        self.attributes["state_class"] = "measurement"
+        self.attributes.setdefault("state_class", "measurement")
         self.evaluator = ExpressionEvaluator(
             self, self.args["expr"], self._set
         )
