@@ -162,3 +162,8 @@ class ADAPI:
         endpoint: str | None = None,
         **kwargs: Any,
     ) -> str | None: ...
+    def remove_entity(
+        self,
+        entity_id: str,
+        namespace: str | None = None,
+    ) -> None: ...

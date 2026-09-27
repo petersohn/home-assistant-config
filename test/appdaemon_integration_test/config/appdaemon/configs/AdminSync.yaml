@@ -1,0 +1,4 @@
+admin_sync:
+    module: admin_sync
+    class: AdminSync
+    dependencies: locker
