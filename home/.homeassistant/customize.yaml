@@ -559,15 +559,3 @@ sensor.appdaemon_uptime:
 
 sensor.appdaemon_booted:
   icon: mdi:calendar-start
-
-sensor.threads_current_busy:
-  icon: mdi:gauge
-
-sensor.threads_max_busy:
-  icon: mdi:gauge-full
-
-sensor.threads_max_busy_time:
-  icon: mdi:gauge-full
-
-sensor.threads_last_action_time:
-  icon: mdi:gauge

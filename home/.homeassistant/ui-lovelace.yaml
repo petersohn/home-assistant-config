@@ -1693,10 +1693,6 @@ views:
           - sensor.inactive_apps
           - sensor.appdaemon_uptime
           - sensor.appdaemon_booted
-          - sensor.threads_current_busy
-          - sensor.threads_max_busy
-          - sensor.threads_max_busy_time
-          - sensor.threads_last_action_time
         title: AppDaemon
         show_header_toggle: false
       - type: entities
