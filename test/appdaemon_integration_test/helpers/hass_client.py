@@ -22,6 +22,34 @@ class HassClient:
         r.raise_for_status()
         return r.json()["state"]
 
+    def get_attributes(self, entity_id: str) -> dict[str, Any]:
+        r = self._session.get(f"http://{self._host}/api/states/{entity_id}")
+        r.raise_for_status()
+        attributes: dict[str, Any] = r.json()["attributes"]
+        return attributes
+
+    def wait_for_attributes(
+        self, entity_id: str, expected: dict[str, Any], timeout: float = 15.0
+    ) -> None:
+        import time
+        deadline = time.time() + timeout
+        last: dict[str, Any] | None = None
+        while time.time() < deadline:
+            try:
+                last = self.get_attributes(entity_id)
+            except Exception:
+                last = None
+            if last is not None and all(
+                key in last and values_equal(last[key], value)
+                for key, value in expected.items()
+            ):
+                return
+            time.sleep(0.1)
+        assert last is not None and all(
+            key in last and values_equal(last[key], value)
+            for key, value in expected.items()
+        ), f"{entity_id}: expected attributes {expected!r}, got {last!r}"
+
     def get_states(self) -> list[dict[str, Any]]:
         r = self._session.get(f"http://{self._host}/api/states")
         r.raise_for_status()

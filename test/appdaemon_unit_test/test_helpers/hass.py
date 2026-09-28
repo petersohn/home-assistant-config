@@ -13,7 +13,7 @@ class State:
         self.state: str | None = None
         self.attributes: dict[str, str] = {}
 
-    def to_map(self) -> dict[str, object]:
+    def to_map(self) -> dict[str, str | dict[str, str] | None]:
         return {"state": self.state, "attributes": deepcopy(self.attributes)}
 
 
@@ -187,6 +187,15 @@ class AppManager:
                 for entity, data in states.items()
             }
             return all_states
+        if "." not in name:
+            # Domain query, matching real AppDaemon behavior: returns the
+            # full state dict of every entity in the domain.
+            domain_states: dict[str, EntityState] = {
+                entity: data.to_map()
+                for entity, data in states.items()
+                if entity.split(".", 1)[0] == name
+            }
+            return domain_states
         data = states.get(name)
         if data is None:
             return None
@@ -232,7 +241,10 @@ class AppManager:
             if callback.namespace != namespace:
                 continue
             if callback.entity is not None and callback.entity != name:
-                continue
+                if "." in callback.entity:
+                    continue
+                if name.split(".", 1)[0] != callback.entity:
+                    continue
 
             def call_callback(
                 f: StateCallback,

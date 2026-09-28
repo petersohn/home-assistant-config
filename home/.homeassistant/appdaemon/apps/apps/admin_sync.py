@@ -97,7 +97,7 @@ class AdminSync(hass.Hass):
         if entity not in self.mirrored:
             return
         try:
-            self.remove_entity(entity)
+            self.remove_entity(self._sanitize(entity))
         except Exception:
             self.error(f"Failed to remove {entity}")
             self.error(traceback.format_exc())
@@ -130,11 +130,24 @@ class AdminSync(hass.Hass):
                 attributes = {**attributes, **overrides}
             if self.mirrored.get(entity) == (value, attributes):
                 return
-            self.set_state(entity, state=value, attributes=attributes)
+            self.set_state(
+                self._sanitize(entity), state=value, attributes=attributes
+            )
             self.mirrored[entity] = (value, attributes)
         except Exception:
             self.error(f"Failed to mirror {entity}")
             self.error(traceback.format_exc())
+
+    @staticmethod
+    def _sanitize(entity: str) -> str:
+        """Rewrite an entity id for HASS, which rejects invalid characters.
+
+        HASS object ids may only contain ``a-z``, ``0-9`` and ``_``.
+        AppDaemon's internal thread entities contain hyphens
+        (``thread.thread-0``), so hyphens become underscores.
+        """
+        domain, separator, object_id = entity.partition(".")
+        return f"{domain}{separator}{object_id.replace('-', '_')}"
 
     def _numeric_unit(self, entity: str, value: str | None) -> str | None:
         if value is None:

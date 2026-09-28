@@ -53,6 +53,7 @@ class ExpressionEvaluator:
         self.callback: Callback | None = callback
         self.entities: set[str] = set()
         self.attributes: set[tuple[str, str]] = set()
+        self.domains: set[str] = set()
         self.app_callbacks: dict[str, int] = {}
         self.evaluators: dict[str, Any] = self._create_evaluators()
         if extra_values:
@@ -79,6 +80,7 @@ class ExpressionEvaluator:
             "u": Evaluator(self._get_last_updated),
             "v": Evaluator(self._get_value),
             "ok": Evaluator(self._get_ok),
+            "d": Evaluator(self._get_domain),
             "now": self._get_now,
             "strptime": datetime.datetime.strptime,
             "dt": datetime.timedelta,
@@ -164,6 +166,49 @@ class ExpressionEvaluator:
             and value != "unknown"
             and value != "unavailable"
         )
+
+    def _get_domain(self, domain: str) -> list[str | float | bool]:
+        """All state values of entities in a domain, e.g. ``d.thread``.
+
+        Usable with attribute access (``d.thread``) or indexing
+        (``d["thread"]``), like ``v``. Listens on the whole domain, so
+        entities added to or removed from the domain also trigger
+        re-evaluation.
+        """
+        if self.callback is not None and domain not in self.domains:
+            self.app.listen_state(self._on_entity_change, entity_id=domain)
+            self.domains.add(domain)
+        states: (
+            dict[str, dict[str, object] | str | float | bool] | None
+        ) = self.app.get_state(domain)
+        if states is None:
+            return []
+        return [
+            self._extract_state_value(state) for state in states.values()
+        ]
+
+    def _extract_state_value(
+        self, state: dict[str, object] | str | float | bool
+    ) -> str | float | bool:
+        """Extract the scalar state value from a get_state domain result.
+
+        Domain queries return full state dicts, of which only the
+        ``state`` key is interesting here.
+        """
+        value: object = (
+            state.get("state") if isinstance(state, dict) else state
+        )
+        if value is None:
+            return ""
+        if isinstance(value, bool):
+            return value
+        assert isinstance(value, (str, int, float)), (
+            f"Expected scalar from domain query, got {type(value).__name__}"
+        )
+        try:
+            return float(value)
+        except ValueError:
+            return str(value)
 
     def _get_app(self, name: str) -> hass.Hass:
         try:

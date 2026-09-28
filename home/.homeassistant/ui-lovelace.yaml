@@ -1693,6 +1693,8 @@ views:
           - sensor.inactive_apps
           - sensor.appdaemon_uptime
           - sensor.appdaemon_booted
+          - sensor.total_threads
+          - sensor.active_threads
         title: AppDaemon
         show_header_toggle: false
       - type: entities

@@ -1,4 +1,20 @@
+total_threads:
+    module: expression
+    class: Expression
+    dependencies: [locker, admin_sync]
+    target: sensor.total_threads
+    expr: len(d.thread)
+
+active_threads:
+    module: expression
+    class: Expression
+    dependencies: [locker, admin_sync]
+    target: sensor.active_threads
+    expr: 'sum(1 for x in d.thread if x != "idle")'
+
 admin_sync:
     module: admin_sync
     class: AdminSync
     dependencies: locker
+    attributes:
+        sensor.active_apps: {icon: mdi:cog-play}

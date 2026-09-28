@@ -10,6 +10,9 @@ input1 = "sensor.test_input1"
 input2 = "sensor.test_input2"
 input3 = "sensor.test_input3"
 output = "sensor.test_output"
+thread1 = "thread.thread-0"
+thread2 = "thread.thread-1"
+thread3 = "thread.thread-2"
 
 
 def _initialize(
@@ -181,3 +184,42 @@ def test_nums(harness: Harness) -> None:
     harness.set_state(input2, "foo")
     harness.set_state(input1, 0)
     assert harness.get_state(output) == "-2.0"
+
+
+@pytest.mark.parametrize("syntax", ["d.thread", 'd["thread"]'])
+def test_domain(harness: Harness, syntax: str) -> None:
+    harness.set_state(thread1, "0")
+    _initialize(harness, f"len({syntax})", **{thread1: "0"})
+    assert harness.get_state(output, type="int") == 1
+    harness.set_state(thread2, "4")
+    assert harness.get_state(output, type="int") == 2
+    harness.set_state(thread3, "5")
+    assert harness.get_state(output, type="int") == 3
+
+
+def test_domain_filters(harness: Harness) -> None:
+    harness.set_state(thread1, "idle")
+    harness.set_state(thread2, "callback")
+    _initialize(harness, 'sum(1 for x in d.thread if x != "idle")')
+    assert harness.get_state(output, type="int") == 1
+    harness.set_state(thread1, "callback")
+    assert harness.get_state(output, type="int") == 2
+    harness.set_state(thread1, "idle")
+    assert harness.get_state(output, type="int") == 1
+
+
+def test_domain_empty(harness: Harness) -> None:
+    _initialize(harness, "len(d.thread)")
+    assert harness.get_state(output, type="int") == 0
+
+
+def test_domain_new_entity_triggers(harness: Harness) -> None:
+    _initialize(harness, "len(d.thread)")
+    assert harness.get_state(output, type="int") == 0
+    harness.set_state(thread1, "x")
+    assert harness.get_state(output, type="int") == 1
+
+
+def test_domain_nonexistent(harness: Harness) -> None:
+    _initialize(harness, "len(d.ghost)")
+    assert harness.get_state(output, type="int") == 0

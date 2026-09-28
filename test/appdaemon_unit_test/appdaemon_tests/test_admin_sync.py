@@ -9,8 +9,12 @@ admin_total = "sensor.total_apps"
 admin_uptime = "sensor.appdaemon_uptime"
 
 
-def _set_admin(harness: Harness, entity: str, state: str, **attributes: str) -> None:
-    harness.app_manager.set_state("test", entity, state, attributes, namespace="admin")
+def _set_admin(
+    harness: Harness, entity: str, state: str, **attributes: str
+) -> None:
+    harness.app_manager.set_state(
+        "test", entity, state, attributes, namespace="admin"
+    )
     harness.app_manager.call_pending_callbacks()
 
 
@@ -269,6 +273,38 @@ def test_override_applies_on_resync(
     attributes = mirrored["attributes"]
     assert isinstance(attributes, dict)
     assert attributes["icon"] == "mdi:counter"
+
+
+def test_mirror_sanitizes_hyphens(harness: Harness) -> None:
+    _set_admin(harness, "thread.thread-0", "idle", q="0")
+    _create_admin_sync(harness)
+    assert harness.get_state("thread.thread_0") == "idle"
+    assert harness.get_state("thread.thread-0") is None
+    mirrored = harness.app_manager.get_state("thread.thread_0", "all")
+    assert isinstance(mirrored, dict)
+    attributes = mirrored["attributes"]
+    assert isinstance(attributes, dict)
+    assert attributes["q"] == "0"
+
+
+def test_removal_uses_sanitized_name(harness: Harness) -> None:
+    _set_admin(harness, "thread.thread-0", "idle")
+    _create_admin_sync(harness)
+    assert harness.get_state("thread.thread_0") == "idle"
+    harness.app_manager.remove_entity("thread.thread-0", namespace="admin")
+    harness.app_manager.call_pending_callbacks()
+    assert harness.get_state("thread.thread_0") is None
+
+
+def test_resync_removes_sanitized_stale_entities(
+    harness: Harness,
+) -> None:
+    _set_admin(harness, "thread.thread-0", "idle")
+    _create_admin_sync(harness)
+    assert harness.get_state("thread.thread_0") == "idle"
+    harness.app_manager.remove_entity("thread.thread-0", namespace="admin")
+    harness.advance_time(timedelta(minutes=5))
+    assert harness.get_state("thread.thread_0") is None
 
 
 def test_numeric_state_gets_measurement_attributes(
