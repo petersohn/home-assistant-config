@@ -14,12 +14,16 @@ def _set_admin(harness: Harness, entity: str, state: str, **attributes: str) -> 
     harness.app_manager.call_pending_callbacks()
 
 
-def _create_admin_sync(harness: Harness) -> admin_sync.AdminSync:
-    return _create_admin_sync_app(harness)
+def _create_admin_sync(
+    harness: Harness, **kwargs: object
+) -> admin_sync.AdminSync:
+    return _create_admin_sync_app(harness, **kwargs)
 
 
-def _create_admin_sync_app(harness: Harness) -> admin_sync.AdminSync:
-    app = harness.create_app("admin_sync", "AdminSync", "admin_sync")
+def _create_admin_sync_app(
+    harness: Harness, **kwargs: object
+) -> admin_sync.AdminSync:
+    app = harness.create_app("admin_sync", "AdminSync", "admin_sync", **kwargs)
     assert isinstance(app, admin_sync.AdminSync)
     return app
 
@@ -186,6 +190,85 @@ def test_mirror_of_vanished_entity_skipped_silently(
     app.on_admin_change("state_changed", {"entity_id": "scheduler_callback.gone"})
     assert harness.get_state("scheduler_callback.gone") is None
     assert not harness.app_manager.has_error()
+
+
+def test_override_attributes_applied(
+    harness: Harness,
+) -> None:
+    _set_admin(harness, admin_total, "1", friendly_name="Total Apps")
+    _create_admin_sync(
+        harness, attributes={admin_total: {"icon": "mdi:counter"}}
+    )
+    mirrored = harness.app_manager.get_state(admin_total, "all")
+    assert isinstance(mirrored, dict)
+    attributes = mirrored["attributes"]
+    assert isinstance(attributes, dict)
+    assert attributes["icon"] == "mdi:counter"
+    friendly_name = attributes["friendly_name"]
+    assert isinstance(friendly_name, str)
+    assert friendly_name == "Total Apps"
+
+
+def test_override_wins_over_numeric_annotation(
+    harness: Harness,
+) -> None:
+    _set_admin(harness, admin_total, "42")
+    _create_admin_sync(
+        harness,
+        attributes={admin_total: {"unit_of_measurement": "apps"}},
+    )
+    mirrored = harness.app_manager.get_state(admin_total, "all")
+    assert isinstance(mirrored, dict)
+    attributes = mirrored["attributes"]
+    assert isinstance(attributes, dict)
+    assert attributes["state_class"] == "measurement"
+    assert attributes["unit_of_measurement"] == "apps"
+
+
+def test_no_override_unchanged(
+    harness: Harness,
+) -> None:
+    _set_admin(harness, admin_total, "1", friendly_name="Total Apps")
+    _create_admin_sync(harness)
+    mirrored = harness.app_manager.get_state(admin_total, "all")
+    assert isinstance(mirrored, dict)
+    attributes = mirrored["attributes"]
+    assert isinstance(attributes, dict)
+    assert "icon" not in attributes
+
+
+def test_override_for_unknown_entity_inert_until_present(
+    harness: Harness,
+) -> None:
+    _create_admin_sync(
+        harness, attributes={"sensor.ghost": {"icon": "mdi:ghost"}}
+    )
+    assert harness.get_state("sensor.ghost") is None
+    _set_admin(harness, "sensor.ghost", "boo")
+    assert harness.get_state("sensor.ghost") == "boo" or (
+        harness.get_state("sensor.ghost") == "boo"
+    )
+    mirrored = harness.app_manager.get_state("sensor.ghost", "all")
+    assert isinstance(mirrored, dict)
+    attributes = mirrored["attributes"]
+    assert isinstance(attributes, dict)
+    assert attributes["icon"] == "mdi:ghost"
+
+
+def test_override_applies_on_resync(
+    harness: Harness,
+) -> None:
+    _set_admin(harness, admin_total, "1")
+    _create_admin_sync(harness)
+    app = harness.get_app("admin_sync")
+    assert isinstance(app, admin_sync.AdminSync)
+    app.attributes = {admin_total: {"icon": "mdi:counter"}}
+    harness.advance_time(timedelta(minutes=5))
+    mirrored = harness.app_manager.get_state(admin_total, "all")
+    assert isinstance(mirrored, dict)
+    attributes = mirrored["attributes"]
+    assert isinstance(attributes, dict)
+    assert attributes["icon"] == "mdi:counter"
 
 
 def test_numeric_state_gets_measurement_attributes(

@@ -18,6 +18,9 @@ class AdminSync(hass.Hass):
     resync_interval: datetime.timedelta = cast(
         "datetime.timedelta", cast(Any, None)
     )
+    attributes: dict[str, dict[str, AttributeValue]] = cast(
+        "dict[str, dict[str, AttributeValue]]", cast(Any, None)
+    )
     mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
 
     def initialize(self) -> None:
@@ -29,6 +32,14 @@ class AdminSync(hass.Hass):
         )
         assert isinstance(interval, dict)
         self.resync_interval = datetime.timedelta(**interval)
+        raw_attributes: dict[str, dict[str, AttributeValue]] = self.args.get(
+            "attributes", {}
+        )
+        assert isinstance(raw_attributes, dict)
+        self.attributes = {
+            entity: dict(attributes)
+            for entity, attributes in raw_attributes.items()
+        }
 
         import locker
         locker_app = self.get_app("locker")
@@ -114,6 +125,9 @@ class AdminSync(hass.Hass):
                     "unit_of_measurement": numeric_unit,
                     "state_class": "measurement",
                 }
+            overrides = self.attributes.get(entity)
+            if overrides:
+                attributes = {**attributes, **overrides}
             if self.mirrored.get(entity) == (value, attributes):
                 return
             self.set_state(entity, state=value, attributes=attributes)

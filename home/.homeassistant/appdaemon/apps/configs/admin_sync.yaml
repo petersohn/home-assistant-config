@@ -2,3 +2,8 @@ admin_sync:
     module: admin_sync
     class: AdminSync
     dependencies: locker
+    attributes:
+        sensor.active_apps: {icon: mdi:cog-play}
+        sensor.inactive_apps: {icon: mdi:cog-stop}
+        sensor.appdaemon_uptime: {icon: mdi:timer-outline}
+        sensor.appdaemon_booted: {icon: mdi:calendar-start}
