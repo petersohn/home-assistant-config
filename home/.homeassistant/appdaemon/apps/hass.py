@@ -37,7 +37,10 @@ class Hass(appdaemon.plugins.hass.hassapi.Hass):
     ) -> HistoryResult:
         now = datetime.datetime.now(datetime.timezone.utc)
         begin_timestamp = (now - max_interval).strftime("%Y-%m-%dT%H:%M:%SZ")
-        end_timestamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+        # Keep sub-second precision in end_time: truncating to whole
+        # seconds would exclude states recorded earlier in the same
+        # wall-clock second as the query, losing freshly-written history.
+        end_timestamp = now.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         path = (
             f"history/period/{begin_timestamp}"
             f"?filter_entity_id={entity_id}&end_time={end_timestamp}"

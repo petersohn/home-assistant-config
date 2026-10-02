@@ -105,8 +105,12 @@ def error_log(error_log_checker: ErrorLogChecker) -> Iterator[ErrorLogChecker]:
 
     Marks the current end of error.log at test start, then asserts at teardown
     that no unexpected error blocks were written during the test. Tests that
-    intentionally trigger an AppDaemon-internal race may wrap the triggering
-    call in ``error_log.allow_errors("KeyError")`` to tolerate matching blocks.
+    intentionally trigger an AppDaemon-internal race may call
+    ``error_log.allow_errors("KeyError")`` before the triggering call to
+    tolerate matching blocks. The allowance is test-scoped: it remains
+    active until this fixture marks the next test start, because the
+    tolerated block can be written asynchronously after the triggering
+    call, including during teardown-time app cleanup.
     """
     error_log_checker.mark_test_start()
     yield error_log_checker

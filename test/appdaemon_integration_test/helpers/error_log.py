@@ -5,35 +5,14 @@ import os
 _BORDER = "=" * 75
 
 
-class _Allow:
-    """Context manager returned by :meth:`ErrorLogChecker.allow_errors`.
-
-    On exit, removes the allow-listed substring from the checker.
-    """
-
-    _checker: "ErrorLogChecker"
-    _message_substring: str
-
-    def __init__(self, checker: "ErrorLogChecker", message_substring: str) -> None:
-        self._checker = checker
-        self._message_substring = message_substring
-
-    def __enter__(self) -> "ErrorLogChecker":
-        return self._checker
-
-    def __exit__(self, *exc: object) -> None:
-        if self._message_substring in self._checker.allowed:
-            self._checker.allowed.remove(self._message_substring)
-
-
 class ErrorLogChecker:
     """Tracks new error.log entries per test and tolerates allow-listed blocks.
 
     AppDaemon writes error blocks delimited by a line of 75 ``=`` characters.
-    Each block contains an ``Unexpected error: <repr>`` line. A test opens a
-    context via :meth:`allow_errors` to tolerate blocks whose text matches a
-    given substring (e.g. ``KeyError`` raised by an AppDaemon-internal race
-    during reload).
+    Each block contains an ``Unexpected error: <repr>`` line. A test calls
+    :meth:`allow_errors` before triggering code that may write a tolerated
+    block (e.g. ``KeyError`` raised by an AppDaemon-internal race during
+    app reload).
     """
 
     _path: str
@@ -52,10 +31,13 @@ class ErrorLogChecker:
         self._offset = self._size()
         self._allowed = []
 
-    def allow_errors(self, message_substring: str) -> _Allow:
-        """Tolerate error blocks whose text contains the substring."""
+    def allow_errors(self, message_substring: str) -> None:
+        """Tolerate error blocks whose text contains the substring.
+
+        Test-scoped: the allowance remains active for the rest of the
+        test, until the next ``mark_test_start``.
+        """
         self._allowed.append(message_substring)
-        return _Allow(self, message_substring)
 
     def check_no_unexpected_errors(self) -> None:
         """Assert no error blocks were written after the test-start marker,

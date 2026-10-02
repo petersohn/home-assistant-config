@@ -174,11 +174,13 @@ def test_reload(
     # anyway (AppDaemon's intended behavior is to discard stale callbacks),
     # and the missing callback-counter increment has no functional effect.
     # Fixable only in AppDaemon itself (TOCTOU between get_app_instance and
-    # objects[name] in threads.py); tolerated here instead.
-    with error_log.allow_errors("KeyError"):
-        appdaemon_client.load_apps(
-            *base_configs, auto_switch2, enabler_config, "dummy1"
-        )
+    # objects[name] in threads.py); tolerated here instead. The allowance
+    # is test-scoped because the block can surface asynchronously during
+    # the reload or during teardown-time app cleanup.
+    error_log.allow_errors("KeyError")
+    appdaemon_client.load_apps(
+        *base_configs, auto_switch2, enabler_config, "dummy1"
+    )
     if expected_state1 == expected_state2:
         time.sleep(2)
     appdaemon_client.wait_for_state(output_switch, expected_state2)
