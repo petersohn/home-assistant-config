@@ -1700,6 +1700,8 @@ views:
       - type: entities
         entities:
           - app.admin_sync
+          - app.total_threads
+          - app.active_threads
         title: admin_sync
         state_color: true
         show_header_toggle: false

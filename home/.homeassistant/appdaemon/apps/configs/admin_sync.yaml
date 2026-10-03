@@ -4,6 +4,7 @@ total_threads:
     dependencies: [locker, admin_sync]
     target: sensor.total_threads
     expr: len(d.thread)
+    attributes: {icon: mdi:counter}
 
 active_threads:
     module: expression
@@ -11,6 +12,7 @@ active_threads:
     dependencies: [locker, admin_sync]
     target: sensor.active_threads
     expr: 'sum(1 for x in d.thread if x != "idle")'
+    attributes: {icon: mdi:progress-clock}
 
 admin_sync:
     module: admin_sync
@@ -21,5 +23,3 @@ admin_sync:
         sensor.inactive_apps: {icon: mdi:cog-stop}
         sensor.appdaemon_uptime: {icon: mdi:timer-outline}
         sensor.appdaemon_booted: {icon: mdi:calendar-start}
-        sensor.total_threads: {icon: mdi:counter}
-        sensor.active_threads: {icon: mdi:progress-clock}
