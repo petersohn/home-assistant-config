@@ -244,6 +244,17 @@ def _initialize_dict(
     )
 
 
+def _initialize_list(
+    harness: Harness, expression: list[object], **initial_values: object,
+) -> None:
+    for entity, value in initial_values.items():
+        harness.set_state(entity, value)
+    harness.create_app(
+        "expression", "Expression", "expression",
+        target=output, expr=expression,
+    )
+
+
 @pytest.mark.parametrize("sensor1, sensor2, expected", [
     (10, 5, 10.0),
     (5, 10, -1.0),
@@ -466,6 +477,121 @@ def test_validation_error_path(harness: Harness) -> None:
     }
     with pytest.raises(
         ValueError, match=r"expr\.case\[1\]\.then: missing key then"
+    ):
+        harness.create_app(
+            "expression", "Expression", "expression",
+            target=output, expr=bad_expr,
+        )
+
+
+@pytest.mark.parametrize("sensor1, sensor2, expected", [
+    (10, 5, "first"),
+    (5, 10, "second"),
+    (5, 5, "other"),
+])
+def test_if_chain(
+    harness: Harness, sensor1: str | int | float,
+    sensor2: str | int | float, expected: str,
+) -> None:
+    expr: list[object] = [
+        {"if": f"v.{input1} > v.{input2}", "then": "'first'"},
+        {"if": f"v.{input2} > v.{input1}", "then": "'second'"},
+        {"else": "'other'"},
+    ]
+    _initialize_list(harness, expr, **{input1: "0", input2: "0"})
+    _test_states(harness, sensor1, sensor2, "str", expected)
+
+
+def test_if_chain_three_conditions(harness: Harness) -> None:
+    expr: list[object] = [
+        {"if": f"v.{input1} == 1", "then": "'one'"},
+        {"if": f"v.{input1} == 2", "then": "'two'"},
+        {"if": f"v.{input1} == 3", "then": "'three'"},
+        {"else": "'other'"},
+    ]
+    _initialize_list(harness, expr, **{input1: 1})
+    assert harness.get_state(output) == "one"
+    harness.set_state(input1, 2)
+    assert harness.get_state(output) == "two"
+    harness.set_state(input1, 5)
+    assert harness.get_state(output) == "other"
+
+
+def test_if_chain_else_value_dict(harness: Harness) -> None:
+    expr: list[object] = [
+        {"if": f"v.{input1} > 0", "then": "'pos'"},
+        {
+            "else": {
+                "if": f"v.{input2} > 5",
+                "then": 1,
+                "else": 0,
+            },
+        },
+    ]
+    _initialize_list(harness, expr, **{input1: 1, input2: 8})
+    assert harness.get_state(output) == "pos"
+    harness.set_state(input1, 0)
+    assert harness.get_state(output, type="int") == 1
+    harness.set_state(input2, 3)
+    assert harness.get_state(output, type="int") == 0
+
+
+def test_if_chain_entity_tracking(harness: Harness) -> None:
+    expr: list[object] = [
+        {"if": f"v.{input1} == 1", "then": "'first'"},
+        {"if": f"v.{input2} == 2", "then": "'second'"},
+        {"else": "'other'"},
+    ]
+    _initialize_list(harness, expr, **{input1: 0, input2: 0})
+    assert harness.get_state(output) == "other"
+    harness.set_state(input2, 2)
+    assert harness.get_state(output) == "second"
+    harness.set_state(input2, 0)
+    assert harness.get_state(output) == "other"
+    harness.set_state(input1, 1)
+    assert harness.get_state(output) == "first"
+
+
+@pytest.mark.parametrize("bad_expr", [
+    [{"else": "'other'"}],
+    [{"if": "v.sensor", "then": "'first'"}],
+    [{"if": "v.sensor", "then": "'first'"}, {"if": "x", "then": "'last'"}],
+    [{"if": "v.sensor", "then": "'first'"}, {"else": "'a'"}, {"else": "'b'"}],
+    [{"if": "v.sensor", "then": "1", "foo": "2"}, {"else": "'other'"}],
+    [],
+    [{"if": "1", "then": "1"}, ["2"]],
+])
+def test_if_chain_validation_errors(harness: Harness, bad_expr: object) -> None:
+    with pytest.raises(ValueError):
+        harness.create_app(
+            "expression", "Expression", "expression",
+            target=output, expr=bad_expr,
+        )
+
+
+def test_if_chain_validation_error_path(harness: Harness) -> None:
+    bad_expr: list[object] = [
+        {"if": "1", "then": "2", "foo": "3"},
+        {"else": "'other'"},
+    ]
+    with pytest.raises(
+        ValueError, match=r"expr\[0\]: unknown keys: \[\"'foo'\"\]"
+    ):
+        harness.create_app(
+            "expression", "Expression", "expression",
+            target=output, expr=bad_expr,
+        )
+
+
+def test_list_sub_expression_rejected(harness: Harness) -> None:
+    bad_expr: dict[str, object] = {
+        "if": ["1"],
+        "then": "1",
+        "else": "2",
+    }
+    with pytest.raises(
+        ValueError,
+        match=r"expr\.if: expected str, int, float, bool or dict, got list",
     ):
         harness.create_app(
             "expression", "Expression", "expression",

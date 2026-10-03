@@ -179,12 +179,75 @@ def _compile_switch(source: dict[str, object], path: str) -> _ExprNode:
     )
 
 
+def _compile_list(source: list[object], path: str) -> _ExprNode:
+    """Compile a top-level if-then-elif-else chain (list form).
+
+    All items except the last are dicts with exactly {if, then}; the
+    last item is a dict with exactly {else}. Compiles to a nested
+    _IfNode chain: the first true condition wins its then branch, none
+    true → the else branch. This form is only valid at the top level
+    of the expr argument, not as a sub-expression.
+
+    path is the location of the list in the expression
+    (e.g. "expr"), used in ValueError messages.
+    """
+    if len(source) < 2:
+        raise ValueError(
+            f"{path}: expected at least one if-then item "
+            + f"followed by a final else item, got {len(source)} item(s)"
+        )
+    chain: list[tuple[_ExprNode, _ExprNode]] = []
+    for index, item in enumerate(source[:-1]):
+        item_path = f"{path}[{index}]"
+        if not isinstance(item, dict):
+            raise ValueError(
+                f"{item_path}: expected dict, "
+                + f"got {type(item).__name__}"
+            )
+        # cast: parameterized generic dict type cannot be isinstance-checked
+        item_dict = cast("dict[str, object]", item)
+        item_keys: set[str] = set(item_dict.keys())
+        unknown = item_keys - {"if", "then"}
+        if unknown:
+            raise ValueError(
+                f"{item_path}: unknown keys: {sorted(map(repr, unknown))}"
+            )
+        for key in ("if", "then"):
+            if key not in item_keys:
+                raise ValueError(f"{item_path}.{key}: missing key {key}")
+        chain.append(
+            (
+                _compile_expr(item_dict["if"], f"{item_path}.if"),
+                _compile_expr(item_dict["then"], f"{item_path}.then"),
+            )
+        )
+    last_path = f"{path}[{len(source) - 1}]"
+    last_item: object = source[-1]
+    if not isinstance(last_item, dict):
+        raise ValueError(
+            f"{last_path}: expected dict, "
+            + f"got {type(last_item).__name__}"
+        )
+    # cast: parameterized generic dict type cannot be isinstance-checked
+    last_dict = cast("dict[str, object]", last_item)
+    last_keys: set[str] = set(last_dict.keys())
+    if last_keys != {"else"}:
+        raise ValueError(
+            f"{last_path}: final item keys must be exactly {{else}}, "
+            + f"got {sorted(map(repr, last_keys))}"
+        )
+    node: _ExprNode = _compile_expr(last_dict["else"], f"{last_path}.else")
+    for cond, then in reversed(chain):
+        node = _IfNode(cond, then, node)
+    return node
+
+
 @final
 class ExpressionEvaluator:
     def __init__(
         self,
         app: hass.Hass,
-        expr: ExpressionValue,
+        expr: ExpressionValue | list[object],
         callback: Callback | None = None,
         extra_values: dict[str, Any] | None = None,
     ) -> None:
@@ -203,13 +266,19 @@ class ExpressionEvaluator:
         elif isinstance(expr, bool):
             raise ValueError(
                 "expr: bare bool is not a valid expression, "
-                + "expected str, int, float or dict"
+                + "expected str, int, float, dict "
+                + "or [[if, then], ..., else] list"
             )
+        elif isinstance(expr, list):
+            # List form is valid only at the top level: a chain of
+            # {if, then} dicts terminated by an {else} dict.
+            self.root = _compile_list(expr, "expr")
         elif type(expr) in (int, float):
             self.expr = str(expr)
         else:
             raise ValueError(
-                f"expr: expected str, int, float or dict, "
+                f"expr: expected str, int, float, dict "
+                + f"or [[if, then], ..., else] list, "
                 + f"got {type(expr).__name__}"
             )
         self.callback: Callback | None = callback
