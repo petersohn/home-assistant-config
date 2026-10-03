@@ -22,10 +22,10 @@ sunlight:
     class: Expression
     dependencies:
         - locker
-    expr: >
-        v.sensor.light_sunlight
-        if not v.input_boolean.sunlight_sensor_maintenance
-        else 'unavailable'
+    expr:
+        if: not v.input_boolean.sunlight_sensor_maintenance
+        then: v.sensor.light_sunlight
+        else: "'unavailable'"
     target: sensor.light_sunlight_adjusted
     attributes:
         unit_of_measurement: '%'

@@ -18,15 +18,20 @@ dining_room_window_blind:
         - locker
         - window_blind_shield_1
         - is_sunlight_or_false
-    expr: >
-        75 if v.input_select.presence_mode == 'home' and e.window_blind_shield_1
-        else 'open' if v.input_select.presence_mode == 'home' or (
-        v.input_select.presence_mode == 'sleep' and
-        v.binary_sensor.window_entrance) or (
-        v.input_select.presence_mode == 'away' and
-        e.is_sunlight_or_false and
-        v.input_select.season_mode == 'winter')
-        else 'closed'
+    expr:
+        - if: >-
+              v.input_select.presence_mode == 'home'
+              and e.window_blind_shield_1
+          then: 75
+        - if: >-
+              v.input_select.presence_mode == 'home' or (
+              v.input_select.presence_mode == 'sleep' and
+              v.binary_sensor.window_entrance) or (
+              v.input_select.presence_mode == 'away' and
+              e.is_sunlight_or_false and
+              v.input_select.season_mode == 'winter')
+          then: "'open'"
+        - else: "'closed'"
     target: cover.dining_room
     mode_switch: input_select.dining_room_window_blind_1
     delay:
@@ -52,11 +57,17 @@ dining_room_2_window_blind:
         - locker
         - is_light_enough_to_open_blind
         - window_blind_shield_2
-    expr: >
-        75 if v.input_select.presence_mode == 'home' and e.window_blind_shield_2
-        else 'open' if v.input_select.presence_mode == 'home' and (
-        e.is_light_enough_to_open_blind or v.binary_sensor.window_dining_room_2)
-        else 'closed'
+    expr:
+        - if: >-
+              v.input_select.presence_mode == 'home'
+              and e.window_blind_shield_2
+          then: 75
+        - if: >-
+              v.input_select.presence_mode == 'home' and (
+              e.is_light_enough_to_open_blind
+              or v.binary_sensor.window_dining_room_2)
+          then: "'open'"
+        - else: "'closed'"
     target: cover.dining_room_2
     mode_switch: input_select.dining_room_window_blind_2
     delay:
@@ -127,11 +138,12 @@ storage_window_blind_1:
     dependencies:
         - locker
         - auto_switch_storage_window_blind
-    expr: >
-        'open' if
-        v.input_boolean.storage_window_blind_open or
-        v.binary_sensor.window_storage_1
-        else 'closed'
+    expr:
+        if: >-
+            v.input_boolean.storage_window_blind_open or
+            v.binary_sensor.window_storage_1
+        then: "'open'"
+        else: "'closed'"
     mode_switch: input_select.storage_window_blind_1
     target: cover.storage_1
 
@@ -142,11 +154,12 @@ storage_window_blind_2:
     dependencies:
         - locker
         - auto_switch_storage_window_blind
-    expr: >
-        'open' if
-        v.input_boolean.storage_window_blind_open or
-        v.binary_sensor.window_storage_2
-        else 'closed'
+    expr:
+        if: >-
+            v.input_boolean.storage_window_blind_open or
+            v.binary_sensor.window_storage_2
+        then: "'open'"
+        else: "'closed'"
     mode_switch: input_select.storage_window_blind_2
     target: cover.storage_2
 
@@ -157,14 +170,19 @@ living_room_window_blind:
     dependencies:
         - locker
         - is_light_enough_to_open_blind
-    expr: >
-        'open' if v.input_select.presence_mode == 'home' and (
-        e.is_light_enough_to_open_blind or v.binary_sensor.window_living_room)
-        else 45 if (v.input_select.presence_mode == 'away' and
-        e.is_light_enough_to_open_blind) or (
-        v.input_select.presence_mode == 'sleep' and
-        v.binary_sensor.window_living_room)
-        else 'closed'
+    expr:
+        - if: >-
+              v.input_select.presence_mode == 'home' and (
+              e.is_light_enough_to_open_blind
+              or v.binary_sensor.window_living_room)
+          then: "'open'"
+        - if: >-
+              (v.input_select.presence_mode == 'away' and
+              e.is_light_enough_to_open_blind) or (
+              v.input_select.presence_mode == 'sleep' and
+              v.binary_sensor.window_living_room)
+          then: 45
+        - else: "'closed'"
     target: cover.living_room
     mode_switch: input_select.living_room_window_blind
     delay:
