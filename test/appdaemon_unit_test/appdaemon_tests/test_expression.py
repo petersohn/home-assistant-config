@@ -1,10 +1,18 @@
 from __future__ import annotations
+import sys
 from datetime import datetime, time, timedelta
+from typing import TYPE_CHECKING, cast
 
 import pytest
-from typing import cast
 
 from appdaemon_unit_test.test_helpers.harness import Harness
+
+if TYPE_CHECKING:
+    from appdaemon_unit_test.test_helpers import hass as hass_module
+
+    _Hass = hass_module.Hass
+else:
+    _Hass = object
 
 input1 = "sensor.test_input1"
 input2 = "sensor.test_input2"
@@ -223,3 +231,243 @@ def test_domain_new_entity_triggers(harness: Harness) -> None:
 def test_domain_nonexistent(harness: Harness) -> None:
     _initialize(harness, "len(d.ghost)")
     assert harness.get_state(output, type="int") == 0
+
+
+def _initialize_dict(
+    harness: Harness, expression: dict[str, object], **initial_values: object,
+) -> None:
+    for entity, value in initial_values.items():
+        harness.set_state(entity, value)
+    harness.create_app(
+        "expression", "Expression", "expression",
+        target=output, expr=expression,
+    )
+
+
+@pytest.mark.parametrize("sensor1, sensor2, expected", [
+    (10, 5, 10.0),
+    (5, 10, -1.0),
+    (5, 5, -1.0),
+])
+def test_if_then_else(
+    harness: Harness, sensor1: str | int | float,
+    sensor2: str | int | float, expected: str | int | float,
+) -> None:
+    expr: dict[str, object] = {
+        "if": f"v.{input1} > v.{input2}",
+        "then": f"v.{input1}",
+        "else": "-1",
+    }
+    _initialize_dict(
+        harness, expr, **{input1: "0", input2: "0"},
+    )
+    _test_states(harness, sensor1, sensor2, "float", expected)
+
+
+def test_nested_if(harness: Harness) -> None:
+    expr: dict[str, object] = {
+        "if": f"v.{input1} > 0",
+        "then": {
+            "if": f"v.{input2} > 5",
+            "then": 1,
+            "else": 0,
+        },
+        "else": {
+            "if": False,
+            "then": "impossible",
+            "else": -1,
+        },
+    }
+    _initialize_dict(harness, expr, **{input1: 1, input2: 8})
+    assert harness.get_state(output, type="int") == 1
+    harness.set_state(input2, 3)
+    assert harness.get_state(output, type="int") == 0
+    harness.set_state(input1, 0)
+    assert harness.get_state(output) == "-1"
+
+
+@pytest.mark.parametrize("value, expected", [
+    (1, "one"),
+    (2, "two"),
+    (7, "other"),
+])
+def test_switch_cases(harness: Harness, value: int, expected: str) -> None:
+    expr: dict[str, object] = {
+        "switch": f"v.{input1}",
+        "case": [
+            {"if": 1, "then": "'one'"},
+            {"if": 2, "then": "'two'"},
+        ],
+        "else": "'other'",
+    }
+    _initialize_dict(harness, expr, **{input1: value})
+    assert harness.get_state(output) == expected
+
+
+def test_switch_bool_equality(harness: Harness) -> None:
+    expr: dict[str, object] = {
+        "switch": f"v.{input1}",
+        "case": [
+            {"if": 1, "then": "'one'"},
+            {"if": 0, "then": "'zero'"},
+        ],
+        "else": "'other'",
+    }
+    _initialize_dict(harness, expr, **{input1: "off"})
+    assert harness.get_state(output) == "zero"
+    harness.set_state(input1, "on")
+    assert harness.get_state(output) == "one"
+
+
+def test_switch_nested_case_dict(harness: Harness) -> None:
+    expr: dict[str, object] = {
+        "switch": f"v.{input1}",
+        "case": [
+            {"if": 0, "then": "'zero'"},
+            {
+                "if": 1,
+                "then": {
+                    "if": f"v.{input2} > 5",
+                    "then": "'high'",
+                    "else": "'low'",
+                },
+            },
+        ],
+        "else": "'other'",
+    }
+    _initialize_dict(harness, expr, **{input1: 1, input2: 8})
+    assert harness.get_state(output) == "high"
+    harness.set_state(input2, 3)
+    assert harness.get_state(output) == "low"
+
+
+@pytest.mark.parametrize("expr, expected", [(5, 5), (2.5, 2.5)])
+def test_numeric_expr(
+    harness: Harness, expr: float | int, expected: float | int
+) -> None:
+    harness.create_app(
+        "expression", "Expression", "expression", target=output, expr=expr
+    )
+    assert harness.get_state(output, type="float") == expected
+    harness.set_state(input1, 999)
+    assert harness.get_state(output, type="float") == expected
+
+
+def test_if_entity_tracking(harness: Harness) -> None:
+    expr: dict[str, object] = {
+        "if": f"v.{input1}",
+        "then": "'yes'",
+        "else": "'no'",
+    }
+    _initialize_dict(harness, expr, **{input1: "off"})
+    assert harness.get_state(output) == "no"
+    harness.set_state(input1, "on")
+    assert harness.get_state(output) == "yes"
+    harness.set_state(input1, "off")
+    assert harness.get_state(output) == "no"
+
+
+def test_switch_entity_tracking(harness: Harness) -> None:
+    expr: dict[str, object] = {
+        "switch": f"v.{input1}",
+        "case": [
+            {"if": 1, "then": "'one'"},
+            {"if": 2, "then": "'two'"},
+        ],
+        "else": "'other'",
+    }
+    _initialize_dict(harness, expr, **{input1: 1})
+    assert harness.get_state(output) == "one"
+    harness.set_state(input1, 2)
+    assert harness.get_state(output) == "two"
+    harness.set_state(input1, 3)
+    assert harness.get_state(output) == "other"
+
+
+@pytest.mark.parametrize("bad_expr", [
+    {"if": "v.sensor", "then": "1"},
+    {"if": "v.sensor", "then": "1", "else": "2", "foo": "3"},
+    {"switch": "v.sensor", "case": [], "else": "2"},
+    {"switch": "v.sensor", "case": [{"if": "1"}], "else": "2"},
+    {
+        "switch": "v.sensor",
+        "case": [{"if": "1", "then": "2", "when": "3"}],
+        "else": "4",
+    },
+    {"if": ["1"], "then": "2", "else": "3"},
+    ["a"],
+    True,
+])
+def test_validation_errors(harness: Harness, bad_expr: object) -> None:
+    with pytest.raises(ValueError):
+        harness.create_app(
+            "expression", "Expression", "expression",
+            target=output, expr=bad_expr,
+        )
+
+
+def test_switch_int_float_equality(harness: Harness) -> None:
+    expr: dict[str, object] = {
+        "switch": f"v.{input1}",
+        "case": [
+            {"if": 1.0, "then": "'one'"},
+        ],
+        "else": "'other'",
+    }
+    _initialize_dict(harness, expr, **{input1: 1})
+    assert harness.get_state(output) == "one"
+
+
+def test_switch_evaluated_once(harness: Harness) -> None:
+    expr: dict[str, object] = {
+        "switch": f"v.{input1}",
+        "case": [
+            {"if": 1, "then": "'one'"},
+            {"if": 2, "then": "'two'"},
+            {"if": 3, "then": "'three'"},
+        ],
+        "else": "'other'",
+    }
+    _initialize_dict(harness, expr, **{input1: 3})
+    assert harness.get_state(output) == "three"
+
+    get_state_calls: list[str] = []
+    hass_module = sys.modules.get("hass") or __import__("hass")
+    original_get_state = hass_module.Hass.get_state
+
+    def counting_get_state(
+        self: _Hass,
+        entity_id: str | None,
+        attribute: str | None = None,
+        namespace: str = "default",
+    ) -> object:
+        if entity_id is not None and entity_id == input1:
+            get_state_calls.append(entity_id)
+        return original_get_state(
+            self, entity_id, attribute, namespace
+        )
+
+    hass_module.Hass.get_state = counting_get_state  # type: ignore[method-assign, assignment]
+    try:
+        harness.set_state(input1, 2)
+        assert harness.get_state(output) == "two"
+    finally:
+        hass_module.Hass.get_state = original_get_state  # type: ignore[method-assign, assignment]
+    # One re-evaluation triggered by the state change: the switch value
+    # must be fetched exactly once, not once per case.
+    assert get_state_calls == [input1]
+
+
+def test_validation_error_path(harness: Harness) -> None:
+    bad_expr: dict[str, object] = {
+        "switch": "v.sensor",
+        "case": [{"if": "1", "then": "2"}, {"if": "1"}],
+        "else": "3",
+    }
+    with pytest.raises(
+        ValueError, match=r"expr\.case\[1\]\.then: missing key then"
+    ):
+        harness.create_app(
+            "expression", "Expression", "expression",
+            target=output, expr=bad_expr,
+        )

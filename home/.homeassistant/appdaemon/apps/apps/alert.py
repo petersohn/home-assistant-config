@@ -23,8 +23,8 @@ class AlertAggregator(hass.Hass):
             self,
             app: AlertAggregator,
             entity: str,
-            trigger_expr: str,
-            text_expr: str,
+            trigger_expr: expression.ExpressionValue,
+            text_expr: expression.ExpressionValue,
         ) -> None:
             self.app = app
             self.entity = entity
@@ -105,8 +105,12 @@ class AlertAggregator(hass.Hass):
 
     def initialize(self) -> None:
         self.target: str = self.args["target"]
-        trigger_expr: str = self.args["trigger_expr"]
-        text_expr: str = self.args["text_expr"]
+        trigger_expr: expression.ExpressionValue = self.args[
+            "trigger_expr"
+        ]
+        text_expr: expression.ExpressionValue = self.args[
+            "text_expr"
+        ]
         self.timeout: datetime.timedelta | None = None
         timeout = self.args.get("timeout")
         if timeout is not None:

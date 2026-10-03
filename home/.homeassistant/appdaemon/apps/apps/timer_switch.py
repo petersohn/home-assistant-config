@@ -17,7 +17,7 @@ class Trigger:
     def __init__(
         self,
         app: hass.Hass,
-        expr: str | None,
+        expr: expression.ExpressionValue | None,
         sensor: str | None,
         source_state: str | None,
         target_state: str | None,

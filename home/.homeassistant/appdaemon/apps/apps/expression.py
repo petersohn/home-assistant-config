@@ -13,6 +13,7 @@ from collections.abc import Iterator
 
 
 ExpressionResult = str | float | int | bool | None
+ExpressionValue = str | float | int | dict[str, object]
 Callback = Callable[[ExpressionResult], None]
 
 
@@ -34,12 +35,156 @@ def filter_nums(*args: object) -> Iterator[float]:
     return (x for x in args if type(x) is float)
 
 
+class _StringExprNode:
+    """String sub-expression, evaluated with the eval machinery."""
+
+    def __init__(self, expr: str) -> None:
+        self.expr: str = expr
+
+    def evaluate(self, evaluator: ExpressionEvaluator) -> ExpressionResult:
+        return eval(self.expr, evaluator.evaluators)
+
+
+class _LiteralNode:
+    def __init__(self, value: float | int | bool) -> None:
+        self.value: float | int | bool = value
+
+    def evaluate(self, evaluator: ExpressionEvaluator) -> ExpressionResult:
+        return self.value
+
+
+class _IfNode:
+    def __init__(
+        self, cond: _ExprNode, then: _ExprNode, else_: _ExprNode
+    ) -> None:
+        self.cond: _ExprNode = cond
+        self.then: _ExprNode = then
+        self.else_: _ExprNode = else_
+
+    def evaluate(self, evaluator: ExpressionEvaluator) -> ExpressionResult:
+        cond = self.cond.evaluate(evaluator)
+        branch = self.then if cond else self.else_
+        return branch.evaluate(evaluator)
+
+
+class _SwitchNode:
+    def __init__(
+        self,
+        switch: _ExprNode,
+        cases: list[tuple[_ExprNode, _ExprNode]],
+        else_: _ExprNode,
+    ) -> None:
+        self.switch: _ExprNode = switch
+        self.cases: list[tuple[_ExprNode, _ExprNode]] = cases
+        self.else_: _ExprNode = else_
+
+    def evaluate(self, evaluator: ExpressionEvaluator) -> ExpressionResult:
+        switch_value = self.switch.evaluate(evaluator)
+        for case_expr, then in self.cases:
+            if switch_value == case_expr.evaluate(evaluator):
+                return then.evaluate(evaluator)
+        return self.else_.evaluate(evaluator)
+
+
+_ExprNode = _StringExprNode | _LiteralNode | _IfNode | _SwitchNode
+
+
+def _compile_expr(source: object, path: str) -> _ExprNode:
+    """Compile a sub-expression to a node.
+
+    path is the location of the sub-expression in the expression dict
+    (e.g. "expr.case[1].then"), used in ValueError messages.
+    """
+    if isinstance(source, str):
+        return _StringExprNode(source)
+    if isinstance(source, (bool, int, float)):
+        # bool must be handled before int: it is a subclass of int, but
+        # it is valid as a sub-expression (unlike at the top level).
+        return _LiteralNode(source)
+    if isinstance(source, dict):
+        # cast: parameterized generic dict type cannot be isinstance-checked
+        return _compile_dict(cast("dict[str, object]", source), path)
+    raise ValueError(
+        f"{path}: expected str, int, float, bool or dict, "
+        + f"got {type(source).__name__}"
+    )
+
+
+def _compile_dict(source: dict[str, object], path: str) -> _ExprNode:
+    keys: set[str] = set(source.keys())
+    if keys == {"if", "then", "else"}:
+        return _IfNode(
+            _compile_expr(source["if"], f"{path}.if"),
+            _compile_expr(source["then"], f"{path}.then"),
+            _compile_expr(source["else"], f"{path}.else"),
+        )
+    if keys == {"switch", "case", "else"}:
+        return _compile_switch(source, path)
+    unknown = keys - {"if", "then", "else", "switch", "case"}
+    if unknown:
+        raise ValueError(
+            f"{path}: unknown keys: {sorted(map(repr, unknown))}"
+        )
+    expected: set[str]
+    if "switch" in keys:
+        expected = {"switch", "case", "else"}
+    elif "if" in keys or "then" in keys:
+        expected = {"if", "then", "else"}
+    else:
+        raise ValueError(
+            f"{path}: keys must be exactly {{if, then, else}} "
+            + "or {{switch, case, else}}"
+        )
+    raise ValueError(f"{path}: missing keys: {sorted(expected - keys)}")
+
+
+def _compile_switch(source: dict[str, object], path: str) -> _ExprNode:
+    case_source: object = source["case"]
+    if not isinstance(case_source, list):
+        raise ValueError(
+            f"{path}.case: expected list, "
+            + f"got {type(case_source).__name__}"
+        )
+    if not case_source:
+        raise ValueError(f"{path}.case: empty case list")
+    case_items = cast("list[object]", case_source)  # same as above
+    cases: list[tuple[_ExprNode, _ExprNode]] = []
+    for index, item in enumerate(case_items):
+        item_path = f"{path}.case[{index}]"
+        if not isinstance(item, dict):
+            raise ValueError(
+                f"{item_path}: expected dict, "
+                + f"got {type(item).__name__}"
+            )
+        item_dict = cast("dict[str, object]", item)  # same as above
+        item_keys: set[str] = set(item_dict.keys())
+        unknown = item_keys - {"if", "then"}
+        if unknown:
+            raise ValueError(
+                f"{item_path}: unknown keys: {sorted(map(repr, unknown))}"
+            )
+        for key in ("if", "then"):
+            if key not in item_keys:
+                raise ValueError(f"{item_path}.{key}: missing key {key}")
+        cases.append(
+            (
+                _compile_expr(item_dict["if"], f"{item_path}.if"),
+                _compile_expr(item_dict["then"], f"{item_path}.then"),
+            )
+        )
+    return _SwitchNode(
+        _compile_expr(source["switch"], f"{path}.switch"),
+        cases,
+        _compile_expr(source["else"], f"{path}.else"),
+    )
+
+
 @final
 class ExpressionEvaluator:
     def __init__(
         self,
         app: hass.Hass,
-        expr: str,
+        expr: ExpressionValue,
         callback: Callback | None = None,
         extra_values: dict[str, Any] | None = None,
     ) -> None:
@@ -49,7 +194,24 @@ class ExpressionEvaluator:
         self.mutex = locker_app.get_mutex("ExpressionEvaluator")
 
         self.app = app
-        self.expr = expr
+        self.expr: str = ""
+        self.root: _ExprNode | None = None
+        if isinstance(expr, str):
+            self.expr = expr
+        elif isinstance(expr, dict):
+            self.root = _compile_expr(expr, "expr")
+        elif isinstance(expr, bool):
+            raise ValueError(
+                "expr: bare bool is not a valid expression, "
+                + "expected str, int, float or dict"
+            )
+        elif type(expr) in (int, float):
+            self.expr = str(expr)
+        else:
+            raise ValueError(
+                f"expr: expected str, int, float or dict, "
+                + f"got {type(expr).__name__}"
+            )
         self.callback: Callback | None = callback
         self.entities: set[str] = set()
         self.attributes: set[tuple[str, str]] = set()
@@ -270,7 +432,10 @@ class ExpressionEvaluator:
 
     def _get(self) -> ExpressionResult:
         try:
-            result = eval(self.expr, self.evaluators)
+            if self.root is None:
+                result = eval(self.expr, self.evaluators)
+            else:
+                result = self.root.evaluate(self)
             assert result is None or isinstance(result, (str, float, int, bool)), (
                 f"Expression returned unexpected type "
                 f"{type(result).__name__}: {result!r}"
