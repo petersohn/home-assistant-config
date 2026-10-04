@@ -1,5 +1,7 @@
 # Home Assistant Config
 
+@AGENTS.local.md
+
 This repo contains a configuration for Home Assistant. It consists of the following parts:
 
 - A set of AppDaemon apps and the corresponding config file.
