@@ -98,7 +98,7 @@ wheels = [
 [[package]]
 name = "appdaemon"
 version = "4.5.14"
-source = { git = "https://github.com/petersohn/appdaemon?rev=fix-unload-bug#d38d3acd7dbf23c72af6e60b452eeb29a9347b07" }
+source = { git = "https://github.com/petersohn/appdaemon?rev=fix-unload-bug#187e915f09f2a1b142e65a65e6fb889f97a6df5c" }
 dependencies = [
     { name = "aiohttp" },
     { name = "aiohttp-jinja2" },
