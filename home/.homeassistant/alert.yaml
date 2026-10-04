@@ -192,3 +192,18 @@ camera_detection:
     - 5
   notifiers:
     - telegram_alert
+
+appdaemon_apps_down:
+  name: AppDaemon hiba
+  title: AddDaemon app nem működik
+  message: >
+    {{ states('sensor.inactive_apps') }} app nem működik.
+  entity_id: binary_sensor.has_inactive_app
+  state: 'on'
+  skip_first: true
+  repeat:
+    - 1
+    - 10
+  can_acknowledge: true
+  notifiers:
+    - telegram_alert

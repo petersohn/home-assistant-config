@@ -29,6 +29,7 @@ sunlight:
     target: sensor.light_sunlight_adjusted
     attributes:
         unit_of_measurement: '%'
+        icon: mdi:weather-sunny
 
 
 is_dark:

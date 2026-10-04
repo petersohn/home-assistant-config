@@ -1272,6 +1272,7 @@ views:
           - alert.air_quality
           - alert.low_space
           - alert.camera_detection
+          - alert.appdaemon_apps_down
           - input_boolean.appdaemon_error_log_alert
         title: Riasztások
       - type: entities
@@ -1695,6 +1696,8 @@ views:
           - sensor.appdaemon_booted
           - sensor.total_threads
           - sensor.active_threads
+          - binary_sensor.has_inactive_app
+          - alert.appdaemon_apps_down
         title: AppDaemon
         show_header_toggle: false
       - type: entities
