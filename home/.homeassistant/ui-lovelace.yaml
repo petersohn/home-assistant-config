@@ -236,17 +236,19 @@ views:
             heading: Klíma csendes
             icon: mdi:fan-chevron-down
             badges:
-              - type: button
+              - type: entity
                 entity: binary_sensor.living_room_climate_silence
                 icon: mdi:sofa
+                color: state
                 tap_action:
                   action: call-service
                   service: script.toggle_silence
                   service_data:
                     entity: climate.daikin_living_room
-              - type: button
+              - type: entity
                 entity: binary_sensor.bedroom_climate_silence
                 icon: mdi:bed
+                color: state
                 tap_action:
                   action: call-service
                   service: script.toggle_silence
