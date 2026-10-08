@@ -7,6 +7,10 @@ if TYPE_CHECKING:
     import enabler
     import locker
 
+# Delay before re-issuing a state command after the target reports a
+# wrong or invalid state (retry / verify-stable quiet period).
+RECOMMAND_DELAY = 10
+
 
 class AutoSwitch(hass.Hass):
     target: str = ""
@@ -151,7 +155,7 @@ class AutoSwitch(hass.Hass):
         self.log("Turning " + state)
         if self.intended_state is not None or self.get_state(self.target) != state:
             self.intended_state = state
-            self.timer = self.run_in(self.update, 10)
+            self.timer = self.run_in(self.update, RECOMMAND_DELAY)
 
     def on_switch_change(
         self,
@@ -163,7 +167,10 @@ class AutoSwitch(hass.Hass):
     ) -> None:
         with self.mutex.lock("on_switch_change"):
             self.log("on_switch_change")
-            value = new if new is not None else self.get_state(entity)
+            value = new
+            if value is None:
+                self.log("Invalid switch state: None")
+                return
             if value == "on":
                 self.log("Manually turning on")
                 if self.__is_target_available():
@@ -190,7 +197,7 @@ class AutoSwitch(hass.Hass):
     ) -> None:
         with self.mutex.lock("on_target_change"):
             self.log("on_target_change")
-            value = new if new is not None else self.get_state(entity)
+            value = new
             if value != "on" and value != "off":
                 self.log(f"Invalid state: {value}")
                 return
@@ -217,7 +224,8 @@ class AutoSwitch(hass.Hass):
                 self.log(
                     f"Wrong state: {value}, intended={self.intended_state}"
                 )
-                self.__update(self.state)
+                self.__stop_timer()
+                self.timer = self.run_in(self.update, RECOMMAND_DELAY)
 
     def __stop_timer(self) -> None:
         if self.timer:

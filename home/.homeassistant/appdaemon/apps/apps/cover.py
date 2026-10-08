@@ -27,6 +27,9 @@ class CoverController(hass.Hass):
     expected_value: ExpressionResult = None
     timer: str | None = None
     delay: datetime.timedelta | None = None
+    reset_delay: datetime.timedelta = datetime.timedelta(seconds=5)
+    reset_timer: str | None = None
+    force_reset_count: int = 0
     mode_switch: str | None = None
     mode: int = 0
     arrived_at_target: bool | None = None
@@ -48,11 +51,16 @@ class CoverController(hass.Hass):
             self.is_available = False
             self.expected_value = None
             self.timer = None
+            self.reset_timer = None
+            self.force_reset_count = 0
 
             delay = self.args.get("delay")
             self.delay = (
                 datetime.timedelta(**delay) if delay is not None else None
             )
+
+            reset_delay = self.args.get("reset_delay", {"seconds": 5})
+            self.reset_delay = datetime.timedelta(**reset_delay)
 
             self.mode_switch = self.args.get("mode_switch")
 
@@ -122,7 +130,44 @@ class CoverController(hass.Hass):
         self.call_service(service, **kwargs)
 
     def _reset_value(self) -> None:
+        self._cancel_reset_timer_superseded()
         self._set_value(self.expected_value)
+
+    def _schedule_reset(self) -> None:
+        """Schedule a deferred reset, rescheduling any pending one.
+
+        Each subsequent state change pushes the reset out again, so a
+        flap storm only lets one reset run once changes settle down.
+        """
+        if self.reset_timer is not None:
+            self.cancel_timer(self.reset_timer)
+        self.log(f"Deferring reset by {self.reset_delay}")
+        self.reset_timer = self.run_in(
+            self._reset_timer, self.reset_delay.total_seconds()
+        )
+
+    def _cancel_reset_timer(self) -> None:
+        if self.reset_timer is not None:
+            self.cancel_timer(self.reset_timer)
+            self.reset_timer = None
+
+    def _cancel_reset_timer_superseded(self) -> None:
+        """Cancel a pending reset because a command supersedes it."""
+        if self.reset_timer is not None:
+            self.log("Cancelling pending reset as superseded")
+            self._cancel_reset_timer()
+
+    def _reset_timer(self, _kwargs: dict[str, Any]) -> None:
+        with self.mutex.lock("reset_timer"):
+            self.reset_timer = None
+            if not self.is_available:
+                self.log("Reset timer fired, not available")
+                return
+            if self.mode != self.Mode.AUTO:
+                self.log("Reset timer fired, not in auto mode")
+                return
+            self.log("Reset timer fired")
+            self._reset_value()
 
     def _set_value_inner(self, value: ExpressionResult) -> None:
         self.log(f"Execute command: {value}")
@@ -162,6 +207,7 @@ class CoverController(hass.Hass):
             self.log("Not in auto mode")
             return
 
+        self._cancel_reset_timer_superseded()
         self._set_value_inner(value)
         self._force_check_state()
 
@@ -169,6 +215,18 @@ class CoverController(hass.Hass):
         state = self.get_state(self.target, attribute="all")
         assert isinstance(state, dict)
         self._check_state(state)
+
+    def _force_reset(self) -> None:
+        self.force_reset_count += 1
+        if self.force_reset_count < 3:
+            self._reset_value()
+            return
+        self.error(
+            "Cover keeps stopping short of the target "
+            + f"({self.force_reset_count} attempts), giving up."
+        )
+        self.force_reset_count = 0
+        self._set_mode(self.Mode.STABLE)
 
     def on_expression_change(self, value: ExpressionResult) -> None:
         with self.mutex.lock("on_expression_change"):
@@ -178,6 +236,7 @@ class CoverController(hass.Hass):
 
             self.log(f"Value changed: {self.value} -> {value}")
             self.value = value
+            self.force_reset_count = 0
 
             if self.delay is None:
                 self._set_value(value)
@@ -226,17 +285,20 @@ class CoverController(hass.Hass):
 
         if not was_available and is_available:
             self.log("Became available")
-            self._reset_value()
+            self._schedule_reset()
         elif was_available and not is_available:
             self.log("Became unavailable")
+            self._cancel_reset_timer()
         elif (
             state == "unknown"
             and self.mode == self.Mode.AUTO
             and self.expected_value is not None
         ):
             self.log("State unknown, need to reset.")
-            self._reset_value()
+            self._schedule_reset()
             return
+        elif self.reset_timer is not None:
+            self._schedule_reset()
 
         if not self.is_available or self.mode != self.Mode.AUTO:
             self._reset_target()
@@ -258,13 +320,14 @@ class CoverController(hass.Hass):
             ):
                 self.log("Arrived at target")
                 self.arrived_at_target = True
+                self.force_reset_count = 0
                 self._set_mode(self.Mode.STABLE)
             elif self.arrived_at_target is None and is_moving:
                 self.log("Started moving")
                 self.arrived_at_target = False
             elif self.arrived_at_target is False and not is_moving:
                 self.log(f"Stopped at {position}, force resetting")
-                self._reset_value()
+                self._force_reset()
         else:
             self.log("Position not yet set")
 
@@ -289,3 +352,7 @@ class CoverController(hass.Hass):
     def _reset_target(self) -> None:
         self.target_position = None
         self.arrived_at_target = None
+
+    def get_force_reset_count(self) -> int:
+        """Debug getter for tests: current force-reset attempt count."""
+        return self.force_reset_count
