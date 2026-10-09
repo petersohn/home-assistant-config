@@ -3,7 +3,11 @@ from datetime import datetime as dt_datetime, timedelta, time, date
 from typing import Any, Callable, TypeVar, overload
 
 from appdaemon_unit_test.test_helpers.config import create_app_manager
-from appdaemon_unit_test.test_helpers.hass import AppManager, Hass
+from appdaemon_unit_test.test_helpers.hass import (
+    AppManager,
+    Hass,
+    ServiceCallRecord,
+)
 from locker import Locker
 from mutex_graph import GraphValue, find_cycle, append_graph
 from appdaemon_unit_test.test_helpers.test_app import TestApp
@@ -94,6 +98,13 @@ class Harness:
 
     def turn_off(self, entity_id: str) -> None:
         self.set_state(entity_id, "off")
+
+    def service_calls(
+        self, service: str | None = None, entity_id: str | None = None
+    ) -> list[ServiceCallRecord]:
+        """Service calls sent so far (production app commands and
+        test-driven calls), in call order. Both filters are optional."""
+        return self._manager.service_calls(service, entity_id)
 
     def create_app(
         self, module: str, class_name: str, name: str, **kwargs: object

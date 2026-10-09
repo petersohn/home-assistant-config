@@ -352,7 +352,3 @@ class CoverController(hass.Hass):
     def _reset_target(self) -> None:
         self.target_position = None
         self.arrived_at_target = None
-
-    def get_force_reset_count(self) -> int:
-        """Debug getter for tests: current force-reset attempt count."""
-        return self.force_reset_count

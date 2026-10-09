@@ -67,6 +67,16 @@ ServiceData = NamedTuple(
     "ServiceData", [("app", str), ("callback", ServiceCallback)]
 )
 
+ServiceCallRecord = NamedTuple(
+    "ServiceCallRecord",
+    [
+        ("app", str),
+        ("service", str),
+        ("entity_id", str),
+        ("kwargs", dict[str, object]),
+    ],
+)
+
 LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 
@@ -102,6 +112,7 @@ class AppManager:
         self.__has_error = False
         self.__log_filename = log_filename
         self.__services: dict[ServiceKey, ServiceData] = {}
+        self.__service_calls: list[ServiceCallRecord] = []
 
         if os.path.exists(log_filename):
             os.remove(log_filename)
@@ -544,10 +555,63 @@ class AppManager:
         del self.__services[key]
 
     def call_service(
-        self, _app: str, key: ServiceKey, data: dict[str, object]
+        self, app: str, key: ServiceKey, data: dict[str, object]
     ) -> None:
+        self.__record_service_call(app, key, data)
         service = self.__services[key]
         service.callback(data)
+
+    def service_calls(
+        self, service: str | None = None, entity_id: str | None = None
+    ) -> list[ServiceCallRecord]:
+        """Service calls recorded so far, in call order, filtered by the
+        optional `service` and `entity_id` arguments.
+
+        The log records every call ATTEMPT through this manager,
+        including calls to unregistered services (which then raise
+        KeyError) and calls whose handler raised."""
+        return [
+            call
+            for call in self.__service_calls
+            if (service is None or call.service == service)
+            and (entity_id is None or call.entity_id == entity_id)
+        ]
+
+    def call_service_with_fallback(
+        self,
+        app: str,
+        key: ServiceKey,
+        kwargs: dict[str, object],
+        fallback: Callable[[], None],
+    ) -> None:
+        """Record the call and route it to a registered handler if one is
+        registered for the (service, entity_id) key, else run `fallback`.
+
+        Used by Hass.turn_on/turn_off so that commands are always recorded,
+        device doubles (registered handlers) receive them instead of the
+        state being set directly, and tests without such doubles keep the
+        legacy direct set_state behavior.
+        """
+        self.__record_service_call(app, key, kwargs)
+        service = self.__services.get(key)
+        if service is not None:
+            service.callback(kwargs)
+        else:
+            fallback()
+
+    def __record_service_call(
+        self, app: str, key: ServiceKey, kwargs: dict[str, object]
+    ) -> None:
+        # Copy the kwargs so later mutations by handlers cannot retroactively
+        # change what was recorded.
+        self.__service_calls.append(
+            ServiceCallRecord(
+                app=app,
+                service=key.service,
+                entity_id=key.entity_id,
+                kwargs=deepcopy(kwargs),
+            )
+        )
 
 
 class Hass:
@@ -618,12 +682,24 @@ class Hass:
         self.__manager.set_state(self.__name, entity_id, option)
 
     def turn_on(self, entity_id: str) -> None:
-        assert self.__manager is not None
-        self.__manager.set_state(self.__name, entity_id, "on")
+        manager = self.__manager
+        assert manager is not None
+        manager.call_service_with_fallback(
+            self.__name,
+            ServiceKey(service="homeassistant/turn_on", entity_id=entity_id),
+            {},
+            lambda: manager.set_state(self.__name, entity_id, "on"),
+        )
 
     def turn_off(self, entity_id: str) -> None:
-        assert self.__manager is not None
-        self.__manager.set_state(self.__name, entity_id, "off")
+        manager = self.__manager
+        assert manager is not None
+        manager.call_service_with_fallback(
+            self.__name,
+            ServiceKey(service="homeassistant/turn_off", entity_id=entity_id),
+            {},
+            lambda: manager.set_state(self.__name, entity_id, "off"),
+        )
 
     def listen_state(
         self,

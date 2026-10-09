@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, time
 import pytest
 from appdaemon_unit_test.test_helpers.harness import Harness
+from appdaemon_unit_test.test_helpers.hass import ServiceCallRecord
 from appdaemon_unit_test.test_helpers.timing import Timing
 
 
@@ -181,3 +182,162 @@ def test_state_should_change_next_day(harness: Harness) -> None:
 def test_converted_state_expectations(setup_harness: Harness) -> None:
     setup_harness.set_state("sensor.test_sensor", "12")
     assert setup_harness.get_state("sensor.test_sensor", type="int") == 12
+
+
+def test_service_call_log_records_calls(setup_harness: Harness) -> None:
+    setup_harness.test_app.register_service(
+        "light/turn_on", "light.test_light", lambda _args: None
+    )
+    setup_harness.call_on_app(
+        setup_harness.test_app, "call_service", "light/turn_on",
+        "light.test_light", brightness="5",
+    )
+    assert setup_harness.service_calls() == [
+        ServiceCallRecord(
+            app="test_app",
+            service="light/turn_on",
+            entity_id="light.test_light",
+            kwargs={"brightness": "5"},
+        )
+    ]
+
+
+def test_service_calls_filtering(setup_harness: Harness) -> None:
+    setup_harness.test_app.register_service(
+        "light/turn_on", "light.a", lambda _args: None
+    )
+    setup_harness.test_app.register_service(
+        "switch/turn_off", "switch.b", lambda _args: None
+    )
+    light_on_a = ServiceCallRecord(
+        app="test_app", service="light/turn_on", entity_id="light.a",
+        kwargs={},
+    )
+    switch_off_b = ServiceCallRecord(
+        app="test_app", service="switch/turn_off", entity_id="switch.b",
+        kwargs={},
+    )
+    setup_harness.call_on_app(
+        setup_harness.test_app, "call_service", "light/turn_on", "light.a"
+    )
+    setup_harness.call_on_app(
+        setup_harness.test_app, "call_service", "switch/turn_off", "switch.b"
+    )
+    setup_harness.call_on_app(
+        setup_harness.test_app, "call_service", "light/turn_on", "light.a"
+    )
+    assert setup_harness.service_calls() == [
+        light_on_a, switch_off_b, light_on_a,
+    ]
+    assert setup_harness.service_calls(service="light/turn_on") == [
+        light_on_a, light_on_a,
+    ]
+    assert setup_harness.service_calls(entity_id="switch.b") == [switch_off_b]
+    assert setup_harness.service_calls(
+        service="light/turn_on", entity_id="switch.b"
+    ) == []
+
+
+def test_turn_on_without_handler_reflects_state(setup_harness: Harness) -> None:
+    setup_harness.call_on_app(
+        setup_harness.test_app, "turn_on", "switch.test_switch"
+    )
+    assert setup_harness.get_state("switch.test_switch") == "on"
+    assert setup_harness.service_calls(entity_id="switch.test_switch") == [
+        ServiceCallRecord(
+            app="test_app",
+            service="homeassistant/turn_on",
+            entity_id="switch.test_switch",
+            kwargs={},
+        )
+    ]
+
+
+def test_turn_off_without_handler_reflects_state(setup_harness: Harness) -> None:
+    setup_harness.set_state("switch.test_switch", "on")
+    setup_harness.call_on_app(
+        setup_harness.test_app, "turn_off", "switch.test_switch"
+    )
+    assert setup_harness.get_state("switch.test_switch") == "off"
+    assert setup_harness.service_calls(entity_id="switch.test_switch") == [
+        ServiceCallRecord(
+            app="test_app",
+            service="homeassistant/turn_off",
+            entity_id="switch.test_switch",
+            kwargs={},
+        )
+    ]
+
+
+def test_turn_on_with_handler_routes_and_does_not_reflect(
+    setup_harness: Harness,
+) -> None:
+    received: list[dict[str, object]] = []
+    setup_harness.test_app.register_service(
+        "homeassistant/turn_on",
+        "switch.test_switch",
+        lambda args: received.append(dict(args)),
+    )
+    setup_harness.call_on_app(
+        setup_harness.test_app, "turn_on", "switch.test_switch"
+    )
+    assert received == [{}]
+    # The device double owns the state: a routed command is not reflected.
+    assert setup_harness.get_state("switch.test_switch") is None
+    assert setup_harness.service_calls(
+        service="homeassistant/turn_on", entity_id="switch.test_switch"
+    ) == [
+        ServiceCallRecord(
+            app="test_app",
+            service="homeassistant/turn_on",
+            entity_id="switch.test_switch",
+            kwargs={},
+        )
+    ]
+
+
+def test_turn_off_with_handler_routes_and_does_not_reflect(
+    setup_harness: Harness,
+) -> None:
+    received: list[dict[str, object]] = []
+    setup_harness.test_app.register_service(
+        "homeassistant/turn_off",
+        "switch.test_switch",
+        lambda args: received.append(dict(args)),
+    )
+    setup_harness.set_state("switch.test_switch", "on")
+    setup_harness.call_on_app(
+        setup_harness.test_app, "turn_off", "switch.test_switch"
+    )
+    assert received == [{}]
+    assert setup_harness.get_state("switch.test_switch") == "on"
+    assert setup_harness.service_calls(
+        service="homeassistant/turn_off", entity_id="switch.test_switch"
+    ) == [
+        ServiceCallRecord(
+            app="test_app",
+            service="homeassistant/turn_off",
+            entity_id="switch.test_switch",
+            kwargs={},
+        )
+    ]
+
+
+def test_turn_on_handler_matches_only_registered_entity(
+    setup_harness: Harness,
+) -> None:
+    setup_harness.test_app.register_service(
+        "homeassistant/turn_on", "switch.a", lambda _args: None
+    )
+    setup_harness.call_on_app(setup_harness.test_app, "turn_on", "switch.b")
+    assert setup_harness.get_state("switch.b") == "on"
+
+
+def test_call_service_unregistered_raises(setup_harness: Harness) -> None:
+    with pytest.raises(KeyError):
+        setup_harness.call_on_app(
+            setup_harness.test_app, "call_service", "light/turn_on", "light.x"
+        )
+    # The log records call ATTEMPTS: the failed call is logged even
+    # though no handler ran.
+    assert len(setup_harness.service_calls(service="light/turn_on")) == 1
