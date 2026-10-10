@@ -14,7 +14,9 @@ if TYPE_CHECKING:
 class AdminSync(hass.Hass):
     mirrored: dict[str, tuple[str | None, dict[str, AttributeValue]]] = {}
     resync_timer: str | None = None
+    sync_timer: str | None = None
     listener_registered: bool = False
+    terminated: bool = False
     resync_interval: datetime.timedelta = cast(
         "datetime.timedelta", cast(Any, None)
     )
@@ -26,7 +28,9 @@ class AdminSync(hass.Hass):
     def initialize(self) -> None:
         self.mirrored = {}
         self.resync_timer = None
+        self.sync_timer = None
         self.listener_registered = False
+        self.terminated = False
         interval: dict[str, int | float] = self.args.get(
             "resync_interval", {"minutes": 5}
         )
@@ -46,18 +50,28 @@ class AdminSync(hass.Hass):
         assert isinstance(locker_app, locker.Locker)
         self.mutex = locker_app.get_mutex("AdminSync")
 
-        self._sync_with_retry()
+        self.sync_timer = self.run_in(self._retry_init, 1)
 
     def _retry_init(self, kwargs: dict[str, object]) -> None:
-        self._sync_with_retry()
+        with self.mutex.lock("retry_init"):
+            self.sync_timer = None
+            if not self._is_active():
+                return
+            self._sync_with_retry()
 
     def _sync_with_retry(self) -> None:
         try:
             self._ensure_listener()
-            self.full_sync({})
+            self._full_sync()
         except Exception:
+            if not self._is_active():
+                return
             self.error(traceback.format_exc())
-            _ = self.run_in(self._retry_init, 60)
+            try:
+                self.sync_timer = self.run_in(self._retry_init, 60)
+            except KeyError:
+                if self._is_active():
+                    raise
 
     def _ensure_listener(self) -> None:
         if not self.listener_registered:
@@ -85,15 +99,19 @@ class AdminSync(hass.Hass):
         self, event: str, data: dict[str, object], **kwargs: object
     ) -> None:
         entity = data.get("entity_id")
-        if not isinstance(entity, str):
+        if not isinstance(entity, str) or self._is_excluded(entity):
             return
         with self.mutex.lock("on_admin_change"):
+            if not self._is_active():
+                return
             if event == "__AD_ENTITY_REMOVED":
                 self._remove(entity)
             else:
                 self._mirror(entity)
 
     def _remove(self, entity: str) -> None:
+        if self._is_excluded(entity):
+            return
         if entity not in self.mirrored:
             return
         try:
@@ -105,6 +123,8 @@ class AdminSync(hass.Hass):
             del self.mirrored[entity]
 
     def _mirror(self, entity: str) -> None:
+        if self._is_excluded(entity):
+            return
         try:
             state = self.get_state(entity, attribute="all", namespace="admin")
             if state is None:
@@ -139,6 +159,10 @@ class AdminSync(hass.Hass):
             self.error(traceback.format_exc())
 
     @staticmethod
+    def _is_excluded(entity: str) -> bool:
+        return entity.startswith("scheduler_callback.")
+
+    @staticmethod
     def _sanitize(entity: str) -> str:
         """Rewrite an entity id for HASS, which rejects invalid characters.
 
@@ -163,21 +187,30 @@ class AdminSync(hass.Hass):
 
     def full_sync(self, kwargs: dict[str, object]) -> None:
         with self.mutex.lock("full_sync"):
-            admin: dict[str, str] = self.get_state(
-                entity_id=None, namespace="admin"
+            if not self._is_active():
+                return
+            self._full_sync()
+
+    def _full_sync(self) -> None:
+        admin: dict[str, str] = self.get_state(
+            entity_id=None, namespace="admin"
+        )
+        assert isinstance(admin, dict)
+        for entity in admin:
+            self._mirror(entity)
+        for entity in list(self.mirrored):
+            if entity not in admin:
+                self._remove(entity)
+        if self.resync_timer is None:
+            self.resync_timer = self.run_every(
+                self.full_sync,
+                self.datetime() + self.resync_interval,
+                int(self.resync_interval.total_seconds()),
             )
-            assert isinstance(admin, dict)
-            for entity in admin:
-                self._mirror(entity)
-            for entity in list(self.mirrored):
-                if entity not in admin:
-                    self._remove(entity)
-            if self.resync_timer is None:
-                self.resync_timer = self.run_every(
-                    self.full_sync,
-                    self.datetime() + self.resync_interval,
-                    int(self.resync_interval.total_seconds()),
-                )
+
+    def _is_active(self) -> bool:
+        return not self.terminated
 
     def terminate(self) -> None:
-        pass
+        with self.mutex.lock("terminate"):
+            self.terminated = True

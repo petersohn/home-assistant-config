@@ -3,6 +3,7 @@ from datetime import timedelta
 from typing import Any
 
 import admin_sync
+import pytest
 from appdaemon_unit_test.test_helpers.harness import Harness
 
 admin_total = "sensor.total_apps"
@@ -21,7 +22,9 @@ def _set_admin(
 def _create_admin_sync(
     harness: Harness, **kwargs: object
 ) -> admin_sync.AdminSync:
-    return _create_admin_sync_app(harness, **kwargs)
+    app = _create_admin_sync_app(harness, **kwargs)
+    harness.advance_time(timedelta(seconds=1))
+    return app
 
 
 def _create_admin_sync_app(
@@ -32,12 +35,30 @@ def _create_admin_sync_app(
     return app
 
 
-def test_initial_full_sync(harness: Harness) -> None:
+def test_initial_sync_is_deferred_to_avoid_blocking_app_start(
+    harness: Harness,
+) -> None:
     _set_admin(harness, admin_total, "42")
     _set_admin(harness, admin_uptime, "0:00:00")
-    _create_admin_sync(harness)
+    _create_admin_sync_app(harness)
+    assert harness.get_state(admin_total) is None
+    assert harness.get_state(admin_uptime) is None
+    harness.advance_time(timedelta(seconds=1))
     assert harness.get_state(admin_total) == "42"
     assert harness.get_state(admin_uptime) == "0:00:00"
+
+
+def test_deferred_initial_sync_is_ignored_after_termination(
+    harness: Harness,
+) -> None:
+    _set_admin(harness, admin_total, "42")
+    app = _create_admin_sync_app(harness)
+
+    # terminate() runs before AppDaemon removes the managed object.
+    app.terminate()
+    app._retry_init({})  # pyright: ignore[reportPrivateUsage]
+
+    assert harness.get_state(admin_total) is None
 
 
 def test_incremental_mirror_on_change(harness: Harness) -> None:
@@ -111,60 +132,54 @@ def test_unchanged_not_re_set(harness: Harness) -> None:
     assert harness.get_state(admin_total) == "2"
 
 
-def test_initialize_retries_after_full_sync_failure(
+@pytest.mark.parametrize(
+    "harness", [{"interval": timedelta(seconds=1)}], indirect=True
+)
+def test_failed_deferred_initial_sync_retries_after_60_seconds(
     harness: Harness,
 ) -> None:
     _set_admin(harness, admin_total, "1")
-    sync_calls = 0
-    register_calls = 0
-    original_full_sync = admin_sync.AdminSync.full_sync
-    original_register = (
-        admin_sync.AdminSync._register_listener  # pyright: ignore[reportPrivateUsage]
-    )
+    app = _create_admin_sync_app(harness)
+    original_get_state = app.get_state
+    fail_initial_sync = True
 
-    def failing_full_sync(
-        self: admin_sync.AdminSync, kwargs: dict[str, object]
-    ) -> None:
-        nonlocal sync_calls
-        if sync_calls == 0:
-            sync_calls += 1
+    def fail_first_get_state(
+        entity_id: str | None = None,
+        attribute: str | None = None,
+        default: Any | None = None,
+        namespace: str | None = None,
+        copy: bool = True,
+    ) -> Any:
+        nonlocal fail_initial_sync
+        if fail_initial_sync:
+            fail_initial_sync = False
             raise RuntimeError("HASS down")
-        sync_calls += 1
-        original_full_sync(self, kwargs)
+        return original_get_state(
+            entity_id,
+            attribute=attribute,
+            namespace="default" if namespace is None else namespace,
+        )
 
-    def counting_register(self: admin_sync.AdminSync) -> None:
-        nonlocal register_calls
-        register_calls += 1
-        original_register(self)
-
-    setattr(admin_sync.AdminSync, "full_sync", failing_full_sync)
-    setattr(admin_sync.AdminSync, "_register_listener", counting_register)
+    app.get_state = fail_first_get_state  # type: ignore[method-assign]
     harness.clear_errors()
     try:
-        app = harness.app_manager.create_app(
-            "admin_sync", "AdminSync", "admin_sync"
-        )
-        assert isinstance(app, admin_sync.AdminSync)
-        assert sync_calls == 1
-        assert register_calls == 1
+        harness.advance_time(timedelta(seconds=1))
+        assert harness.get_state(admin_total) is None
         assert harness.app_manager.has_error()
         harness.clear_errors()
 
-        harness.advance_time(timedelta(seconds=60))
-        assert sync_calls == 2
-        assert register_calls == 1
+        harness.advance_time(timedelta(seconds=59))
+        assert harness.get_state(admin_total) is None
+        harness.advance_time(timedelta(seconds=1))
         assert not harness.app_manager.has_error()
         assert harness.get_state(admin_total) == "1"
     finally:
-        setattr(admin_sync.AdminSync, "full_sync", original_full_sync)
-        setattr(admin_sync.AdminSync, "_register_listener", original_register)
+        app.get_state = original_get_state  # type: ignore[method-assign]
 
 
 def test_mirror_failure_logged_not_fatal(harness: Harness) -> None:
     _set_admin(harness, admin_total, "1")
-    app = harness.app_manager.create_app(
-        "admin_sync", "AdminSync", "admin_sync"
-    )
+    app = _create_admin_sync(harness)
     harness.clear_errors()
     assert isinstance(app, admin_sync.AdminSync)
 
@@ -180,7 +195,7 @@ def test_mirror_failure_logged_not_fatal(harness: Harness) -> None:
 
     app.set_state = failing  # type: ignore[method-assign]
     # Must not raise; error is logged internally.
-    app._mirror(admin_total)
+    app.on_admin_change("state_changed", {"entity_id": admin_total})
     harness.clear_errors()
 
 
@@ -194,6 +209,30 @@ def test_mirror_of_vanished_entity_skipped_silently(
     app.on_admin_change("state_changed", {"entity_id": "scheduler_callback.gone"})
     assert harness.get_state("scheduler_callback.gone") is None
     assert not harness.app_manager.has_error()
+
+
+def test_scheduler_callback_entities_are_excluded_from_full_sync(
+    harness: Harness,
+) -> None:
+    scheduler_callback = "scheduler_callback.transient"
+    _set_admin(harness, admin_total, "1")
+    _set_admin(harness, scheduler_callback, "pending")
+
+    _create_admin_sync(harness)
+
+    assert harness.get_state(admin_total) == "1"
+    assert harness.get_state(scheduler_callback) is None
+
+
+def test_scheduler_callback_change_event_is_excluded_from_mirroring(
+    harness: Harness,
+) -> None:
+    scheduler_callback = "scheduler_callback.transient"
+    _create_admin_sync(harness)
+
+    _set_admin(harness, scheduler_callback, "pending")
+
+    assert harness.get_state(scheduler_callback) is None
 
 
 def test_override_attributes_applied(
