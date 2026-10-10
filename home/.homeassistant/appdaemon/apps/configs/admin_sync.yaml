@@ -24,10 +24,10 @@ admin_sync:
         sensor.appdaemon_uptime: {icon: mdi:timer-outline}
         sensor.appdaemon_booted: {icon: mdi:calendar-start}
 
-total_threads:
+has_inactive_app:
     module: expression
     class: Expression
     dependencies: [locker, admin_sync]
     target: binary_sensor.has_inactive_app
-    expr: v.sensor.inactive_apps > 0
+    expr: ok.sensor.inactive_apps and v.sensor.inactive_apps > 0
     attributes: {icon: mdi:alert}
