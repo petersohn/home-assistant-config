@@ -209,11 +209,12 @@ class DateEnabler(Enabler):
     @override
     def initialize(self) -> None:
         super().initialize()
+        # Preserve strptime's default year while avoiding yearless parsing.
         self.begin = datetime.datetime.strptime(
-            self.args["begin"], "%m-%d"
+            f"1900-{self.args['begin']}", "%Y-%m-%d"
         ).date()
         self.end = datetime.datetime.strptime(
-            self.args["end"], "%m-%d"
+            f"1900-{self.args['end']}", "%Y-%m-%d"
         ).date()
         self._init_enabler(self._get())
         self.run_daily(
