@@ -529,35 +529,27 @@ views:
             - input_number.cooler_temperature
             - input_boolean.wood_heating
             - climate.heater
-            - input_select.climate_mode
-            - binary_sensor.living_room_climate_silence
-            - binary_sensor.bedroom_climate_silence
             - climate.daikin_living_room
             - climate.daikin_bedroom
+            - input_select.climate_mode
+            - entity: binary_sensor.living_room_climate_silence
+              name: Klíma nappali csendes
+              icon: mdi:fan-chevron-down
+              tap_action:
+                action: call-service
+                service: script.toggle_silence
+                service_data:
+                  entity: climate.daikin_living_room
+            - entity: binary_sensor.bedroom_climate_silence
+              name: Klíma hálószoba csendes
+              icon: mdi:fan-chevron-down
+              tap_action:
+                action: call-service
+                service: script.toggle_silence
+                service_data:
+                  entity: climate.daikin_bedroom
           show_header_toggle: false
           title: Fűtés
-        - type: horizontal-stack
-          cards:
-          - type: button
-            entity: binary_sensor.living_room_climate_silence
-            name: Klíma nappali csendes
-            icon: mdi:fan-chevron-down
-            state_color: true
-            tap_action:
-              action: call-service
-              service: script.toggle_silence
-              service_data:
-                entity: climate.daikin_living_room
-          - type: button
-            entity: binary_sensor.bedroom_climate_silence
-            icon: mdi:fan-chevron-down
-            name: Klíma hálószoba csendes
-            state_color: true
-            tap_action:
-              action: call-service
-              service: script.toggle_silence
-              service_data:
-                entity: climate.daikin_bedroom
       - type: vertical-stack
         cards:
           - type: horizontal-stack
