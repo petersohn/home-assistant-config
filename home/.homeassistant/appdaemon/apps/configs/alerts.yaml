@@ -61,8 +61,8 @@ availability_alerts_critical:
     target: binary_sensor.availability_alert_critical
     trigger_expr: >
       not v['input_boolean.' + name + '_maintenance'] and
-      ok['binary_sensor.' + name + '_available'] and
-      not v['binary_sensor.' + name + '_available']
+      (not ok['binary_sensor.' + name + '_available'] or
+      not v['binary_sensor.' + name + '_available'])
     text_expr: a['binary_sensor.' + name + '_available'].friendly_name
     timeout:
         minutes: 5
