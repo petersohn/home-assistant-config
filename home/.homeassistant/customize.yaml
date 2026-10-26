@@ -532,6 +532,10 @@ switch.water_heater:
   friendly_name: Vízmelegítő
   icon: mdi:water-boiler
 
+climate.heater:
+  icon: mdi:radiator
+  friendly_name: Gázfűtés
+
 switch.christmas_tree:
   friendly_name: "Karácsonyfa"
   icon: mdi:pine-tree
