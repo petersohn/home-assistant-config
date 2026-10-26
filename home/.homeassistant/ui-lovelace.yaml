@@ -189,7 +189,7 @@ views:
                     option: 'off'
               - type: button
                 entity: binary_sensor.climate_cool
-                icon: mdi:snowflake-thermometer
+                icon: mdi:thermometer-chevron-down
                 tap_action:
                   action: call-service
                   service: input_select.select_option
@@ -207,7 +207,7 @@ views:
                     option: 'dry'
               - type: button
                 entity: binary_sensor.climate_heat
-                icon: mdi:sun-thermometer-outline
+                icon: mdi:thermometer-chevron-up
                 tap_action:
                   action: call-service
                   service: input_select.select_option
@@ -216,7 +216,7 @@ views:
                     option: 'heat'
               - type: button
                 entity: binary_sensor.climate_heat_up
-                icon: mdi:thermometer-chevron-up
+                icon: mdi:thermometer-plus
                 tap_action:
                   action: call-service
                   service: input_select.select_option

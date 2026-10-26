@@ -221,12 +221,12 @@ input_number:
     name: "Fűtés hőmérséklet"
     min: 10
     max: 25
-    icon: mdi:sun-thermometer-outline
+    icon: mdi:thermometer-chevron-up
   cooler_temperature:
     name: "Hűtés hőmérséklet"
     min: 15
     max: 30
-    icon: mdi:snowflake-thermometer
+    icon: mdi:thermometer-chevron-down
 
 mqtt_statestream:
   base_topic: home
