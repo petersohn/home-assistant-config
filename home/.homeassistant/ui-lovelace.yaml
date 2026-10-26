@@ -3,6 +3,202 @@ views:
   - path: default_view
     title: default_view
     badges: []
+    icon: 'mdi:home'
+    cards:
+      - type: horizontal-stack
+        title: Jelenlét
+        cards:
+          - type: button
+            entity: binary_sensor.presence_home
+            name: Home
+            icon: mdi:home
+            tap_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: input_select.presence_mode
+                option: 'home'
+          - type: button
+            entity: binary_sensor.presence_sleep
+            name: Sleep
+            icon: mdi:sleep
+            tap_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: input_select.presence_mode
+                option: 'sleep'
+          - type: button
+            entity: binary_sensor.presence_away
+            name: Away
+            icon: mdi:home-export-outline
+            tap_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: input_select.presence_mode
+                option: 'away'
+      - type: horizontal-stack
+        title: Hőmérséklet
+        cards:
+          - type: sensor
+            entity: sensor.temperature_living_room_upper
+            graph: line
+          - type: sensor
+            entity: sensor.temperature_bedroom_upper
+            graph: line
+          - type: sensor
+            entity: sensor.temperature_outside
+            graph: line
+      - type: horizontal-stack
+        title: Lejátszás
+        cards:
+          - type: button
+            entity: switch.desktop_player
+          - type: button
+            entity: input_boolean.desktop_player_pause
+          - type: button
+            entity: switch.laptop_player
+          - type: button
+            entity: input_boolean.laptop_player_pause
+      - type: horizontal-stack
+        title: Kapu
+        cards:
+          - type: entity
+            entity: cover.gate
+            attribute: current_position
+            name: Pozíció
+            icon: mdi:percent
+          - type: button
+            name: Stop
+            icon: mdi:gate-alert
+            tap_action:
+              action: call-service
+              service: cover.stop_cover
+              service_data:
+                entity_id: cover.gate
+          - type: button
+            name: Nyitás
+            icon: mdi:gate-open
+            entity: binary_sensor.gate_opening
+            tap_action:
+              action: call-service
+              service: cover.open_cover
+              service_data:
+                entity_id: cover.gate
+          - type: button
+            name: Nyitás gyalogos
+            icon: mdi:walk
+            tap_action:
+              action: call-service
+              service: cover.set_cover_position
+              service_data:
+                entity_id: cover.gate
+                position: 40
+          - type: button
+            name: Zárás
+            icon: mdi:gate
+            entity: binary_sensor.gate_closing
+            tap_action:
+              action: call-service
+              service: cover.close_cover
+              service_data:
+                entity_id: cover.gate
+      - type: vertical-stack
+        title: Klíma
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: button
+                entity: binary_sensor.climate_off
+                name: Ki
+                icon: mdi:thermometer-off
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'off'
+              - type: button
+                entity: binary_sensor.climate_cool
+                name: Hűtés
+                icon: mdi:thermometer-chevron-down
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'cool'
+              - type: button
+                entity: binary_sensor.climate_dry
+                name: Párátlanítás
+                icon: mdi:water-percent
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'dry'
+              - type: button
+                entity: binary_sensor.living_room_climate_silence
+                name: Nappali klíma csendes
+                icon: mdi:fan-chevron-down
+                tap_action:
+                  action: call-service
+                  service: script.toggle_silence
+                  service_data:
+                    entity: climate.daikin_living_room
+                double_tap_action:
+                  action: more-info
+                  entity: climate.daikin_living_room
+          - type: horizontal-stack
+            cards:
+              - type: button
+                entity: binary_sensor.climate_heat
+                name: Fűtés
+                icon: mdi:thermometer-chevron-up
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'heat'
+              - type: button
+                entity: binary_sensor.climate_heat_up
+                name: Felfűtés
+                icon: mdi:thermometer-plus
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'heat_up'
+              - type: button
+                entity: binary_sensor.climate_keep_warm
+                name: Melegen tartás
+                icon: mdi:thermometer-lines
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'keep_warm'
+              - type: button
+                entity: binary_sensor.bedroom_climate_silence
+                name: Hálószoba klíma csendes
+                icon: mdi:fan-chevron-down
+                tap_action:
+                  action: call-service
+                  service: script.toggle_silence
+                  service_data:
+                    entity: climate.daikin_bedroom
+                double_tap_action:
+                  action: more-info
+                  entity: climate.daikin_bedroom
+  - path: overview
+    title: Áttekintés
+    badges: []
+    icon: 'mdi:dots-grid'
     cards:
       #- type: entity
       #  entity: cover.gate
@@ -473,9 +669,6 @@ views:
             color: state
             tap_action:
               action: more-info
-
-
-    icon: 'mdi:home'
   - path: window_door
     title: 'Nyílászárók'
     icon: mdi:window-closed

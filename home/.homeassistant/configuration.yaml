@@ -148,6 +148,18 @@ climate:
 
 template:
   - binary_sensor:
+    - name: presence_home
+      state: >
+        {{ is_state('input_select.presence_mode', 'home') }}
+  - binary_sensor:
+    - name: presence_sleep
+      state: >
+        {{ is_state('input_select.presence_mode', 'sleep') }}
+  - binary_sensor:
+    - name: presence_away
+      state: >
+        {{ is_state('input_select.presence_mode', 'away') }}
+  - binary_sensor:
     - name: climate_off
       state: >
         {{ is_state('input_select.climate_mode', 'off') }}
@@ -209,6 +221,14 @@ template:
         {{ '%.0f' | format(states('sensor.wind_direction_average') | float) }}
       icon: mdi:windsock
       unit_of_measurement: "°"
+  - binary_sensor:
+    - name: gate_opening
+      state: >
+        {{ is_state('cover.gate', 'opening') }}
+  - binary_sensor:
+    - name: gate_closing
+      state: >
+        {{ is_state('cover.gate', 'closing') }}
 
 
 input_number:
