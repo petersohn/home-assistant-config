@@ -39,29 +39,6 @@ views:
                 entity_id: input_select.presence_mode
                 option: 'away'
       - type: horizontal-stack
-        title: Hőmérséklet
-        cards:
-          - type: sensor
-            entity: sensor.temperature_living_room_upper
-            graph: line
-          - type: sensor
-            entity: sensor.temperature_bedroom_upper
-            graph: line
-          - type: sensor
-            entity: sensor.temperature_outside
-            graph: line
-      - type: horizontal-stack
-        title: Lejátszás
-        cards:
-          - type: button
-            entity: switch.desktop_player
-          - type: button
-            entity: input_boolean.desktop_player_pause
-          - type: button
-            entity: switch.laptop_player
-          - type: button
-            entity: input_boolean.laptop_player_pause
-      - type: horizontal-stack
         title: Kapu
         cards:
           - type: entity
@@ -104,6 +81,18 @@ views:
               service: cover.close_cover
               service_data:
                 entity_id: cover.gate
+      - type: horizontal-stack
+        title: Hőmérséklet
+        cards:
+          - type: sensor
+            entity: sensor.temperature_living_room_upper
+            graph: line
+          - type: sensor
+            entity: sensor.temperature_bedroom_upper
+            graph: line
+          - type: sensor
+            entity: sensor.temperature_outside
+            graph: line
       - type: vertical-stack
         title: Klíma
         cards:
@@ -119,40 +108,6 @@ views:
                   service_data:
                     entity_id: input_select.climate_mode
                     option: 'off'
-              - type: button
-                entity: binary_sensor.climate_cool
-                name: Hűtés
-                icon: mdi:thermometer-chevron-down
-                tap_action:
-                  action: call-service
-                  service: input_select.select_option
-                  service_data:
-                    entity_id: input_select.climate_mode
-                    option: 'cool'
-              - type: button
-                entity: binary_sensor.climate_dry
-                name: Párátlanítás
-                icon: mdi:water-percent
-                tap_action:
-                  action: call-service
-                  service: input_select.select_option
-                  service_data:
-                    entity_id: input_select.climate_mode
-                    option: 'dry'
-              - type: button
-                entity: binary_sensor.living_room_climate_silence
-                name: Nappali klíma csendes
-                icon: mdi:fan-chevron-down
-                tap_action:
-                  action: call-service
-                  service: script.toggle_silence
-                  service_data:
-                    entity: climate.daikin_living_room
-                double_tap_action:
-                  action: more-info
-                  entity: climate.daikin_living_room
-          - type: horizontal-stack
-            cards:
               - type: button
                 entity: binary_sensor.climate_heat
                 name: Fűtés
@@ -173,6 +128,40 @@ views:
                   service_data:
                     entity_id: input_select.climate_mode
                     option: 'heat_up'
+              - type: button
+                entity: binary_sensor.living_room_climate_silence
+                name: Nappali klíma csendes
+                icon: mdi:fan-chevron-down
+                tap_action:
+                  action: call-service
+                  service: script.toggle_silence
+                  service_data:
+                    entity: climate.daikin_living_room
+                double_tap_action:
+                  action: more-info
+                  entity: climate.daikin_living_room
+          - type: horizontal-stack
+            cards:
+              - type: button
+                entity: binary_sensor.climate_cool
+                name: Hűtés
+                icon: mdi:thermometer-chevron-down
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'cool'
+              - type: button
+                entity: binary_sensor.climate_dry
+                name: Párátlanítás
+                icon: mdi:water-percent
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  service_data:
+                    entity_id: input_select.climate_mode
+                    option: 'dry'
               - type: button
                 entity: binary_sensor.climate_keep_warm
                 name: Melegen tartás
@@ -195,6 +184,17 @@ views:
                 double_tap_action:
                   action: more-info
                   entity: climate.daikin_bedroom
+      - type: horizontal-stack
+        title: Lejátszás
+        cards:
+          - type: button
+            entity: switch.desktop_player
+          - type: button
+            entity: input_boolean.desktop_player_pause
+          - type: button
+            entity: switch.laptop_player
+          - type: button
+            entity: input_boolean.laptop_player_pause
   - path: overview
     title: Áttekintés
     badges: []
