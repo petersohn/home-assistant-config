@@ -119,7 +119,7 @@ def test_basic_usage_with_enabler(harness: Harness, type_: str, initial_switch_s
     ("off", "on", "auto", "on"),
 ])
 def test_switch_on_and_off_manually(harness: Harness, initial: str, auto_switch_state: str, changed: str, expected: str) -> None:
-    auto_switch, _ = _initialize(harness, "Switched", initial, target)
+    auto_switch, _ = _initialize(harness, "Switched", initial, "off")
     if auto_switch_state == "on":
         harness.call_on_app(auto_switch, "auto_turn_on")
     else:
@@ -229,12 +229,21 @@ def _create_test_switch(
 
 
 def _initialize_with_stuck_target(
-    harness: Harness, type_: str
+    harness: Harness,
+    type_: str,
+    initial_target_state: str = "off",
+    initial_switch_state: str = "auto",
 ) -> tuple[AutoSwitch, "TestSwitch"]:
     test_switch = _create_test_switch(
-        harness, "test_switch", entity=target, stuck=True
+        harness,
+        "test_switch",
+        entity=target,
+        stuck=True,
+        state=initial_target_state,
     )
-    auto_switch, _ = _initialize(harness, type_)
+    auto_switch, _ = _initialize(
+        harness, type_, initial_switch_state, initial_target_state
+    )
     return auto_switch, test_switch
 
 
@@ -242,6 +251,14 @@ def _turn_on_count(harness: Harness) -> int:
     return len(
         harness.service_calls(
             service="homeassistant/turn_on", entity_id=target
+        )
+    )
+
+
+def _command_count(harness: Harness, state: str) -> int:
+    return len(
+        harness.service_calls(
+            service=f"homeassistant/turn_{state}", entity_id=target
         )
     )
 
@@ -303,3 +320,226 @@ def test_wrong_state_flap_single_recommand(harness: Harness) -> None:
     harness.advance_time(timedelta(seconds=10))
     assert _turn_on_count(harness) == after_turn_on + 2
     assert harness.get_state(target) == "off"
+
+
+def _assert_five_retries(
+    harness: Harness, state: str, initial_count: int
+) -> None:
+    for retry in range(1, 6):
+        harness.advance_time(timedelta(seconds=10))
+        assert _command_count(harness, state) == initial_count + retry
+    harness.advance_time(timedelta(seconds=10))
+    assert _command_count(harness, state) == initial_count + 5
+
+
+@pytest.mark.parametrize(
+    "mode, desired_state, initial_target_state",
+    [
+        ("auto", "on", "off"),
+        ("auto", "on", "unknown"),
+        ("auto", "off", "on"),
+        ("auto", "off", "unknown"),
+        ("on", "on", "off"),
+        ("on", "on", "unknown"),
+        ("off", "off", "on"),
+        ("off", "off", "unknown"),
+    ],
+)
+def test_retry_limit_is_initial_command_plus_five(
+    harness: Harness,
+    mode: str,
+    desired_state: str,
+    initial_target_state: str,
+) -> None:
+    auto_switch, _ = _initialize_with_stuck_target(
+        harness, "Switched", initial_target_state
+    )
+    initial_count = _command_count(harness, desired_state)
+
+    if mode == "auto":
+        if desired_state == "on":
+            harness.call_on_app(auto_switch, "auto_turn_on")
+            assert _command_count(harness, desired_state) == initial_count + 1
+        else:
+            assert initial_count == 1
+    else:
+        harness.set_state(switch, mode)
+        assert _command_count(harness, desired_state) == initial_count + 1
+
+    _assert_five_retries(
+        harness, desired_state, _command_count(harness, desired_state)
+    )
+
+
+@pytest.mark.parametrize(
+    "initial_switch_state, desired_state",
+    [("auto", "off"), ("on", "on"), ("off", "off")],
+)
+def test_unknown_target_at_startup_allows_command(
+    harness: Harness, initial_switch_state: str, desired_state: str
+) -> None:
+    _initialize_with_stuck_target(
+        harness, "Switched", "unknown", initial_switch_state
+    )
+
+    assert _command_count(harness, desired_state) >= 1
+
+
+@pytest.mark.parametrize(
+    "desired_state, initial_target_state",
+    [("on", "off"), ("off", "on")],
+)
+def test_unknown_target_transition_is_mismatch(
+    harness: Harness, desired_state: str, initial_target_state: str
+) -> None:
+    auto_switch, _ = _initialize_with_stuck_target(
+        harness, "Basic", initial_target_state
+    )
+    if desired_state == "on":
+        harness.call_on_app(auto_switch, "auto_turn_on")
+    initial_count = _command_count(harness, desired_state)
+    assert initial_count == (1 if desired_state == "on" else 2)
+
+    harness.set_state(target, "unknown")
+    assert _command_count(harness, desired_state) == initial_count
+    harness.advance_time(timedelta(seconds=10))
+    assert _command_count(harness, desired_state) == initial_count + 1
+
+
+@pytest.mark.parametrize("reset_by", ["target", "mode", "automation", "enabler"])
+def test_exhausted_retry_budget_resets_on_change(
+    harness: Harness, reset_by: str
+) -> None:
+    type_ = (
+        "Enabled"
+        if reset_by == "enabler"
+        else "Switched"
+        if reset_by == "mode"
+        else "Basic"
+    )
+    auto_switch, _ = _initialize_with_stuck_target(harness, type_)
+    enabler = harness.get_app("switch_enabler")
+    harness.call_on_app(auto_switch, "auto_turn_on")
+    assert _command_count(harness, "on") == 1
+    _assert_five_retries(harness, "on", 1)
+
+    if reset_by == "target":
+        harness.set_state(target, "unknown")
+        harness.advance_time(timedelta(seconds=10))
+    elif reset_by == "mode":
+        harness.set_state(switch, "on")
+    elif reset_by == "automation":
+        harness.call_on_app(auto_switch, "auto_turn_off")
+        harness.call_on_app(auto_switch, "auto_turn_on")
+    else:
+        assert isinstance(enabler, ScriptEnabler)
+        harness.call_on_app(enabler, "disable")
+        harness.call_on_app(enabler, "enable")
+
+    assert _command_count(harness, "on") == 7
+    _assert_five_retries(harness, "on", 7)
+
+
+def test_unchanged_demand_and_retry_callbacks_do_not_reset_budget(
+    harness: Harness,
+) -> None:
+    auto_switch, _ = _initialize_with_stuck_target(harness, "Basic")
+    harness.call_on_app(auto_switch, "auto_turn_on")
+
+    for _ in range(4):
+        harness.advance_time(timedelta(seconds=10))
+    assert _command_count(harness, "on") == 5
+
+    harness.call_on_app(auto_switch, "auto_turn_on")
+    assert _command_count(harness, "on") == 5
+    harness.advance_time(timedelta(seconds=10))
+    assert _command_count(harness, "on") == 6
+    harness.advance_time(timedelta(seconds=50))
+    assert _command_count(harness, "on") == 6
+
+
+def test_matching_target_cancels_retries(harness: Harness) -> None:
+    auto_switch, _ = _initialize_with_stuck_target(harness, "Basic")
+    harness.call_on_app(auto_switch, "auto_turn_on")
+    assert _command_count(harness, "on") == 1
+
+    harness.set_state(target, "on")
+    harness.advance_time(timedelta(seconds=60))
+    assert _command_count(harness, "on") == 1
+
+
+@pytest.mark.parametrize("mode", ["on", "off"])
+@pytest.mark.parametrize("reset_by", ["automation", "enabler"])
+def test_manual_retry_budget_restarts_on_demand_change(
+    harness: Harness, mode: str, reset_by: str
+) -> None:
+    auto_switch, _ = _initialize_with_stuck_target(
+        harness, "EnabledSwitched", "off" if mode == "on" else "on"
+    )
+    harness.call_on_app(auto_switch, "auto_turn_on")
+    harness.set_state(switch, mode)
+    initial_count = _command_count(harness, mode)
+    _assert_five_retries(harness, mode, initial_count)
+
+    if reset_by == "automation":
+        harness.call_on_app(auto_switch, "auto_turn_off")
+    else:
+        enabler = harness.get_app("switch_enabler")
+        assert isinstance(enabler, ScriptEnabler)
+        harness.call_on_app(enabler, "disable")
+
+    assert _command_count(harness, mode) == initial_count + 6
+    _assert_five_retries(harness, mode, initial_count + 6)
+
+
+def test_successful_stabilization_cancels_retries(harness: Harness) -> None:
+    _create_test_switch(harness, "test_switch", entity=target)
+    auto_switch, _ = _initialize(harness, "Basic")
+    harness.call_on_app(auto_switch, "auto_turn_on")
+    assert harness.get_state(target) == "on"
+    assert _command_count(harness, "on") == 1
+
+    harness.advance_time(timedelta(seconds=60))
+    assert _command_count(harness, "on") == 1
+
+
+@pytest.mark.parametrize(
+    "mode, desired_state", [("auto", "off"), ("on", "on"), ("off", "off")]
+)
+def test_responsive_unknown_target_at_startup_stabilizes(
+    harness: Harness, mode: str, desired_state: str
+) -> None:
+    _create_test_switch(harness, "test_switch", entity=target, state="unknown")
+    _initialize(harness, "Switched", mode, "unknown")
+
+    assert harness.get_state(target) == desired_state
+    assert _command_count(harness, desired_state) == 1
+    command_count = len(harness.service_calls(entity_id=target))
+
+    harness.advance_time(timedelta(seconds=60))
+    assert harness.get_state(target) == desired_state
+    assert len(harness.service_calls(entity_id=target)) == command_count
+
+
+@pytest.mark.parametrize(
+    "mode, desired_state",
+    [("auto", "on"), ("auto", "off"), ("on", "on"), ("off", "off")],
+)
+def test_responsive_unknown_target_transition_stabilizes(
+    harness: Harness, mode: str, desired_state: str
+) -> None:
+    _create_test_switch(harness, "test_switch", entity=target)
+    auto_switch, _ = _initialize(harness, "Switched", mode)
+    if mode == "auto" and desired_state == "on":
+        harness.call_on_app(auto_switch, "auto_turn_on")
+    assert harness.get_state(target) == desired_state
+    initial_count = _command_count(harness, desired_state)
+
+    harness.set_state(target, "unknown")
+    assert harness.get_state(target) == desired_state
+    assert _command_count(harness, desired_state) == initial_count + 1
+    command_count = len(harness.service_calls(entity_id=target))
+
+    harness.advance_time(timedelta(seconds=60))
+    assert harness.get_state(target) == desired_state
+    assert len(harness.service_calls(entity_id=target)) == command_count

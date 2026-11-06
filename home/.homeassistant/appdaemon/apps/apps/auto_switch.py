@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 # Delay before re-issuing a state command after the target reports a
 # wrong or invalid state (retry / verify-stable quiet period).
 RECOMMAND_DELAY = 10
+MAX_RETRIES = 5
 
 
 class AutoSwitch(hass.Hass):
@@ -18,6 +19,8 @@ class AutoSwitch(hass.Hass):
     reentrant: bool = False
     intended_state: str | None = None
     timer: str | None = None
+    retry_count: int = 0
+    auto_demand_state: str | None = None
     mutex: locker.Mutex = cast("locker.Mutex", cast(Any, None))
     listen_handles: list[str] = []
     state: int | None = None
@@ -30,6 +33,8 @@ class AutoSwitch(hass.Hass):
         self.reentrant = self.args.get("reentrant", False)
         self.intended_state = None
         self.timer = None
+        self.retry_count = 0
+        self.auto_demand_state = None
 
         import locker
         locker_app = self.get_app("locker")
@@ -86,12 +91,10 @@ class AutoSwitch(hass.Hass):
             self.log(f"Switch state={switch_state}")
             if switch_state == "on":
                 self.log("Initially turning on")
-                if self.__is_target_available():
-                    self.turn_on(self.target)
+                self.__set_intended_state("on")
             elif switch_state == "off":
                 self.log("Initially turning off")
-                if self.__is_target_available():
-                    self.turn_off(self.target)
+                self.__set_intended_state("off")
 
     def auto_turn_on(self) -> None:
         with self.mutex.lock("auto_turn_on"):
@@ -118,43 +121,93 @@ class AutoSwitch(hass.Hass):
 
     def __is_target_available(self) -> bool:
         target_state = self.get_state(self.target)
-        if target_state in ("unavailable", "unknown"):
+        if target_state == "unavailable":
             self.log(f"Target {self.target} not available")
             return False
         return True
 
-    def __update(self, state: int | None) -> None:
-        self.__stop_timer()
-        self.log(f"Got new state: {self.state} -> {state}")
-        self.state = state
-
-        if self.switch and self.get_state(self.switch) != "auto":
-            self.log("On manual mode")
-            return
-
-        if not self.__is_target_available():
-            return
-
+    def __auto_demand_state(self, state: int | None) -> str:
         if state == 0 or (
             self.enabler is not None and not self.enabler.is_enabled()
         ):
-            self.__set_intended_state("off")
-            if self.get_state(self.target) != "off":
-                self.turn_off(self.target)
-        else:
-            self.__set_intended_state("on")
-            if self.get_state(self.target) != "on":
-                self.turn_on(self.target)
+            return "off"
+        return "on"
+
+    def __update(self, state: int | None, force: bool = False) -> None:
+        self.log(f"Got new state: {self.state} -> {state}")
+        self.state = state
+        desired_state = self.__auto_demand_state(state)
+        previous_demand_state = self.auto_demand_state
+        demand_changed = desired_state != previous_demand_state
+        if demand_changed:
+            if self.auto_demand_state is not None:
+                self.retry_count = 0
+            self.auto_demand_state = desired_state
+
+        if self.switch and self.get_state(self.switch) != "auto":
+            self.log("On manual mode")
+            switch_state = self.get_state(self.switch)
+            if (
+                demand_changed and previous_demand_state is not None
+                and switch_state in ("on", "off")
+            ):
+                assert isinstance(switch_state, str)
+                self.__set_intended_state(switch_state)
+            return
+
+        if not demand_changed and not force:
+            return
+
+        self.__set_intended_state(desired_state)
 
     def update(self, kwargs: dict[str, Any]) -> None:
         with self.mutex.lock("update"):
-            self.log("Timeout")
-            self.__update(self.state)
+            self.log("Retry timeout")
+            self.timer = None
+            intended_state = self.intended_state
+            if intended_state is None or not self.__is_target_available():
+                return
+
+            if self.get_state(self.target) == intended_state:
+                self.intended_state = None
+                self.retry_count = 0
+                return
+
+            if self.switch:
+                switch_state = self.get_state(self.switch)
+                if switch_state in ("on", "off"):
+                    assert isinstance(switch_state, str)
+                    if switch_state != intended_state:
+                        self.__set_intended_state(switch_state)
+                        return
+
+            if self.retry_count >= MAX_RETRIES:
+                return
+
+            self.__send_command(intended_state)
+            self.retry_count += 1
+            self.__schedule_retry()
 
     def __set_intended_state(self, state: str) -> None:
         self.log("Turning " + state)
-        if self.intended_state is not None or self.get_state(self.target) != state:
-            self.intended_state = state
+        self.__stop_timer()
+        self.retry_count = 0
+        self.intended_state = None
+        if not self.__is_target_available() or self.get_state(self.target) == state:
+            return
+
+        self.intended_state = state
+        self.__send_command(state)
+        self.__schedule_retry()
+
+    def __send_command(self, state: str) -> None:
+        if state == "on":
+            self.turn_on(self.target)
+        else:
+            self.turn_off(self.target)
+
+    def __schedule_retry(self) -> None:
+        if self.intended_state is not None and self.retry_count < MAX_RETRIES:
             self.timer = self.run_in(self.update, RECOMMAND_DELAY)
 
     def on_switch_change(
@@ -173,19 +226,16 @@ class AutoSwitch(hass.Hass):
                 return
             if value == "on":
                 self.log("Manually turning on")
-                if self.__is_target_available():
-                    self.__set_intended_state("on")
-                    if self.get_state(self.target) != "on":
-                        self.turn_on(self.target)
+                self.retry_count = 0
+                self.__set_intended_state("on")
             elif value == "off":
                 self.log("Manually turning off")
-                if self.__is_target_available():
-                    self.__set_intended_state("off")
-                    if self.get_state(self.target) != "off":
-                        self.turn_off(self.target)
+                self.retry_count = 0
+                self.__set_intended_state("off")
             else:
                 self.log("Setting to auto")
-                self.__update(self.state)
+                self.retry_count = 0
+                self.__update(self.state, force=True)
 
     def on_target_change(
         self,
@@ -198,24 +248,27 @@ class AutoSwitch(hass.Hass):
         with self.mutex.lock("on_target_change"):
             self.log("on_target_change")
             value = new
-            if value != "on" and value != "off":
+            if value is None:
                 self.log(f"Invalid state: {value}")
                 return
             assert isinstance(value, str)
+            if old is not None:
+                self.retry_count = 0
+            if value == "unavailable":
+                self.__stop_timer()
+                return
             if not self.intended_state:
                 if self.switch is None or self.get_state(self.switch) == "auto":
                     self.log(f"State change detected: {value}")
-                    self.__update(self.state)
+                    self.__update(self.state, force=True)
                 else:
                     switch_state = self.get_state(self.switch)
-                    assert isinstance(switch_state, str)
-                    self.log(f"Reverting target to manual state: {switch_state}")
-                    self.__set_intended_state(switch_state)
-                    if self.get_state(self.target) != switch_state:
-                        if switch_state == "on":
-                            self.turn_on(self.target)
-                        else:
-                            self.turn_off(self.target)
+                    if switch_state in ("on", "off"):
+                        assert isinstance(switch_state, str)
+                        self.log(
+                            f"Reverting target to manual state: {switch_state}"
+                        )
+                        self.__set_intended_state(switch_state)
             elif value == self.intended_state:
                 self.log(f"State stabilized to {new}")
                 self.intended_state = None
@@ -225,7 +278,10 @@ class AutoSwitch(hass.Hass):
                     f"Wrong state: {value}, intended={self.intended_state}"
                 )
                 self.__stop_timer()
-                self.timer = self.run_in(self.update, RECOMMAND_DELAY)
+                if old is not None and old != new:
+                    # First delayed command starts the new retry budget.
+                    self.retry_count = -1
+                self.__schedule_retry()
 
     def __stop_timer(self) -> None:
         if self.timer:
