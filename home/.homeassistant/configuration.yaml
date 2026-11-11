@@ -14,6 +14,8 @@ homeassistant:
   customize: !include customize.yaml
   allowlist_external_dirs:
     - /tmp
+  internal_url: !secret internal_url
+  external_url: !secret external_url
 
 # Enables the frontend
 frontend:
