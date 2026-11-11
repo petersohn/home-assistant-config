@@ -123,14 +123,6 @@ sensor:
       - 'time'
       - 'date_time'
 
-binary_sensor:
-  - platform: tod
-    name: Night
-    after: sunset
-    after_offset: 00:10
-    before: sunrise
-    before_offset: -00:10
-
 climate:
   - platform: generic_thermostat
     name: heater

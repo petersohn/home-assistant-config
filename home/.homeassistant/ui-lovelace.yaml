@@ -803,7 +803,6 @@ views:
         entities:
           - sun.sun
           - sensor.moon
-          - binary_sensor.night
         show_header_toggle: false
       - type: glance
         entities:

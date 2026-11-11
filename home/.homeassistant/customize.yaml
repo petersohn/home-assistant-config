@@ -375,10 +375,6 @@ group.temperature:
 group.machinery:
   friendly_name: "Gépészet"
 
-binary_sensor.night:
-  friendly_name: "Éjszaka"
-  icon: mdi:weather-night
-
 binary_sensor.motion_sensor_driveway_uppest:
   friendly_name: "Bejáró legfelső"
   device_class: motion
